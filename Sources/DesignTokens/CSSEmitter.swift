@@ -26,6 +26,17 @@ public enum CSSEmitter {
         lines.append("  --columns: \(Grid.columns);")
         lines.append("  --radius-container: \(Radius.container);")
         lines.append("  --radius-control: \(Radius.control)px;")
+        lines.append("  --font-sans: \(FontStack.sans);")
+        lines.append("  --font-mono: \(FontStack.mono);")
+        lines.append("  --font-serif-new-york: \(FontStack.serifNewYork);")
+        lines.append("  --font-serif-garamond: \(FontStack.serifGaramond);")
+        for style in TypeStyle.allCases {
+            lines.append("  --type-\(style.name)-size: \(style.size);")
+            lines.append("  --type-\(style.name)-line: \(style.line);")
+            lines.append("  --type-\(style.name)-weight: \(style.weight);")
+            lines.append("  --type-\(style.name)-tracking: \(style.tracking);")
+            lines.append("  --type-\(style.name)-transform: \(style.uppercase ? "uppercase" : "none");")
+        }
         lines.append("}")
         let dark = darkDeclarations()
         lines.append("@media (prefers-color-scheme: dark) {")

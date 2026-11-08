@@ -1,3 +1,5 @@
+import Foundation
+
 /// Emits the tokens as JSON for tools that cannot import Swift.
 ///
 /// The text is built by hand, with sorted keys and fixed spacing, so the output is identical on every
@@ -12,10 +14,20 @@ public enum JSONEmitter {
         }
         let series = zip(Palette.seriesNames, Palette.series).map { "      { \"name\": \"\($0)\", \"hex\": \"\($1.hex)\" }" }
         let rules = Rule.allCases.sorted { $0.name < $1.name }.map { "    \"\($0.name)\": \($0.points)" }
+        let types = TypeStyle.allCases.sorted { $0.name < $1.name }.map { style in
+            "    \"\(style.name)\": { \"line\": \"\(style.line)\", \"size\": \"\(escaped(style.size))\", "
+                + "\"tracking\": \"\(style.tracking)\", \"uppercase\": \(style.uppercase), \"weight\": \(style.weight) }"
+        }
         let lines = [
             "{",
             "  \"colors\": {",
             colors.joined(separator: ",\n"),
+            "  },",
+            "  \"fonts\": {",
+            "    \"mono\": \"\(escaped(FontStack.mono))\",",
+            "    \"sans\": \"\(escaped(FontStack.sans))\",",
+            "    \"serifGaramond\": \"\(escaped(FontStack.serifGaramond))\",",
+            "    \"serifNewYork\": \"\(escaped(FontStack.serifNewYork))\"",
             "  },",
             "  \"grid\": { \"baseUnit\": \(Grid.baseUnit), \"columns\": \(Grid.columns), \"gutter\": \(Grid.gutter) },",
             "  \"palette\": {",
@@ -30,10 +42,17 @@ public enum JSONEmitter {
             "  \"rules\": {",
             rules.joined(separator: ",\n"),
             "  },",
+            "  \"type\": {",
+            types.joined(separator: ",\n"),
+            "  },",
             "  \"systemRelease\": \"\(Snapshot.systemRelease)\"",
             "}",
         ]
         return lines.joined(separator: "\n") + "\n"
+    }
+
+    private static func escaped(_ text: String) -> String {
+        text.replacingOccurrences(of: "\\", with: "\\\\").replacingOccurrences(of: "\"", with: "\\\"")
     }
 
     private static func list(_ colors: [RGB]) -> String {

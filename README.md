@@ -14,7 +14,10 @@ The design system's values, held once as typed Swift and generated for every sur
 - **Metrics** (`Rule`, `Grid`, `Radius`): rule weights 1, 3 and 8 pt; a 12-column grid with a 16 pt gutter
   and a 4 pt base; container radius 0, control radius 4 pt.
 
-Not yet here: the type scale, and increased-contrast values (neither has been measured or settled).
+- **Typography** (`FontStack`, `TypeStyle`): SF with a Helvetica fallback as the default; New York and
+  Garamond stacks as a switch; six type roles from label to display.
+
+Not yet here: increased-contrast values (not measured).
 
 ## Platforms
 
