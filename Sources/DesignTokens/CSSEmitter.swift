@@ -3,6 +3,9 @@
 /// Light values go on `:root`. Dark values go under `prefers-color-scheme: dark` (unless the page forces
 /// light with `data-theme="light"`) and under `data-theme="dark"`. A dark value that has not been
 /// measured is left out, so the light value carries through.
+///
+/// The dark selectors honour both `data-theme` and Bootstrap's `data-bs-theme`. Each colour also gets a
+/// `-rgb` triple, because Bootstrap builds link colours as `rgba(var(--bs-link-color-rgb), ...)`.
 public enum CSSEmitter {
     /// The complete stylesheet, ending in a newline.
     public static func emit() -> String {
@@ -10,6 +13,7 @@ public enum CSSEmitter {
         lines.append(":root {")
         for token in ColorToken.allCases {
             lines.append("  --\(kebab(token.rawValue)): \(token.light.hex);")
+            lines.append("  --\(kebab(token.rawValue))-rgb: \(triple(token.light));")
         }
         for (index, color) in Palette.series.enumerated() {
             lines.append("  --series-\(index + 1): \(color.hex);")
@@ -25,22 +29,30 @@ public enum CSSEmitter {
         lines.append("}")
         let dark = darkDeclarations()
         lines.append("@media (prefers-color-scheme: dark) {")
-        lines.append("  :root:not([data-theme=\"light\"]) {")
+        lines.append("  :root:not([data-theme=\"light\"]):not([data-bs-theme=\"light\"]) {")
         lines.append(contentsOf: dark.map { "  " + $0 })
         lines.append("  }")
         lines.append("}")
-        lines.append(":root[data-theme=\"dark\"] {")
+        lines.append(":root[data-theme=\"dark\"],")
+        lines.append(":root[data-bs-theme=\"dark\"] {")
         lines.append(contentsOf: dark)
         lines.append("}")
         return lines.joined(separator: "\n") + "\n"
     }
 
     private static func darkDeclarations() -> [String] {
-        var out = ColorToken.allCases.compactMap { token in
-            token.dark.map { "  --\(kebab(token.rawValue)): \($0.hex);" }
+        var out: [String] = []
+        for token in ColorToken.allCases {
+            guard let dark = token.dark else { continue }
+            out.append("  --\(kebab(token.rawValue)): \(dark.hex);")
+            out.append("  --\(kebab(token.rawValue))-rgb: \(triple(dark));")
         }
         out.append("  color-scheme: dark;")
         return out
+    }
+
+    private static func triple(_ color: RGB) -> String {
+        "\(color.red), \(color.green), \(color.blue)"
     }
 
     private static func kebab(_ name: String) -> String {
