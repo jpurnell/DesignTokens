@@ -3,11 +3,11 @@ import Testing
 
 @Suite("ColorToken")
 struct ColorTokenTests {
-    @Test("the role list is the nine SwiftGUIKit roles plus link, in a fixed order")
+    @Test("the role list is the nine SwiftGUIKit roles plus onAccent and link, in a fixed order")
     func roles() {
         #expect(ColorToken.allCases.map(\.rawValue) == [
             "label", "secondaryLabel", "background", "secondaryBackground", "separator",
-            "accent", "link", "success", "warning", "destructive",
+            "accent", "onAccent", "link", "success", "warning", "destructive",
         ])
     }
 
@@ -26,6 +26,16 @@ struct ColorTokenTests {
         #expect(ColorToken.background.dark?.hex == "#101112")
         #expect(ColorToken.separator.light.hex == "#D6D8DB")
         #expect(ColorToken.separator.dark?.hex == "#2E3033")
+    }
+
+    @Test("onAccent is ink on the accent, at least 4.5 to 1 in both appearances")
+    func onAccent() {
+        for appearance in Appearance.allCases {
+            let ratio = Contrast.ratio(ColorToken.onAccent.value(in: appearance), ColorToken.accent.value(in: appearance))
+            #expect(ratio >= 4.5)
+        }
+        #expect(ColorToken.onAccent.light.hex == "#111214")
+        #expect(ColorToken.onAccent.dark?.hex == "#111214")
     }
 
     @Test("dark values not yet measured on the snapshot release are listed, not guessed")

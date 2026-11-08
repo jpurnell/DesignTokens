@@ -6,7 +6,7 @@ public enum Appearance: Sendable, Hashable, CaseIterable {
     case dark
 }
 
-/// The colour roles: the nine SwiftGUIKit roles plus `link`, each with a light and a dark value.
+/// The colour roles: the nine SwiftGUIKit roles plus `onAccent` and `link`, each with a light and a dark value.
 ///
 /// A dark value is `nil` when it has not been measured on the snapshot release. It is listed in
 /// ``unmeasuredDark`` rather than guessed, and emitters leave it out so the light value carries through.
@@ -23,6 +23,8 @@ public enum ColorToken: String, Sendable, Hashable, CaseIterable {
     case separator
     /// The application tint: Apple's system orange.
     case accent
+    /// Text and marks drawn on the accent: ink in both appearances, so it stays readable on orange.
+    case onAccent
     /// Link text.
     case link
     /// Success status.
@@ -41,6 +43,7 @@ public enum ColorToken: String, Sendable, Hashable, CaseIterable {
         case .secondaryBackground: RGB(rgb: 0xFFFFFF)
         case .separator: RGB(rgb: 0xD6D8DB)
         case .accent: RGB(rgb: 0xFF8D28)
+        case .onAccent: RGB(rgb: 0x111214)
         case .link: RGB(rgb: 0x1F57D6)
         case .success: RGB(rgb: 0x34C759)
         case .warning: RGB(rgb: 0x9A6A00)
@@ -57,6 +60,7 @@ public enum ColorToken: String, Sendable, Hashable, CaseIterable {
         case .secondaryBackground: RGB(rgb: 0x17181A)
         case .separator: RGB(rgb: 0x2E3033)
         case .accent: RGB(rgb: 0xFF9230)
+        case .onAccent: RGB(rgb: 0x111214)
         case .link: RGB(rgb: 0x7BA3FF)
         case .warning: RGB(rgb: 0xF2C14E)
         case .success, .destructive: nil

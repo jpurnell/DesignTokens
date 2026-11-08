@@ -6,6 +6,7 @@
   --secondary-background: #FFFFFF;
   --separator: #D6D8DB;
   --accent: #FF8D28;
+  --on-accent: #111214;
   --link: #1F57D6;
   --success: #34C759;
   --warning: #9A6A00;
@@ -35,6 +36,7 @@
     --secondary-background: #17181A;
     --separator: #2E3033;
     --accent: #FF9230;
+    --on-accent: #111214;
     --link: #7BA3FF;
     --warning: #F2C14E;
     color-scheme: dark;
@@ -47,6 +49,7 @@
   --secondary-background: #17181A;
   --separator: #2E3033;
   --accent: #FF9230;
+  --on-accent: #111214;
   --link: #7BA3FF;
   --warning: #F2C14E;
   color-scheme: dark;

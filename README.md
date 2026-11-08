@@ -6,7 +6,7 @@ The design system's values, held once as typed Swift and generated for every sur
 
 ## What it holds
 
-- **Colour roles** (`ColorToken`): the nine SwiftGUIKit roles plus `link`, each with a light and a dark value.
+- **Colour roles** (`ColorToken`): the nine SwiftGUIKit roles plus `onAccent` and `link`, each with a light and a dark value.
   A dark value that has not been measured on the snapshot release is `nil` and listed in
   `ColorToken.unmeasuredDark`; it is not guessed. Today that is `success` and `destructive`.
 - **Palette** (`Palette`): eight series colours in a validated order, the sequential and diverging ramps,
