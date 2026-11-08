@@ -11,11 +11,18 @@ struct EmitterTests {
         #expect(css.contains(":root {"))
         #expect(css.contains("--accent: #FF8D28;"))
         #expect(css.contains("@media (prefers-color-scheme: dark) {\n  :root:not([data-theme=\"light\"]):not([data-bs-theme=\"light\"]) {"))
-        #expect(css.contains(":root[data-theme=\"dark\"],\n:root[data-bs-theme=\"dark\"] {"))
+        #expect(css.contains("[data-theme=\"dark\"],\n[data-bs-theme=\"dark\"] {"))
         #expect(css.contains("--accent: #FF9230;"))
         #expect(css.contains("--series-8: #00C0E8;"))
         #expect(css.contains("--rule-hairline: 1px;"))
         #expect(css.contains("--gutter: 16px;"))
+    }
+
+    @Test("the explicit dark selector is not tied to :root, so any element can scope the dark appearance")
+    func cssDarkScoping() {
+        let css = CSSEmitter.emit()
+        #expect(!css.contains(":root[data-theme=\"dark\"]"))
+        #expect(!css.contains(":root[data-bs-theme=\"dark\"]"))
     }
 
     @Test("every colour also has an -rgb triple, for Bootstrap's rgba(var(--bs-link-color-rgb))")

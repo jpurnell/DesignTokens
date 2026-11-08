@@ -4,7 +4,8 @@
 /// light with `data-theme="light"`) and under `data-theme="dark"`. A dark value that has not been
 /// measured is left out, so the light value carries through.
 ///
-/// The dark selectors honour both `data-theme` and Bootstrap's `data-bs-theme`. Each colour also gets a
+/// The dark selectors honour both `data-theme` and Bootstrap's `data-bs-theme`, on the root or on any
+/// element, so a single component (a terminal mock-up) can be pinned to the dark appearance. Each colour also gets a
 /// `-rgb` triple, because Bootstrap builds link colours as `rgba(var(--bs-link-color-rgb), ...)`.
 public enum CSSEmitter {
     /// The complete stylesheet, ending in a newline.
@@ -44,8 +45,8 @@ public enum CSSEmitter {
         lines.append(contentsOf: dark.map { "  " + $0 })
         lines.append("  }")
         lines.append("}")
-        lines.append(":root[data-theme=\"dark\"],")
-        lines.append(":root[data-bs-theme=\"dark\"] {")
+        lines.append("[data-theme=\"dark\"],")
+        lines.append("[data-bs-theme=\"dark\"] {")
         lines.append(contentsOf: dark)
         lines.append("}")
         return lines.joined(separator: "\n") + "\n"

@@ -96,8 +96,8 @@
     color-scheme: dark;
   }
 }
-:root[data-theme="dark"],
-:root[data-bs-theme="dark"] {
+[data-theme="dark"],
+[data-bs-theme="dark"] {
   --label: #F2F2EF;
   --label-rgb: 242, 242, 239;
   --secondary-label: #9A9DA2;
