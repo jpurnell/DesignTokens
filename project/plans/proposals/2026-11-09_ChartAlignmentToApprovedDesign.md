@@ -312,6 +312,8 @@ Values taken from the table in section 4, and where this implementation differs 
 | `palette.sequential` | blue C light #6AB0FF #2E92F5 #0A74D6 #0757A6 #053C73; dark #064E8B #0167B8 #1382E1 #449FFA #7FBCFE | light as audited (2.17:1 at the light end, hue spread 2.2); the dark ramp is new (darkest step 2.22:1, hue spread 0.27) |
 | `palette.diverging` | light unchanged; dark #0091FF #246BB1 #414344 #AB6224 #FF9230 | new; each arm monotone, no step under 0.13 of OKLCH L, outer ends 8.5:1 or more on #101112 (the midpoint is meant to sit near the surface, 1.9:1) |
 
+**Princeton follows Swiss, owner 2026-11-09 (later the same day).** The system green and red override is removed: Princeton has Swiss's text-safe `positive` / `negative` as well, and keeps only its own accent, series and ramps. Its ledger is 10 findings (no status rows). Swiss `marks.barCornerRadius` is the explicit literal 0 (it was `Radius.container`, also 0); the theme is the single source for square bars. Halo rule: the halo must match the surface actually painted behind the text (`ChartStyle.paintsOwnSurface`, `valueHaloValue(over:)`).
+
 Princeton is composed on Swiss, so it **inherits the whole Swiss structure** (neutral marks, the latest column emphasised, the rule above
 the title, the 1.5 pt ink baseline, the hairline target line) and the neutral `muted` grey, and keeps its own accent, its own orange ramps and
 the system green and red. Reason: it is a Swiss variant whose only intended differences are colours. It is the one behaviour change among

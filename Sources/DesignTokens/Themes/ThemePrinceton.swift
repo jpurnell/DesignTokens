@@ -23,13 +23,13 @@ public extension Theme {
     /// This is the supported light-only composition: ``Theme/composed(with:)`` on a theme that declares both
     /// appearances, with a palette that has no dark values, yields a light-only theme with every dark value
     /// stripped (Princeton has no measured dark series and none is invented; a dark context shows Princeton on
-    /// Swiss's light background). Only the id (`princeton`), the name, the ledger and the system `positive` and `negative` (Swiss's are the text-safe pair) are set here.
+    /// Swiss's light background). Only the id (`princeton`), the name and the ledger are set here.
+
+    /// **Princeton follows Swiss fully** (owner decision 2026-11-09): its structure (neutral marks, the rule above the
+    /// title, a hairline target line), its text-safe `positive` and `negative`, and its neutral `muted` grey are Swiss's.
+    /// It keeps only its own accent, series and ramps.
     static var princeton: Theme {
         var theme = Theme.swiss.composed(with: princetonPalette)
-        // Swiss's gain and loss became the text-safe pair on 2026-11-09; Princeton did not change, so it keeps the
-        // system green and red it was built with (light only, like the rest of its palette).
-        theme.palette.positive = Theme.systemPositive.strippingDark()
-        theme.palette.negative = Theme.systemNegative.strippingDark()
         theme.id = "princeton"
         theme.name = "Princeton"
         theme.conformance = princetonConformance

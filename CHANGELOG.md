@@ -2,6 +2,23 @@
 
 ## [Unreleased]
 
+### Princeton follows Swiss fully; Swiss bars square; the halo rule (owner decisions 2026-11-09), unreleased
+Branch `fix/princeton-follows-swiss` from 5ae1cbc.
+- **Princeton:** the override that kept the system green and red is removed, so `Theme.princeton` inherits Swiss's text-safe `positive` and
+  `negative` (light #268053 / #DB2C2C, Increase Contrast #0E6B3A / #B81D1D; no dark values, no system colour). It keeps only its own accent, series and
+  ramps. Its ledger loses the four `positive` / `negative` text rows (14 to 10 findings, none failing); its accent and series rows (orange 2.9, sky 2.15,
+  teal 2.09, periwinkle 2.27 on the background, sky 2.25, teal 2.18, periwinkle 2.37 on the surface, accent 2.9) are unchanged, and so are its colours.
+  `Theme.systemPositive` and `Theme.systemNegative` are removed (unreleased API; nothing else used them). Regenerated: `themes/princeton.css` and
+  `princeton.json`, and nothing else.
+- **Swiss `marks.barCornerRadius`** was `Double(Radius.container)`, which is 0, so the value did not change: it is now the literal 0 with a comment, and a
+  test pins it for Swiss and Princeton. The theme is the single source for square bars. Swiss's generated files are byte-identical.
+- **Halo colour** (`DesignTokensSwiftUI`): `ChartStyle.valueHaloColor` is the theme's own background, which is right only where the chart paints that background.
+  New `paintsOwnSurface` (true for a light-only or fixed-dark theme in a dark context), `valueHaloValue(over:)` and `valueHaloColor(over:)` (the surface the
+  caller actually paints behind the text); the rule is documented on `valueHaloColor`. The white shadow on Princeton's standard SVG charts is
+  BusinessMath-UI's: its standard SVG writes no background, and `StandardSVG.haloText` strokes `paperHex` (Princeton's light background) over whatever
+  surface the page has. Not fixed here.
+- Tests: 277 core and 42 SwiftUI (was 276 and 41).
+
 ### 0.6.0 grew: the chart alignment (owner decisions 2026-11-09), unreleased
 0.6.0 is untagged, so this is added to it rather than renumbered; the section below it is no longer the whole of what 0.6.0 contains.
 Written on branch `feature/chart-alignment-spec` from the 0.6.0 candidate (8e29e5c). Source:
@@ -34,7 +51,7 @@ reserved for emphasis.
 - Ledger: four `muted` mark-contrast rows added (1.84 and 1.93 light, 2.34 and 2.20 dark) and the orange dark sequential row (1.99) removed: 25 findings
   become 28, 15 failing become 14.
 - Princeton is composed on Swiss and **inherits the new structure** and the `muted` grey (its ledger gains the two light `muted` rows, 12 to 14); it keeps
-  its own accent, orange ramps and the system green and red.
+  its own accent and orange ramps. (It first kept the system green and red; it now follows Swiss fully, see above.)
 
 **Generated files (regenerated deliberately)**
 - House, FT, Economist and the four legacy themes: `themes/<id>.json` gains the new defaulted keys and nothing else (a test pins that the JSON less those keys

@@ -264,8 +264,26 @@ public struct ChartStyle: Sendable {
     public var valueHalo: CGFloat { CGFloat(theme.structure.labels.valueHalo) }
     /// Whether value labels get a halo.
     public var hasValueHalo: Bool { theme.structure.labels.valueHalo > 0 }
-    /// The halo's colour: the background, so the stroke hides the gridline or target line behind the text.
+    /// The halo's colour: the theme's background, so the stroke hides the gridline or target line behind the text.
+    ///
+    /// **The rule: the halo must match the surface actually painted behind the text.** This is the theme's background,
+    /// which is right when the chart paints that background itself. A light-only theme (Princeton) in a dark context
+    /// keeps its light colours (dark ink, light background); drawn on a transparent surface over a dark page, the halo
+    /// is then a thick white shadow. Either paint the background (``paintsOwnSurface`` says when it is needed), or pass
+    /// the surface that is behind the text to ``valueHaloColor(over:)``.
     public var valueHaloColor: Color { background }
+
+    /// The halo's colour over a surface the caller paints behind the text (`nil`: the theme's own background).
+    public func valueHaloColor(over surface: Color) -> Color { surface }
+
+    /// The stored value of the halo's colour, for string renderers: `surface` when the caller paints one behind the
+    /// text, else the theme's background.
+    public func valueHaloValue(over surface: ColorValue? = nil) -> ColorValue { surface ?? value(.background) }
+
+    /// Whether the chart must paint its own background to be legible: the theme has no dark values (light-only or
+    /// fixed-dark) and the style is for a dark context, so its colours are not the surround's. Princeton in dark is the
+    /// case. A renderer that leaves the surface transparent in this case draws dark ink and a light halo on a dark page.
+    public var paintsOwnSurface: Bool { theme.appearances != .both && appearance == .dark }
 
     // MARK: Layout
 

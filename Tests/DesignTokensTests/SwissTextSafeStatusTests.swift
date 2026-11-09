@@ -154,13 +154,14 @@ struct SwissTextSafeStatusTests {
         #expect(String(decoding: json, as: UTF8.self) == JSONEmitter.emit())
     }
 
-    @Test("other themes are untouched: Princeton (composed on Swiss) keeps the system green and red it had, House keeps its own")
-    func otherThemesUnchanged() {
+    @Test("Princeton follows Swiss (owner decision 2026-11-09): it has Swiss's text-safe gain and loss, light only; House keeps its own")
+    func princetonFollowsSwiss() {
         let princeton = Theme.princeton.palette
-        #expect(princeton.positive.light == ColorValue(ColorToken.success.light))
-        #expect(princeton.negative.light == ColorValue(ColorToken.destructive.light))
-        #expect(princeton.positive.system == .green)
-        #expect(princeton.negative.system == .red)
+        #expect(princeton.positive.light == Theme.swiss.palette.positive.light)
+        #expect(princeton.negative.light == Theme.swiss.palette.negative.light)
+        #expect(princeton.positive.light.hex == "#268053" && princeton.negative.light.hex == "#DB2C2C")
+        #expect(princeton.positive.lightIncreased?.hex == "#0E6B3A" && princeton.negative.lightIncreased?.hex == "#B81D1D")
+        #expect(princeton.positive.system == nil && princeton.negative.system == nil)
         #expect(princeton.positive.dark == nil && princeton.negative.dark == nil)
         #expect(Theme.house.palette.positive.light == hex("#1F9D55"))
         #expect(Theme.house.palette.negative.light == hex("#D64545"))
@@ -179,10 +180,10 @@ struct SwissTextSafeStatusTests {
         #expect(ThemeValidator.validate(.swiss).filter { $0.subject.hasPrefix("positive") || $0.subject.hasPrefix("negative") }.isEmpty)
     }
 
-    @Test("Princeton's ledger is unchanged: it still records the system green and red as text")
-    func princetonLedgerKeepsStatusRows() {
+    @Test("Princeton's ledger has no positive or negative row any more: they are text-safe, as in Swiss")
+    func princetonLedgerHasNoStatusRows() {
         let rows = Theme.princetonConformance.entries.filter { $0.subject.hasPrefix("positive") || $0.subject.hasPrefix("negative") }
-        #expect(same(rows.map(\.measured), [2.13, 2.22, 3.42, 3.57]))
+        #expect(rows.isEmpty)
         #expect(ThemeValidator.deviations(of: .princeton).isEmpty)
     }
 
@@ -198,6 +199,8 @@ struct SwissTextSafeStatusTests {
         #expect(css.contains("--positive: #34C759;") == false)
         #expect(css.contains("--negative: #FF383C;") == false)
         let princeton = try String(contentsOf: Self.root.appendingPathComponent("Generated/themes/princeton.css"), encoding: .utf8)
-        #expect(princeton.contains("--positive: #34C759;"))
+        #expect(princeton.contains("--positive: #268053;"))
+        #expect(princeton.contains("--negative: #DB2C2C;"))
+        #expect(princeton.contains("--positive: #34C759;") == false)
     }
 }

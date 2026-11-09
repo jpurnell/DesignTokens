@@ -77,6 +77,13 @@ struct ChartAlignmentStructureTests {
         #expect(s.labels.series == .direct)
     }
 
+    @Test("Swiss's bars are square: barCornerRadius is 0 in the theme, which is the single source (BusinessMath-UI draws no radius of its own)")
+    func swissBarsAreSquare() {
+        #expect(Theme.swiss.structure.marks.barCornerRadius.isEqual(to: 0))
+        #expect(Theme.princeton.structure.marks.barCornerRadius.isEqual(to: 0))
+        #expect(Radius.container == 0, "the value was Radius.container; it is now a literal 0, equal to it today")
+    }
+
     @Test("Swiss's plain number format prints the fewest decimals up to two: 41.2, 80, 52.6, not 41.20")
     func swissPlainIsMinimal() {
         let plain = Theme.swiss.structure.numbers.plain

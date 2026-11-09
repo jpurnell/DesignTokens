@@ -92,10 +92,8 @@ struct ThemeCompositionTests {
 
     @Test("Theme.princeton is the supported light-only composition, with the same palette as composing it")
     func princetonIsTheComposedPath() {
-        var composed = Theme.swiss.composed(with: Theme.princetonPalette)
-        // Swiss's gain and loss became the text-safe pair on 2026-11-09; Princeton did not change and keeps the system pair
-        composed.palette.positive = Theme.systemPositive.strippingDark()
-        composed.palette.negative = Theme.systemNegative.strippingDark()
+        // Princeton follows Swiss fully (owner decision 2026-11-09): nothing is overridden after composing
+        let composed = Theme.swiss.composed(with: Theme.princetonPalette)
         let princeton = Theme.princeton
         #expect(princeton.palette == composed.palette)
         #expect(princeton.structure == composed.structure)

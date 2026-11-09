@@ -1,5 +1,5 @@
 #if canImport(SwiftUI) && os(macOS)
-import DesignTokens
+@testable import DesignTokens
 import SwiftUI
 import Testing
 @testable import DesignTokensSwiftUI
@@ -127,6 +127,24 @@ struct ChartStyleAlignmentTests {
         #expect(matches(resolve(style(dark: true).valueHaloColor, dark: true), style(dark: true).value(.background)))
         #expect(near(style(.house).valueHalo, 0))
         #expect(!style(.house).hasValueHalo && style().hasValueHalo)
+    }
+
+    @Test("the halo is the surface the text sits on: a light-only theme in a dark context has its own light background as halo, and the ink paired with it")
+    func haloMatchesTheSurfaceBehindTheText() {
+        let princeton = style(.princeton, dark: true)
+        // Princeton declares no dark values, so a dark context shows its light colours: halo, background and ink stay a pair
+        #expect(princeton.valueHaloValue() == ChartStyle(theme: .princeton, appearance: .light, defersToSystemColors: false).value(.background))
+        #expect(princeton.valueHaloValue().hex == "#FAFAFA")
+        #expect(Contrast.ratio(princeton.value(.ink).rgb, princeton.valueHaloValue().rgb) >= 4.5)
+        #expect(princeton.paintsOwnSurface, "dark context, light-only theme: the chart must paint its own background or the halo shows as a white shadow")
+        #expect(!style(.princeton).paintsOwnSurface)
+        #expect(!style(.swiss, dark: true).paintsOwnSurface, "Swiss has dark values, so its dark halo is the dark background")
+        #expect(style(.swiss, dark: true).valueHaloValue().hex == "#101112")
+        #expect(style(.swiss).valueHaloValue().hex == "#FAFAFA")
+        // a caller that paints a different surface behind the text says so, and the halo follows it
+        let surround = ColorValue(RGB(rgb: 0x101112))
+        #expect(princeton.valueHaloValue(over: surround) == surround)
+        #expect(matches(resolve(princeton.valueHaloColor(over: surround.color), dark: true), surround))
     }
 
     @Test("the card border is off in Swiss and on, in the rule colour, with its padding, for the opt-in variant")

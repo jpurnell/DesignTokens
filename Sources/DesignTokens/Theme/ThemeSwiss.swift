@@ -56,12 +56,6 @@ public extension Theme {
                  lightIncreased: ColorValue(RGB(rgb: 0xB81D1D)), darkIncreased: ColorValue(RGB(rgb: 0xFF6165)))
     }
 
-    /// The system green and red, as Swiss's `positive` and `negative` were before 2026-11-09. Princeton is
-    /// composed on Swiss and keeps these: its palette and ledger did not change.
-    static var systemPositive: Adaptive { Adaptive(token: .success, system: .green) }
-    /// See `systemPositive`.
-    static var systemNegative: Adaptive { Adaptive(token: .destructive, system: .red) }
-
     private static var swissPalette: ThemePalette {
         func role(_ token: ColorToken, system: SystemColorName? = nil) -> Adaptive {
             Adaptive(token: token, system: system)
@@ -130,8 +124,10 @@ public extension Theme {
             gridlines: .horizontalFaint)
         let labels = LabelSpec(values: .aboveOrEnd, series: .direct, axisSide: .leading,
                                axisLabelPlacement: .besideAxis, sourceLine: true, valueHalo: 3)
+        // Square bars, written as 0 rather than read from `Radius.container` (also 0): the theme is the single source, and
+        // BusinessMath-UI draws no radius of its own.
         let marks = MarkSpec(lineWidth: 2, pointSize: 24, bandOpacity: 0.14, selectedLineWidth: 3,
-                             barFill: .flat, barWidthRatio: 0.7, barCornerRadius: Double(Radius.container),
+                             barFill: .flat, barWidthRatio: 0.7, barCornerRadius: 0,
                              lineEnd: .none, defaultFill: .muted, defaultEmphasis: .latest, emphasisFill: .accent)
         return Structure(rules: rules, type: swissType, labels: labels, layout: layout, marks: marks,
                          numbers: standardNumbers)

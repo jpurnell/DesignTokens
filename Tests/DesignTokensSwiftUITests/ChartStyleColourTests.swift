@@ -130,14 +130,18 @@ struct ChartStyleColourTests {
 
     @Test("a light-only theme keeps its light values in a dark context, even where a role names a system colour")
     func lightOnlyDoesNotDefer() {
-        #expect(Theme.princeton.appearances == .lightOnly)
-        let style = ChartStyle(theme: .princeton, appearance: .dark)
+        // Princeton follows Swiss and names no system colour any more (owner decision 2026-11-09), so give a light-only
+        // copy one: the guard against deferring to the system's dark green is what is under test.
+        var theme = Theme.princeton
+        theme.palette.positive = Adaptive(token: .success, system: .green).strippingDark()
+        #expect(theme.appearances == .lightOnly)
+        #expect(theme.palette.positive.system == .green)
+        #expect(Theme.princeton.palette.positive.system == nil)
+        let style = ChartStyle(theme: theme, appearance: .dark)
         for role in ColorRole.allCases {
-            let expected = Theme.princeton.palette[role].light
+            let expected = theme.palette[role].light
             #expect(matches(resolve(style.color(role), dark: true, increased: false), expected), "princeton \(role.rawValue)")
         }
-        // Princeton composes on Swiss, so some roles do name a system colour: the guard is what is under test.
-        #expect(Theme.princeton.palette.positive.system == .green)
     }
 
     @Test("a fixed-dark theme resolves its single set of values in a light context too")

@@ -53,7 +53,7 @@ extension Theme {
         ])
     }
 
-    /// Princeton's ledger: the exact findings on the composed palette. It has no failing check; every finding is a mark that needs a direct label or printed value.
+    /// Princeton's ledger: the exact findings on the composed palette. It has no failing check; every finding is a mark that needs a direct label or printed value. Its `positive` and `negative` are Swiss's text-safe pair, so they have no rows.
     static var princetonConformance: Conformance {
         Conformance(kind: .ledger, entries: [
             ledgerWarn(.markContrast, .light, "orange on background", 2.9, 3.0),
@@ -63,10 +63,6 @@ extension Theme {
             ledgerWarn(.markContrast, .light, "sky on surface", 2.25, 3.0),
             ledgerWarn(.markContrast, .light, "teal on surface", 2.18, 3.0),
             ledgerWarn(.markContrast, .light, "periwinkle on surface", 2.37, 3.0),
-            ledgerWarn(.textContrast, .light, "positive on background", 2.13, 4.5),
-            ledgerWarn(.textContrast, .light, "positive on surface", 2.22, 4.5),
-            ledgerWarn(.textContrast, .light, "negative on background", 3.42, 4.5),
-            ledgerWarn(.textContrast, .light, "negative on surface", 3.57, 4.5),
             ledgerWarn(.markContrast, .light, "accent on background", 2.9, 3.0),
             ledgerWarn(.markContrast, .light, "muted on background", 1.84, 3.0),
             ledgerWarn(.markContrast, .light, "muted on surface", 1.93, 3.0),
