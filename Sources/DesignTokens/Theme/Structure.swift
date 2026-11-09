@@ -900,3 +900,32 @@ public extension Theme {
         return copy
     }
 }
+
+public extension MarkSpec {
+    /// The index of the mark the theme emphasises when the chart's author names none, or `nil` for none.
+    ///
+    /// ``EmphasisDefault/latest`` emphasises the last mark of a vertical chart (the last column, the last period).
+    /// A horizontal ranked bar has no "latest", so it emphasises nothing by default; an empty chart has nothing to
+    /// emphasise. An author who names an emphasis does not come through here.
+    ///
+    /// - Parameters:
+    ///   - count: The number of marks along the category or time axis.
+    ///   - isVertical: Whether the chart's categories run along the horizontal axis (columns, a time series).
+    func defaultEmphasisIndex(count: Int, isVertical: Bool) -> Int? {
+        guard defaultEmphasis == .latest, isVertical, count > 0 else { return nil }
+        return count - 1
+    }
+}
+
+public extension NumberFormatSpec {
+    /// The fraction digits a renderer shows, or `nil` when the format leaves them to the renderer's default for the style.
+    ///
+    /// A fixed ``decimals`` shows exactly that many (and wins over ``maxDecimals``). With ``decimals`` `nil` and
+    /// ``maxDecimals`` set the format is minimal: no trailing zeros, up to the cap (41.2, 80, 52.6, never 41.20).
+    /// Use it as `minimumFractionDigits` and `maximumFractionDigits` of a number formatter.
+    var fractionDigits: ClosedRange<Int>? {
+        if let decimals, decimals >= 0 { return decimals...decimals }
+        if let maxDecimals, maxDecimals >= 0 { return 0...maxDecimals }
+        return nil
+    }
+}

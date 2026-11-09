@@ -190,14 +190,22 @@ public struct ChartStyle: Sendable {
         public var position: TitleRulePosition
         /// Inset from each edge, in points.
         public var inset: CGFloat
+        /// The space between the rule and the title when the rule is above the title: the theme's `gapAfter`, else
+        /// the title gap.
+        public var gap: CGFloat
     }
 
     /// The heavy title rule, or `nil` when the theme has none (weight 0 or position `.none`).
     public var titleRule: Rule? {
         let rule = theme.structure.rules.title
         guard rule.weight > 0, rule.position != .none else { return nil }
-        return Rule(weight: CGFloat(rule.weight), color: color(rule.colour), position: rule.position, inset: CGFloat(rule.inset))
+        return Rule(weight: CGFloat(rule.weight), color: color(rule.colour), position: rule.position, inset: CGFloat(rule.inset),
+                    gap: CGFloat(rule.gapAfter ?? theme.structure.layout.gaps.title))
     }
+
+    /// The space between a title rule above the title and the title, in points: the theme's `gapAfter`, else the
+    /// title gap. Meaningful for a rule that is ``TitleRulePosition/aboveTitle``.
+    public var titleRuleGap: CGFloat { CGFloat(theme.structure.rules.title.gapAfter ?? theme.structure.layout.gaps.title) }
 
     /// The new-section rule weight.
     public var sectionRuleWeight: CGFloat { CGFloat(theme.structure.rules.section) }
@@ -216,7 +224,16 @@ public struct ChartStyle: Sendable {
     /// Whether a plot border is drawn.
     public var hasPlotBorder: Bool { theme.structure.rules.plotBorder > 0 }
 
-    /// The stroke of a reference line.
+    /// The baseline's colour: ink in Swiss, the `rule` role in the themes that did not say.
+    public var baselineColor: Color { color(theme.structure.rules.baselineColour) }
+    /// The colour of a reference (target) line.
+    public var referenceColor: Color { color(theme.structure.rules.referenceColour) }
+    /// The colour of a reference line's direct label: ink in Swiss, so it reads on the line.
+    public var referenceLabelColor: Color { color(theme.structure.rules.referenceLabelColour) }
+    /// The gap between a reference line and its label, in points.
+    public var referenceLabelGap: CGFloat { CGFloat(theme.structure.layout.gaps.referenceLabel) }
+
+    /// The stroke of a reference line. Solid (no dash) in Swiss, a hairline.
     public var referenceStroke: StrokeStyle {
         let line = theme.structure.rules.reference
         return StrokeStyle(lineWidth: CGFloat(line.weight), dash: line.dash.map { CGFloat($0) })
@@ -242,6 +259,13 @@ public struct ChartStyle: Sendable {
     public var axisLabelPlacement: AxisLabelPlacement { theme.structure.labels.axisLabelPlacement }
     /// Whether a source line is drawn.
     public var showsSourceLine: Bool { theme.structure.labels.sourceLine }
+
+    /// Points of background-coloured stroke behind value and reference labels; 0 is none.
+    public var valueHalo: CGFloat { CGFloat(theme.structure.labels.valueHalo) }
+    /// Whether value labels get a halo.
+    public var hasValueHalo: Bool { theme.structure.labels.valueHalo > 0 }
+    /// The halo's colour: the background, so the stroke hides the gridline or target line behind the text.
+    public var valueHaloColor: Color { background }
 
     // MARK: Layout
 
@@ -272,6 +296,14 @@ public struct ChartStyle: Sendable {
     public var annotationRadius: CGFloat { CGFloat(theme.structure.layout.annotationRadius) }
     /// Gridline style.
     public var gridlines: GridlineStyle { theme.structure.layout.gridlines }
+    /// The weight of the card border; 0 is none (Swiss's default: an option, see ``Theme/withCardBorder(_:padding:)``).
+    public var cardBorderWeight: CGFloat { CGFloat(theme.structure.layout.cardBorder) }
+    /// Whether the card has a border.
+    public var hasCardBorder: Bool { theme.structure.layout.cardBorder > 0 }
+    /// The card border's colour: the `rule` role.
+    public var cardBorderColor: Color { rule }
+    /// Padding inside the card border, in points.
+    public var cardPadding: CGFloat { CGFloat(theme.structure.layout.cardPadding) }
 
     /// A drop shadow.
     public struct Shadow: Sendable {
@@ -332,10 +364,61 @@ public struct ChartStyle: Sendable {
         return Tag(width: CGFloat(mark.width), height: CGFloat(mark.height), color: color(mark.colour))
     }
 
+    // MARK: Fills and emphasis
+
+    /// What an un-emphasised mark is filled with: the series colours, or the neutral grey.
+    public var defaultMarkFill: MarkFill { theme.structure.marks.defaultFill }
+    /// Which mark the theme emphasises when the author names none.
+    public var defaultEmphasis: EmphasisDefault { theme.structure.marks.defaultEmphasis }
+    /// The colour of an emphasised mark: the theme's `emphasisFill` role (the accent).
+    public var emphasisColour: Color { color(theme.structure.marks.emphasisFill) }
+    /// The stored value of ``emphasisColour``, for string renderers.
+    public var emphasisValue: ColorValue { value(theme.structure.marks.emphasisFill) }
+
+    /// The index of the mark the theme emphasises when the author names none, or `nil` (see ``MarkSpec/defaultEmphasisIndex(count:isVertical:)``).
+    public func defaultEmphasisIndex(count: Int, isVertical: Bool) -> Int? {
+        theme.structure.marks.defaultEmphasisIndex(count: count, isVertical: isVertical)
+    }
+
+    /// The fill of a mark.
+    ///
+    /// An emphasised mark takes ``emphasisColour``. Any other takes the neutral grey when the theme's default fill is
+    /// neutral, or when the author named an emphasis (naming emphasis always greys the rest, whatever the theme's
+    /// default), and the series colour otherwise.
+    ///
+    /// - Parameters:
+    ///   - emphasised: Whether this mark is emphasised.
+    ///   - emphasisNamed: Whether the author named an emphasis for the chart (so the others are greyed).
+    ///   - series: The series index, for a theme whose default fill is the series colours; it wraps.
+    public func markFill(emphasised: Bool, emphasisNamed: Bool = false, series index: Int = 0) -> Color {
+        if emphasised { return emphasisColour }
+        if emphasisNamed || defaultMarkFill == .muted { return muted }
+        return series(index)
+    }
+
+    /// The stored value of ``markFill(emphasised:emphasisNamed:series:)``, for string renderers.
+    public func markFillValue(emphasised: Bool, emphasisNamed: Bool = false, series index: Int = 0) -> ColorValue {
+        if emphasised { return emphasisValue }
+        if emphasisNamed || defaultMarkFill == .muted { return value(.muted) }
+        return seriesValue(index)
+    }
+
+    /// The grey of the nth non-emphasised series when two or three series are drawn and some are emphasised: the
+    /// secondary ink, then the muted grey, which it stays at from then on (the audit's ladder: #6A6D72 then #B9BBBD
+    /// in light, #9A9DA2 then #4E5053 in dark).
+    public func neutralLadder(_ rank: Int) -> Color { rank <= 0 ? secondaryInk : muted }
+
+    /// The stored value of ``neutralLadder(_:)``.
+    public func neutralLadderValue(_ rank: Int) -> ColorValue { rank <= 0 ? value(.secondaryInk) : value(.muted) }
+
     // MARK: Numbers
 
     /// The number format for a kind of quantity. It is a specification; formatting stays in the renderer.
     public func numberFormat(_ kind: NumberKind) -> NumberFormatSpec { theme.structure.numbers[kind] }
+
+    /// The fraction digits to show for a kind of quantity (see ``NumberFormatSpec/fractionDigits``), or `nil` for the
+    /// renderer's default.
+    public func fractionDigits(_ kind: NumberKind) -> ClosedRange<Int>? { theme.structure.numbers[kind].fractionDigits }
 }
 
 @available(macOS 14.0, iOS 17.0, visionOS 1.0, tvOS 17.0, watchOS 10.0, *)
