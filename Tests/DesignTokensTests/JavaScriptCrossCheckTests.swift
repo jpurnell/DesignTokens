@@ -2,14 +2,17 @@ import Foundation
 import Testing
 @testable import DesignTokens
 
-/// Runs the vendored copy of the dataviz skill's `validate_palette.js` (`Vendored/`, hash-pinned by
-/// `VendoredScriptTests`) under Node on the same palettes and compares numbers. Needs Node; where it is absent
-/// the tests are SKIPPED and the skip is visible in the test report with the reason (it is never a silent pass).
+/// Runs the dataviz skill's `validate_palette.js` under Node on the same palettes and compares numbers. The script is
+/// not vendored (licence unclear): `ReferenceScript` finds it via `DATAVIZ_VALIDATOR` or the skill directories and
+/// verifies its SHA-256 against the pin. Needs Node and that script; where either is absent or the hash differs the
+/// tests are SKIPPED and the skip is visible in the test report with the reason (it is never a silent pass).
 @Suite("JavaScript cross-check")
 struct JavaScriptCrossCheckTests {
     static let node: String? = JavaScriptValidator.nodePath()
     static let script: String? = JavaScriptValidator.scriptPath()
-    static let reason = "needs Node (found: \(node ?? "none"); set NODE to its path) and the vendored validate_palette.js (found: \(script ?? "none"))"
+    static let reason = "cross-check skipped: "
+        + (node == nil ? "Node not found (set NODE to its path). " : "")
+        + (ReferenceScript.skipReason.map { "\($0). " } ?? "")
 
     @Test("validatorMatchesJavaScriptOnAllPalettes", .enabled(if: node != nil && script != nil, Comment(rawValue: reason)))
     func validatorMatchesJavaScriptOnAllPalettes() throws {

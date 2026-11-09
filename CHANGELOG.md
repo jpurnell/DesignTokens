@@ -2,6 +2,14 @@
 
 ## [Unreleased]
 
+### Reference script no longer vendored, unreleased
+Branch `fix/no-vendored-script`. Reverses the "vendored" half of the entry below: the repository is public and `validate_palette.js` has no licence of its own
+(only an embedded Color.js MIT notice), so we cannot confirm we may redistribute it. Nothing was ever pushed with it (it was only on unpushed local branches).
+- **Removed** `Tests/DesignTokensTests/Vendored/validate_palette.js`. `Vendored/README.md` is now a note: where the script comes from, the pin, `DATAVIZ_VALIDATOR`, why it is not vendored. (The directory stays, excluded from the test target, to hold that note.)
+- **`ReferenceScript`** (test support) locates the script: `DATAVIZ_VALIDATOR` (authoritative when set), else `~/.claude/skills/dataviz/scripts/` and Claude Code's bundled-skills directory (bounded, sorted, first whose SHA-256 matches the pin). Absent or mismatching: never run.
+- **The cross-check now runs only where the reference script is present and matches the pin.** Elsewhere `JavaScriptCrossCheckTests` and the thresholds-from-script tests are skipped with the reason (not found and where searched, or a hash mismatch with both hashes). The recorded-run test (`ValidationThresholdTests`, hard-coded numbers) still runs everywhere.
+- **`ReferenceScriptTests`** (never skipped) asserts the locating and skip-reason logic: missing path reports absent, wrong hash reports mismatch, the variable is authoritative, the bundled search is sorted. `VendoredScriptTests` became `ReferenceScriptThresholdTests`; its hash-pin and "reads that file" tests were replaced by the above.
+
 ### Heatmaps and scatter grey to orange (owner decision 2026-11-09), unreleased
 Same branch, `fix/princeton-follows-swiss`. This replaces the blue ramps the entry below says Swiss got a few hours earlier.
 - **Swiss `palette.sequential`:** light #D6D8DB #F0B58B #FF8D28, dark #4E5053 #A6714A #FF9230 (neutral grey to the system orange; three steps so each OKLCH
@@ -160,7 +168,7 @@ use site does not change). Theme JSON written by 0.5.0's `ThemeCodec` still deco
 - **`SwissLedger.directLabelSlots`** said it held the slots that fail "in some appearance", but the ledger also has `darkIncreased` band
   rows for all eight series, and its test compared the list with itself. It is now derived from `swissConformance` and documented as the
   light and standard-dark list; `SwissLedger.slotsNeedingDirectLabels(in:)` answers for any appearance (all eight for `.darkIncreased`).
-- **Cross-check script:** `JavaScriptValidator.scriptPath()` searched a Claude session's temp directory. `validate_palette.js` is now
+- **Cross-check script** (the vendoring below was reversed the same day, see "Reference script no longer vendored"): `JavaScriptValidator.scriptPath()` searched a Claude session's temp directory. `validate_palette.js` is now
   vendored under `Tests/DesignTokensTests/Vendored/` (README: provenance, licence note) with a SHA-256 pin, and the cross-check runs against it
   only. `VendoredScriptTests` pins the hash and reads the method's thresholds out of the script's text (no Node needed).
 - **Weak tests:** thresholds are pinned at their edges (`ValidationThresholdTests`: both lightness bands, `rampMinStep`, and the

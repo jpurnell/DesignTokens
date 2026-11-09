@@ -33,9 +33,10 @@ The design system's values, held once as typed Swift and generated for every sur
 
 - **Validator and themes** (0.5.0, additive): `ThemeValidator`, a Swift port of the dataviz skill's
   `validate_palette.js` (OKLCH lightness band, chroma floor, colour-vision and normal-vision separation, mark
-  and text contrast, ramps, structure), cross-checked under Node against a vendored, hash-pinned copy of the script
-  (`Tests/DesignTokensTests/Vendored/`, `JavaScriptCrossCheckTests`; skipped with a visible reason when Node is absent), and its
-  thresholds are read out of the script's text by a test that needs no Node. `Theme.conformance`:
+  and text contrast, ramps, structure), cross-checked under Node against the script itself, which is **not** in this repository (no licence of its own): the
+  cross-check (`JavaScriptCrossCheckTests`) and a test that reads the thresholds out of the script's text run only where the script is present
+  and its SHA-256 matches the pin (`DATAVIZ_VALIDATOR`, or the dataviz skill directories; see `Tests/DesignTokensTests/Vendored/README.md`),
+  and are skipped with a visible reason otherwise (also when Node is absent). A recorded-run test (numbers taken from the script) runs everywhere. `Theme.conformance`:
   `strict`, or a `ledger` / `legacy` ledger of the exact findings (measured values at the validator's displayed rounding):
   a finding that appears, disappears or changes value fails a test; a ledger is not a suppression. A colour change that
   moves no finding is not caught by the ledger: it is caught by the committed `Generated/themes/` files (0.6.0), which a

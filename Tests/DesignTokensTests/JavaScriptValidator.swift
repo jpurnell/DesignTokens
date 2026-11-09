@@ -1,3 +1,4 @@
+import CryptoKit
 import Foundation
 
 /// Test support: runs the dataviz skill's `validate_palette.js` under Node and parses its report.
@@ -41,16 +42,9 @@ enum JavaScriptValidator {
         return candidates.first { FileManager.default.isExecutableFile(atPath: $0) }
     }
 
-    /// The vendored copy of the script, `Tests/DesignTokensTests/Vendored/validate_palette.js`, or `nil` if it
-    /// is missing. It is the only script the cross-check runs: no search of temporary directories, no
-    /// environment override, so the comparison is against one pinned file (`VendoredScriptTests`).
-    static func scriptPath() -> String? {
-        let path = vendoredScriptURL.path
-        return FileManager.default.fileExists(atPath: path) ? path : nil
-    }
-
-    static let vendoredScriptURL = URL(fileURLWithPath: #filePath)
-        .deletingLastPathComponent().appendingPathComponent("Vendored/validate_palette.js")
+    /// The reference script, located and verified by `ReferenceScript`, or `nil` (the cross-check then skips, with
+    /// `ReferenceScript.skipReason`).
+    static func scriptPath() -> String? { ReferenceScript.current.path }
 
     private static func runNode(_ node: String, source: String) throws -> Data {
         let directory = FileManager.default.temporaryDirectory.appendingPathComponent("dt-js-\(UUID().uuidString)")
@@ -122,5 +116,93 @@ enum JavaScriptValidator {
     private static func quoted(_ path: String) -> String {
         let data = (try? JSONEncoder().encode(path)) ?? Data()
         return String(decoding: data, as: UTF8.self)
+    }
+}
+
+/// Finds the dataviz skill's `validate_palette.js` on this machine and verifies it against a pinned SHA-256.
+///
+/// The script is not vendored in this repository: it has no licence of its own, so redistributing it is not
+/// something this repository can confirm it may do. The pin keeps the comparison honest: a script that is absent
+/// or whose hash differs is never run, and the tests that need it skip with a reason (`ReferenceScript.Resolution`).
+enum ReferenceScript {
+    /// SHA-256 of the script as bundled with Claude Code 2.1.311 (353 lines).
+    static let pinnedSHA256 = "25df43beb77674dad34348b9fe338d5a47f568e08bcf51b38780e51386cf866e"
+
+    /// Absolute path of the script; authoritative when set.
+    static let environmentVariable = "DATAVIZ_VALIDATOR"
+
+    /// What one candidate path turned out to be.
+    enum Status: Equatable {
+        case found(path: String)
+        case absent(path: String)
+        case mismatch(path: String, sha256: String)
+    }
+
+    /// Where the search ended.
+    enum Resolution: Equatable {
+        case found(String)
+        case skip(String)
+
+        var path: String? {
+            if case .found(let path) = self { return path }
+            return nil
+        }
+    }
+
+    /// The SHA-256 of the file at `path` as lowercase hex, or `nil` if it cannot be read.
+    static func sha256(ofFileAt path: String) -> String? {
+        guard let data = FileManager.default.contents(atPath: path) else { return nil }
+        return SHA256.hash(data: data).map { ($0 < 16 ? "0" : "") + String($0, radix: 16) }.joined()
+    }
+
+    /// Checks one candidate against `pin`.
+    static func check(path: String, pin: String = pinnedSHA256) -> Status {
+        guard let digest = sha256(ofFileAt: path) else { return .absent(path: path) }
+        return digest == pin ? .found(path: path) : .mismatch(path: path, sha256: digest)
+    }
+
+    /// Locates the script. `DATAVIZ_VALIDATOR`, when set, is the only candidate. Otherwise the candidates are
+    /// `<home>/.claude/skills/dataviz/scripts/validate_palette.js` and, two directory levels under
+    /// `bundledSkillsRoot` (version, then a hash), `dataviz/scripts/validate_palette.js`: sorted by path, the first
+    /// whose hash matches `pin` is used. Nothing is searched recursively.
+    static func resolve(environment: [String: String], home: String, bundledSkillsRoot: String, pin: String = pinnedSHA256) -> Resolution {
+        if let explicit = environment[environmentVariable], !explicit.isEmpty {
+            switch check(path: explicit, pin: pin) {
+            case .found(let path): return .found(path)
+            case .absent(let path): return .skip("\(environmentVariable) is set to \(path), which is absent: nothing to cross-check against")
+            case .mismatch(let path, let digest): return .skip("\(environmentVariable) is set to \(path), but its SHA-256 is a mismatch: \(digest), pinned \(pin)")
+            }
+        }
+        let tail = "dataviz/scripts/validate_palette.js"
+        var candidates = ["\(home)/.claude/skills/\(tail)"]
+        let fileManager = FileManager.default
+        for version in ((try? fileManager.contentsOfDirectory(atPath: bundledSkillsRoot)) ?? []).sorted() {
+            for bundle in ((try? fileManager.contentsOfDirectory(atPath: "\(bundledSkillsRoot)/\(version)")) ?? []).sorted() {
+                candidates.append("\(bundledSkillsRoot)/\(version)/\(bundle)/\(tail)")
+            }
+        }
+        var mismatches: [String] = []
+        for candidate in candidates.sorted() {
+            switch check(path: candidate, pin: pin) {
+            case .found(let path): return .found(path)
+            case .absent: continue
+            case .mismatch(let path, let digest): mismatches.append("\(path) (\(digest))")
+            }
+        }
+        let how = "set \(environmentVariable) to the absolute path of a validate_palette.js with SHA-256 \(pin)"
+        if mismatches.isEmpty {
+            return .skip("reference script not found; searched \(home)/.claude/skills and \(bundledSkillsRoot): \(how)")
+        }
+        return .skip("reference script found but a SHA-256 mismatch against the pin: \(mismatches.joined(separator: ", ")): \(how)")
+    }
+
+    /// The resolution for this process: the real environment, home directory and Claude Code's bundled-skills directory.
+    static let current: Resolution = resolve(environment: ProcessInfo.processInfo.environment,
+                                             home: NSHomeDirectory(), bundledSkillsRoot: "/tmp/claude-\(getuid())/bundled-skills")
+
+    /// Why the tests that need the script are skipped, or `nil` if they run.
+    static var skipReason: String? {
+        if case .skip(let reason) = current { return reason }
+        return nil
     }
 }

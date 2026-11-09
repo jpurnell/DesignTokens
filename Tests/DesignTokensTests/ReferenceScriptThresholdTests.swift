@@ -1,38 +1,19 @@
-import CryptoKit
 import Foundation
 import Testing
 @testable import DesignTokens
 
-/// The vendored `validate_palette.js` is the reference the Swift validator is compared with. These tests need no
-/// Node: they pin the file, and read the method's constants out of its text.
-@Suite("Vendored validate_palette.js")
-struct VendoredScriptTests {
-    static let pinnedSHA256 = "25df43beb77674dad34348b9fe338d5a47f568e08bcf51b38780e51386cf866e"
+/// The reference `validate_palette.js` is what the method's constants are read from. It is not in this repository
+/// (see `Vendored/README.md`), so these tests run where `ReferenceScript` finds a copy with the pinned hash and are
+/// skipped, with the reason, elsewhere. The recorded-run test in `ValidationThresholdTests` runs everywhere. They need
+/// no Node.
+@Suite("Reference validate_palette.js thresholds")
+struct ReferenceScriptThresholdTests {
+    static let skipReason = Comment(rawValue: ReferenceScript.skipReason ?? "")
+    static let available = ReferenceScript.current.path != nil
 
     private func source() throws -> String {
-        try String(contentsOf: JavaScriptValidator.vendoredScriptURL, encoding: .utf8)
-    }
-
-    @Test("the vendored script is the pinned file: a changed hash fails, deliberately")
-    func hashIsPinned() throws {
-        let data = try Data(contentsOf: JavaScriptValidator.vendoredScriptURL)
-        let digest = SHA256.hash(data: data).map { ($0 < 16 ? "0" : "") + String($0, radix: 16) }.joined()
-        #expect(digest == Self.pinnedSHA256,
-                "Tests/DesignTokensTests/Vendored/validate_palette.js changed (SHA-256 \(digest)). If that is deliberate, update pinnedSHA256 and Vendored/README.md and re-run the cross-check with Node; otherwise restore the file.")
-    }
-
-    @Test("the cross-check reads that file and no other")
-    func crossCheckUsesTheVendoredCopy() {
-        #expect(JavaScriptValidator.scriptPath() == JavaScriptValidator.vendoredScriptURL.path)
-        #expect(JavaScriptValidator.vendoredScriptURL.path.hasSuffix("Tests/DesignTokensTests/Vendored/validate_palette.js"))
-    }
-
-    @Test("the Vendored README records the hash that the test pins")
-    func readmeRecordsTheHash() throws {
-        let readme = JavaScriptValidator.vendoredScriptURL.deletingLastPathComponent().appendingPathComponent("README.md")
-        let text = try String(contentsOf: readme, encoding: .utf8)
-        #expect(text.contains(Self.pinnedSHA256))
-        #expect(text.contains("MIT"), "the licence note is kept next to the file")
+        let path = try #require(ReferenceScript.current.path)
+        return try String(contentsOfFile: path, encoding: .utf8)
     }
 
     /// The first capture group of `pattern` in the script, as numbers.
@@ -43,7 +24,7 @@ struct VendoredScriptTests {
         return (1..<match.numberOfRanges).compactMap { Range(match.range(at: $0), in: text).flatMap { Double(text[$0]) } }
     }
 
-    @Test("ValidationThresholds are the constants in the script, read from its text")
+    @Test("ValidationThresholds are the constants in the script, read from its text", .enabled(if: available, skipReason))
     func thresholdsMatchTheScript() throws {
         let text = try source()
         let number = #"(\d+(?:\.\d+)?)"#
@@ -59,7 +40,7 @@ struct VendoredScriptTests {
         #expect(same(try numbers(#"const oneHue = spread <= \#(number)"#, in: text), [ValidationThresholds.rampMaxHueSpread]))
     }
 
-    @Test("the deliberate Swift deviations are real: the script has no chroma exclusion in its hue spread and no text-contrast floor")
+    @Test("the deliberate Swift deviations are real: the script has no chroma exclusion in its hue spread and no text-contrast floor", .enabled(if: available, skipReason))
     func swiftOnlyThresholdsAreNotInTheScript() throws {
         let text = try source()
         // validateOrdinal takes the hue of every step: `const hues = palette.map(okhue);`

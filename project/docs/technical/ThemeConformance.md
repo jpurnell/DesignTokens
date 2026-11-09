@@ -16,7 +16,7 @@ changes until the files are regenerated and committed, a deliberate step. On 0.5
 (FT dark ink, FT light muted, legacy Financial `info`, FT `marks.lineWidth`, House `surface`) left every test green; on 0.6.0 all five fail
 that test. `ConformanceTests.legacyLedgersAndThreeSeriesArrays` writes out only three legacy series arrays; there is no BusinessMath-UI
 source in this repository for a test to compare the rest with. Method: the dataviz skill's `validate_palette.js`, ported to Swift and cross-checked against
-the script under Node (`JavaScriptCrossCheckTests`).
+the script under Node (`JavaScriptCrossCheckTests`) where the script is present and matches its pinned SHA-256 (it is not vendored; see `Tests/DesignTokensTests/Vendored/README.md`).
 
 Findings by theme (a finding is a measured result short of a threshold; "fail" breaks the method, "warn" is legal only
 with labels or a table):

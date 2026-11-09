@@ -55,7 +55,7 @@ let package = Package(
         .testTarget(
             name: "DesignTokensTests",
             dependencies: ["DesignTokens"],
-            // Test data read by path, not a resource: see Vendored/README.md.
+            // A note, not a resource: see Vendored/README.md.
             exclude: ["Vendored"],
             swiftSettings: [
                 .enableUpcomingFeature("ApproachableConcurrency"),
