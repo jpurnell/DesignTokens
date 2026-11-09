@@ -27,8 +27,13 @@ public enum GeneratorError: Error, Sendable, Equatable {
 /// The generator behind `design-tokens`: plans the files, writes them, and answers `list`.
 ///
 /// The set is `tokens.css` and `tokens.json` (the default look, unchanged since 0.3.0) and, for each theme in
-/// ``Theme/all``, `themes/<id>.css` and `themes/<id>.json`. Every file is committed and golden-tested.
+/// ``Theme/all``, `themes/<id>.css` and `themes/<id>.json`, plus `themes/swiss.tumblr.css` (the Tumblr paste-in block,
+/// for the one theme the blog uses; `design-tokens tumblr --theme <id>` can write any other on request, uncommitted).
+/// Every file is committed and golden-tested.
 public enum Generator {
+    /// The theme whose Tumblr paste-in block is part of the committed file set.
+    public static let tumblrThemeID = "swiss"
+
     /// Every generated file, in a stable order: the two default files, then each theme's CSS and JSON.
     ///
     /// - Parameters:
@@ -43,6 +48,9 @@ public enum Generator {
         for theme in themes {
             files.append(GeneratedFile(path: "themes/\(theme.id).css", contents: try ThemeCSSEmitter.emit(theme)))
             files.append(GeneratedFile(path: "themes/\(theme.id).json", contents: try ThemeJSONEmitter.emit(theme)))
+            if theme.id == tumblrThemeID {
+                files.append(GeneratedFile(path: "themes/\(theme.id).tumblr.css", contents: try TumblrEmitter.emit(theme)))
+            }
         }
         return files
     }

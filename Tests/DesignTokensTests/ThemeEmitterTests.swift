@@ -52,13 +52,16 @@ struct ThemeEmitterTests {
         #expect(onDisk.sorted() == files.map(\.path).sorted())
     }
 
-    @Test("the file set is the two default files plus a CSS and a JSON file per registered theme")
+    @Test("the file set is the two default files, a CSS and a JSON file per registered theme, and Swiss's Tumblr block")
     func fileSet() throws {
         let paths = try Generator.files().map(\.path)
         var expected = ["tokens.css", "tokens.json"]
-        for theme in Theme.all { expected += ["themes/\(theme.id).css", "themes/\(theme.id).json"] }
+        for theme in Theme.all {
+            expected += ["themes/\(theme.id).css", "themes/\(theme.id).json"]
+            if theme.id == "swiss" { expected.append("themes/swiss.tumblr.css") }
+        }
         #expect(paths == expected)
-        #expect(paths.count == 2 + 2 * 9)
+        #expect(paths.count == 2 + 2 * 9 + 1)
     }
 
     @Test("theme JSON is the canonical codec output and decodes back to the theme")

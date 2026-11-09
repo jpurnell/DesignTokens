@@ -2,7 +2,7 @@
 
 The design system's values, held once as typed Swift and generated for every surface that cannot import Swift.
 
-**Status:** pre-release (`0.x`, latest tag 0.5.0; 0.6.0 is unreleased and untagged, and carries the fixes from an independent review of 0.4.0 and 0.5.0: see `CHANGELOG.md`). Phase 1 and 1b of `project/master_plan.md`.
+**Status:** pre-release (`0.x`, latest tag 0.5.0; 0.6.0 is unreleased and untagged; the Tumblr block and `check-blog` are merged into it on `merge/tumblr-into-0.6.0`; 0.6.0 carries the fixes from an independent review of 0.4.0 and 0.5.0: see `CHANGELOG.md`). Phase 1 and 1b of `project/master_plan.md`.
 
 ## What it holds
 
@@ -80,7 +80,7 @@ swift run design-tokens list                      # the registered theme ids
 ```
 
 writes `Generated/tokens.css` and `Generated/tokens.json` (the default look) and, for every theme in `Theme.all`,
-`Generated/themes/<id>.css` and `<id>.json`. All are committed, and a test fails if any differs from a fresh emit or if
+`Generated/themes/<id>.css` and `<id>.json`, plus Swiss's Tumblr block `themes/swiss.tumblr.css`. All are committed, and a test fails if any differs from a fresh emit or if
 `Generated/` holds a file that is not generated, so regenerate and commit after changing a value.
 
 A theme's CSS is scoped to `[data-theme-name="<id>"]`, so several themes can coexist on a page. A light-only theme has no
@@ -106,6 +106,26 @@ owner has seen the contact sheets. macOS 14, iOS 17, visionOS 1.
 The CSS has `@media (prefers-contrast: more)` blocks (light, then `and (prefers-color-scheme: dark)`, then the
 explicit dark selectors), ordered so the dark scheme wins over the light contrast block and the dark contrast
 block wins over the standard dark values.
+
+## The Tumblr block
+
+```
+swift run design-tokens tumblr --theme swiss      # writes Generated/themes/swiss.tumblr.css (also written by `emit`)
+swift run design-tokens check-blog                # is the blog's pasted block the current one?
+```
+
+The blog gets a generated block that the owner pastes by hand into the Tumblr theme's `<style>` element (not a linked
+stylesheet). It is CSS only: the theme's colour for light, dark and `prefers-contrast: more`, rule weights, grid, type
+roles and fonts as custom properties, then fixed selectors for the blog's classes and Tumblr's own, with no colour
+literal. The Tumblr tags, the analytics snippet and the `<link>` elements stay in the theme HTML, which the block
+assumes keeps its class names (listed in the block's header). The block's first lines carry a stamp (theme id,
+DesignTokens version, template revision, hash of the theme's canonical JSON), also in `--theme-stamp`.
+
+`check-blog` loads the live page in headless Chrome (a plain `curl` gets 403 and a bot challenge, so it needs a local
+Google Chrome), reads the stamp from the `<style>` elements and compares it with the current theme. Exit codes: 0
+current, 1 stale, 2 unstamped, 3 garbled stamp, 4 page could not be read. `--html-file` checks a saved page instead.
+As of 2026-11-09 the live blog already uses the Swiss draft but has no stamp, so it reports unstamped. Nothing has been
+rendered in Tumblr or pasted by this tooling.
 
 ## Requirements
 
