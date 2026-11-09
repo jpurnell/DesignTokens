@@ -113,13 +113,10 @@ struct ThemeValidatorTests {
     @Test("ramps: the Swiss sequential ramp passes the ordinal check, a shuffled one does not")
     func rampOrdinalCheck() throws {
         let ok = ThemeValidator.validate(.swiss).filter { $0.check.isRamp && $0.subject == "sequential" }
-        // the light ramp passes; the dark one (the light ramp reversed) has a darkest step at 1.99:1 on #101112,
-        // just under the 2:1 floor, which the JavaScript's validateOrdinal also reports
-        #expect(ok.filter { $0.appearance == .light }.isEmpty)
-        #expect(ok.map(\.check) == [.rampLightEnd])
-        #expect(ok.map(\.appearance) == [.dark])
-        let darkEnd = try #require(ok.first)
-        #expect(same([darkEnd.measured], [1.99]))
+        // the blue ramp, light and its authored dark ramp, passes every ramp check (the orange ramp it replaced had a
+        // darkest dark step at 1.99:1, under the 2:1 floor; that is measured in SwissPaletteAlignmentTests)
+        #expect(ok.isEmpty)
+        #expect(!ThemeValidator.validate(.swiss).contains { $0.check.isRamp })
         var shuffled = Theme.swiss
         shuffled.palette.sequential.light = [shuffled.palette.sequential.light[2], shuffled.palette.sequential.light[0],
                                              shuffled.palette.sequential.light[4], shuffled.palette.sequential.light[1],

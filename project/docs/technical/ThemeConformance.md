@@ -23,9 +23,9 @@ with labels or a table):
 
 | Theme | Kind | Findings | Failing | What |
 |---|---|---|---|---|
-| swiss | ledger | 25 | 15 | see `SwissConformanceLedger.md`; 31 before 2026-11-09, when `positive` and `negative` became the text-safe pair (not system colours) and their six rows went |
+| swiss | ledger | 28 | 14 | see `SwissConformanceLedger.md`; 31 before 2026-11-09, when `positive` and `negative` became the text-safe pair (not system colours) and their six rows went; then the chart alignment dropped the orange dark ramp row and added four `muted` mark-contrast rows (1.84, 1.93, 2.34, 2.20) |
 | house | ledger | 9 | 3 | cyan 2.98 on background (mark); `secondaryInk` 4.02 (text); status colours under 4.5 as text; sequential ramp lightest step 1.08:1 on white |
-| princeton | ledger | 12 | 0 | orange 2.9, sky 2.15, teal 2.09, periwinkle 2.27 under 3:1 on the light surface; status colours as text |
+| princeton | ledger | 14 | 0 | orange 2.9, sky 2.15, teal 2.09, periwinkle 2.27 under 3:1 on the light surface; status colours as text; `muted` 1.84 and 1.93 (the neutral mark grey it inherits from Swiss) |
 | ft | ledger | 10 | 3 | light: purple L 0.407 (band 0.43), teal chroma 0.086 (0.10), orange 2.15 under 3:1, sequential lightest step 1.09:1; authored dark: claret 2.89 and purple 2.85 on the card surface (3:1) |
 | economist | ledger | 18 | 6 | light: yellow L 0.80, green chroma 0.094, plum 0.086, cyan 2.25 and yellow 1.89 under 3:1, `secondaryInk` 3.48, sequential 1.36:1; authored dark: blue, yellow and plum 2.8 on the card surface |
 | legacy-default | legacy | 64 | 47 | ten series (method allows eight); yellow band; blue-green-orange adjacency is a colour-vision finding (green / orange 6.6 light, 4.9 dark, 3.4 with Increase Contrast on); rainbow `sequential`, `volatility` and `sharpe` ramps fail monotone, step gap and single hue |

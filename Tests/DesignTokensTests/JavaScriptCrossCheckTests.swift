@@ -54,6 +54,8 @@ struct JavaScriptCrossCheckTests {
         let ramps: [(String, [String], Bool, String)] = [
             ("swiss sequential light", Palette.sequential.map(\.hex), false, "#FAFAFA"),
             ("swiss sequential dark", Palette.sequentialDark.map(\.hex), true, "#101112"),
+            ("swiss blue sequential light", Theme.swiss.palette.sequential.light.map(\.hex), false, "#FAFAFA"),
+            ("swiss blue sequential dark", (Theme.swiss.palette.sequential.dark ?? []).map(\.hex), true, "#101112"),
             ("economist sequential", Theme.economist.palette.sequential.light.map(\.hex), false, "#FFFFFF"),
             ("ft sequential dark", (Theme.ft.palette.sequential.dark ?? []).map(\.hex), true, "#1F1B18"),
             ("shuffled", ["#FF9134", "#6E3700", "#B85F01", "#DF7502", "#924A01"], false, "#FAFAFA"),

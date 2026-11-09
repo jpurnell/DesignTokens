@@ -18,11 +18,14 @@ extension Theme {
             ledgerWarn(.markContrast, .light, "cyan on surface", 2.16, 3.0),
             ledgerWarn(.markContrast, .light, "accent on background", 2.21, 3.0),
             ledgerWarn(.markContrast, .light, "accent on surface", 2.31, 3.0),
+            ledgerWarn(.markContrast, .light, "muted on background", 1.84, 3.0),
+            ledgerWarn(.markContrast, .light, "muted on surface", 1.93, 3.0),
             ledgerFail(.lightnessBand, .dark, "orange", 0.762, 0.67),
             ledgerFail(.lightnessBand, .dark, "green", 0.756, 0.67),
             ledgerFail(.lightnessBand, .dark, "yellow", 0.885, 0.67),
             ledgerFail(.lightnessBand, .dark, "cyan", 0.808, 0.67),
-            ledgerFail(.rampLightEnd, .dark, "sequential", 1.99, 2.0),
+            ledgerWarn(.markContrast, .dark, "muted on background", 2.34, 3.0),
+            ledgerWarn(.markContrast, .dark, "muted on surface", 2.2, 3.0),
             ledgerFail(.textContrast, .lightIncreased, "onAccent on accent", 4.12, 4.5),
             ledgerFail(.lightnessBand, .darkIncreased, "orange", 0.789, 0.67),
             ledgerFail(.lightnessBand, .darkIncreased, "indigo", 0.769, 0.67),
@@ -65,6 +68,8 @@ extension Theme {
             ledgerWarn(.textContrast, .light, "negative on background", 3.42, 4.5),
             ledgerWarn(.textContrast, .light, "negative on surface", 3.57, 4.5),
             ledgerWarn(.markContrast, .light, "accent on background", 2.9, 3.0),
+            ledgerWarn(.markContrast, .light, "muted on background", 1.84, 3.0),
+            ledgerWarn(.markContrast, .light, "muted on surface", 1.93, 3.0),
         ])
     }
 

@@ -97,6 +97,22 @@
         "severity" : "warn",
         "subject" : "accent on background",
         "threshold" : 3
+      },
+      {
+        "appearance" : "light",
+        "check" : "markContrast",
+        "measured" : 1.84,
+        "severity" : "warn",
+        "subject" : "muted on background",
+        "threshold" : 3
+      },
+      {
+        "appearance" : "light",
+        "check" : "markContrast",
+        "measured" : 1.93,
+        "severity" : "warn",
+        "subject" : "muted on surface",
+        "threshold" : 3
       }
     ],
     "kind" : "ledger"
@@ -135,7 +151,8 @@
       "light" : "#1F57D6"
     },
     "muted" : {
-      "light" : "#6A6D72"
+      "light" : "#B9BBBD",
+      "lightIncreased" : "#8E9196"
     },
     "negative" : {
       "light" : "#FF383C",

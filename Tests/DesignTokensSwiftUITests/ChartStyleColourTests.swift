@@ -179,8 +179,11 @@ struct ChartStyleColourTests {
         let darkRamp = Theme.swiss.palette.sequential.dark ?? []
         #expect(darkRamp.count == 5)
         #expect(matches(resolve(dark.sequential(0), dark: true, increased: false), darkRamp[0]))
-        // Swiss has no dark diverging ramp: the light one is used as it is.
-        #expect(matches(resolve(dark.diverging(1), dark: true, increased: false), Theme.swiss.palette.diverging.light[4]))
+        // Swiss's dark diverging ramp is authored (chart alignment, 2026-11-09): the dark ramp is sampled in dark.
+        let darkDiverging = Theme.swiss.palette.diverging.dark ?? []
+        #expect(darkDiverging.count == 5)
+        #expect(matches(resolve(dark.diverging(1), dark: true, increased: false), darkDiverging[4]))
+        #expect(matches(resolve(light.diverging(1), dark: false, increased: false), Theme.swiss.palette.diverging.light[4]))
         #expect(light.ramp(named: "nonexistent", 0.5) == nil)
         #expect(light.rampStops(named: "nonexistent") == nil)
         let sharpe = try #require(Theme.legacyDefault.palette.extraRamps["sharpe"]).light

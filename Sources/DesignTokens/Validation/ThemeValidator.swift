@@ -287,6 +287,11 @@ public enum ThemeValidator {
         check(.negative, .textContrast, .warn, ValidationThresholds.textContrast)
         check(.accent, .markContrast, .warn, ValidationThresholds.markContrast)
         check(.warning, .markContrast, .warn, ValidationThresholds.markContrast)
+        // `muted` is a mark colour only where it is the default fill (neutral marks); elsewhere it is a pale accent
+        // helper that no chart draws as a mark by default, and the check would not describe anything drawn.
+        if theme.structure.marks.defaultFill == .muted {
+            check(.muted, .markContrast, .warn, ValidationThresholds.markContrast)
+        }
         if has(.onAccent) || has(.accent) {
             let base = surface(of: theme, role: .background, appearance: appearance)
             let accent = resolved(value(theme.palette.accent, theme: theme, appearance: appearance), over: base)

@@ -172,8 +172,9 @@ struct SwissTextSafeStatusTests {
     func ledgerHasNoStatusRows() {
         let rows = Theme.swissConformance.entries
         #expect(rows.filter { $0.subject.hasPrefix("positive") || $0.subject.hasPrefix("negative") }.isEmpty)
-        #expect(rows.count == 25)
-        #expect(rows.filter { $0.severity == .fail }.count == 15)
+        // 25 findings before the chart alignment; then the orange dark ramp row left and four muted rows arrived
+        #expect(rows.count == 28)
+        #expect(rows.filter { $0.severity == .fail }.count == 14)
         #expect(ThemeValidator.deviations(of: .swiss).isEmpty)
         #expect(ThemeValidator.validate(.swiss).filter { $0.subject.hasPrefix("positive") || $0.subject.hasPrefix("negative") }.isEmpty)
     }

@@ -91,6 +91,22 @@
         "threshold" : 3
       },
       {
+        "appearance" : "light",
+        "check" : "markContrast",
+        "measured" : 1.84,
+        "severity" : "warn",
+        "subject" : "muted on background",
+        "threshold" : 3
+      },
+      {
+        "appearance" : "light",
+        "check" : "markContrast",
+        "measured" : 1.93,
+        "severity" : "warn",
+        "subject" : "muted on surface",
+        "threshold" : 3
+      },
+      {
         "appearance" : "dark",
         "check" : "lightnessBand",
         "measured" : 0.762,
@@ -124,11 +140,19 @@
       },
       {
         "appearance" : "dark",
-        "check" : "rampLightEnd",
-        "measured" : 1.99,
-        "severity" : "fail",
-        "subject" : "sequential",
-        "threshold" : 2
+        "check" : "markContrast",
+        "measured" : 2.34,
+        "severity" : "warn",
+        "subject" : "muted on background",
+        "threshold" : 3
+      },
+      {
+        "appearance" : "dark",
+        "check" : "markContrast",
+        "measured" : 2.2,
+        "severity" : "warn",
+        "subject" : "muted on surface",
+        "threshold" : 3
       },
       {
         "appearance" : "lightIncreased",
@@ -223,6 +247,13 @@
 
     },
     "diverging" : {
+      "dark" : [
+        "#0091FF",
+        "#246BB1",
+        "#414344",
+        "#AB6224",
+        "#FF9230"
+      ],
       "light" : [
         "#0088FF",
         "#8ABBF8",
@@ -246,8 +277,10 @@
       "light" : "#1F57D6"
     },
     "muted" : {
-      "dark" : "#9A9DA2",
-      "light" : "#6A6D72"
+      "dark" : "#4E5053",
+      "darkIncreased" : "#6F7176",
+      "light" : "#B9BBBD",
+      "lightIncreased" : "#8E9196"
     },
     "negative" : {
       "dark" : "#FF4245",
@@ -278,18 +311,18 @@
     },
     "sequential" : {
       "dark" : [
-        "#6E3700",
-        "#924A01",
-        "#B85F01",
-        "#DF7502",
-        "#FF9134"
+        "#064E8B",
+        "#0167B8",
+        "#1382E1",
+        "#449FFA",
+        "#7FBCFE"
       ],
       "light" : [
-        "#FF9134",
-        "#DF7502",
-        "#B85F01",
-        "#924A01",
-        "#6E3700"
+        "#6AB0FF",
+        "#2E92F5",
+        "#0A74D6",
+        "#0757A6",
+        "#053C73"
       ]
     },
     "series" : [

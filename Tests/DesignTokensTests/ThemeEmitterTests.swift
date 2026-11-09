@@ -267,16 +267,19 @@ struct ThemeEmitterTests {
     @Test("ramps are written step by step, with the dark ramp in the dark block where one exists")
     func ramps() throws {
         let css = try ThemeCSSEmitter.emit(Theme.swiss)
-        for (index, step) in Palette.sequential.enumerated() {
+        for (index, step) in Theme.swiss.palette.sequential.light.enumerated() {
             #expect(css.contains("  --sequential-\(index + 1): \(step.hex);"))
         }
         let notLight = ":not([data-theme=\"light\"]):not([data-bs-theme=\"light\"])"
         let dark = try #require(Self.block(
             css, opening: "@media (prefers-color-scheme: dark) {\n  [data-theme-name=\"swiss\"]\(notLight) {\n", closing: "\n  }\n}\n"))
-        for (index, step) in Palette.sequentialDark.enumerated() {
+        for (index, step) in (Theme.swiss.palette.sequential.dark ?? []).enumerated() {
             #expect(dark.contains("--sequential-\(index + 1): \(step.hex);"))
         }
-        #expect(!dark.contains("--diverging-"), "Swiss has no dark diverging ramp and none is invented")
+        for (index, step) in (Theme.swiss.palette.diverging.dark ?? []).enumerated() {
+            #expect(dark.contains("--diverging-\(index + 1): \(step.hex);"))
+        }
+        #expect(Theme.swiss.palette.diverging.dark?.count == 5, "Swiss has an authored dark diverging ramp")
     }
 
     // MARK: Literals and header

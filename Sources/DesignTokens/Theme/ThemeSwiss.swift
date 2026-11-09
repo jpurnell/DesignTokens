@@ -13,6 +13,11 @@ public extension Theme {
     /// `muted` token, and none is invented); chart text line height is 1.3, the label role's, because the
     /// editorial theme has none.
     ///
+    /// After the chart alignment (owner decisions 2026-11-09): `muted` is the neutral mark grey (``neutralMark``), the
+    /// magnitude ramp is one-hue blue (``blueSequential``) and the diverging ramp has a dark version
+    /// (``darkDiverging``). The structure draws the heavy rule above the title, marks neutral with the latest column in
+    /// the accent, and a muted solid hairline for a target line.
+    ///
     /// `positive` and `negative` are **deliberately not the system colours** (owner decision 2026-11-09).
     /// They are gain and loss, printed as text and used as marks in charts, so they are the darker text-safe
     /// pair, `textSafePositive` and `textSafeNegative`, at 4.5:1 or more on the Swiss background and the
@@ -73,11 +78,41 @@ public extension Theme {
             ink: role(.label), secondaryInk: role(.secondaryLabel), background: role(.background),
             surface: role(.secondaryBackground), rule: role(.separator), accent: role(.accent, system: .orange),
             onAccent: role(.onAccent), link: role(.link), positive: textSafePositive,
-            negative: textSafeNegative, warning: role(.warning), muted: role(.secondaryLabel),
-            series: series,
-            sequential: Ramp(light: Palette.sequential.map { ColorValue($0) },
-                             dark: Palette.sequentialDark.map { ColorValue($0) }),
-            diverging: Ramp(light: Palette.diverging.map { ColorValue($0) }, dark: nil))
+            negative: textSafeNegative, warning: role(.warning), muted: neutralMark,
+            series: series, sequential: blueSequential,
+            diverging: Ramp(light: Palette.diverging.map { ColorValue($0) }, dark: darkDiverging))
+    }
+
+    /// Swiss's `muted`: the neutral grey of a mark that is not emphasised. Light #B9BBBD and dark #4E5053 are the
+    /// approved drawing's history-bar greys, `color-mix(muted 45%, background)` of the secondary ink over the
+    /// background (45% of #6A6D72 over #FAFAFA, 45% of #9A9DA2 over #101112). They stay the default although they
+    /// are 1.84:1 and 2.34:1 on the background (1.93 and 2.20 on the card surface), under the method's 3:1: the
+    /// grey must stay lighter than the accent, and the relief is the printed value (owner decision 2026-11-09;
+    /// ledgered). Increase Contrast uses 3:1 greys, light #8E9196 (3.03:1, 3.16 on the card) and dark #6F7176
+    /// (3.87:1, 3.64). It names no system colour, so it is never deferred to Apple's.
+    static var neutralMark: Adaptive {
+        Adaptive(light: ColorValue(RGB(rgb: 0xB9BBBD)), dark: ColorValue(RGB(rgb: 0x4E5053)),
+                 lightIncreased: ColorValue(RGB(rgb: 0x8E9196)), darkIncreased: ColorValue(RGB(rgb: 0x6F7176)))
+    }
+
+    /// Swiss's magnitude ramp: one hue, blue, because orange is emphasis only (owner decision 2026-11-09).
+    /// Light "blue C", light to dark: #6AB0FF #2E92F5 #0A74D6 #0757A6 #053C73 (monotone, no thin step, 2.17:1 at the
+    /// light end, hue spread 2.2 degrees). Dark, authored and not the light ramp reversed (reversed it is 1.7:1 at
+    /// its darkest step): dark to light, #064E8B #0167B8 #1382E1 #449FFA #7FBCFE, the light ramp's hue (OKLCH 251.5,
+    /// the system dark blue's) at OKLCH L 0.42 to 0.78 in even 0.09 steps, the darkest step 2.22:1 on #101112.
+    /// `Palette.sequential` (orange) and `tokens.css` are unchanged.
+    static var blueSequential: Ramp {
+        func steps(_ values: [UInt32]) -> [ColorValue] { values.map { ColorValue(RGB(rgb: $0)) } }
+        return Ramp(light: steps([0x6AB0FF, 0x2E92F5, 0x0A74D6, 0x0757A6, 0x053C73]),
+                    dark: steps([0x064E8B, 0x0167B8, 0x1382E1, 0x449FFA, 0x7FBCFE]))
+    }
+
+    /// Swiss's dark diverging ramp, built like the series: the endpoints are the system dark blue #0091FF and
+    /// orange #FF9230, the midpoint is a dark neutral #414344 (OKLCH L 0.38, 1.9:1 on #101112: it is meant to sit
+    /// near the surface), and each arm's middle step is the endpoint's hue at L 0.52 (blue, #246BB1) and 0.57
+    /// (orange, #AB6224). Lightness runs 0.65, 0.52, 0.38, 0.57, 0.76: no step under 0.13 apart.
+    static var darkDiverging: [ColorValue] {
+        [0x0091FF, 0x246BB1, 0x414344, 0xAB6224, 0xFF9230].map { ColorValue(RGB(rgb: $0)) }
     }
 
     private static var swissStructure: Structure {
