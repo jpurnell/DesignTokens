@@ -2,7 +2,7 @@
 
 The design system's values, held once as typed Swift and generated for every surface that cannot import Swift.
 
-**Status:** pre-release (`0.x`, latest tag 0.4.0; 0.5.0 in preparation on `feature/themes-validator-0.5.0`, untagged). Phase 1 and 1b of `project/master_plan.md`.
+**Status:** pre-release (`0.x`, latest tag 0.5.0; 0.6.0 in preparation on `feature/emitters-swiftui-0.6.0`, untagged). Phase 1 and 1b of `project/master_plan.md`.
 
 ## What it holds
 
@@ -40,13 +40,20 @@ The design system's values, held once as typed Swift and generated for every sur
   label (`ThemeValidator.requiresDirectLabels`). `Theme.all`: Swiss, House, Princeton, FT and Economist (with
   authored dark variants, our interpretation of those houses), and the four legacy BusinessMath-UI themes (the
   Default as a labelled snapshot of the system colours), each a `Theme` value that round-trips through
-  `ThemeCodec`. Findings: `project/docs/technical/ThemeConformance.md`. No emitters for themes yet.
+  `ThemeCodec`. Findings: `project/docs/technical/ThemeConformance.md`.
+
+- **Emitters and SwiftUI adapter** (0.6.0, additive): `ThemeCSSEmitter` and `ThemeJSONEmitter` write one scoped CSS file
+  (`[data-theme-name="<id>"]`: light, `prefers-contrast: more`, dark, and the contrast-dark blocks) and one canonical JSON
+  file per theme into `Generated/themes/`; `tokens.css` and `tokens.json` are byte-identical to 0.5.0. A second library,
+  `DesignTokensSwiftUI` (`import DesignTokensSwiftUI`), turns a `Theme` into a `ChartStyle`: SwiftUI colours, fonts,
+  rule weights (including the title rule), flags, layout, marks and number formats for the current appearance and
+  Increase Contrast, with `EnvironmentValues.theme`, `ChartStyleReader` and `.chartTheme(_:)`. See "SwiftUI" below.
 
 Not yet here: increased-contrast values for the roles listed above, and a dark diverging ramp.
 
 ## Platforms
 
-Foundation-only, expected to build on Linux, untested: no Linux build has been run. Foundation-only is a guard against
+The core library (`DesignTokens`) is Foundation-only, expected to build on Linux, untested: no Linux build has been run. Foundation-only is a guard against
 SwiftUI imports in the core, not a commitment to a Linux GUI (there is none; a future GUI path that consumes the
 `Theme` is possible but out of scope). It builds and is tested on macOS. It holds data, not `Color` values: on Apple
 platforms a resolver should use the system's own colours (the HIG says not to hard-code them), and the
@@ -55,11 +62,34 @@ values here are a labelled snapshot (`Snapshot.systemRelease`) for web, SVG, sli
 ## Generating the files
 
 ```
-swift run design-tokens Generated
+swift run design-tokens emit --all Generated      # or just: swift run design-tokens Generated
+swift run design-tokens emit --theme ft Generated # one theme's pair only
+swift run design-tokens list                      # the registered theme ids
 ```
 
-writes `Generated/tokens.css` and `Generated/tokens.json`. Both are committed, and a test fails if either
-differs from a fresh emit, so regenerate and commit after changing a value.
+writes `Generated/tokens.css` and `Generated/tokens.json` (the default look) and, for every theme in `Theme.all`,
+`Generated/themes/<id>.css` and `<id>.json`. All are committed, and a test fails if any differs from a fresh emit or if
+`Generated/` holds a file that is not generated, so regenerate and commit after changing a value.
+
+A theme's CSS is scoped to `[data-theme-name="<id>"]`, so several themes can coexist on a page. A light-only theme has no
+dark blocks; the dark selectors honour `data-theme` and `data-bs-theme` on the element or any ancestor.
+
+## SwiftUI
+
+```swift
+import DesignTokensSwiftUI
+
+ContentView().chartTheme(.swiss)                 // sets \.theme and \.chartStyle
+
+ChartStyleReader { style in                      // always current for its own environment
+    Text("Revenue").chartText(.title, in: style).foregroundStyle(style.ink)
+}
+```
+
+`ChartStyle(theme:colorScheme:contrast:)` resolves a theme for the live appearance. A colour that stands for an Apple
+system colour defers to it (HIG) when the theme declares both appearances; every other colour is the theme's stored
+value. The default theme in the environment is `Theme.legacyDefault`, not Swiss: no default look changes before the
+owner has seen the contact sheets. macOS 14, iOS 17, visionOS 1.
 
 The CSS has `@media (prefers-contrast: more)` blocks (light, then `and (prefers-color-scheme: dark)`, then the
 explicit dark selectors), ordered so the dark scheme wins over the light contrast block and the dark contrast

@@ -1,7 +1,7 @@
 # Design Proposal: a Theme model hosted in DesignTokens
 
 **Date:** 2026-11-09
-**Status:** Approved with decisions 2026-11-09 (see "Decisions 2026-11-09" below). Release 0.4.0 is tagged; release 0.5.0 (validator, conformance ledgers and the nine themes) is implemented on branch `feature/themes-validator-0.5.0` (untagged, see "Corrections found while implementing 0.5.0"); sections 3 to 18 are otherwise as proposed, with the corrections listed under "Corrections found while implementing 0.4.0".
+**Status:** Approved with decisions 2026-11-09 (see "Decisions 2026-11-09" below). Release 0.4.0 is tagged; release 0.5.0 (validator, conformance ledgers and the nine themes) is tagged (see "Corrections found while implementing 0.5.0"); release 0.6.0, DesignTokens half (per-theme CSS and JSON emitters and the `DesignTokensSwiftUI` target), is implemented on branch `feature/emitters-swiftui-0.6.0` (untagged, see "Corrections found while implementing 0.6.0"); the BusinessMath-UI half of 0.6.0 is not started; sections 3 to 18 are otherwise as proposed, with the corrections listed under "Corrections found while implementing 0.4.0".
 **Author:** Claude (session with Justin Purnell)
 **Supersedes:** `Playgrounds/Math/BusinessMath-UI/project/plans/proposals/2026-11-09_StructuralThemeLayer.md`
 (branch `design/structural-theme-proposal`, commit `1a6c914`). That proposal kept `EditorialTheme` in
@@ -115,6 +115,33 @@ Owner decisions on the open questions of section 17. They are binding and overri
 - **The Machado port was verified by mutation:** changing one deutan coefficient fails the recorded-run test and the Node
   cross-check.
 
+## Corrections found while implementing 0.6.0 (DesignTokens half)
+
+- **The emitters cover what a stylesheet can use.** Value-label and series-label flags, axis placement and number formats are in the
+  theme JSON, not the CSS. Chart text roles are `--chart-<role>-*`; the six UI roles keep `tokens.css`'s `--type-<name>-*` names
+  (`uiTitle` is `--type-title-*`), so loading both files does not collide. A display role at the package's display size is written as the
+  fluid `clamp(...)` (the numbers cannot carry a fluid range). `--rule-title-color` and `--mark-tag-color` are `var()` references to the
+  role, and a colour reference at an opacity is `color-mix(in srgb, var(--x) P%, transparent)`.
+- **`themes/<id>.json` is the canonical codec output with no header** (JSON has no comments). The version and fingerprint are in the CSS header.
+- **`design-tokens emit --all` is the default** and the old `design-tokens <dir>` form still works; `validate` is not built (0.7.0 or later).
+- **Four fields were added so BusinessMath-UI's literals have a home** (all with decode defaults, so 0.5.0 JSON stays readable):
+  `MarkSpec.areaOpacity` (0.22) / `.fillOpacity` (0.35) / `.detailLineWidth` (1.5), the SVG renderer's area, box and detail-stroke literals;
+  `LayoutSpec.annotationRadius` (8 for the legacy views' annotation cards, whose `containerRadius` is 0).
+  Also `TypeRole`, `NumberKind`, `ColorValue.interpolated`, `Ramp.sample` (the Editorial `sequentialColor(t)` and `divergingColor(t)` walk).
+- **Not added, because they are not theme values:** default plot heights (200, 250, 300 pt; 40 pt per category row), marker radii (the SVG draws
+  3, 3.5 and 4; `pointSize` is square points), the annotation card's material and reduce-transparency behaviour, the tag block's 1 pt corner
+  and 8 pt gap, the waterfall connector's `[4, 2]` dash (the theme has one reference-line dash). Formatting stays in the renderer
+  (`NumberFormatSpec` to `NumberFormat` is a field-for-field map).
+- **Decisions BusinessMath-UI must make, not made here:** `ChartThemeProviding` has `primary`, `info`, `highlight`, `subtle`, `emphasis`,
+  which exist as `extras` only in the legacy themes. In Swiss, House, Princeton, FT and Economist `ChartStyle.extra("primary")` is `nil`. Pick the
+  mapping (`primary` to accent, `subtle` to rule, and so on) once, in BusinessMath-UI. `FontToken.tracking` has no stated unit there; the theme's is em.
+- **The environment default is `Theme.legacyDefault`**, not Swiss (decision 6, visual checkpoint 1).
+- **`EnvironmentValues.colorSchemeContrast` is read-only**, so a test cannot put an environment into Increase Contrast. Stored colours are fixed
+  by the style's own flag and are tested in all four modes; system-colour deferral is tested in light and dark only (and mutation-checked).
+- **System deferral applies only to a theme that declares both appearances.** Princeton (light only) composes on Swiss and keeps `system: .green`
+  on `positive`; deferring there would draw a dark system green on its light background. A test pins it.
+- **Dynamic Type is not applied:** `ChartText` uses fixed point sizes (a platform text style for the legacy themes).
+
 ### Vocabulary gaps (section 3.4) after 0.5.0: filled by the model, or deferred
 
 | # | Status | Detail |
@@ -123,7 +150,7 @@ Owner decisions on the open questions of section 17. They are binding and overri
 | G2 | Filled in the model; unconfirmed against any rendering | `TitleRule.position .aboveTitle` and `MarkSpec.tagMark` are used by Economist (1 pt red rule, 28 by 6 pt red tag). No renderer draws them yet |
 | G3 | Filled (0.4.0), now exercised | Alpha on ink, rule, shadow, highlight in the legacy themes; the validator composites before measuring |
 | G4 | Filled in the model; unconfirmed | Axis on the trailing edge for FT and Economist; labels above their gridline for Economist |
-| G5 | Filled | Economist's `Econ Sans Cnd` carries `.sans` as its fallback (the type enforces it). The CSS font stack is the 0.6.0 emitter's |
+| G5 | Filled | Economist's `Econ Sans Cnd` carries `.sans` as its fallback (the type enforces it). 0.6.0: the CSS emitter writes `"Econ Sans Cnd", <sans stack>`, and `FontPlan` falls back to the declared family when the face is not installed |
 | G6 | Filled | Economist bar width 0.45 (authored); corner radius 0 everywhere |
 | G7 | Filled | Legacy themes `.autoGradient`, the rest `.flat` |
 | G8 | Filled for the theme default; deferred for the per-spec override | FT and Swiss direct, the rest legend. A view's override is view behaviour, 0.6.0 |
@@ -778,7 +805,7 @@ release changes any default look. Test names are red-first names; written before
 |---|---|---|---|
 | **0.4.0** Model | `ColorValue`, `Adaptive`, `ThemePalette`, `Structure` and its parts, `Theme`, `AppPalette`; `Theme.swiss` built from `ColorToken`/`Palette`/`Rule`; canonical JSON codec; numeric `TypeStyle` accessors; the `Theme` file layout | `swissIsBuiltFromTokens`, `adaptiveAgreesWithColorTokenForAllRoles`, `themeRoundTripsDeterministically` (Finding B), `dictionaryKeysAreStringsNotEnums`, `lightOnlyThemeRejectsDarkValue`, `bothThemeRequiresDarkOnEveryRole`, `existingTokensCSSUnchanged`, `alphaColourRoundTripsAsRRGGBBAA` | None. Additive; existing consumers on 0.2.0 or 0.3.0 are unaffected |
 | **0.5.0** Validator and registry (implemented on `feature/themes-validator-0.5.0`, untagged) | `ThemeValidator` (band, chroma, CVD via Machado matrices, normal floor, contrast, ordinal ramps, structure sanity); `Theme.house`, `.ft` and `.economist` (each with an authored dark variant, decision 4), `.princeton` (as `AppPalette` on Swiss), the four legacy themes (Default snapshotted and marked legacy, decision 3), `Theme.all`; `conformance`/ledger | `validatorMatchesJavaScriptOnAllPalettes` (Node, tagged), `validatorFindsFailureOnBadPalette` ("silence is not a result"), `swissLightBandFindingIsLedgered` (measured 0.865), `ftAndEconomistFindingsAreExactlyTheLedger`, `legacyDarkCVDFailureIsRecorded` (ΔE 3.6), `entityOrderRequiresEveryFailingPairListed`, `princetonComposesOnSwissKeepingStructure`, `everyRegisteredThemeValidates` | None. Gaps G1 to G11 become the field list the three new themes force |
-| **0.6.0** Emitters I: JSON, CSS | `design-tokens emit --all`; `themes/<id>.json` and `.css` (scoped, with light, dark, contrast); `tokens.css` still byte-identical; DesignTokensSwiftUI target (`Color(theme:role:)`, `ChartStyle`) if question 2 is yes | `themeCSSMatchesCommitted`, `themeJSONMatchesCommitted`, `tokensCSSStillEqualsToday`, `cssHasNoLiteralOutsideGenerated`, `scopedSelectorsDoNotLeakAcrossThemes` | **BusinessMath-UI converts** (the large change, on its own branch, in the phases of 6.1): pin 0.6.0; delete `ChartThemeProviding`, `EditorialTheme`, `TokenColor`, the five themes; views read `ChartStyle`; `showValues: Bool?`; `source:`; per-view `...resolve` tests; legacy themes render via `.platformAutomatic`. `swissThemeStructureHonouredByBarChart` etc. |
+| **0.6.0** Emitters I: JSON, CSS (DesignTokens half implemented on `feature/emitters-swiftui-0.6.0`, untagged; the BusinessMath-UI conversion in the last column is not started) | `design-tokens emit --all`; `themes/<id>.json` and `.css` (scoped, with light, dark, contrast); `tokens.css` still byte-identical; DesignTokensSwiftUI target (`Color(theme:role:)`, `ChartStyle`) if question 2 is yes | `themeCSSMatchesCommitted`, `themeJSONMatchesCommitted`, `tokensCSSStillEqualsToday`, `cssHasNoLiteralOutsideGenerated`, `scopedSelectorsDoNotLeakAcrossThemes` | **BusinessMath-UI converts** (the large change, on its own branch, in the phases of 6.1): pin 0.6.0; delete `ChartThemeProviding`, `EditorialTheme`, `TokenColor`, the five themes; views read `ChartStyle`; `showValues: Bool?`; `source:`; per-view `...resolve` tests; legacy themes render via `.platformAutomatic`. `swissThemeStructureHonouredByBarChart` etc. |
 | **Visual checkpoint 1** | **Not a release; a gate.** Contact sheets, produced by a test target in BusinessMath-UI: every theme (Swiss, House, Princeton, FT, Economist, the four legacy) x every standard view and Editorial archetype x {light, dark, increased contrast} x {SwiftUI standard views, Editorial, SVG}, each **before (BusinessMath-UI `main` at the pre-change commit) beside after (the branch)**, as PNG and an HTML index. Plus a second sheet: gaps G2, G4, G9 as drawn | `contactSheetCoversEveryThemeViewAppearance` (the sheet generator fails if a cell is missing: a blank cell is not a pass) | The owner looks. **No default theme or default structure changes, in BusinessMath-UI, the site or anywhere, before the owner has seen this** and says so. `design/swiss-default-theme` stays unmerged |
 | **0.7.0** Emitters II: SVG, web, blog | SVG emitter and `SVGStyle`; **Tumblr block emitter** with stamp (version, hash, template revision); `design-tokens check-blog` (stamp check and computed-value check, headless Chrome); site gains `themes/<id>.css` use if wanted | `svgStyleMatchesCommitted`, `tumblrBlockMatchesCommitted`, `tumblrBlockContainsNoTumblrTags`, `tumblrBlockHasNoLiterals`, `stampParsesAndRoundTrips`, `staleStampIsReported`/`missingStampIsReported`/`currentStampIsAccepted` (against fixture HTML, no network), `tumblrBlockCoversEveryRoleTheDraftUses` (compares to `~/Desktop/tumblr-swiss.html`'s variable names) | **BusinessMathCharts** replaces `SVGTheme` with `SVGStyle`; BusinessMath-UI SVG exporters take `theme:`; **the blog**: owner pastes the first generated block (after the verification on a Tumblr preview, section 9); the site re-pins |
 | **0.8.0** Emitters III: ANSI, slides | ANSI table and rule glyph mapping; slides json | `ansiCoversEveryRoleInBothAppearances`, `ruleGlyphMappingIsExact`, `slidesJSONMatchesCommitted` | SwiftGUIKit terminal resolver reads `Theme`; Apple resolver reads rule weights and grid; Swiss tier work resumes on it |

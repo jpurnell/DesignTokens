@@ -41,4 +41,8 @@ system's own colours and use these values only where the system cannot reach.
 
 - ``CSSEmitter``
 - ``JSONEmitter``
+- ``ThemeCSSEmitter``
+- ``ThemeJSONEmitter``
+- ``Generator``
+- ``GeneratedFile``
 - ``Snapshot``

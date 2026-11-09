@@ -35,9 +35,11 @@ when a generated file differs from the checked-in copy.
 ### Module Structure
 
 ```
-Sources/DesignTokens/        library: typed tokens, palette, emitters
-Sources/design-tokens/       executable: writes the generated files
+Sources/DesignTokens/        library: typed tokens, palette, themes, validator, emitters (Foundation only)
+Sources/DesignTokensSwiftUI/ library (0.6.0): Theme -> ChartStyle, fonts, environment; empty where SwiftUI is absent
+Sources/design-tokens/       executable: writes the generated files (emit, list)
 Tests/DesignTokensTests/     value tests, palette validation, golden-file tests
+Tests/DesignTokensSwiftUITests/ macOS: colour resolution (@MainActor), structure, fonts
 ```
 
 ### Key Types
@@ -50,13 +52,16 @@ Tests/DesignTokensTests/     value tests, palette validation, golden-file tests
 | `Rule`, `Grid`, `Radius`, `Space` | Rule weights (1, 3, 8), 12 columns with a 16 pt gutter, radii, 4 pt base |
 | `Theme`, `Structure`, `ThemePalette`, `Adaptive`, `ColorValue`, `AppPalette`, `ThemeCodec` (0.4.0) | A theme is structure + palette; `Theme.swiss` is built from the constants above; canonical JSON codec |
 | `ThemeValidator`, `Finding`, `Conformance`, `ValidationThresholds`, `Theme.all` (0.5.0) | The dataviz method as Swift; a theme's measured findings against its ledger; the nine registered themes |
-| `Emitter` | Turns the tokens into CSS, JSON or SVG |
+| `ThemeCSSEmitter`, `ThemeJSONEmitter`, `Generator` (0.6.0) | One scoped CSS file and one canonical JSON file per theme in `Generated/themes/`; the CLI behind `design-tokens` |
+| `ChartStyle`, `ChartText`, `FontPlan`, `ChartStyleReader` (0.6.0, `DesignTokensSwiftUI`) | A theme resolved for an appearance and contrast into SwiftUI colours, fonts, weights and flags; `\.theme` / `\.chartStyle` environment |
 
 ### Data Flow
 
 ```
-Tokens (Swift) -> Emitter -> tokens.css / tokens.json / svg theme  (committed, golden-tested)
-Tokens (Swift) -> Apple resolver -> Color (system values, not hard-coded)
+Tokens (Swift) -> Emitter -> tokens.css / tokens.json  (committed, golden-tested, unchanged since 0.3.0)
+Theme (Swift) -> ThemeCSSEmitter / ThemeJSONEmitter -> themes/<id>.css, themes/<id>.json  (0.6.0)
+Theme (Swift) -> DesignTokensSwiftUI ChartStyle -> Color, Font, numbers  (0.6.0; system colours deferred to)
+Theme (Swift) -> SVG / Tumblr / ANSI / slides emitters  (0.7.0, 0.8.0, not yet)
 ```
 
 ---
@@ -101,7 +106,9 @@ Tokens (Swift) -> Apple resolver -> Color (system values, not hard-coded)
 - [x] 0.4.0 model: `Theme`, `Adaptive`, `ColorValue`, `Theme.swiss`, canonical JSON codec, numeric `TypeStyle`, Swiss conformance ledger (branch `feature/theme-model-0.4.0`, untagged)
 - [x] 0.5.0 validator and registry (branch `feature/themes-validator-0.5.0`, untagged): `ThemeValidator` cross-checked against `validate_palette.js`, `Theme.conformance` ledgers, House, FT and Economist with authored dark variants, Princeton on Swiss, the four legacy themes with a snapshotted Default marked legacy, `Theme.all`; Princeton is light only (the proposal's "dark values stay out until measured" kept)
 - [ ] **Princeton dark variant (open, noted 2026-11-09).** `Theme.princeton` is light only: it shows on Swiss's light surfaces in a dark context. Dark reference values exist in BusinessMath-UI's source comments (#DF7105 and the rest) but have not been measured or authored. Author them (like FT and Economist), validate, add a ledger entry, and drop `appearances = .lightOnly`. Owner asked to keep moving, so this waits.
-- [ ] 0.6.0 emitters I, then `DesignTokensSwiftUI` (second target in this package); 0.7.0 to 0.9.0 per the proposal's release table
+- [x] 0.6.0 DesignTokens half (branch `feature/emitters-swiftui-0.6.0`, untagged): per-theme scoped CSS and canonical JSON (`Generated/themes/`, 18 files), generator CLI, `DesignTokensSwiftUI` (`ChartStyle`, environment, fonts), additive fields BusinessMath-UI needs. `tokens.css` and `tokens.json` byte-identical.
+- [ ] **0.6.0 BusinessMath-UI half (open):** the conversion on its own branch, in the phases of proposal section 6.1, then Visual checkpoint 1. Not started; nothing in BusinessMath-UI was changed.
+- [ ] 0.7.0 to 0.9.0 per the proposal's release table
 
 ### Phase 2: the site
 ### Phase 3: the chart libraries
@@ -110,4 +117,4 @@ Tokens (Swift) -> Apple resolver -> Color (system values, not hard-coded)
 
 ---
 
-**Last Updated:** 2026-11-09 (0.5.0 on branch: validator, conformance ledgers and the nine themes added, Phase 1b 0.5.0 item moved to done, Key Types table extended; earlier: 0.4.0 on branch: theme model added, Phase 1b checklist added, "validated" wording corrected to adjacency and colour-vision separation with the failing slots listed)
+**Last Updated:** 2026-11-09 (0.6.0 on branch: emitters and `DesignTokensSwiftUI` added, Phase 1b 0.6.0 item split into the done DesignTokens half and the open BusinessMath-UI half, module structure, Key Types and Data Flow reconciled; earlier: 0.5.0 on branch: validator, conformance ledgers and the nine themes added, Phase 1b 0.5.0 item moved to done, Key Types table extended; earlier: 0.4.0 on branch: theme model added, Phase 1b checklist added, "validated" wording corrected to adjacency and colour-vision separation with the failing slots listed)

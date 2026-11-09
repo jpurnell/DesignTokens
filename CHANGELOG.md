@@ -2,6 +2,47 @@
 
 ## [Unreleased]
 
+## [0.6.0] - unreleased (branch `feature/emitters-swiftui-0.6.0`; not tagged)
+
+Additive. `Generated/tokens.css` and `tokens.json` are byte-identical to 0.5.0 (SHA-256 `7f64d385...0342` and
+`9c770feb...0056`, pinned by test). Source-compatible with 0.5.0. Theme JSON written before 0.6.0 still decodes:
+the four fields added to `MarkSpec` and `LayoutSpec` take their current BusinessMath-UI values when absent.
+
+### Added
+- `ThemeCSSEmitter.emit(_:)`: one stylesheet per theme, every selector scoped to `[data-theme-name="<id>"]` (no
+  `:root`), with the light block and structure (rules, layout, marks, type), `prefers-contrast: more`, dark
+  (`prefers-color-scheme` unless pinned light, and the explicit `data-theme` / `data-bs-theme` dark selectors, on the
+  element or any ancestor) and the two increased-contrast dark blocks, in cascade order. Dark blocks exist only for a
+  theme that declares both appearances; a light-only theme says `color-scheme: light`, a fixed-dark one `dark`.
+  Increased-contrast blocks carry only colours with a measured increased value. Header: id, version, snapshot, FNV-1a hash.
+- `ThemeJSONEmitter.emit(_:)`: the canonical `ThemeCodec` bytes.
+- `Generator` and the `design-tokens` CLI: `design-tokens [emit] [--all | --theme <id>] [dir]`, `design-tokens list`
+  (the old `design-tokens Generated` still works). Arguments are checked before anything is written.
+- `Generated/themes/<id>.css` and `<id>.json` for all nine themes (18 files), golden-tested, with a test that nothing
+  else is in `Generated/`.
+- `DesignTokensSwiftUI`, a second library target (guarded by `canImport(SwiftUI)`; the core stays Foundation-only):
+  `ChartStyle` (colours, series, ramps, per-chart overrides, rules incl. the title rule, type roles, value-label and
+  series-label flags, layout, marks, shadow, tag, number-format specs), `FontPlan` / `ChartText`,
+  `EnvironmentValues.theme` (default `Theme.legacyDefault`: no default look changes before the visual checkpoint) and
+  `.chartStyle`, `ChartStyleReader`, `View.chartTheme(_:)`, `View.chartText(_:in:)`, `Color(theme:role:appearance:)`.
+- Model: `MarkSpec.areaOpacity` (0.22), `.fillOpacity` (0.35), `.detailLineWidth` (1.5); `LayoutSpec.annotationRadius`
+  (8 for the legacy themes, 0 otherwise); `TypeRole` and `TypeRoles[role]`; `NumberKind` and `NumberFormats[kind]`;
+  `ColorValue.interpolated(to:fraction:)`; `Ramp.sample(_:dark:)`; `DesignTokens.version`.
+- Tests: `ThemeEmitterTests`, `ThemeAdditionsTests` (compile-red first), `ChartStyleColourTests`,
+  `ChartStyleStructureTests` (macOS; `@MainActor` where they resolve colours).
+
+### Changed
+- Theme JSON now carries the four new fields, so every `Generated/themes/*.json` and each theme's fingerprint differs
+  from what 0.5.0 would have produced. Nothing in 0.5.0 emitted theme JSON.
+
+### Not included
+- SVG, Tumblr, ANSI and slides emitters (0.7.0, 0.8.0). Value-label, series-labelling, axis and number-format settings
+  are in the theme JSON but not in the CSS.
+- Linux was not built (the SwiftUI target is empty there by construction). The SwiftUI target was built, not run, for
+  iOS, iOS Simulator, visionOS, visionOS Simulator, tvOS and watchOS (`xcodebuild`); its tests ran on macOS only.
+- Increase Contrast under system-colour deferral is untested: `EnvironmentValues.colorSchemeContrast` is read-only.
+- Fixed point sizes: no Dynamic Type scaling in `ChartText` yet.
+
 ## [0.5.0] - unreleased (branch `feature/themes-validator-0.5.0`; not tagged)
 
 Additive. `Generated/tokens.css` and `tokens.json` are byte-identical to 0.3.0 (asserted by test). Source-compatible
@@ -113,7 +154,8 @@ Additive. `Generated/tokens.css` and `tokens.json` are byte-identical to 0.3.0 (
   selectors honour Bootstrap's `data-bs-theme` as well as `data-theme`.
 - Palette tests: fixed order (validated for adjacency and colour-vision separation; fails the lightness band for the slots listed under 0.4.0), adjacent OKLab distance of at least 15, contrast of label on background.
 
-[Unreleased]: https://github.com/jpurnell/DesignTokens/compare/0.4.0...HEAD
+[Unreleased]: https://github.com/jpurnell/DesignTokens/compare/0.6.0...HEAD
+[0.6.0]: https://github.com/jpurnell/DesignTokens/compare/0.5.0...0.6.0
 [0.5.0]: https://github.com/jpurnell/DesignTokens/compare/0.4.0...0.5.0
 [0.4.0]: https://github.com/jpurnell/DesignTokens/compare/0.3.0...0.4.0
 [0.3.0]: https://github.com/jpurnell/DesignTokens/compare/0.2.0...0.3.0
