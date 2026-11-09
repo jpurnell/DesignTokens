@@ -17,8 +17,8 @@ when a generated file differs from the checked-in copy.
 - Tools that cannot import Swift (slide and spreadsheet generators, the Tumblr paste block), via JSON and CSS.
 
 ### Key Differentiators
-- Swift is the source, so the compiler checks every value, and Foundation-only means it builds on macOS, iOS,
-  visionOS and Linux.
+- Swift is the source, so the compiler checks every value, and Foundation-only (a guard against SwiftUI imports in the core, not a
+  commitment to a Linux GUI) means it builds on macOS, iOS and visionOS, and is expected to build on Linux, untested.
 - The palette is validated for adjacency and colour-vision separation, not chosen by taste. It fails the dataviz lightness band for these slots (yellow in light; orange, green, yellow, cyan in dark) and 3:1 contrast for orange, green, yellow, cyan on light: Apple's system colours are kept by decision, the exact numbers are a ledger (`project/docs/technical/SwissConformanceLedger.md`), and those slots need direct labels.
 - It holds data, not `Color` values: Apple resolvers map the data to the system's own colours.
 

@@ -17,7 +17,7 @@ proposal carries out: Swift is the source, and only this package plus declared a
 
 1. One place holds the visual theme, and it reaches the whole portfolio: music, infrastructure, health, sports
    prediction, other apps, the site, the Tumblr blog, SVG and web, terminal, slides. Hyrule is out of scope.
-2. DesignTokens (Foundation-only, builds on Linux) hosts the model.
+2. DesignTokens (Foundation-only, expected to build on Linux, untested) hosts the model. Foundation-only guards against SwiftUI imports in the core; it is not a commitment to a Linux GUI.
 3. Do it cleanly. Source-breaking changes in BusinessMath-UI are fine, there are no compatibility shims, and the
    result is a long-term foundation. Several small DesignTokens releases; the model first.
 4. Standard chart views are themed. FT and Economist become real themes that exist to teach the design language
@@ -377,7 +377,7 @@ declares:
    (`swissIsBuiltFromTokens`), the CSS emitted for Swiss equals today's `tokens.css`.
 
 To keep the port honest, a **conformance test runs the JavaScript validator** on each theme's series and compares
-its verdicts to the Swift port. It needs Node, so it runs on the owner's Mac under a tag that Linux CI skips; the
+its verdicts to the Swift port. It needs Node, so it runs on the owner's Mac under a tag that any future Linux CI would skip; the
 Swift tests do not need Node. Cross-checking against a second implementation catches a wrong matrix more
 reliably than a hand-picked expected value. (Silence is not a result, so the test
 also asserts it found at least one finding on a deliberately bad palette.)
@@ -494,7 +494,7 @@ replaces exactly one region of the theme HTML:
 **The stamp.** A `--theme-stamp` custom property and the header comment both carry `theme id`, DesignTokens
 version and the hash of the *canonical theme JSON* (not of the emitted CSS, so a template-only change is a
 separate `template` revision field). Hash is FNV-1a 64-bit over the canonical bytes: Foundation-only and
-byte-stable on Linux (CryptoKit is not available there). It is a staleness check, not a security control; it is
+expected to be byte-stable on Linux, untested (CryptoKit is not available there). It is a staleness check, not a security control; it is
 not collision-resistant against an adversary, and does not need to be. If the owner later wants SHA-256 it can
 be added in-package.
 
@@ -620,7 +620,7 @@ the package) is answered by this: they do. Parked until its own proposal: termin
 
 DesignTokens must stay Foundation-only. Resolving `Adaptive` into a dynamic `Color` is needed by BusinessMath-UI,
 SwiftGUIKit and every app. Recommendation: a second library target `DesignTokensSwiftUI` in this package, guarded
-with `#if canImport(SwiftUI)`, so the base product still builds on Linux and the dynamic-colour code exists once.
+with `#if canImport(SwiftUI)`, so the base product stays Foundation-only (expected to build on Linux, untested) and the dynamic-colour code exists once.
 Alternative: each consumer writes it (the duplication that exists now). Open question 2.
 
 ### 6.7 A non-chart app adopts a theme with its own palette
@@ -830,7 +830,7 @@ by assertions on pixels.
   covers a reduced model only.
 - Whether Swift Charts can draw a title rule, flat fills and custom gridline weights under `AxisMarks(preset:
   .automatic)`.
-- Whether the full model (all nine chart type roles, layout, formats) composes without surprises on Linux.
+- Whether the full model (all nine chart type roles, layout, formats) builds on Linux: expected, never built there.
 - FT and Economist structural details (G2, G4, G9): general knowledge, not looked up and not rendered.
 - The Swift port of the CVD simulation against the JavaScript: not written.
 - Legacy `DefaultTheme`'s colours as hex: not measured.
@@ -853,7 +853,7 @@ by assertions on pixels.
    from "validated" to "validated for adjacency and colour-blind separation; system colours sit outside the
    lightness band".*
 2. **Where does the SwiftUI adapter live?** A second target `DesignTokensSwiftUI` in this package, or duplicated in
-   each consumer. *Lean: the second target; the base product stays Foundation-only and Linux-clean.*
+   each consumer. *Lean: the second target; the base product stays Foundation-only (expected to build on Linux, untested).*
 3. **Legacy Default theme uses SwiftUI system colours with no hex. Snapshot it with the measurer (and keep
    `Adaptive.system`), or drop it?** *Lean: snapshot it and keep it as `legacy`, since it is today's default and the
    before-and-after sheets need it; drop it only if the owner decides the default is going away.*

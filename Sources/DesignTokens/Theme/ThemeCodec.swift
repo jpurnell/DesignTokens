@@ -2,7 +2,7 @@ import Foundation
 
 /// A stable content hash, FNV-1a 64-bit, as 16 lowercase hex digits.
 ///
-/// Foundation-only and byte-stable on every platform (`CryptoKit` is not available on Linux). It is a
+/// Foundation-only and expected to be byte-stable on every platform, untested off macOS (`CryptoKit` is not available on Linux). It is a
 /// change detector, not a security control, and is not collision-resistant against an adversary.
 public enum Fingerprint {
     /// The FNV-1a 64-bit hash of `data`.

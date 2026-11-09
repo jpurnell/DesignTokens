@@ -35,7 +35,9 @@ Not yet here: increased-contrast values for the roles listed above, and a dark d
 
 ## Platforms
 
-Foundation only. Builds on macOS, iOS, visionOS and Linux. It holds data, not `Color` values: on Apple
+Foundation-only, expected to build on Linux, untested: no Linux build has been run. Foundation-only is a guard against
+SwiftUI imports in the core, not a commitment to a Linux GUI (there is none; a future GUI path that consumes the
+`Theme` is possible but out of scope). It builds and is tested on macOS. It holds data, not `Color` values: on Apple
 platforms a resolver should use the system's own colours (the HIG says not to hard-code them), and the
 values here are a labelled snapshot (`Snapshot.systemRelease`) for web, SVG, slides and spreadsheets.
 

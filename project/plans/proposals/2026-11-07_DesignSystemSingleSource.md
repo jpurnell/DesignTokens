@@ -69,7 +69,7 @@ Each is a property a check can assert, not a style preference.
 ## 4. Architecture
 
 ```
-DesignTokens   (a small SwiftPM package; Foundation only; builds on Linux)
+DesignTokens   (a small SwiftPM package; Foundation only; expected to build on Linux, untested)
  ├── Tokens.swift         typed source: ColorRole values for light, dark and high contrast,
  │                        TypeRole scale, SpaceToken, Rule weights, Grid, Radius
  ├── Palette.swift        the eight series colours and their validated order
@@ -125,7 +125,7 @@ A quality-gate checker, in the same SwiftSyntax style as the existing auditors:
 
 - **System colours drift between OS releases,** so the snapshot ages. Mitigation: record the release in the
   generated header, and add a test on macOS that reads the live system colours and compares.
-- **A Linux-buildable package cannot import SwiftUI,** so it holds data, not `Color` values. The Apple
+- **A Foundation-only package (expected to build on Linux, untested) cannot import SwiftUI,** so it holds data, not `Color` values. The Apple
   resolver maps the data to `Color`.
 - **The checker will find real drift in old code** (BusinessMath-UI's 682 literals are mostly legitimate
   colour maths). It needs a way to say "this file defines colours" that is declared and validated, not a
