@@ -100,6 +100,7 @@ Tokens (Swift) -> Apple resolver -> Color (system values, not hard-coded)
 ### Phase 1b: the theme model (proposal `project/plans/proposals/2026-11-09_ThemeModel.md`, approved 2026-11-09)
 - [x] 0.4.0 model: `Theme`, `Adaptive`, `ColorValue`, `Theme.swiss`, canonical JSON codec, numeric `TypeStyle`, Swiss conformance ledger (branch `feature/theme-model-0.4.0`, untagged)
 - [x] 0.5.0 validator and registry (branch `feature/themes-validator-0.5.0`, untagged): `ThemeValidator` cross-checked against `validate_palette.js`, `Theme.conformance` ledgers, House, FT and Economist with authored dark variants, Princeton on Swiss, the four legacy themes with a snapshotted Default marked legacy, `Theme.all`; Princeton is light only (the proposal's "dark values stay out until measured" kept)
+- [ ] **Princeton dark variant (open, noted 2026-11-09).** `Theme.princeton` is light only: it shows on Swiss's light surfaces in a dark context. Dark reference values exist in BusinessMath-UI's source comments (#DF7105 and the rest) but have not been measured or authored. Author them (like FT and Economist), validate, add a ledger entry, and drop `appearances = .lightOnly`. Owner asked to keep moving, so this waits.
 - [ ] 0.6.0 emitters I, then `DesignTokensSwiftUI` (second target in this package); 0.7.0 to 0.9.0 per the proposal's release table
 
 ### Phase 2: the site

@@ -102,6 +102,7 @@ Owner decisions on the open questions of section 17. They are binding and overri
   composition with every dark value stripped and `appearances = .lightOnly`, so it shows on Swiss's light surfaces in a dark
   context. If the owner would rather have the reference values (#DF7105 and the rest) authored in, it is one edit and a ledger.
   Its id is `princeton`, not `swiss+princeton`.
+  **Open item (owner, 2026-11-09): Princeton has no dark variant yet.** Tracked in the master plan, Phase 1b; the owner chose to keep moving and revisit.
 - **`composed(with:)` resets `conformance` to `strict`**: the receiver's ledger is about the receiver's colours.
 - **Validator extensions beyond the JavaScript** (none is cross-checked against it): contrast on the card `surface` as well as
   the background; text roles (`ink`, `secondaryInk`, `link` fail under 4.5; `positive`, `negative` warn under 4.5; `accent`,
