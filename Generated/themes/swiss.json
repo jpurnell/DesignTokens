@@ -76,38 +76,6 @@
       },
       {
         "appearance" : "light",
-        "check" : "textContrast",
-        "measured" : 2.13,
-        "severity" : "warn",
-        "subject" : "positive on background",
-        "threshold" : 4.5
-      },
-      {
-        "appearance" : "light",
-        "check" : "textContrast",
-        "measured" : 2.22,
-        "severity" : "warn",
-        "subject" : "positive on surface",
-        "threshold" : 4.5
-      },
-      {
-        "appearance" : "light",
-        "check" : "textContrast",
-        "measured" : 3.42,
-        "severity" : "warn",
-        "subject" : "negative on background",
-        "threshold" : 4.5
-      },
-      {
-        "appearance" : "light",
-        "check" : "textContrast",
-        "measured" : 3.57,
-        "severity" : "warn",
-        "subject" : "negative on surface",
-        "threshold" : 4.5
-      },
-      {
-        "appearance" : "light",
         "check" : "markContrast",
         "measured" : 2.21,
         "severity" : "warn",
@@ -161,22 +129,6 @@
         "severity" : "fail",
         "subject" : "sequential",
         "threshold" : 2
-      },
-      {
-        "appearance" : "lightIncreased",
-        "check" : "textContrast",
-        "measured" : 4.35,
-        "severity" : "warn",
-        "subject" : "positive on background",
-        "threshold" : 4.5
-      },
-      {
-        "appearance" : "lightIncreased",
-        "check" : "textContrast",
-        "measured" : 4.36,
-        "severity" : "warn",
-        "subject" : "negative on background",
-        "threshold" : 4.5
       },
       {
         "appearance" : "lightIncreased",
@@ -300,9 +252,8 @@
     "negative" : {
       "dark" : "#FF4245",
       "darkIncreased" : "#FF6165",
-      "light" : "#FF383C",
-      "lightIncreased" : "#E9152D",
-      "system" : "red"
+      "light" : "#DB2C2C",
+      "lightIncreased" : "#B81D1D"
     },
     "onAccent" : {
       "dark" : "#111214",
@@ -311,9 +262,8 @@
     "positive" : {
       "dark" : "#30D158",
       "darkIncreased" : "#4AD968",
-      "light" : "#34C759",
-      "lightIncreased" : "#008932",
-      "system" : "green"
+      "light" : "#268053",
+      "lightIncreased" : "#0E6B3A"
     },
     "rampOverrides" : {
 

@@ -45,6 +45,10 @@ The design system's values, held once as typed Swift and generated for every sur
   authored dark variants, our interpretation of those houses), and the four legacy BusinessMath-UI themes (the
   Default as a labelled snapshot of the system colours), each a `Theme` value that round-trips through
   `ThemeCodec`. Findings: `project/docs/technical/ThemeConformance.md`.
+  Swiss's `positive` and `negative` (gain and loss, as text and marks) are the darker text-safe pair, at least 4.5:1 on the Swiss
+  background and card surface in every appearance, and deliberately **not** system colours (owner decision 2026-11-09): they name no
+  system colour, so `ChartStyle` never defers them to Apple's green and red. `ColorToken.success` and `.destructive`, and so
+  `tokens.css`, stay the system colours. Princeton keeps the system pair.
 
 - **Emitters and SwiftUI adapter** (0.6.0, additive): `ThemeCSSEmitter` and `ThemeJSONEmitter` write one scoped CSS file
   (`[data-theme-name="<id>"]`: light, `prefers-contrast: more`, dark, and the contrast-dark blocks) and one canonical JSON

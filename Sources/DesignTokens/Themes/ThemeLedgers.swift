@@ -4,7 +4,7 @@ import Foundation
 /// any of them changes, appears or disappears (see ``ThemeValidator/deviations(of:)``); this is a ledger, not
 /// a suppression. Regenerate a ledger only by deciding that the change is intended.
 extension Theme {
-    /// Swiss's ledger: Apple's system colours are kept (owner decision 2026-11-09), so these are the exact findings of the dataviz method on them, light, dark and with Increase Contrast on. Rows beyond the 0.4.0 ledger (text and accent contrast, the increased-contrast appearances, ramps) were first measured in 0.5.0. See `SwissConformanceLedger.md`.
+    /// Swiss's ledger: Apple's system colours are kept for the series and the accent (owner decision 2026-11-09), so these are the exact findings of the dataviz method on them, light, dark and with Increase Contrast on. `positive` and `negative` are NOT system colours (owner decision 2026-11-09, same day): they are the text-safe pair and have no row here, because they reach 4.5:1 in every appearance. Rows beyond the 0.4.0 ledger (accent contrast, the increased-contrast appearances, ramps) were first measured in 0.5.0. See `SwissConformanceLedger.md`.
     static var swissConformance: Conformance {
         Conformance(kind: .ledger, entries: [
             ledgerFail(.lightnessBand, .light, "yellow", 0.865, 0.77),
@@ -16,10 +16,6 @@ extension Theme {
             ledgerWarn(.markContrast, .light, "green on surface", 2.22, 3.0),
             ledgerWarn(.markContrast, .light, "yellow on surface", 1.51, 3.0),
             ledgerWarn(.markContrast, .light, "cyan on surface", 2.16, 3.0),
-            ledgerWarn(.textContrast, .light, "positive on background", 2.13, 4.5),
-            ledgerWarn(.textContrast, .light, "positive on surface", 2.22, 4.5),
-            ledgerWarn(.textContrast, .light, "negative on background", 3.42, 4.5),
-            ledgerWarn(.textContrast, .light, "negative on surface", 3.57, 4.5),
             ledgerWarn(.markContrast, .light, "accent on background", 2.21, 3.0),
             ledgerWarn(.markContrast, .light, "accent on surface", 2.31, 3.0),
             ledgerFail(.lightnessBand, .dark, "orange", 0.762, 0.67),
@@ -27,8 +23,6 @@ extension Theme {
             ledgerFail(.lightnessBand, .dark, "yellow", 0.885, 0.67),
             ledgerFail(.lightnessBand, .dark, "cyan", 0.808, 0.67),
             ledgerFail(.rampLightEnd, .dark, "sequential", 1.99, 2.0),
-            ledgerWarn(.textContrast, .lightIncreased, "positive on background", 4.35, 4.5),
-            ledgerWarn(.textContrast, .lightIncreased, "negative on background", 4.36, 4.5),
             ledgerFail(.textContrast, .lightIncreased, "onAccent on accent", 4.12, 4.5),
             ledgerFail(.lightnessBand, .darkIncreased, "orange", 0.789, 0.67),
             ledgerFail(.lightnessBand, .darkIncreased, "indigo", 0.769, 0.67),

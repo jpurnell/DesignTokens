@@ -6,6 +6,28 @@ Written on branch `feature/tumblr-emitter` (from tag 0.5.0) and merged into the 
 under Unreleased, not under 0.6.0: the release it ships in is the owner's call. Additive; `Generated/tokens.css`, `tokens.json`
 and the other `Generated/themes/` files are unchanged by the merge.
 
+### Changed: Swiss `positive` and `negative` are text-safe (owner decision 2026-11-09)
+- `Theme.swiss.palette.positive` and `.negative` (gain and loss, printed as text and used as marks) are no longer
+  `ColorToken.success` and `.destructive`. They are deliberately **not system colours**: they name no `SystemColorName`, so
+  `ChartStyle` never defers them to Apple's green and red. Light #268053 and #DB2C2C (4.68 and 4.56 on the background, 4.89
+  and 4.76 on the card surface; were 2.13 and 3.42); dark #30D158 and #FF4245 (the system dark values, 9.35 and 5.51);
+  Increase Contrast light #0E6B3A and #B81D1D (6.32 and 6.23; the 0.3.0 values #008932 and #E9152D measure 4.35 and 4.36, under
+  4.5), dark #4AD968 and #FF6165. Colour-vision separation of the pair is 9.7 deutan and 9.7 protan in light (the same hue as
+  BusinessMath-UI's #1F9D55 would have been 5.6 deutan, under the method's floor of 6). Each role is still nearest its own series
+  colour (green, red) in normal vision.
+- `ColorToken`, `Generated/tokens.css` and `Generated/tokens.json` are byte-identical (FNV-1a 64 `e369026e87dc1c4e` and
+  `1212e00e2d6ae09c`, pinned by a test). The series, accent and every other Swiss role are unchanged.
+- Swiss's ledger drops its six `positive` / `negative` rows (31 findings become 25; the 15 failing are unchanged), and
+  `SwissConformanceLedger.md` and `ThemeConformance.md` say so. Nothing is suppressed: the rows went because the measurements pass.
+- Princeton is composed on Swiss and **keeps the system green and red** (`Theme.systemPositive` / `systemNegative`, set in
+  `Theme.princeton`), so its generated files and ledger do not change. Following Swiss instead is a two-line removal; say so if wanted.
+- Regenerated deliberately: `Generated/themes/swiss.css` (the `--positive` and `--negative` values in light and in the
+  `prefers-contrast: more` block), `swiss.json` (those values, and the shorter ledger) and `swiss.tumblr.css` (stamp only; the block
+  uses no gain or loss colour): `swiss 0.6.0 t1 fnv1a64:e0b8ece8b01ecf01` became `swiss 0.6.0 t1 fnv1a64:6677d068491bb103`. No other
+  generated file moved. A blog that pasted the old block reports stale from `check-blog` until the new one is pasted.
+- Tests: `SwissTextSafeStatusTests` (14), one `ChartStyle` deferral test; two existing tests were corrected to say the new truth
+  (`Adaptive` agrees with `ColorToken` for nine of eleven roles; Princeton equals Swiss composed, with the system pair).
+
 ### Changed by the merge into 0.6.0
 - `TumblrEmitter.packageVersion` is no longer a literal (`"0.5.0"`): it reads `DesignTokens.version`, so the stamp has one
   source of truth. The stamp is therefore `swiss 0.6.0 t1 fnv1a64:...`.
@@ -90,9 +112,9 @@ use site does not change). Theme JSON written by 0.5.0's `ThemeCodec` still deco
 - `ThemeValidator.validate(_:on:)` for an `AppPalette` measures the composed theme in the appearances it now declares: a palette without
   dark values on a `both` theme is measured in light only instead of reporting missing-dark findings.
 
-### Open owner decision (not changed here)
-- Swiss `positive` and `negative` are the system green and red. `positive` as text is 2.13:1 on the background (ledgered); BusinessMath-UI's Swiss
-  uses a darker green `#1F9D55` at 3.49:1. Not changed: see the proposal's open items.
+### Owner decision 2026-11-09 (raised by the 0.6.0 review, decided the same day; shipped in the next section)
+- Swiss `positive` and `negative` were the system green and red, 2.13:1 and 3.42:1 as text on the background. The owner decided they must be the
+  darker text-safe values. See "Changed: Swiss positive and negative are text-safe" under Unreleased.
 
 ### Added
 - `ThemeCSSEmitter.emit(_:)`: one stylesheet per theme, every selector scoped to `[data-theme-name="<id>"]` (no

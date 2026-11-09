@@ -23,7 +23,7 @@ with labels or a table):
 
 | Theme | Kind | Findings | Failing | What |
 |---|---|---|---|---|
-| swiss | ledger | 31 | 15 | see `SwissConformanceLedger.md` |
+| swiss | ledger | 25 | 15 | see `SwissConformanceLedger.md`; 31 before 2026-11-09, when `positive` and `negative` became the text-safe pair (not system colours) and their six rows went |
 | house | ledger | 9 | 3 | cyan 2.98 on background (mark); `secondaryInk` 4.02 (text); status colours under 4.5 as text; sequential ramp lightest step 1.08:1 on white |
 | princeton | ledger | 12 | 0 | orange 2.9, sky 2.15, teal 2.09, periwinkle 2.27 under 3:1 on the light surface; status colours as text |
 | ft | ledger | 10 | 3 | light: purple L 0.407 (band 0.43), teal chroma 0.086 (0.10), orange 2.15 under 3:1, sequential lightest step 1.09:1; authored dark: claret 2.89 and purple 2.85 on the card surface (3:1) |

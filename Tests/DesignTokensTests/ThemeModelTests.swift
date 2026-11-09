@@ -38,10 +38,10 @@ struct ThemeModelTests {
         #expect(swiss.structure.labels.values == .aboveOrEnd)
     }
 
-    @Test("Adaptive resolves exactly as ColorToken does, for all eleven roles in all four slots")
+    @Test("Adaptive resolves exactly as ColorToken does, for nine of the eleven roles in all four slots; success and destructive are deliberately not Swiss's positive and negative")
     func adaptiveAgreesWithColorTokenForAllRoles() {
         #expect(ColorToken.allCases.count == 11)
-        for token in ColorToken.allCases {
+        for token in ColorToken.allCases where token != .success && token != .destructive {
             let adaptive = Theme.swiss.palette[token.themeRole]
             for (appearance, increased) in Self.appearances {
                 let resolved = adaptive.value(in: appearance, increasedContrast: increased)
@@ -49,6 +49,15 @@ struct ThemeModelTests {
                 #expect(resolved.rgb == expected, "\(token) \(appearance) increased=\(increased)")
                 #expect(resolved.alpha == 1)
             }
+        }
+        // owner decision 2026-11-09: gain and loss are the text-safe pair; the tokens stay the system colours
+        for token in [ColorToken.success, .destructive] {
+            let adaptive = Theme.swiss.palette[token.themeRole]
+            #expect(adaptive.value(in: .light, increasedContrast: false).rgb != token.value(in: .light, increasedContrast: false), "\(token) light")
+            #expect(adaptive.value(in: .light, increasedContrast: true).rgb != token.value(in: .light, increasedContrast: true), "\(token) light increased")
+            // the dark standard value is the same system dark colour, on purpose (9.35:1 and 5.51:1 as text)
+            #expect(adaptive.value(in: .dark, increasedContrast: false).rgb == token.value(in: .dark, increasedContrast: false), "\(token) dark")
+            #expect(adaptive.value(in: .dark, increasedContrast: true).rgb == token.value(in: .dark, increasedContrast: true), "\(token) dark increased")
         }
     }
 

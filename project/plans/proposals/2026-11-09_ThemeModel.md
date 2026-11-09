@@ -66,7 +66,7 @@ Owner decisions on the open questions of section 17. They are binding and overri
   deferred to 0.5.0 with the legacy themes that use it.
 - `Theme.conformance` is not in 0.4.0: the ledger arrives with the validator in 0.5.0 and will be added with a
   decode default, so 0.4.0 JSON stays readable. Until then the Swiss ledger is `SwissLedger` plus tests.
-- Swiss `positive` and `negative` are `ColorToken.success` and `.destructive`; BusinessMath-UI's Swiss uses darker
+- (Superseded 2026-11-09: Swiss `positive` and `negative` are now the text-safe pair, see the open items.) Swiss `positive` and `negative` were `ColorToken.success` and `.destructive`; BusinessMath-UI's Swiss uses darker
   local greens and reds for text (#1F9D55, #D64545), which the package does not hold. Swiss `muted` is the
   secondary ink, since there is no `muted` token and none was invented (BusinessMath-UI uses a local #B4B7BC).
   Both are findings for the 0.5.0 validator and for BusinessMath-UI's conversion.
@@ -118,12 +118,7 @@ Owner decisions on the open questions of section 17. They are binding and overri
 
 ## Open items for the owner (read this first)
 
-- **Swiss `positive` and `negative` (open owner decision, raised by the 0.6.0 review; NOT changed).** `Theme.swiss` takes `positive` and `negative`
-  from `ColorToken.success` and `.destructive`, the system green and red. As text on the Swiss background (#FAFAFA) `positive` is **2.13:1**
-  (ledgered: warn under 4.5) and `negative` 3.42:1. BusinessMath-UI's own Swiss uses a darker green `#1F9D55` at **3.49:1** (and red `#D64545`).
-  A Swiss chart that prints a status in `positive` is therefore harder to read than BusinessMath-UI's today. Options: keep the system colours
-  and require a glyph or a label (the "status is never colour alone" rule already says so), add a darker text-only `positive`/`negative`
-  (`extras` or new roles), or adopt BusinessMath-UI's values for the text use. Decide before the BusinessMath-UI conversion.
+- ~~**Swiss `positive` and `negative` (open owner decision, raised by the 0.6.0 review; NOT changed).**~~ **Decided 2026-11-09 by the owner, and done on `fix/swiss-text-safe-gain-loss`.** The text kept for the record: `Theme.swiss` took `positive` and `negative` from `ColorToken.success` and `.destructive`, the system green and red; as text on the Swiss background (#FAFAFA) `positive` was **2.13:1** and `negative` 3.42:1, and BusinessMath-UI's Swiss used a darker `#1F9D55` (3.35:1 on #FAFAFA, 3.49 on white) and `#D64545` (4.19:1). The owner's decision: gain and loss, used as text and as marks, are the darker text-safe values, not the system colours; `success` and `destructive` stay the system colours. Chosen and measured with the package's own maths: light #268053 and #DB2C2C (4.68 and 4.56 on the background, 4.89 and 4.76 on the card surface), dark the system dark values #30D158 and #FF4245 (9.35 and 5.51), Increase Contrast light #0E6B3A and #B81D1D, dark #4AD968 and #FF6165. BusinessMath-UI's own values were not enough: #1F9D55 is under 4.5 and, darkened without moving the hue, sat 5.6 apart from the red under deutan (floor 6); the green is therefore a little bluer (OKLCH-nearest series still green). They name no system colour, so nothing defers them to Apple's. Princeton, composed on Swiss, keeps the system pair. The "status is never colour alone" rule still stands for the series colours.
 - **Princeton has no dark variant** (see the Phase 1b item in the master plan).
 - **0.4.0 theme JSON no longer decodes** (since the review fixes); nothing emitted theme JSON before 0.6.0, but say so if something stored it.
 

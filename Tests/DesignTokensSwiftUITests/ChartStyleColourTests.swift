@@ -99,6 +99,25 @@ struct ChartStyleColourTests {
         }
     }
 
+    @Test("Swiss positive and negative never defer to the system green and red: a deferring style resolves the stored text-safe values")
+    func swissStatusRolesDoNotDefer() {
+        for mode in Self.modes where !mode.increased {
+            let deferring = ChartStyle(theme: .swiss, appearance: mode.dark ? .dark : .light)
+            let stored = ChartStyle(theme: .swiss, appearance: mode.dark ? .dark : .light, defersToSystemColors: false)
+            for role in [ColorRole.positive, .negative] {
+                let resolved = resolve(deferring.color(role), dark: mode.dark, increased: false)
+                #expect(resolved == resolve(stored.color(role), dark: mode.dark, increased: false), "\(role.rawValue) dark=\(mode.dark)")
+                #expect(matches(resolved, Theme.swiss.palette[role].value(in: mode.dark ? .dark : .light, increasedContrast: false)))
+            }
+        }
+        // light: the stored values are the darker ones, not Apple's green (#34C759) and red (#FF383C)
+        let light = ChartStyle(theme: .swiss, appearance: .light)
+        #expect(light.hex(.positive) == "#268053")
+        #expect(light.hex(.negative) == "#DB2C2C")
+        let green = resolve(light.positive, dark: false, increased: false)
+        #expect(abs(Double(green.green) - Double(0x34C759 >> 8 & 255) / 255) > 0.1)
+    }
+
     @Test("deferral is real: a deferring style's system colour moves with the environment, a stored one does not")
     func deferralIsDynamic() {
         let deferring = ChartStyle(theme: .swiss, appearance: .light)
