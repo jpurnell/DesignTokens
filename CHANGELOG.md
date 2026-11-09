@@ -2,6 +2,20 @@
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-11-09
+
+### Added
+- `ColorToken.success.dark` (#30D158) and `.destructive.dark` (#FF4245), measured on macOS 27.2.
+  `ColorToken.unmeasuredDark` is now empty.
+- `Palette.seriesDark`: the eight system colours in the dark appearance, measured. Emitted as `--series-N`
+  in the dark CSS block and as `palette.seriesDark` in the JSON.
+- `Palette.sequentialDark`: the sequential ramp reversed (derived), emitted as `palette.sequentialDark`.
+
+### Not included
+- Increased-contrast values: system colours report the same value under the increased-contrast
+  appearances from a command-line process, so they cannot be measured here.
+- A dark diverging ramp: its tints would be invented.
+
 ## [0.1.0] - 2026-11-08
 
 ### Added
@@ -17,5 +31,6 @@
   selectors honour Bootstrap's `data-bs-theme` as well as `data-theme`.
 - Palette tests: validated order, adjacent OKLab distance of at least 15, contrast of label on background.
 
-[Unreleased]: https://github.com/jpurnell/DesignTokens/compare/0.1.0...HEAD
+[Unreleased]: https://github.com/jpurnell/DesignTokens/compare/0.2.0...HEAD
+[0.2.0]: https://github.com/jpurnell/DesignTokens/compare/0.1.0...0.2.0
 [0.1.0]: https://github.com/jpurnell/DesignTokens/releases/tag/0.1.0

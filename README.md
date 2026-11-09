@@ -8,9 +8,13 @@ The design system's values, held once as typed Swift and generated for every sur
 
 - **Colour roles** (`ColorToken`): the nine SwiftGUIKit roles plus `onAccent` and `link`, each with a light and a dark value.
   A dark value that has not been measured on the snapshot release is `nil` and listed in
-  `ColorToken.unmeasuredDark`; it is not guessed. Today that is `success` and `destructive`.
-- **Palette** (`Palette`): eight series colours in a validated order, the sequential and diverging ramps,
-  and Princeton orange as a custom accent.
+  `ColorToken.unmeasuredDark`; it is not guessed. Today that list is empty. Increased-contrast values are
+  not in the package: they cannot be measured from a command-line process (the system colours report the
+  same value under the increased-contrast appearances), so they are absent, not assumed equal.
+- **Palette** (`Palette`): eight series colours in a validated order, in light (`series`) and dark
+  (`seriesDark`, measured); the sequential ramp, and `sequentialDark` (the same ramp reversed, derived, not
+  measured); the diverging ramp (no dark ramp yet: its tints would have to be invented); and Princeton
+  orange as a custom accent.
 - **Metrics** (`Rule`, `Grid`, `Radius`): rule weights 1, 3 and 8 pt; a 12-column grid with a 16 pt gutter
   and a 4 pt base; container radius 0, control radius 4 pt.
 

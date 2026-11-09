@@ -33,10 +33,13 @@ struct EmitterTests {
         #expect(css.contains("--accent-rgb: 255, 141, 40;"))
     }
 
-    @Test("an unmeasured dark value is not emitted, so the light value carries through")
-    func cssSkipsUnmeasured() {
+    @Test("the dark block carries the measured status colours and the dark series")
+    func cssDarkBlock() {
         let dark = CSSEmitter.emit().components(separatedBy: "@media (prefers-color-scheme: dark)")[1]
-        #expect(!dark.contains("--success:"))
+        #expect(dark.contains("--success: #30D158;"))
+        #expect(dark.contains("--destructive: #FF4245;"))
+        #expect(dark.contains("--series-1: #FF9230;"))
+        #expect(dark.contains("--series-8: #3CD3FE;"))
     }
 
     @Test("JSON is valid, sorted and carries the snapshot release")
@@ -46,7 +49,11 @@ struct EmitterTests {
         #expect(object["systemRelease"] as? String == "macOS 27.2")
         let colors = try #require(object["colors"] as? [String: [String: String]])
         #expect(colors["accent"]?["light"] == "#FF8D28")
-        #expect(colors["success"]?["dark"] == nil)
+        #expect(colors["success"]?["dark"] == "#30D158")
+        let palette = try #require(object["palette"] as? [String: Any])
+        let seriesDark = try #require(palette["seriesDark"] as? [[String: String]])
+        #expect(seriesDark.map { $0["hex"] } == Palette.seriesDark.map(\.hex))
+        #expect((palette["sequentialDark"] as? [String]) == Palette.sequentialDark.map(\.hex))
     }
 
     @Test("checked-in generated files equal a fresh emit")

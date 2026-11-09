@@ -9,6 +9,14 @@ public enum Palette {
         RGB(rgb: 0xFFCC00), RGB(rgb: 0x0088FF), RGB(rgb: 0xFF383C), RGB(rgb: 0x00C0E8),
     ]
 
+    /// The series colours in the dark appearance, in the same order as ``series``.
+    ///
+    /// Measured: Apple's system colours resolved in the dark appearance on ``Snapshot/systemRelease``.
+    public static let seriesDark: [RGB] = [
+        RGB(rgb: 0xFF9230), RGB(rgb: 0x6D7CFF), RGB(rgb: 0x30D158), RGB(rgb: 0xDB34F2),
+        RGB(rgb: 0xFFD600), RGB(rgb: 0x0091FF), RGB(rgb: 0xFF4245), RGB(rgb: 0x3CD3FE),
+    ]
+
     /// The names of ``series``, in the same order.
     public static let seriesNames = ["orange", "indigo", "green", "purple", "yellow", "blue", "red", "cyan"]
 
@@ -16,6 +24,12 @@ public enum Palette {
     public static let sequential: [RGB] = [
         RGB(rgb: 0xFF9134), RGB(rgb: 0xDF7502), RGB(rgb: 0xB85F01), RGB(rgb: 0x924A01), RGB(rgb: 0x6E3700),
     ]
+
+    /// The sequential ramp for a dark surface: ``sequential`` reversed, so a larger magnitude is lighter.
+    ///
+    /// Derived, not measured. There is no dark diverging ramp yet: its tints would have to be invented,
+    /// so a dark surface uses ``diverging`` as it is.
+    public static var sequentialDark: [RGB] { sequential.reversed() }
 
     /// Two-pole ramp with a neutral midpoint: blue, neutral grey, orange.
     public static let diverging: [RGB] = [

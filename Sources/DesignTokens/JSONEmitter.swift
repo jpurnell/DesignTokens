@@ -13,6 +13,7 @@ public enum JSONEmitter {
             return "    \"\(token.rawValue)\": {\n" + fields.joined(separator: ",\n") + "\n    }"
         }
         let series = zip(Palette.seriesNames, Palette.series).map { "      { \"name\": \"\($0)\", \"hex\": \"\($1.hex)\" }" }
+        let seriesDark = zip(Palette.seriesNames, Palette.seriesDark).map { "      { \"name\": \"\($0)\", \"hex\": \"\($1.hex)\" }" }
         let rules = Rule.allCases.sorted { $0.name < $1.name }.map { "    \"\($0.name)\": \($0.points)" }
         let types = TypeStyle.allCases.sorted { $0.name < $1.name }.map { style in
             "    \"\(style.name)\": { \"line\": \"\(style.line)\", \"size\": \"\(escaped(style.size))\", "
@@ -34,8 +35,12 @@ public enum JSONEmitter {
             "    \"diverging\": [\(list(Palette.diverging))],",
             "    \"princetonAccent\": \"\(Palette.princetonAccent.hex)\",",
             "    \"sequential\": [\(list(Palette.sequential))],",
+            "    \"sequentialDark\": [\(list(Palette.sequentialDark))],",
             "    \"series\": [",
             series.joined(separator: ",\n"),
+            "    ],",
+            "    \"seriesDark\": [",
+            seriesDark.joined(separator: ",\n"),
             "    ]",
             "  },",
             "  \"radius\": { \"container\": \(Radius.container), \"control\": \(Radius.control) },",

@@ -38,10 +38,15 @@ struct ColorTokenTests {
         #expect(ColorToken.onAccent.dark?.hex == "#111214")
     }
 
-    @Test("dark values not yet measured on the snapshot release are listed, not guessed")
-    func unmeasured() {
-        #expect(ColorToken.unmeasuredDark == [.success, .destructive])
-        #expect(ColorToken.success.dark == nil)
+    @Test("success and destructive dark values are the system green and red, measured on macOS 27.2")
+    func statusDark() {
+        #expect(ColorToken.success.dark?.hex == "#30D158")
+        #expect(ColorToken.destructive.dark?.hex == "#FF4245")
+    }
+
+    @Test("every role has a measured dark value, so nothing falls back to light silently")
+    func noneUnmeasured() {
+        #expect(ColorToken.unmeasuredDark.isEmpty)
     }
 
     @Test("every measured pair has text contrast of at least 4.5 to 1 for label on background")

@@ -63,7 +63,8 @@ public enum ColorToken: String, Sendable, Hashable, CaseIterable {
         case .onAccent: RGB(rgb: 0x111214)
         case .link: RGB(rgb: 0x7BA3FF)
         case .warning: RGB(rgb: 0xF2C14E)
-        case .success, .destructive: nil
+        case .success: RGB(rgb: 0x30D158)
+        case .destructive: RGB(rgb: 0xFF4245)
         }
     }
 

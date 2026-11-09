@@ -59,6 +59,9 @@ public enum CSSEmitter {
             out.append("  --\(kebab(token.rawValue)): \(dark.hex);")
             out.append("  --\(kebab(token.rawValue))-rgb: \(triple(dark));")
         }
+        for (index, color) in Palette.seriesDark.enumerated() {
+            out.append("  --series-\(index + 1): \(color.hex);")
+        }
         out.append("  color-scheme: dark;")
         return out
     }
