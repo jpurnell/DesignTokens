@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## [0.1.0] - 2026-11-08
+
 ### Added
 - `RGB`, `ColorToken`, `Palette`, `Rule`, `Grid`, `Radius`, `Snapshot`.
 - `CSSEmitter` and `JSONEmitter`, and the `design-tokens` executable that writes `Generated/tokens.css`
@@ -14,3 +16,6 @@
 - CSS: every colour also emitted as an `-rgb` triple (Bootstrap builds link colours from them); the dark
   selectors honour Bootstrap's `data-bs-theme` as well as `data-theme`.
 - Palette tests: validated order, adjacent OKLab distance of at least 15, contrast of label on background.
+
+[Unreleased]: https://github.com/jpurnell/DesignTokens/compare/0.1.0...HEAD
+[0.1.0]: https://github.com/jpurnell/DesignTokens/releases/tag/0.1.0
