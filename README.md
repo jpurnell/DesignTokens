@@ -2,7 +2,7 @@
 
 The design system's values, held once as typed Swift and generated for every surface that cannot import Swift.
 
-**Status:** pre-release (`0.x`, latest tag 0.4.0; 0.5.0 in preparation on `feature/themes-validator-0.5.0`, untagged). Phase 1 and 1b of `project/master_plan.md`.
+**Status:** pre-release (`0.x`, latest tag 0.4.0; 0.5.0 in preparation on `feature/themes-validator-0.5.0`, untagged; the Tumblr block and `check-blog` are on `feature/tumblr-emitter`, unreleased). Phase 1 and 1b of `project/master_plan.md`.
 
 ## What it holds
 
@@ -64,6 +64,26 @@ differs from a fresh emit, so regenerate and commit after changing a value.
 The CSS has `@media (prefers-contrast: more)` blocks (light, then `and (prefers-color-scheme: dark)`, then the
 explicit dark selectors), ordered so the dark scheme wins over the light contrast block and the dark contrast
 block wins over the standard dark values.
+
+## The Tumblr block
+
+```
+swift run design-tokens tumblr --theme swiss      # writes Generated/themes/swiss.tumblr.css
+swift run design-tokens check-blog                # is the blog's pasted block the current one?
+```
+
+The blog gets a generated block that the owner pastes by hand into the Tumblr theme's `<style>` element (not a linked
+stylesheet). It is CSS only: the theme's colour for light, dark and `prefers-contrast: more`, rule weights, grid, type
+roles and fonts as custom properties, then fixed selectors for the blog's classes and Tumblr's own, with no colour
+literal. The Tumblr tags, the analytics snippet and the `<link>` elements stay in the theme HTML, which the block
+assumes keeps its class names (listed in the block's header). The block's first lines carry a stamp (theme id,
+DesignTokens version, template revision, hash of the theme's canonical JSON), also in `--theme-stamp`.
+
+`check-blog` loads the live page in headless Chrome (a plain `curl` gets 403 and a bot challenge, so it needs a local
+Google Chrome), reads the stamp from the `<style>` elements and compares it with the current theme. Exit codes: 0
+current, 1 stale, 2 unstamped, 3 garbled stamp, 4 page could not be read. `--html-file` checks a saved page instead.
+As of 2026-11-09 the live blog already uses the Swiss draft but has no stamp, so it reports unstamped. Nothing has been
+rendered in Tumblr or pasted by this tooling.
 
 ## Requirements
 

@@ -2,6 +2,31 @@
 
 ## [Unreleased]
 
+Branch `feature/tumblr-emitter` (from tag 0.5.0). Not numbered: the release it ships in is the owner's call. Additive;
+`Generated/tokens.css` and `tokens.json` are unchanged.
+
+### Added
+- `TumblrEmitter.emit(_:)`: the Tumblr paste-in block for a `Theme`, committed as `Generated/themes/swiss.tumblr.css`
+  (golden-tested). CSS only, between sentinel comments: colour variables from each `Adaptive` for light,
+  `prefers-contrast: more`, dark and dark with `prefers-contrast: more` (in cascade order; a light-only theme has no dark
+  block), rule weights, gutter, columns, type roles and font stacks, then a fixed Tumblr template (`TumblrTemplate`)
+  ported from the owner's draft that reads only those variables and has no colour literal. No Tumblr tags, no markup.
+- `BlogStamp` (`swiss 0.5.0 t1 fnv1a64:...`: theme id, DesignTokens version, template revision, FNV-1a hash of the canonical
+  theme JSON), written to the header comment and to `--theme-stamp`. `TumblrEmitter.packageVersion` and
+  `templateRevision` feed it.
+- `design-tokens tumblr [--theme ID] [--out DIR]` writes the block; `design-tokens check-blog [--theme ID] [--url URL]
+  [--html-file PATH]` prints `blog is current`, `blog is stale: re-paste` (both stamps), `blog is unstamped`, a garbled-stamp
+  message or `blog could not be checked`, and exits 0, 1, 2, 3 or 4 (usage errors 64).
+- `BlogChecker` (pure comparison, reads only `<style>` elements, requires the property and the comment to agree),
+  `BlogFetching` (protocol) and `ChromeBlogFetcher` (headless Chrome; needs a local Google Chrome; accepts Chrome's exit
+  status 2 after a complete dump, which is what it returns on this machine).
+- Tests: `TumblrEmitterTests`, `BlogCheckTests` (comparison covered for current, stale, unstamped and garbled stamps, plus the
+  challenge page and fetch failures, against a fake fetcher; no network).
+
+### Not verified
+- Nothing has been rendered in Tumblr and nothing has been pasted; `check-blog` has never seen a stamped page except
+  fixtures. Linux is untested. The block's look against the draft is reasoned from the CSS, not compared on screen.
+
 ## [0.5.0] - unreleased (branch `feature/themes-validator-0.5.0`; not tagged)
 
 Additive. `Generated/tokens.css` and `tokens.json` are byte-identical to 0.3.0 (asserted by test). Source-compatible

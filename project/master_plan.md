@@ -51,6 +51,7 @@ Tests/DesignTokensTests/     value tests, palette validation, golden-file tests
 | `Theme`, `Structure`, `ThemePalette`, `Adaptive`, `ColorValue`, `AppPalette`, `ThemeCodec` (0.4.0) | A theme is structure + palette; `Theme.swiss` is built from the constants above; canonical JSON codec |
 | `ThemeValidator`, `Finding`, `Conformance`, `ValidationThresholds`, `Theme.all` (0.5.0) | The dataviz method as Swift; a theme's measured findings against its ledger; the nine registered themes |
 | `Emitter` | Turns the tokens into CSS, JSON or SVG |
+| `TumblrEmitter`, `BlogStamp`, `BlogChecker`, `BlogFetching`, `ChromeBlogFetcher`, `TumblrCommand` (unreleased) | The Tumblr paste-in block with its stamp; the staleness check of the live blog behind a fetcher protocol |
 
 ### Data Flow
 
@@ -101,6 +102,7 @@ Tokens (Swift) -> Apple resolver -> Color (system values, not hard-coded)
 - [x] 0.4.0 model: `Theme`, `Adaptive`, `ColorValue`, `Theme.swiss`, canonical JSON codec, numeric `TypeStyle`, Swiss conformance ledger (branch `feature/theme-model-0.4.0`, untagged)
 - [x] 0.5.0 validator and registry (branch `feature/themes-validator-0.5.0`, untagged): `ThemeValidator` cross-checked against `validate_palette.js`, `Theme.conformance` ledgers, House, FT and Economist with authored dark variants, Princeton on Swiss, the four legacy themes with a snapshotted Default marked legacy, `Theme.all`; Princeton is light only (the proposal's "dark values stay out until measured" kept)
 - [ ] **Princeton dark variant (open, noted 2026-11-09).** `Theme.princeton` is light only: it shows on Swiss's light surfaces in a dark context. Dark reference values exist in BusinessMath-UI's source comments (#DF7105 and the rest) but have not been measured or authored. Author them (like FT and Economist), validate, add a ledger entry, and drop `appearances = .lightOnly`. Owner asked to keep moving, so this waits.
+- [x] Tumblr paste-in block emitter and `check-blog` (branch `feature/tumblr-emitter`, unreleased, from tag 0.5.0): shipped ahead of the proposal's 0.7.0 row, which listed them with the SVG emitter. Not shipped from that row: the computed-value drift check (it needs a Tumblr preview, never the live blog), SVG, the site re-pin. Nothing pasted or rendered yet; the live blog is unstamped
 - [ ] 0.6.0 emitters I, then `DesignTokensSwiftUI` (second target in this package); 0.7.0 to 0.9.0 per the proposal's release table
 
 ### Phase 2: the site
@@ -110,4 +112,4 @@ Tokens (Swift) -> Apple resolver -> Color (system values, not hard-coded)
 
 ---
 
-**Last Updated:** 2026-11-09 (0.5.0 on branch: validator, conformance ledgers and the nine themes added, Phase 1b 0.5.0 item moved to done, Key Types table extended; earlier: 0.4.0 on branch: theme model added, Phase 1b checklist added, "validated" wording corrected to adjacency and colour-vision separation with the failing slots listed)
+**Last Updated:** 2026-11-09 (Tumblr block emitter and `check-blog` added on `feature/tumblr-emitter`: Key Types and Phase 1b reconciled, the proposal's 0.7.0 row noted as partly shipped early; 0.5.0 on branch: validator, conformance ledgers and the nine themes added, Phase 1b 0.5.0 item moved to done, Key Types table extended; earlier: 0.4.0 on branch: theme model added, Phase 1b checklist added, "validated" wording corrected to adjacency and colour-vision separation with the failing slots listed)

@@ -1,6 +1,15 @@
 import DesignTokens
 import Foundation
 
+/// `tumblr` and `check-blog` are handled by ``TumblrCommand``; the rest of this file is unchanged.
+let arguments = Array(CommandLine.arguments.dropFirst())
+if let name = arguments.first, TumblrCommand.names.contains(name) {
+    let result = TumblrCommand.run(arguments, fetcher: ChromeBlogFetcher())
+    FileHandle.standardOutput.write(Data(result.stdout.utf8))
+    FileHandle.standardError.write(Data(result.stderr.utf8))
+    exit(result.exitCode)
+}
+
 /// Writes `tokens.css` and `tokens.json` into a directory (default `Generated`).
 let directory = CommandLine.arguments.dropFirst().first ?? "Generated"
 let base = URL(fileURLWithPath: directory, isDirectory: true)
