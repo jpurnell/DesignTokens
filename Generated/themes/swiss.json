@@ -389,16 +389,20 @@
       "axisSide" : "leading",
       "series" : "direct",
       "sourceLine" : true,
+      "valueHalo" : 3,
       "values" : "aboveOrEnd"
     },
     "layout" : {
       "annotationRadius" : 0,
       "baseUnit" : 4,
+      "cardBorder" : 0,
+      "cardPadding" : 0,
       "columns" : 12,
       "containerRadius" : 0,
       "controlRadius" : 4,
       "gaps" : {
         "plot" : 8,
+        "referenceLabel" : 5,
         "source" : 10,
         "subtitle" : 12,
         "title" : 4
@@ -406,10 +410,10 @@
       "gridlines" : "horizontalFaint",
       "gutter" : 16,
       "margins" : {
-        "bottom" : 14,
+        "bottom" : 12,
         "leading" : 8,
-        "top" : 16,
-        "trailing" : 16
+        "top" : 6,
+        "trailing" : 8
       }
     },
     "marks" : {
@@ -417,8 +421,11 @@
       "bandOpacity" : 0.14,
       "barCornerRadius" : 0,
       "barFill" : "flat",
-      "barWidthRatio" : 0.6,
+      "barWidthRatio" : 0.7,
+      "defaultEmphasis" : "latest",
+      "defaultFill" : "muted",
       "detailLineWidth" : 1.5,
+      "emphasisFill" : "accent",
       "fillOpacity" : 0.35,
       "lineEnd" : "none",
       "lineWidth" : 2,
@@ -459,7 +466,7 @@
       },
       "plain" : {
         "abbreviate" : false,
-        "decimals" : 2,
+        "maxDecimals" : 2,
         "percentScales" : true,
         "prefix" : "",
         "style" : "decimal",
@@ -483,23 +490,26 @@
       }
     },
     "rules" : {
-      "baseline" : 1,
+      "baseline" : 1.5,
+      "baselineColour" : "ink",
       "gridline" : 1,
       "hairline" : 1,
       "page" : 8,
       "plotBorder" : 0,
       "reference" : {
         "dash" : [
-          3,
-          3
+
         ],
         "weight" : 1
       },
+      "referenceColour" : "secondaryInk",
+      "referenceLabelColour" : "ink",
       "section" : 3,
       "title" : {
         "colour" : "ink",
+        "gapAfter" : 8,
         "inset" : 0,
-        "position" : "belowTitle",
+        "position" : "aboveTitle",
         "weight" : 3
       }
     },

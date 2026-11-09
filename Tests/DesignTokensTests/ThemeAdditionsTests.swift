@@ -42,7 +42,9 @@ struct ThemeAdditionsTests {
         #expect(numbers[.index].decimals == 1)
         #expect(numbers[.ratio].suffix == "×")
         #expect(numbers[.temperature].suffix == "°")
-        #expect(numbers[.plain].decimals == 2)
+        // minimal decimals up to two, not a fixed two (chart alignment, 2026-11-09)
+        #expect(numbers[.plain].decimals == nil)
+        #expect(numbers[.plain].maxDecimals == 2)
     }
 
     @Test("ColorValue interpolates channel by channel, with alpha")

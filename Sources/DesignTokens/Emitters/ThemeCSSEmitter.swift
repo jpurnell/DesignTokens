@@ -22,7 +22,8 @@ import Foundation
 /// Increased-contrast blocks carry only the colours that have a measured increased-contrast value: the
 /// others carry through, as ``Adaptive/value(in:increasedContrast:)`` does.
 ///
-/// Not emitted as CSS: value-label and series-labelling flags, axis placement and number formats. They are not
+/// Not emitted as CSS: value-label and series-labelling flags, axis placement and number formats (the value halo, card
+/// border and padding, reference-label gap, mark default fill and emphasis are emitted). They are not
 /// presentational properties a stylesheet can use; the theme's JSON carries them.
 public enum ThemeCSSEmitter {
     /// The complete stylesheet for a theme, ending in a newline.
@@ -145,14 +146,18 @@ public enum ThemeCSSEmitter {
         add("rule-title-position", kebab(rules.title.position.rawValue))
         add("rule-title-color", "var(--\(kebab(rules.title.colour.rawValue)))")
         add("rule-title-inset", px(rules.title.inset))
+        if let gap = rules.title.gapAfter { add("rule-title-gap-after", px(gap)) }
         add("rule-section", px(rules.section))
         add("rule-hairline", px(rules.hairline))
         add("rule-gridline", px(rules.gridline))
         add("rule-baseline", px(rules.baseline))
+        add("rule-baseline-color", "var(--\(kebab(rules.baselineColour.rawValue)))")
         add("rule-page", px(rules.page))
         add("rule-reference", px(rules.reference.weight))
         add("rule-reference-dash", rules.reference.dash.isEmpty ? "none" : rules.reference.dash.map(number).joined(separator: " "))
         add("rule-plot-border", px(rules.plotBorder))
+        add("rule-reference-color", "var(--\(kebab(rules.referenceColour.rawValue)))")
+        add("rule-reference-label-color", "var(--\(kebab(rules.referenceLabelColour.rawValue)))")
 
         let layout = s.layout
         add("gutter", px(layout.gutter))
@@ -169,6 +174,10 @@ public enum ThemeCSSEmitter {
         add("gap-subtitle", px(layout.gaps.subtitle))
         add("gap-plot", px(layout.gaps.plot))
         add("gap-source", px(layout.gaps.source))
+        add("gap-reference-label", px(layout.gaps.referenceLabel))
+        add("card-border", px(layout.cardBorder))
+        add("card-padding", px(layout.cardPadding))
+        add("label-value-halo", px(s.labels.valueHalo))
         add("gridlines", kebab(layout.gridlines.rawValue))
         if let shadow = layout.shadow {
             add("shadow", "\(px(shadow.x)) \(px(shadow.y)) \(px(shadow.radius)) \(reference(shadow.colour))")
@@ -188,6 +197,9 @@ public enum ThemeCSSEmitter {
         add("mark-bar-width-ratio", number(marks.barWidthRatio))
         add("mark-bar-corner-radius", px(marks.barCornerRadius))
         add("mark-line-end", kebab(marks.lineEnd.rawValue))
+        add("mark-default-fill", kebab(marks.defaultFill.rawValue))
+        add("mark-default-emphasis", kebab(marks.defaultEmphasis.rawValue))
+        add("mark-emphasis-fill", "var(--\(kebab(marks.emphasisFill.rawValue)))")
         if let tag = marks.tagMark {
             add("mark-tag-width", px(tag.width))
             add("mark-tag-height", px(tag.height))

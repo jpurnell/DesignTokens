@@ -7,21 +7,21 @@ import Testing
 @MainActor
 @Suite("ChartStyle structure")
 struct ChartStyleStructureTests {
-    @Test("Swiss: a 3 pt title rule below the title in ink, 1 pt gridlines and baseline, a dashed reference line")
+    @Test("Swiss: a 3 pt title rule above the title in ink, 1 pt gridlines, a 1.5 pt baseline, a dashed reference line")
     func swissRules() throws {
         let style = ChartStyle(theme: .swiss, appearance: .light, defersToSystemColors: false)
         let rule = try #require(style.titleRule)
         #expect(near(rule.weight, 3))
-        #expect(rule.position == .belowTitle)
+        #expect(rule.position == .aboveTitle)
         #expect(near(rule.inset, 0))
         #expect(near(style.gridlineWeight, 1))
-        #expect(near(style.baselineWeight, 1))
+        #expect(near(style.baselineWeight, 1.5))
         #expect(near(style.hairlineWeight, 1))
         #expect(near(style.sectionRuleWeight, 3))
         #expect(near(style.pageRuleWeight, 8))
         #expect(style.hasPlotBorder == false)
         #expect(near(style.referenceStroke.lineWidth, 1))
-        #expect(style.referenceStroke.dash == [3, 3])
+        #expect(style.referenceStroke.dash.isEmpty, "Swiss target line is a solid hairline (owner decision 2026-11-09)")
         #expect(style.gridlines == .horizontalFaint)
     }
 

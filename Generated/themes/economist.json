@@ -291,16 +291,20 @@
       "axisSide" : "trailing",
       "series" : "legend",
       "sourceLine" : true,
+      "valueHalo" : 0,
       "values" : "off"
     },
     "layout" : {
       "annotationRadius" : 0,
       "baseUnit" : 4,
+      "cardBorder" : 0,
+      "cardPadding" : 0,
       "columns" : 12,
       "containerRadius" : 0,
       "controlRadius" : 4,
       "gaps" : {
         "plot" : 8,
+        "referenceLabel" : 3,
         "source" : 10,
         "subtitle" : 14,
         "title" : 3
@@ -320,7 +324,10 @@
       "barCornerRadius" : 0,
       "barFill" : "flat",
       "barWidthRatio" : 0.45,
+      "defaultEmphasis" : "none",
+      "defaultFill" : "series",
       "detailLineWidth" : 1.5,
+      "emphasisFill" : "accent",
       "fillOpacity" : 0.35,
       "lineEnd" : "none",
       "lineWidth" : 2.5,
@@ -391,6 +398,7 @@
     },
     "rules" : {
       "baseline" : 1,
+      "baselineColour" : "rule",
       "gridline" : 1,
       "hairline" : 1,
       "page" : 8,
@@ -402,6 +410,8 @@
         ],
         "weight" : 1
       },
+      "referenceColour" : "secondaryInk",
+      "referenceLabelColour" : "secondaryInk",
       "section" : 3,
       "title" : {
         "colour" : "negative",

@@ -66,7 +66,8 @@ extension Theme {
     ///   a key of ``ThemePalette/extras``, or has an opacity outside 0 to 1.
     /// - A ramp override names something that is neither `sequential`, `diverging` nor a key of
     ///   ``ThemePalette/extraRamps``.
-    /// - A rule weight is negative or not a number.
+    /// - A rule weight, card border or padding, label gap, value halo or rule-to-title gap is negative or not a
+    ///   number, or a decimals cap is negative.
     /// - A ramp has a dark version with a different number of steps from its light one.
     /// - The conformance is ``Conformance/strict`` and still carries ledger entries.
     var consistencyProblems: [String] {
@@ -100,6 +101,20 @@ extension Theme {
         ]
         for (subject, weight) in weights where !(weight.isFinite && weight >= 0) {
             problems.append("\(subject) is negative or not a number (\(weight))")
+        }
+        let layout = structure.layout
+        let lengths: [(String, Double)] = [
+            ("structure.layout.cardBorder", layout.cardBorder), ("structure.layout.cardPadding", layout.cardPadding),
+            ("structure.layout.gaps.referenceLabel", layout.gaps.referenceLabel), ("structure.labels.valueHalo", structure.labels.valueHalo),
+            ("structure.rules.title.gapAfter", rules.title.gapAfter ?? 0),
+        ]
+        for (subject, length) in lengths where !(length.isFinite && length >= 0) {
+            problems.append("\(subject) is negative or not a number (\(length))")
+        }
+        for kind in NumberKind.allCases {
+            if let cap = structure.numbers[kind].maxDecimals, cap < 0 {
+                problems.append("structure.numbers.\(kind.rawValue).maxDecimals is negative (\(cap))")
+            }
         }
         func parity(_ ramp: Ramp, _ subject: String) {
             if let dark = ramp.dark, dark.count != ramp.light.count {

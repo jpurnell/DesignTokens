@@ -22,13 +22,17 @@ public struct TitleRule: Sendable, Hashable, Codable {
     public var colour: ColorRole
     /// Inset from each edge, in points.
     public var inset: Double
+    /// The space between the rule and the title when the rule is ``TitleRulePosition/aboveTitle``, in points;
+    /// `nil` means ``Gaps/title``. Added in 0.6.0 (Swiss: 8, the approved drawing's rule-to-title space).
+    public var gapAfter: Double?
 
     /// Creates a title rule.
-    public init(weight: Double, position: TitleRulePosition, colour: ColorRole, inset: Double) {
+    public init(weight: Double, position: TitleRulePosition, colour: ColorRole, inset: Double, gapAfter: Double? = nil) {
         self.weight = weight
         self.position = position
         self.colour = colour
         self.inset = inset
+        self.gapAfter = gapAfter
     }
 }
 
@@ -64,10 +68,46 @@ public struct RuleSpec: Sendable, Hashable, Codable {
     public var reference: LineSpec
     /// The border around a plot; 0 is none.
     public var plotBorder: Double
+    /// The colour role of the baseline. Added in 0.6.0; the default, ``ColorRole/rule``, is what the Editorial
+    /// renderers draw today (Swiss: ``ColorRole/ink``, the heavy baseline of the approved drawing).
+    public var baselineColour: ColorRole
+    /// The colour role of a reference (target) line. Added in 0.6.0; the default,
+    /// ``ColorRole/secondaryInk``, is what the Editorial renderers draw today (Swiss: ``ColorRole/ink``).
+    public var referenceColour: ColorRole
+    /// The colour role of a reference line's direct label. Added in 0.6.0; the default, ``ColorRole/secondaryInk``,
+    /// is what the Editorial renderers draw today (Swiss: ``ColorRole/ink``, so the label reads on the line).
+    public var referenceLabelColour: ColorRole
+
+    private enum CodingKeys: String, CodingKey {
+        case title, section, hairline, gridline, baseline, page, reference, plotBorder, baselineColour, referenceColour
+        case referenceLabelColour
+    }
+
+    /// Decodes the rules; a missing `baselineColour` is `rule` and a missing `referenceColour` is `secondaryInk`
+    /// (JSON before the chart alignment).
+    public init(from decoder: any Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        title = try c.decode(TitleRule.self, forKey: .title)
+        section = try c.decode(Double.self, forKey: .section)
+        hairline = try c.decode(Double.self, forKey: .hairline)
+        gridline = try c.decode(Double.self, forKey: .gridline)
+        baseline = try c.decode(Double.self, forKey: .baseline)
+        page = try c.decode(Double.self, forKey: .page)
+        reference = try c.decode(LineSpec.self, forKey: .reference)
+        plotBorder = try c.decode(Double.self, forKey: .plotBorder)
+        baselineColour = try c.decodeIfPresent(ColorRole.self, forKey: .baselineColour) ?? .rule
+        referenceColour = try c.decodeIfPresent(ColorRole.self, forKey: .referenceColour) ?? .secondaryInk
+        referenceLabelColour = try c.decodeIfPresent(ColorRole.self, forKey: .referenceLabelColour) ?? .secondaryInk
+    }
 
     /// Creates the rule weights.
     public init(title: TitleRule, section: Double, hairline: Double, gridline: Double, baseline: Double,
-                page: Double, reference: LineSpec, plotBorder: Double) {
+                page: Double, reference: LineSpec, plotBorder: Double,
+                baselineColour: ColorRole = .rule, referenceColour: ColorRole = .secondaryInk,
+                referenceLabelColour: ColorRole = .secondaryInk) {
+        self.referenceLabelColour = referenceLabelColour
+        self.baselineColour = baselineColour
+        self.referenceColour = referenceColour
         self.title = title
         self.section = section
         self.hairline = hairline
@@ -350,10 +390,29 @@ public struct LabelSpec: Sendable, Hashable, Codable {
     public var axisLabelPlacement: AxisLabelPlacement
     /// Whether a source line is drawn.
     public var sourceLine: Bool
+    /// Points of background-coloured stroke drawn behind value and reference-line labels so a gridline or a target
+    /// line does not strike through the text; 0 is none. Added in 0.6.0 (Swiss: 3).
+    public var valueHalo: Double
+
+    private enum CodingKeys: String, CodingKey {
+        case values, series, axisSide, axisLabelPlacement, sourceLine, valueHalo
+    }
+
+    /// Decodes label settings; a missing `valueHalo` (JSON before the chart alignment) is 0.
+    public init(from decoder: any Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        values = try c.decode(ValueLabels.self, forKey: .values)
+        series = try c.decode(SeriesLabeling.self, forKey: .series)
+        axisSide = try c.decode(Side.self, forKey: .axisSide)
+        axisLabelPlacement = try c.decode(AxisLabelPlacement.self, forKey: .axisLabelPlacement)
+        sourceLine = try c.decode(Bool.self, forKey: .sourceLine)
+        valueHalo = try c.decodeIfPresent(Double.self, forKey: .valueHalo) ?? 0
+    }
 
     /// Creates label settings.
     public init(values: ValueLabels, series: SeriesLabeling, axisSide: Side,
-                axisLabelPlacement: AxisLabelPlacement, sourceLine: Bool) {
+                axisLabelPlacement: AxisLabelPlacement, sourceLine: Bool, valueHalo: Double = 0) {
+        self.valueHalo = valueHalo
         self.values = values
         self.series = series
         self.axisSide = axisSide
@@ -408,9 +467,29 @@ public struct Gaps: Sendable, Hashable, Codable {
     public var plot: Double
     /// Between the plot and the source line.
     public var source: Double
+    /// Between a reference line and its label, in points. Added in 0.6.0; the default, 3, is the offset the
+    /// SVG renderer draws today (Swiss: 5, the approved drawing's).
+    public var referenceLabel: Double
+
+    /// The default reference-label gap: what BusinessMath-UI's SVG renderer draws today.
+    public static let defaultReferenceLabel = 3.0
+
+    private enum CodingKeys: String, CodingKey { case title, subtitle, plot, source, referenceLabel }
+
+    /// Decodes gaps; a missing `referenceLabel` (JSON before the chart alignment) is 3.
+    public init(from decoder: any Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        title = try c.decode(Double.self, forKey: .title)
+        subtitle = try c.decode(Double.self, forKey: .subtitle)
+        plot = try c.decode(Double.self, forKey: .plot)
+        source = try c.decode(Double.self, forKey: .source)
+        referenceLabel = try c.decodeIfPresent(Double.self, forKey: .referenceLabel) ?? Self.defaultReferenceLabel
+    }
 
     /// Creates gaps.
-    public init(title: Double, subtitle: Double, plot: Double, source: Double) {
+    public init(title: Double, subtitle: Double, plot: Double, source: Double,
+                referenceLabel: Double = Gaps.defaultReferenceLabel) {
+        self.referenceLabel = referenceLabel
         self.title = title
         self.subtitle = subtitle
         self.plot = plot
@@ -461,13 +540,18 @@ public struct LayoutSpec: Sendable, Hashable, Codable {
     /// Corner radius of annotation and tooltip cards, in points. Added in 0.6.0: the legacy views draw 8 as a
     /// literal while their ``containerRadius`` is 0, so the two are different quantities.
     public var annotationRadius: Double
+    /// The weight of a border drawn around the whole chart card, in the `rule` colour; 0 is none. Added in 0.6.0
+    /// (Swiss: 1, the approved drawing's hairline card).
+    public var cardBorder: Double
+    /// Padding inside the card border, in points. Added in 0.6.0 (Swiss: 8).
+    public var cardPadding: Double
 
     private enum CodingKeys: String, CodingKey {
         case margins, gaps, gutter, columns, baseUnit, containerRadius, controlRadius, gridlines, shadow
-        case annotationRadius
+        case annotationRadius, cardBorder, cardPadding
     }
 
-    /// Decodes a layout; a missing `annotationRadius` (JSON before 0.6.0) is 0.
+    /// Decodes a layout; a missing `annotationRadius`, `cardBorder` or `cardPadding` (JSON before they were added) is 0.
     public init(from decoder: any Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
         margins = try c.decode(Insets.self, forKey: .margins)
@@ -480,12 +564,17 @@ public struct LayoutSpec: Sendable, Hashable, Codable {
         gridlines = try c.decode(GridlineStyle.self, forKey: .gridlines)
         shadow = try c.decodeIfPresent(ShadowSpec.self, forKey: .shadow)
         annotationRadius = try c.decodeIfPresent(Double.self, forKey: .annotationRadius) ?? 0
+        cardBorder = try c.decodeIfPresent(Double.self, forKey: .cardBorder) ?? 0
+        cardPadding = try c.decodeIfPresent(Double.self, forKey: .cardPadding) ?? 0
     }
 
     /// Creates a layout.
     public init(margins: Insets, gaps: Gaps, gutter: Double, columns: Int, baseUnit: Double,
                 containerRadius: Double, controlRadius: Double, gridlines: GridlineStyle,
-                shadow: ShadowSpec? = nil, annotationRadius: Double = 0) {
+                shadow: ShadowSpec? = nil, annotationRadius: Double = 0, cardBorder: Double = 0,
+                cardPadding: Double = 0) {
+        self.cardBorder = cardBorder
+        self.cardPadding = cardPadding
         self.annotationRadius = annotationRadius
         self.shadow = shadow
         self.margins = margins
@@ -515,6 +604,22 @@ public enum LineEnd: String, Sendable, Hashable, Codable, CaseIterable {
     case none
     /// A dot at the last point.
     case dot
+}
+
+/// What a mark is filled with when nothing says otherwise.
+public enum MarkFill: String, Sendable, Hashable, Codable, CaseIterable {
+    /// The categorical series colour (every theme before Swiss's neutral marks).
+    case series
+    /// The palette's ``ColorRole/muted`` role: neutral marks, with the accent reserved for emphasis.
+    case muted
+}
+
+/// Which mark a theme emphasises when the chart's author does not say.
+public enum EmphasisDefault: String, Sendable, Hashable, Codable, CaseIterable {
+    /// Nothing is emphasised.
+    case none
+    /// The latest mark: the last column of a vertical chart, the last period of a time series.
+    case latest
 }
 
 /// A block drawn in the chart's top-left corner (the Economist's red tab).
@@ -561,6 +666,13 @@ public struct MarkSpec: Sendable, Hashable, Codable {
     /// Line width of detail strokes: whiskers, box outlines, the separators between slices. Added in 0.6.0
     /// (the SVG renderer draws 1.5).
     public var detailLineWidth: Double
+    /// What a mark is filled with by default. Added in 0.6.0; ``MarkFill/series`` is today's behaviour.
+    public var defaultFill: MarkFill
+    /// Which mark takes ``emphasisFill`` when the author names none. Added in 0.6.0; ``EmphasisDefault/none`` is
+    /// today's behaviour. Naming emphasis explicitly always greys the rest, whatever this says.
+    public var defaultEmphasis: EmphasisDefault
+    /// The colour role of an emphasised mark. Added in 0.6.0; ``ColorRole/accent`` for every theme.
+    public var emphasisFill: ColorRole
 
     /// The area opacity BusinessMath-UI draws today.
     public static let defaultAreaOpacity = 0.22
@@ -571,10 +683,10 @@ public struct MarkSpec: Sendable, Hashable, Codable {
 
     private enum CodingKeys: String, CodingKey {
         case lineWidth, pointSize, bandOpacity, selectedLineWidth, barFill, barWidthRatio, barCornerRadius
-        case lineEnd, tagMark, areaOpacity, fillOpacity, detailLineWidth
+        case lineEnd, tagMark, areaOpacity, fillOpacity, detailLineWidth, defaultFill, defaultEmphasis, emphasisFill
     }
 
-    /// Decodes mark settings; the three fields added in 0.6.0 take BusinessMath-UI's current values when absent.
+    /// Decodes mark settings; the fields added in 0.6.0 take BusinessMath-UI's current behaviour when absent.
     public init(from decoder: any Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
         lineWidth = try c.decode(Double.self, forKey: .lineWidth)
@@ -589,6 +701,9 @@ public struct MarkSpec: Sendable, Hashable, Codable {
         areaOpacity = try c.decodeIfPresent(Double.self, forKey: .areaOpacity) ?? Self.defaultAreaOpacity
         fillOpacity = try c.decodeIfPresent(Double.self, forKey: .fillOpacity) ?? Self.defaultFillOpacity
         detailLineWidth = try c.decodeIfPresent(Double.self, forKey: .detailLineWidth) ?? Self.defaultDetailLineWidth
+        defaultFill = try c.decodeIfPresent(MarkFill.self, forKey: .defaultFill) ?? .series
+        defaultEmphasis = try c.decodeIfPresent(EmphasisDefault.self, forKey: .defaultEmphasis) ?? EmphasisDefault.none
+        emphasisFill = try c.decodeIfPresent(ColorRole.self, forKey: .emphasisFill) ?? .accent
     }
 
     /// Creates mark settings.
@@ -596,7 +711,11 @@ public struct MarkSpec: Sendable, Hashable, Codable {
                 barFill: BarFill, barWidthRatio: Double, barCornerRadius: Double, lineEnd: LineEnd,
                 tagMark: TagMark? = nil, areaOpacity: Double = MarkSpec.defaultAreaOpacity,
                 fillOpacity: Double = MarkSpec.defaultFillOpacity,
-                detailLineWidth: Double = MarkSpec.defaultDetailLineWidth) {
+                detailLineWidth: Double = MarkSpec.defaultDetailLineWidth, defaultFill: MarkFill = .series,
+                defaultEmphasis: EmphasisDefault = .none, emphasisFill: ColorRole = .accent) {
+        self.defaultFill = defaultFill
+        self.defaultEmphasis = defaultEmphasis
+        self.emphasisFill = emphasisFill
         self.areaOpacity = areaOpacity
         self.fillOpacity = fillOpacity
         self.detailLineWidth = detailLineWidth
@@ -629,8 +748,12 @@ public struct NumberFormatSpec: Sendable, Hashable, Codable {
 
     /// The kind of number.
     public var style: Style
-    /// Fixed decimals; `nil` means the renderer's default for the style.
+    /// Fixed decimals; `nil` means the renderer's default for the style, or, when ``maxDecimals`` is set, the
+    /// fewest decimals that show the value (41.2, 80, 52.6).
     public var decimals: Int?
+    /// With ``decimals`` `nil`: the most decimals a "minimal" format shows. `nil` (the default) is no minimal
+    /// format. Added in 0.6.0 (Swiss `plain`: 2).
+    public var maxDecimals: Int?
     /// Whether to abbreviate thousands, millions, billions.
     public var abbreviate: Bool
     /// Text before the number.
@@ -642,7 +765,8 @@ public struct NumberFormatSpec: Sendable, Hashable, Codable {
 
     /// Creates a number format.
     public init(style: Style = .decimal, decimals: Int? = nil, abbreviate: Bool = false, prefix: String = "",
-                suffix: String = "", percentScales: Bool = true) {
+                suffix: String = "", percentScales: Bool = true, maxDecimals: Int? = nil) {
+        self.maxDecimals = maxDecimals
         self.style = style
         self.decimals = decimals
         self.abbreviate = abbreviate
@@ -742,5 +866,37 @@ public struct Structure: Sendable, Hashable, Codable {
         self.layout = layout
         self.marks = marks
         self.numbers = numbers
+    }
+}
+
+public extension Structure {
+    /// This structure with a border and padding on the chart card: `layout.cardBorder` and `layout.cardPadding`.
+    ///
+    /// Swiss's card border is off (owner decision 2026-11-09), because the fields are an option, not a default.
+    /// The approved drawing's card is a 1 pt hairline border with 8 pt of padding, which is what the defaults of
+    /// this method give.
+    ///
+    /// - Parameters:
+    ///   - border: The border weight in points; 0 turns it off.
+    ///   - padding: The padding inside the border in points.
+    func withCardBorder(_ border: Double = 1, padding: Double = 8) -> Structure {
+        var copy = self
+        copy.layout.cardBorder = border
+        copy.layout.cardPadding = padding
+        return copy
+    }
+}
+
+public extension Theme {
+    /// This theme with a border and padding on the chart card (see ``Structure/withCardBorder(_:padding:)``).
+    ///
+    /// The result's id is `"<id>+card"` and its name `"<name> (card)"`, so it never shadows the registered theme.
+    /// Colours and the conformance ledger are the receiver's, because only structure changed.
+    func withCardBorder(_ border: Double = 1, padding: Double = 8) -> Theme {
+        var copy = self
+        copy.id = "\(id)+card"
+        copy.name = "\(name) (card)"
+        copy.structure = structure.withCardBorder(border, padding: padding)
+        return copy
     }
 }

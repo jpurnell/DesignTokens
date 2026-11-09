@@ -83,20 +83,21 @@ public extension Theme {
     private static var swissStructure: Structure {
         let hairline = Double(Rule.hairline.points)
         let rules = RuleSpec(
-            title: TitleRule(weight: Double(Rule.section.points), position: .belowTitle, colour: .ink, inset: 0),
-            section: Double(Rule.section.points), hairline: hairline, gridline: hairline, baseline: hairline,
-            page: Double(Rule.page.points), reference: LineSpec(weight: 1, dash: [3, 3]), plotBorder: 0)
+            title: TitleRule(weight: Double(Rule.section.points), position: .aboveTitle, colour: .ink, inset: 0, gapAfter: 8),
+            section: Double(Rule.section.points), hairline: hairline, gridline: hairline, baseline: 1.5,
+            page: Double(Rule.page.points), reference: LineSpec(weight: hairline, dash: []), plotBorder: 0,
+            baselineColour: .ink, referenceColour: .secondaryInk, referenceLabelColour: .ink)
         let layout = LayoutSpec(
-            margins: Insets(top: 16, leading: 8, bottom: 14, trailing: 16),
-            gaps: Gaps(title: 4, subtitle: 12, plot: 8, source: 10),
+            margins: Insets(top: 6, leading: 8, bottom: 12, trailing: 8),
+            gaps: Gaps(title: 4, subtitle: 12, plot: 8, source: 10, referenceLabel: 5),
             gutter: Double(Grid.gutter), columns: Grid.columns, baseUnit: Double(Grid.baseUnit),
             containerRadius: Double(Radius.container), controlRadius: Double(Radius.control),
             gridlines: .horizontalFaint)
         let labels = LabelSpec(values: .aboveOrEnd, series: .direct, axisSide: .leading,
-                               axisLabelPlacement: .besideAxis, sourceLine: true)
+                               axisLabelPlacement: .besideAxis, sourceLine: true, valueHalo: 3)
         let marks = MarkSpec(lineWidth: 2, pointSize: 24, bandOpacity: 0.14, selectedLineWidth: 3,
-                             barFill: .flat, barWidthRatio: 0.6, barCornerRadius: Double(Radius.container),
-                             lineEnd: .none)
+                             barFill: .flat, barWidthRatio: 0.7, barCornerRadius: Double(Radius.container),
+                             lineEnd: .none, defaultFill: .muted, defaultEmphasis: .latest, emphasisFill: .accent)
         return Structure(rules: rules, type: swissType, labels: labels, layout: layout, marks: marks,
                          numbers: standardNumbers)
     }
@@ -128,6 +129,6 @@ public extension Theme {
             index: NumberFormatSpec(style: .decimal, decimals: 1),
             ratio: NumberFormatSpec(style: .decimal, decimals: 2, suffix: "×"),
             temperature: NumberFormatSpec(style: .decimal, decimals: 1, suffix: "°"),
-            plain: NumberFormatSpec(style: .decimal, decimals: 2))
+            plain: NumberFormatSpec(style: .decimal, maxDecimals: 2))
     }
 }
