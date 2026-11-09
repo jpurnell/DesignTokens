@@ -9,3 +9,8 @@
 /// core rather than a commitment to a Linux GUI. It is built and tested on macOS. It holds data, not
 /// `Color` values: a resolver on each surface maps the data to that surface's native type.
 public enum DesignTokens {}
+
+public extension DesignTokens {
+    /// The package version, written into every generated file's header. It moves with the CHANGELOG.
+    static let version = "0.6.0"
+}

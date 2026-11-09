@@ -234,6 +234,72 @@ public struct TypeRoles: Sendable, Hashable, Codable {
     }
 }
 
+public extension TypeRoles {
+    /// The text style for a role.
+    subscript(role: TypeRole) -> TextSpec {
+        switch role {
+        case .title: title
+        case .subtitle: subtitle
+        case .axisTitle: axisTitle
+        case .axisLabel: axisLabel
+        case .seriesLabel: seriesLabel
+        case .annotation: annotation
+        case .source: source
+        case .note: note
+        case .tag: tag
+        case .label: label
+        case .caption: caption
+        case .body: body
+        case .heading: heading
+        case .uiTitle: uiTitle
+        case .display: display
+        }
+    }
+}
+
+/// The fifteen text roles of ``TypeRoles``, in field order: the nine chart roles, then the six UI roles.
+/// Added in 0.6.0 so a renderer or emitter can loop over them.
+public enum TypeRole: String, Sendable, Hashable, Codable, CaseIterable {
+    /// Chart title.
+    case title
+    /// Chart subtitle.
+    case subtitle
+    /// Axis title.
+    case axisTitle
+    /// Axis tick label.
+    case axisLabel
+    /// Direct series label.
+    case seriesLabel
+    /// Annotation.
+    case annotation
+    /// Source line.
+    case source
+    /// Note.
+    case note
+    /// Tag.
+    case tag
+    /// UI label.
+    case label
+    /// UI caption.
+    case caption
+    /// UI body.
+    case body
+    /// UI heading.
+    case heading
+    /// UI page and section title.
+    case uiTitle
+    /// UI display.
+    case display
+
+    /// Whether this is one of the six UI roles (``TypeStyle``) rather than a chart role.
+    public var isUIRole: Bool {
+        switch self {
+        case .label, .caption, .body, .heading, .uiTitle, .display: true
+        default: false
+        }
+    }
+}
+
 // MARK: - Labels
 
 /// Whether and where value labels are drawn on data.
@@ -392,11 +458,35 @@ public struct LayoutSpec: Sendable, Hashable, Codable {
     public var gridlines: GridlineStyle
     /// A drop shadow under cards, or `nil` for flat surfaces (Swiss). Added in 0.5.0.
     public var shadow: ShadowSpec?
+    /// Corner radius of annotation and tooltip cards, in points. Added in 0.6.0: the legacy views draw 8 as a
+    /// literal while their ``containerRadius`` is 0, so the two are different quantities.
+    public var annotationRadius: Double
+
+    private enum CodingKeys: String, CodingKey {
+        case margins, gaps, gutter, columns, baseUnit, containerRadius, controlRadius, gridlines, shadow
+        case annotationRadius
+    }
+
+    /// Decodes a layout; a missing `annotationRadius` (JSON before 0.6.0) is 0.
+    public init(from decoder: any Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        margins = try c.decode(Insets.self, forKey: .margins)
+        gaps = try c.decode(Gaps.self, forKey: .gaps)
+        gutter = try c.decode(Double.self, forKey: .gutter)
+        columns = try c.decode(Int.self, forKey: .columns)
+        baseUnit = try c.decode(Double.self, forKey: .baseUnit)
+        containerRadius = try c.decode(Double.self, forKey: .containerRadius)
+        controlRadius = try c.decode(Double.self, forKey: .controlRadius)
+        gridlines = try c.decode(GridlineStyle.self, forKey: .gridlines)
+        shadow = try c.decodeIfPresent(ShadowSpec.self, forKey: .shadow)
+        annotationRadius = try c.decodeIfPresent(Double.self, forKey: .annotationRadius) ?? 0
+    }
 
     /// Creates a layout.
     public init(margins: Insets, gaps: Gaps, gutter: Double, columns: Int, baseUnit: Double,
                 containerRadius: Double, controlRadius: Double, gridlines: GridlineStyle,
-                shadow: ShadowSpec? = nil) {
+                shadow: ShadowSpec? = nil, annotationRadius: Double = 0) {
+        self.annotationRadius = annotationRadius
         self.shadow = shadow
         self.margins = margins
         self.gaps = gaps
@@ -464,11 +554,52 @@ public struct MarkSpec: Sendable, Hashable, Codable {
     public var lineEnd: LineEnd
     /// A corner tag block, if the theme has one.
     public var tagMark: TagMark?
+    /// Opacity of the fill under an area series. Added in 0.6.0 (BusinessMath-UI's SVG renderer draws 0.22).
+    public var areaOpacity: Double
+    /// Opacity of the fill of a box, a pie slice or a violin. Added in 0.6.0 (the SVG renderer draws 0.35).
+    public var fillOpacity: Double
+    /// Line width of detail strokes: whiskers, box outlines, the separators between slices. Added in 0.6.0
+    /// (the SVG renderer draws 1.5).
+    public var detailLineWidth: Double
+
+    /// The area opacity BusinessMath-UI draws today.
+    public static let defaultAreaOpacity = 0.22
+    /// The box and slice fill opacity BusinessMath-UI draws today.
+    public static let defaultFillOpacity = 0.35
+    /// The detail stroke width BusinessMath-UI draws today.
+    public static let defaultDetailLineWidth = 1.5
+
+    private enum CodingKeys: String, CodingKey {
+        case lineWidth, pointSize, bandOpacity, selectedLineWidth, barFill, barWidthRatio, barCornerRadius
+        case lineEnd, tagMark, areaOpacity, fillOpacity, detailLineWidth
+    }
+
+    /// Decodes mark settings; the three fields added in 0.6.0 take BusinessMath-UI's current values when absent.
+    public init(from decoder: any Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        lineWidth = try c.decode(Double.self, forKey: .lineWidth)
+        pointSize = try c.decode(Double.self, forKey: .pointSize)
+        bandOpacity = try c.decode(Double.self, forKey: .bandOpacity)
+        selectedLineWidth = try c.decode(Double.self, forKey: .selectedLineWidth)
+        barFill = try c.decode(BarFill.self, forKey: .barFill)
+        barWidthRatio = try c.decode(Double.self, forKey: .barWidthRatio)
+        barCornerRadius = try c.decode(Double.self, forKey: .barCornerRadius)
+        lineEnd = try c.decode(LineEnd.self, forKey: .lineEnd)
+        tagMark = try c.decodeIfPresent(TagMark.self, forKey: .tagMark)
+        areaOpacity = try c.decodeIfPresent(Double.self, forKey: .areaOpacity) ?? Self.defaultAreaOpacity
+        fillOpacity = try c.decodeIfPresent(Double.self, forKey: .fillOpacity) ?? Self.defaultFillOpacity
+        detailLineWidth = try c.decodeIfPresent(Double.self, forKey: .detailLineWidth) ?? Self.defaultDetailLineWidth
+    }
 
     /// Creates mark settings.
     public init(lineWidth: Double, pointSize: Double, bandOpacity: Double, selectedLineWidth: Double,
                 barFill: BarFill, barWidthRatio: Double, barCornerRadius: Double, lineEnd: LineEnd,
-                tagMark: TagMark? = nil) {
+                tagMark: TagMark? = nil, areaOpacity: Double = MarkSpec.defaultAreaOpacity,
+                fillOpacity: Double = MarkSpec.defaultFillOpacity,
+                detailLineWidth: Double = MarkSpec.defaultDetailLineWidth) {
+        self.areaOpacity = areaOpacity
+        self.fillOpacity = fillOpacity
+        self.detailLineWidth = detailLineWidth
         self.lineWidth = lineWidth
         self.pointSize = pointSize
         self.bandOpacity = bandOpacity
@@ -549,6 +680,39 @@ public struct NumberFormats: Sendable, Hashable, Codable {
         self.ratio = ratio
         self.temperature = temperature
         self.plain = plain
+    }
+}
+
+/// The seven kinds of quantity in ``NumberFormats``. Added in 0.6.0 so a renderer can pick a format by kind.
+public enum NumberKind: String, Sendable, Hashable, Codable, CaseIterable {
+    /// Money.
+    case currency
+    /// Proportions.
+    case percent
+    /// Counts.
+    case count
+    /// Index values.
+    case index
+    /// Ratios.
+    case ratio
+    /// Temperatures.
+    case temperature
+    /// Anything else.
+    case plain
+}
+
+public extension NumberFormats {
+    /// The format for a kind of quantity.
+    subscript(kind: NumberKind) -> NumberFormatSpec {
+        switch kind {
+        case .currency: currency
+        case .percent: percent
+        case .count: count
+        case .index: index
+        case .ratio: ratio
+        case .temperature: temperature
+        case .plain: plain
+        }
     }
 }
 

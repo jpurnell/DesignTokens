@@ -1,0 +1,612 @@
+{
+  "appearances" : "lightOnly",
+  "conformance" : {
+    "entries" : [
+      {
+        "appearance" : "light",
+        "check" : "lightnessBand",
+        "measured" : 0.309,
+        "severity" : "fail",
+        "subject" : "blue",
+        "threshold" : 0.43
+      },
+      {
+        "appearance" : "light",
+        "check" : "chromaFloor",
+        "measured" : 0,
+        "severity" : "fail",
+        "subject" : "grey",
+        "threshold" : 0.1
+      },
+      {
+        "appearance" : "light",
+        "check" : "chromaFloor",
+        "measured" : 0.093,
+        "severity" : "fail",
+        "subject" : "teal",
+        "threshold" : 0.1
+      },
+      {
+        "appearance" : "light",
+        "check" : "markContrast",
+        "measured" : 2.27,
+        "severity" : "warn",
+        "subject" : "olive on background",
+        "threshold" : 3
+      },
+      {
+        "appearance" : "light",
+        "check" : "markContrast",
+        "measured" : 2.03,
+        "severity" : "warn",
+        "subject" : "olive on surface",
+        "threshold" : 3
+      },
+      {
+        "appearance" : "light",
+        "check" : "textContrast",
+        "measured" : 4.47,
+        "severity" : "warn",
+        "subject" : "positive on surface",
+        "threshold" : 4.5
+      },
+      {
+        "appearance" : "light",
+        "check" : "markContrast",
+        "measured" : 2.58,
+        "severity" : "warn",
+        "subject" : "warning on background",
+        "threshold" : 3
+      },
+      {
+        "appearance" : "light",
+        "check" : "markContrast",
+        "measured" : 2.31,
+        "severity" : "warn",
+        "subject" : "warning on surface",
+        "threshold" : 3
+      },
+      {
+        "appearance" : "light",
+        "check" : "rampMonotone",
+        "measured" : 1,
+        "severity" : "fail",
+        "subject" : "sequential",
+        "threshold" : 0
+      },
+      {
+        "appearance" : "light",
+        "check" : "rampSingleHue",
+        "measured" : 149,
+        "severity" : "fail",
+        "subject" : "sequential",
+        "threshold" : 40
+      },
+      {
+        "appearance" : "light",
+        "check" : "rampStepGap",
+        "measured" : 0.02,
+        "severity" : "fail",
+        "subject" : "diverging.high 0-1",
+        "threshold" : 0.06
+      },
+      {
+        "appearance" : "light",
+        "check" : "rampMonotone",
+        "measured" : 1,
+        "severity" : "fail",
+        "subject" : "extraRamps.sharpe",
+        "threshold" : 0
+      },
+      {
+        "appearance" : "light",
+        "check" : "rampSingleHue",
+        "measured" : 128,
+        "severity" : "fail",
+        "subject" : "extraRamps.sharpe",
+        "threshold" : 40
+      },
+      {
+        "appearance" : "light",
+        "check" : "rampMonotone",
+        "measured" : 1,
+        "severity" : "fail",
+        "subject" : "extraRamps.volatility",
+        "threshold" : 0
+      },
+      {
+        "appearance" : "light",
+        "check" : "rampSingleHue",
+        "measured" : 149,
+        "severity" : "fail",
+        "subject" : "extraRamps.volatility",
+        "threshold" : 40
+      }
+    ],
+    "kind" : "legacy"
+  },
+  "id" : "legacy-accessible",
+  "name" : "Legacy Accessible",
+  "palette" : {
+    "accent" : {
+      "light" : "#CC6600"
+    },
+    "background" : {
+      "light" : "#FFFFFF"
+    },
+    "colourOverrides" : {
+      "boxplot.median" : {
+        "opacity" : 1,
+        "source" : "neutral"
+      },
+      "boxplot.outlier" : {
+        "opacity" : 1,
+        "source" : "emphasis"
+      },
+      "boxplot.secondary" : {
+        "opacity" : 1,
+        "source" : "accent"
+      },
+      "correlation.negative" : {
+        "opacity" : 1,
+        "source" : "primary"
+      },
+      "correlation.neutral" : {
+        "opacity" : 1,
+        "source" : "neutral"
+      },
+      "correlation.positive" : {
+        "opacity" : 1,
+        "source" : "accent"
+      },
+      "tornado.high" : {
+        "opacity" : 1,
+        "source" : "primary"
+      },
+      "tornado.low" : {
+        "opacity" : 1,
+        "source" : "accent"
+      }
+    },
+    "diverging" : {
+      "light" : [
+        "#000099",
+        "#808080",
+        "#CC6600"
+      ]
+    },
+    "extraRamps" : {
+      "distribution" : {
+        "light" : [
+          "#B2B2E6",
+          "#6666B2",
+          "#000099"
+        ]
+      },
+      "sharpe" : {
+        "light" : [
+          "#990000",
+          "#CC6600",
+          "#B2B200",
+          "#00804C"
+        ]
+      },
+      "volatility" : {
+        "light" : [
+          "#000099",
+          "#008080",
+          "#B2B200",
+          "#CC6600"
+        ]
+      }
+    },
+    "extras" : {
+      "emphasis" : {
+        "light" : "#660080"
+      },
+      "highlight" : {
+        "light" : "#FFFFB2"
+      },
+      "info" : {
+        "light" : "#008099"
+      },
+      "neutral" : {
+        "light" : "#666666"
+      },
+      "primary" : {
+        "light" : "#000099"
+      },
+      "shadow" : {
+        "light" : "#00000026"
+      },
+      "subtle" : {
+        "light" : "#EDEDED"
+      }
+    },
+    "ink" : {
+      "light" : "#000000D8"
+    },
+    "link" : {
+      "light" : "#000099"
+    },
+    "muted" : {
+      "light" : "#666666"
+    },
+    "negative" : {
+      "light" : "#990000"
+    },
+    "onAccent" : {
+      "light" : "#000000"
+    },
+    "positive" : {
+      "light" : "#00804C"
+    },
+    "rampOverrides" : {
+
+    },
+    "rule" : {
+      "light" : "#4C4C4C"
+    },
+    "secondaryInk" : {
+      "light" : "#4C4C4C"
+    },
+    "sequential" : {
+      "light" : [
+        "#000099",
+        "#008080",
+        "#B2B200",
+        "#CC6600"
+      ]
+    },
+    "series" : [
+      {
+        "color" : {
+          "light" : "#000099"
+        },
+        "name" : "blue"
+      },
+      {
+        "color" : {
+          "light" : "#CC6600"
+        },
+        "name" : "orange"
+      },
+      {
+        "color" : {
+          "light" : "#666666"
+        },
+        "name" : "grey"
+      },
+      {
+        "color" : {
+          "light" : "#990099"
+        },
+        "name" : "purple"
+      },
+      {
+        "color" : {
+          "light" : "#008080"
+        },
+        "name" : "teal"
+      },
+      {
+        "color" : {
+          "light" : "#B2B200"
+        },
+        "name" : "olive"
+      }
+    ],
+    "surface" : {
+      "light" : "#F2F2F2"
+    },
+    "warning" : {
+      "light" : "#CC9900"
+    }
+  },
+  "structure" : {
+    "labels" : {
+      "axisLabelPlacement" : "besideAxis",
+      "axisSide" : "leading",
+      "series" : "legend",
+      "sourceLine" : false,
+      "values" : "off"
+    },
+    "layout" : {
+      "annotationRadius" : 8,
+      "baseUnit" : 4,
+      "columns" : 12,
+      "containerRadius" : 0,
+      "controlRadius" : 4,
+      "gaps" : {
+        "plot" : 8,
+        "source" : 10,
+        "subtitle" : 12,
+        "title" : 4
+      },
+      "gridlines" : "platformAutomatic",
+      "gutter" : 16,
+      "margins" : {
+        "bottom" : 14,
+        "leading" : 16,
+        "top" : 16,
+        "trailing" : 16
+      },
+      "shadow" : {
+        "colour" : {
+          "opacity" : 1,
+          "source" : "shadow"
+        },
+        "radius" : 4,
+        "x" : 0,
+        "y" : 2
+      }
+    },
+    "marks" : {
+      "areaOpacity" : 0.22,
+      "bandOpacity" : 0.18,
+      "barCornerRadius" : 0,
+      "barFill" : "autoGradient",
+      "barWidthRatio" : 0.6,
+      "detailLineWidth" : 1.5,
+      "fillOpacity" : 0.35,
+      "lineEnd" : "none",
+      "lineWidth" : 2.5,
+      "pointSize" : 30,
+      "selectedLineWidth" : 3.5
+    },
+    "numbers" : {
+      "count" : {
+        "abbreviate" : true,
+        "decimals" : 0,
+        "percentScales" : true,
+        "prefix" : "",
+        "style" : "decimal",
+        "suffix" : ""
+      },
+      "currency" : {
+        "abbreviate" : true,
+        "percentScales" : true,
+        "prefix" : "$",
+        "style" : "currency",
+        "suffix" : ""
+      },
+      "index" : {
+        "abbreviate" : false,
+        "decimals" : 1,
+        "percentScales" : true,
+        "prefix" : "",
+        "style" : "decimal",
+        "suffix" : ""
+      },
+      "percent" : {
+        "abbreviate" : false,
+        "decimals" : 1,
+        "percentScales" : true,
+        "prefix" : "",
+        "style" : "percent",
+        "suffix" : ""
+      },
+      "plain" : {
+        "abbreviate" : false,
+        "decimals" : 2,
+        "percentScales" : true,
+        "prefix" : "",
+        "style" : "decimal",
+        "suffix" : ""
+      },
+      "ratio" : {
+        "abbreviate" : false,
+        "decimals" : 2,
+        "percentScales" : true,
+        "prefix" : "",
+        "style" : "decimal",
+        "suffix" : "×"
+      },
+      "temperature" : {
+        "abbreviate" : false,
+        "decimals" : 1,
+        "percentScales" : true,
+        "prefix" : "",
+        "style" : "decimal",
+        "suffix" : "°"
+      }
+    },
+    "rules" : {
+      "baseline" : 1,
+      "gridline" : 1,
+      "hairline" : 1,
+      "page" : 8,
+      "plotBorder" : 0,
+      "reference" : {
+        "dash" : [
+          4,
+          4
+        ],
+        "weight" : 1
+      },
+      "section" : 3,
+      "title" : {
+        "colour" : "ink",
+        "inset" : 0,
+        "position" : "none",
+        "weight" : 0
+      }
+    },
+    "type" : {
+      "annotation" : {
+        "family" : {
+          "kind" : "sans"
+        },
+        "italic" : false,
+        "lineHeight" : 1.3,
+        "platformStyle" : "caption",
+        "size" : 11,
+        "tracking" : 0,
+        "uppercase" : false,
+        "weight" : 700
+      },
+      "axisLabel" : {
+        "family" : {
+          "kind" : "sans"
+        },
+        "italic" : false,
+        "lineHeight" : 1.3,
+        "platformStyle" : "caption2",
+        "size" : 11,
+        "tracking" : 0,
+        "uppercase" : false,
+        "weight" : 400
+      },
+      "axisTitle" : {
+        "family" : {
+          "kind" : "sans"
+        },
+        "italic" : false,
+        "lineHeight" : 1.3,
+        "platformStyle" : "caption",
+        "size" : 11,
+        "tracking" : 0,
+        "uppercase" : false,
+        "weight" : 500
+      },
+      "body" : {
+        "family" : {
+          "kind" : "sans"
+        },
+        "italic" : false,
+        "lineHeight" : 1.5,
+        "size" : 16,
+        "tracking" : 0,
+        "uppercase" : false,
+        "weight" : 400
+      },
+      "caption" : {
+        "family" : {
+          "kind" : "sans"
+        },
+        "italic" : false,
+        "lineHeight" : 1.4,
+        "size" : 13,
+        "tracking" : 0,
+        "uppercase" : false,
+        "weight" : 400
+      },
+      "display" : {
+        "family" : {
+          "kind" : "sans"
+        },
+        "italic" : false,
+        "lineHeight" : 0.86,
+        "size" : 168,
+        "tracking" : -0.05,
+        "uppercase" : false,
+        "weight" : 800
+      },
+      "heading" : {
+        "family" : {
+          "kind" : "sans"
+        },
+        "italic" : false,
+        "lineHeight" : 1.2,
+        "size" : 28,
+        "tracking" : -0.02,
+        "uppercase" : false,
+        "weight" : 700
+      },
+      "label" : {
+        "family" : {
+          "kind" : "sans"
+        },
+        "italic" : false,
+        "lineHeight" : 1.3,
+        "size" : 11,
+        "tracking" : 0.08,
+        "uppercase" : true,
+        "weight" : 600
+      },
+      "note" : {
+        "family" : {
+          "kind" : "sans"
+        },
+        "italic" : false,
+        "lineHeight" : 1.3,
+        "platformStyle" : "caption2",
+        "size" : 11,
+        "tracking" : 0,
+        "uppercase" : false,
+        "weight" : 400
+      },
+      "seriesLabel" : {
+        "family" : {
+          "kind" : "sans"
+        },
+        "italic" : false,
+        "lineHeight" : 1.3,
+        "platformStyle" : "caption",
+        "size" : 12,
+        "tracking" : 0,
+        "uppercase" : false,
+        "weight" : 600
+      },
+      "source" : {
+        "family" : {
+          "kind" : "sans"
+        },
+        "italic" : false,
+        "lineHeight" : 1.3,
+        "platformStyle" : "caption2",
+        "size" : 11,
+        "tracking" : 0,
+        "uppercase" : false,
+        "weight" : 400
+      },
+      "subtitle" : {
+        "family" : {
+          "kind" : "sans"
+        },
+        "italic" : false,
+        "lineHeight" : 1.3,
+        "platformStyle" : "subheadline",
+        "size" : 13,
+        "tracking" : 0,
+        "uppercase" : false,
+        "weight" : 400
+      },
+      "tag" : {
+        "family" : {
+          "kind" : "sans"
+        },
+        "italic" : false,
+        "lineHeight" : 1.3,
+        "platformStyle" : "caption2",
+        "size" : 11,
+        "tracking" : 0,
+        "uppercase" : false,
+        "weight" : 700
+      },
+      "title" : {
+        "family" : {
+          "kind" : "sans"
+        },
+        "italic" : false,
+        "lineHeight" : 1.3,
+        "platformStyle" : "headline",
+        "size" : 17,
+        "tracking" : 0,
+        "uppercase" : false,
+        "weight" : 700
+      },
+      "uiTitle" : {
+        "family" : {
+          "kind" : "sans"
+        },
+        "italic" : false,
+        "lineHeight" : 1.12,
+        "size" : 34,
+        "tracking" : -0.03,
+        "uppercase" : false,
+        "weight" : 800
+      }
+    }
+  }
+}

@@ -47,7 +47,8 @@ enum LegacyThemes {
             labels: LabelSpec(values: .off, series: .legend, axisSide: .leading, axisLabelPlacement: .besideAxis, sourceLine: false),
             layout: B.layout(top: 16, leading: 16, bottom: 14, trailing: 16, title: 4, subtitle: 12, plot: 8, source: 10,
                              gridlines: .platformAutomatic,
-                             shadow: ShadowSpec(colour: ColourReference(source: "shadow"), radius: 4, x: 0, y: 2)),
+                             shadow: ShadowSpec(colour: ColourReference(source: "shadow"), radius: 4, x: 0, y: 2),
+                             annotationRadius: 8),
             marks: MarkSpec(lineWidth: 2.5, pointSize: 30, bandOpacity: 0.18, selectedLineWidth: 3.5, barFill: .autoGradient,
                             barWidthRatio: 0.6, barCornerRadius: 0, lineEnd: .none),
             numbers: B.standardNumbers)

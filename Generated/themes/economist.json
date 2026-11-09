@@ -1,0 +1,617 @@
+{
+  "appearances" : "both",
+  "conformance" : {
+    "entries" : [
+      {
+        "appearance" : "light",
+        "check" : "lightnessBand",
+        "measured" : 0.8,
+        "severity" : "fail",
+        "subject" : "yellow",
+        "threshold" : 0.77
+      },
+      {
+        "appearance" : "light",
+        "check" : "chromaFloor",
+        "measured" : 0.094,
+        "severity" : "fail",
+        "subject" : "green",
+        "threshold" : 0.1
+      },
+      {
+        "appearance" : "light",
+        "check" : "chromaFloor",
+        "measured" : 0.086,
+        "severity" : "fail",
+        "subject" : "plum",
+        "threshold" : 0.1
+      },
+      {
+        "appearance" : "light",
+        "check" : "markContrast",
+        "measured" : 2.25,
+        "severity" : "warn",
+        "subject" : "cyan on background",
+        "threshold" : 3
+      },
+      {
+        "appearance" : "light",
+        "check" : "markContrast",
+        "measured" : 1.89,
+        "severity" : "warn",
+        "subject" : "yellow on background",
+        "threshold" : 3
+      },
+      {
+        "appearance" : "light",
+        "check" : "markContrast",
+        "measured" : 2.01,
+        "severity" : "warn",
+        "subject" : "cyan on surface",
+        "threshold" : 3
+      },
+      {
+        "appearance" : "light",
+        "check" : "markContrast",
+        "measured" : 1.69,
+        "severity" : "warn",
+        "subject" : "yellow on surface",
+        "threshold" : 3
+      },
+      {
+        "appearance" : "light",
+        "check" : "textContrast",
+        "measured" : 3.48,
+        "severity" : "fail",
+        "subject" : "secondaryInk on background",
+        "threshold" : 4.5
+      },
+      {
+        "appearance" : "light",
+        "check" : "textContrast",
+        "measured" : 3.11,
+        "severity" : "fail",
+        "subject" : "secondaryInk on surface",
+        "threshold" : 4.5
+      },
+      {
+        "appearance" : "light",
+        "check" : "textContrast",
+        "measured" : 3.41,
+        "severity" : "warn",
+        "subject" : "positive on background",
+        "threshold" : 4.5
+      },
+      {
+        "appearance" : "light",
+        "check" : "textContrast",
+        "measured" : 3.05,
+        "severity" : "warn",
+        "subject" : "positive on surface",
+        "threshold" : 4.5
+      },
+      {
+        "appearance" : "light",
+        "check" : "textContrast",
+        "measured" : 4.31,
+        "severity" : "warn",
+        "subject" : "negative on surface",
+        "threshold" : 4.5
+      },
+      {
+        "appearance" : "light",
+        "check" : "markContrast",
+        "measured" : 1.89,
+        "severity" : "warn",
+        "subject" : "warning on background",
+        "threshold" : 3
+      },
+      {
+        "appearance" : "light",
+        "check" : "markContrast",
+        "measured" : 1.69,
+        "severity" : "warn",
+        "subject" : "warning on surface",
+        "threshold" : 3
+      },
+      {
+        "appearance" : "light",
+        "check" : "rampLightEnd",
+        "measured" : 1.36,
+        "severity" : "fail",
+        "subject" : "sequential",
+        "threshold" : 2
+      },
+      {
+        "appearance" : "dark",
+        "check" : "markContrast",
+        "measured" : 2.79,
+        "severity" : "warn",
+        "subject" : "blue on surface",
+        "threshold" : 3
+      },
+      {
+        "appearance" : "dark",
+        "check" : "markContrast",
+        "measured" : 2.77,
+        "severity" : "warn",
+        "subject" : "yellow on surface",
+        "threshold" : 3
+      },
+      {
+        "appearance" : "dark",
+        "check" : "markContrast",
+        "measured" : 2.81,
+        "severity" : "warn",
+        "subject" : "plum on surface",
+        "threshold" : 3
+      }
+    ],
+    "kind" : "ledger"
+  },
+  "id" : "economist",
+  "name" : "Economist",
+  "palette" : {
+    "accent" : {
+      "dark" : "#4DA3DB",
+      "light" : "#006BA2"
+    },
+    "background" : {
+      "dark" : "#14181B",
+      "light" : "#FFFFFF"
+    },
+    "colourOverrides" : {
+
+    },
+    "diverging" : {
+      "light" : [
+        "#006BA2",
+        "#7FB0C6",
+        "#F3F2F0",
+        "#F1A9A5",
+        "#E3120B"
+      ]
+    },
+    "extraRamps" : {
+
+    },
+    "extras" : {
+      "neutral" : {
+        "dark" : "#8FA3AD",
+        "light" : "#758D99"
+      }
+    },
+    "ink" : {
+      "dark" : "#F3F2F0",
+      "light" : "#121212"
+    },
+    "link" : {
+      "dark" : "#5CB0E4",
+      "light" : "#006BA2"
+    },
+    "muted" : {
+      "dark" : "#4A565C",
+      "light" : "#C5D0D6"
+    },
+    "negative" : {
+      "dark" : "#FF6B5E",
+      "light" : "#E3120B"
+    },
+    "onAccent" : {
+      "dark" : "#14181B",
+      "light" : "#FFFFFF"
+    },
+    "positive" : {
+      "dark" : "#2DBBA3",
+      "light" : "#379A8B"
+    },
+    "rampOverrides" : {
+
+    },
+    "rule" : {
+      "dark" : "#38434A",
+      "light" : "#D9D9D6"
+    },
+    "secondaryInk" : {
+      "dark" : "#9FB0B8",
+      "light" : "#758D99"
+    },
+    "sequential" : {
+      "dark" : [
+        "#295E7E",
+        "#3880B8",
+        "#57A6CC",
+        "#95C6DD",
+        "#D3E4ED"
+      ],
+      "light" : [
+        "#CFE0E8",
+        "#7FB0C6",
+        "#3B8BB0",
+        "#00588D",
+        "#003D5C"
+      ]
+    },
+    "series" : [
+      {
+        "color" : {
+          "dark" : "#0769A8",
+          "light" : "#006BA2"
+        },
+        "name" : "blue"
+      },
+      {
+        "color" : {
+          "dark" : "#10A4B2",
+          "light" : "#3EBCD2"
+        },
+        "name" : "cyan"
+      },
+      {
+        "color" : {
+          "dark" : "#E35C42",
+          "light" : "#E3120B"
+        },
+        "name" : "red"
+      },
+      {
+        "color" : {
+          "dark" : "#089C85",
+          "light" : "#379A8B"
+        },
+        "name" : "green"
+      },
+      {
+        "color" : {
+          "dark" : "#865D00",
+          "light" : "#EBB434"
+        },
+        "name" : "yellow"
+      },
+      {
+        "color" : {
+          "dark" : "#AA3B7D",
+          "light" : "#9A607F"
+        },
+        "name" : "plum"
+      }
+    ],
+    "surface" : {
+      "dark" : "#1B2125",
+      "light" : "#F3F2F0"
+    },
+    "warning" : {
+      "dark" : "#F0C04A",
+      "light" : "#EBB434"
+    }
+  },
+  "structure" : {
+    "labels" : {
+      "axisLabelPlacement" : "aboveGridline",
+      "axisSide" : "trailing",
+      "series" : "legend",
+      "sourceLine" : true,
+      "values" : "off"
+    },
+    "layout" : {
+      "annotationRadius" : 0,
+      "baseUnit" : 4,
+      "columns" : 12,
+      "containerRadius" : 0,
+      "controlRadius" : 4,
+      "gaps" : {
+        "plot" : 8,
+        "source" : 10,
+        "subtitle" : 14,
+        "title" : 3
+      },
+      "gridlines" : "horizontalFaint",
+      "gutter" : 16,
+      "margins" : {
+        "bottom" : 14,
+        "leading" : 8,
+        "top" : 16,
+        "trailing" : 16
+      }
+    },
+    "marks" : {
+      "areaOpacity" : 0.22,
+      "bandOpacity" : 0.16,
+      "barCornerRadius" : 0,
+      "barFill" : "flat",
+      "barWidthRatio" : 0.45,
+      "detailLineWidth" : 1.5,
+      "fillOpacity" : 0.35,
+      "lineEnd" : "none",
+      "lineWidth" : 2.5,
+      "pointSize" : 26,
+      "selectedLineWidth" : 3.5,
+      "tagMark" : {
+        "colour" : "negative",
+        "height" : 6,
+        "width" : 28
+      }
+    },
+    "numbers" : {
+      "count" : {
+        "abbreviate" : true,
+        "decimals" : 0,
+        "percentScales" : true,
+        "prefix" : "",
+        "style" : "decimal",
+        "suffix" : ""
+      },
+      "currency" : {
+        "abbreviate" : true,
+        "percentScales" : true,
+        "prefix" : "$",
+        "style" : "currency",
+        "suffix" : ""
+      },
+      "index" : {
+        "abbreviate" : false,
+        "decimals" : 1,
+        "percentScales" : true,
+        "prefix" : "",
+        "style" : "decimal",
+        "suffix" : ""
+      },
+      "percent" : {
+        "abbreviate" : false,
+        "decimals" : 1,
+        "percentScales" : true,
+        "prefix" : "",
+        "style" : "percent",
+        "suffix" : ""
+      },
+      "plain" : {
+        "abbreviate" : false,
+        "decimals" : 2,
+        "percentScales" : true,
+        "prefix" : "",
+        "style" : "decimal",
+        "suffix" : ""
+      },
+      "ratio" : {
+        "abbreviate" : false,
+        "decimals" : 2,
+        "percentScales" : true,
+        "prefix" : "",
+        "style" : "decimal",
+        "suffix" : "×"
+      },
+      "temperature" : {
+        "abbreviate" : false,
+        "decimals" : 1,
+        "percentScales" : true,
+        "prefix" : "",
+        "style" : "decimal",
+        "suffix" : "°"
+      }
+    },
+    "rules" : {
+      "baseline" : 1,
+      "gridline" : 1,
+      "hairline" : 1,
+      "page" : 8,
+      "plotBorder" : 0,
+      "reference" : {
+        "dash" : [
+          3,
+          3
+        ],
+        "weight" : 1
+      },
+      "section" : 3,
+      "title" : {
+        "colour" : "negative",
+        "inset" : 0,
+        "position" : "aboveTitle",
+        "weight" : 1
+      }
+    },
+    "type" : {
+      "annotation" : {
+        "family" : {
+          "fallback" : {
+            "kind" : "sans"
+          },
+          "kind" : "named",
+          "name" : "Econ Sans Cnd"
+        },
+        "italic" : false,
+        "lineHeight" : 1.3,
+        "size" : 11,
+        "tracking" : 0,
+        "uppercase" : false,
+        "weight" : 400
+      },
+      "axisLabel" : {
+        "family" : {
+          "fallback" : {
+            "kind" : "sans"
+          },
+          "kind" : "named",
+          "name" : "Econ Sans Cnd"
+        },
+        "italic" : false,
+        "lineHeight" : 1.3,
+        "size" : 11,
+        "tracking" : 0,
+        "uppercase" : false,
+        "weight" : 400
+      },
+      "axisTitle" : {
+        "family" : {
+          "fallback" : {
+            "kind" : "sans"
+          },
+          "kind" : "named",
+          "name" : "Econ Sans Cnd"
+        },
+        "italic" : false,
+        "lineHeight" : 1.3,
+        "size" : 11,
+        "tracking" : 0,
+        "uppercase" : false,
+        "weight" : 500
+      },
+      "body" : {
+        "family" : {
+          "kind" : "sans"
+        },
+        "italic" : false,
+        "lineHeight" : 1.5,
+        "size" : 16,
+        "tracking" : 0,
+        "uppercase" : false,
+        "weight" : 400
+      },
+      "caption" : {
+        "family" : {
+          "kind" : "sans"
+        },
+        "italic" : false,
+        "lineHeight" : 1.4,
+        "size" : 13,
+        "tracking" : 0,
+        "uppercase" : false,
+        "weight" : 400
+      },
+      "display" : {
+        "family" : {
+          "kind" : "sans"
+        },
+        "italic" : false,
+        "lineHeight" : 0.86,
+        "size" : 168,
+        "tracking" : -0.05,
+        "uppercase" : false,
+        "weight" : 800
+      },
+      "heading" : {
+        "family" : {
+          "kind" : "sans"
+        },
+        "italic" : false,
+        "lineHeight" : 1.2,
+        "size" : 28,
+        "tracking" : -0.02,
+        "uppercase" : false,
+        "weight" : 700
+      },
+      "label" : {
+        "family" : {
+          "kind" : "sans"
+        },
+        "italic" : false,
+        "lineHeight" : 1.3,
+        "size" : 11,
+        "tracking" : 0.08,
+        "uppercase" : true,
+        "weight" : 600
+      },
+      "note" : {
+        "family" : {
+          "fallback" : {
+            "kind" : "sans"
+          },
+          "kind" : "named",
+          "name" : "Econ Sans Cnd"
+        },
+        "italic" : false,
+        "lineHeight" : 1.3,
+        "size" : 10,
+        "tracking" : 0,
+        "uppercase" : false,
+        "weight" : 400
+      },
+      "seriesLabel" : {
+        "family" : {
+          "fallback" : {
+            "kind" : "sans"
+          },
+          "kind" : "named",
+          "name" : "Econ Sans Cnd"
+        },
+        "italic" : false,
+        "lineHeight" : 1.3,
+        "size" : 12,
+        "tracking" : 0,
+        "uppercase" : false,
+        "weight" : 600
+      },
+      "source" : {
+        "family" : {
+          "fallback" : {
+            "kind" : "sans"
+          },
+          "kind" : "named",
+          "name" : "Econ Sans Cnd"
+        },
+        "italic" : false,
+        "lineHeight" : 1.3,
+        "size" : 10,
+        "tracking" : 0,
+        "uppercase" : false,
+        "weight" : 400
+      },
+      "subtitle" : {
+        "family" : {
+          "fallback" : {
+            "kind" : "sans"
+          },
+          "kind" : "named",
+          "name" : "Econ Sans Cnd"
+        },
+        "italic" : false,
+        "lineHeight" : 1.3,
+        "size" : 13,
+        "tracking" : 0,
+        "uppercase" : false,
+        "weight" : 400
+      },
+      "tag" : {
+        "family" : {
+          "fallback" : {
+            "kind" : "sans"
+          },
+          "kind" : "named",
+          "name" : "Econ Sans Cnd"
+        },
+        "italic" : false,
+        "lineHeight" : 1.3,
+        "size" : 11,
+        "tracking" : 0,
+        "uppercase" : false,
+        "weight" : 700
+      },
+      "title" : {
+        "family" : {
+          "fallback" : {
+            "kind" : "sans"
+          },
+          "kind" : "named",
+          "name" : "Econ Sans Cnd"
+        },
+        "italic" : false,
+        "lineHeight" : 1.3,
+        "size" : 18,
+        "tracking" : 0,
+        "uppercase" : false,
+        "weight" : 700
+      },
+      "uiTitle" : {
+        "family" : {
+          "kind" : "sans"
+        },
+        "italic" : false,
+        "lineHeight" : 1.12,
+        "size" : 34,
+        "tracking" : -0.03,
+        "uppercase" : false,
+        "weight" : 800
+      }
+    }
+  }
+}

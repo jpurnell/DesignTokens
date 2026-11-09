@@ -1,0 +1,516 @@
+{
+  "appearances" : "lightOnly",
+  "conformance" : {
+    "entries" : [
+      {
+        "appearance" : "light",
+        "check" : "markContrast",
+        "measured" : 2.9,
+        "severity" : "warn",
+        "subject" : "orange on background",
+        "threshold" : 3
+      },
+      {
+        "appearance" : "light",
+        "check" : "markContrast",
+        "measured" : 2.15,
+        "severity" : "warn",
+        "subject" : "sky on background",
+        "threshold" : 3
+      },
+      {
+        "appearance" : "light",
+        "check" : "markContrast",
+        "measured" : 2.09,
+        "severity" : "warn",
+        "subject" : "teal on background",
+        "threshold" : 3
+      },
+      {
+        "appearance" : "light",
+        "check" : "markContrast",
+        "measured" : 2.27,
+        "severity" : "warn",
+        "subject" : "periwinkle on background",
+        "threshold" : 3
+      },
+      {
+        "appearance" : "light",
+        "check" : "markContrast",
+        "measured" : 2.25,
+        "severity" : "warn",
+        "subject" : "sky on surface",
+        "threshold" : 3
+      },
+      {
+        "appearance" : "light",
+        "check" : "markContrast",
+        "measured" : 2.18,
+        "severity" : "warn",
+        "subject" : "teal on surface",
+        "threshold" : 3
+      },
+      {
+        "appearance" : "light",
+        "check" : "markContrast",
+        "measured" : 2.37,
+        "severity" : "warn",
+        "subject" : "periwinkle on surface",
+        "threshold" : 3
+      },
+      {
+        "appearance" : "light",
+        "check" : "textContrast",
+        "measured" : 2.13,
+        "severity" : "warn",
+        "subject" : "positive on background",
+        "threshold" : 4.5
+      },
+      {
+        "appearance" : "light",
+        "check" : "textContrast",
+        "measured" : 2.22,
+        "severity" : "warn",
+        "subject" : "positive on surface",
+        "threshold" : 4.5
+      },
+      {
+        "appearance" : "light",
+        "check" : "textContrast",
+        "measured" : 3.42,
+        "severity" : "warn",
+        "subject" : "negative on background",
+        "threshold" : 4.5
+      },
+      {
+        "appearance" : "light",
+        "check" : "textContrast",
+        "measured" : 3.57,
+        "severity" : "warn",
+        "subject" : "negative on surface",
+        "threshold" : 4.5
+      },
+      {
+        "appearance" : "light",
+        "check" : "markContrast",
+        "measured" : 2.9,
+        "severity" : "warn",
+        "subject" : "accent on background",
+        "threshold" : 3
+      }
+    ],
+    "kind" : "ledger"
+  },
+  "id" : "princeton",
+  "name" : "Princeton",
+  "palette" : {
+    "accent" : {
+      "light" : "#E77500"
+    },
+    "background" : {
+      "light" : "#FAFAFA"
+    },
+    "colourOverrides" : {
+
+    },
+    "diverging" : {
+      "light" : [
+        "#0791C7",
+        "#8DBDD9",
+        "#E8E8E8",
+        "#ECB18B",
+        "#E77500"
+      ]
+    },
+    "extraRamps" : {
+
+    },
+    "extras" : {
+
+    },
+    "ink" : {
+      "light" : "#111214"
+    },
+    "link" : {
+      "light" : "#1F57D6"
+    },
+    "muted" : {
+      "light" : "#6A6D72"
+    },
+    "negative" : {
+      "light" : "#FF383C",
+      "lightIncreased" : "#E9152D",
+      "system" : "red"
+    },
+    "onAccent" : {
+      "light" : "#111214"
+    },
+    "positive" : {
+      "light" : "#34C759",
+      "lightIncreased" : "#008932",
+      "system" : "green"
+    },
+    "rampOverrides" : {
+
+    },
+    "rule" : {
+      "light" : "#D6D8DB"
+    },
+    "secondaryInk" : {
+      "light" : "#6A6D72"
+    },
+    "sequential" : {
+      "light" : [
+        "#FE913F",
+        "#E17204",
+        "#BA5D01",
+        "#944900",
+        "#703500"
+      ]
+    },
+    "series" : [
+      {
+        "color" : {
+          "light" : "#E77500"
+        },
+        "name" : "orange"
+      },
+      {
+        "color" : {
+          "light" : "#03B9FC"
+        },
+        "name" : "sky"
+      },
+      {
+        "color" : {
+          "light" : "#AD274F"
+        },
+        "name" : "crimson"
+      },
+      {
+        "color" : {
+          "light" : "#03C4BB"
+        },
+        "name" : "teal"
+      },
+      {
+        "color" : {
+          "light" : "#A34AAC"
+        },
+        "name" : "violet"
+      },
+      {
+        "color" : {
+          "light" : "#007912"
+        },
+        "name" : "green"
+      },
+      {
+        "color" : {
+          "light" : "#98A1FF"
+        },
+        "name" : "periwinkle"
+      },
+      {
+        "color" : {
+          "light" : "#867500"
+        },
+        "name" : "olive"
+      }
+    ],
+    "surface" : {
+      "light" : "#FFFFFF"
+    },
+    "warning" : {
+      "light" : "#9A6A00"
+    }
+  },
+  "structure" : {
+    "labels" : {
+      "axisLabelPlacement" : "besideAxis",
+      "axisSide" : "leading",
+      "series" : "direct",
+      "sourceLine" : true,
+      "values" : "aboveOrEnd"
+    },
+    "layout" : {
+      "annotationRadius" : 0,
+      "baseUnit" : 4,
+      "columns" : 12,
+      "containerRadius" : 0,
+      "controlRadius" : 4,
+      "gaps" : {
+        "plot" : 8,
+        "source" : 10,
+        "subtitle" : 12,
+        "title" : 4
+      },
+      "gridlines" : "horizontalFaint",
+      "gutter" : 16,
+      "margins" : {
+        "bottom" : 14,
+        "leading" : 8,
+        "top" : 16,
+        "trailing" : 16
+      }
+    },
+    "marks" : {
+      "areaOpacity" : 0.22,
+      "bandOpacity" : 0.14,
+      "barCornerRadius" : 0,
+      "barFill" : "flat",
+      "barWidthRatio" : 0.6,
+      "detailLineWidth" : 1.5,
+      "fillOpacity" : 0.35,
+      "lineEnd" : "none",
+      "lineWidth" : 2,
+      "pointSize" : 24,
+      "selectedLineWidth" : 3
+    },
+    "numbers" : {
+      "count" : {
+        "abbreviate" : true,
+        "decimals" : 0,
+        "percentScales" : true,
+        "prefix" : "",
+        "style" : "decimal",
+        "suffix" : ""
+      },
+      "currency" : {
+        "abbreviate" : true,
+        "percentScales" : true,
+        "prefix" : "$",
+        "style" : "currency",
+        "suffix" : ""
+      },
+      "index" : {
+        "abbreviate" : false,
+        "decimals" : 1,
+        "percentScales" : true,
+        "prefix" : "",
+        "style" : "decimal",
+        "suffix" : ""
+      },
+      "percent" : {
+        "abbreviate" : false,
+        "decimals" : 1,
+        "percentScales" : true,
+        "prefix" : "",
+        "style" : "percent",
+        "suffix" : ""
+      },
+      "plain" : {
+        "abbreviate" : false,
+        "decimals" : 2,
+        "percentScales" : true,
+        "prefix" : "",
+        "style" : "decimal",
+        "suffix" : ""
+      },
+      "ratio" : {
+        "abbreviate" : false,
+        "decimals" : 2,
+        "percentScales" : true,
+        "prefix" : "",
+        "style" : "decimal",
+        "suffix" : "×"
+      },
+      "temperature" : {
+        "abbreviate" : false,
+        "decimals" : 1,
+        "percentScales" : true,
+        "prefix" : "",
+        "style" : "decimal",
+        "suffix" : "°"
+      }
+    },
+    "rules" : {
+      "baseline" : 1,
+      "gridline" : 1,
+      "hairline" : 1,
+      "page" : 8,
+      "plotBorder" : 0,
+      "reference" : {
+        "dash" : [
+          3,
+          3
+        ],
+        "weight" : 1
+      },
+      "section" : 3,
+      "title" : {
+        "colour" : "ink",
+        "inset" : 0,
+        "position" : "belowTitle",
+        "weight" : 3
+      }
+    },
+    "type" : {
+      "annotation" : {
+        "family" : {
+          "kind" : "sans"
+        },
+        "italic" : false,
+        "lineHeight" : 1.3,
+        "size" : 11,
+        "tracking" : 0,
+        "uppercase" : false,
+        "weight" : 700
+      },
+      "axisLabel" : {
+        "family" : {
+          "kind" : "sans"
+        },
+        "italic" : false,
+        "lineHeight" : 1.3,
+        "size" : 11,
+        "tracking" : 0,
+        "uppercase" : false,
+        "weight" : 400
+      },
+      "axisTitle" : {
+        "family" : {
+          "kind" : "sans"
+        },
+        "italic" : false,
+        "lineHeight" : 1.3,
+        "size" : 11,
+        "tracking" : 0,
+        "uppercase" : false,
+        "weight" : 500
+      },
+      "body" : {
+        "family" : {
+          "kind" : "sans"
+        },
+        "italic" : false,
+        "lineHeight" : 1.5,
+        "size" : 16,
+        "tracking" : 0,
+        "uppercase" : false,
+        "weight" : 400
+      },
+      "caption" : {
+        "family" : {
+          "kind" : "sans"
+        },
+        "italic" : false,
+        "lineHeight" : 1.4,
+        "size" : 13,
+        "tracking" : 0,
+        "uppercase" : false,
+        "weight" : 400
+      },
+      "display" : {
+        "family" : {
+          "kind" : "sans"
+        },
+        "italic" : false,
+        "lineHeight" : 0.86,
+        "size" : 168,
+        "tracking" : -0.05,
+        "uppercase" : false,
+        "weight" : 800
+      },
+      "heading" : {
+        "family" : {
+          "kind" : "sans"
+        },
+        "italic" : false,
+        "lineHeight" : 1.2,
+        "size" : 28,
+        "tracking" : -0.02,
+        "uppercase" : false,
+        "weight" : 700
+      },
+      "label" : {
+        "family" : {
+          "kind" : "sans"
+        },
+        "italic" : false,
+        "lineHeight" : 1.3,
+        "size" : 11,
+        "tracking" : 0.08,
+        "uppercase" : true,
+        "weight" : 600
+      },
+      "note" : {
+        "family" : {
+          "kind" : "sans"
+        },
+        "italic" : false,
+        "lineHeight" : 1.3,
+        "size" : 11,
+        "tracking" : 0,
+        "uppercase" : false,
+        "weight" : 400
+      },
+      "seriesLabel" : {
+        "family" : {
+          "kind" : "sans"
+        },
+        "italic" : false,
+        "lineHeight" : 1.3,
+        "size" : 12,
+        "tracking" : 0,
+        "uppercase" : false,
+        "weight" : 600
+      },
+      "source" : {
+        "family" : {
+          "kind" : "sans"
+        },
+        "italic" : false,
+        "lineHeight" : 1.3,
+        "size" : 11,
+        "tracking" : 0,
+        "uppercase" : false,
+        "weight" : 400
+      },
+      "subtitle" : {
+        "family" : {
+          "kind" : "sans"
+        },
+        "italic" : false,
+        "lineHeight" : 1.3,
+        "size" : 13,
+        "tracking" : 0,
+        "uppercase" : false,
+        "weight" : 400
+      },
+      "tag" : {
+        "family" : {
+          "kind" : "sans"
+        },
+        "italic" : false,
+        "lineHeight" : 1.3,
+        "size" : 11,
+        "tracking" : 0,
+        "uppercase" : false,
+        "weight" : 700
+      },
+      "title" : {
+        "family" : {
+          "kind" : "sans"
+        },
+        "italic" : false,
+        "lineHeight" : 1.3,
+        "size" : 17,
+        "tracking" : 0,
+        "uppercase" : false,
+        "weight" : 700
+      },
+      "uiTitle" : {
+        "family" : {
+          "kind" : "sans"
+        },
+        "italic" : false,
+        "lineHeight" : 1.12,
+        "size" : 34,
+        "tracking" : -0.03,
+        "uppercase" : false,
+        "weight" : 800
+      }
+    }
+  }
+}

@@ -1,0 +1,1153 @@
+{
+  "appearances" : "both",
+  "conformance" : {
+    "entries" : [
+      {
+        "appearance" : "light",
+        "check" : "seriesCount",
+        "measured" : 10,
+        "severity" : "fail",
+        "subject" : "series",
+        "threshold" : 8
+      },
+      {
+        "appearance" : "light",
+        "check" : "lightnessBand",
+        "measured" : 0.865,
+        "severity" : "fail",
+        "subject" : "yellow",
+        "threshold" : 0.77
+      },
+      {
+        "appearance" : "light",
+        "check" : "cvdSeparation",
+        "measured" : 6.6,
+        "severity" : "warn",
+        "subject" : "green / orange",
+        "threshold" : 8
+      },
+      {
+        "appearance" : "light",
+        "check" : "markContrast",
+        "measured" : 2.22,
+        "severity" : "warn",
+        "subject" : "green on background",
+        "threshold" : 3
+      },
+      {
+        "appearance" : "light",
+        "check" : "markContrast",
+        "measured" : 2.31,
+        "severity" : "warn",
+        "subject" : "orange on background",
+        "threshold" : 3
+      },
+      {
+        "appearance" : "light",
+        "check" : "markContrast",
+        "measured" : 2.16,
+        "severity" : "warn",
+        "subject" : "cyan on background",
+        "threshold" : 3
+      },
+      {
+        "appearance" : "light",
+        "check" : "markContrast",
+        "measured" : 1.51,
+        "severity" : "warn",
+        "subject" : "yellow on background",
+        "threshold" : 3
+      },
+      {
+        "appearance" : "light",
+        "check" : "markContrast",
+        "measured" : 2.12,
+        "severity" : "warn",
+        "subject" : "mint on background",
+        "threshold" : 3
+      },
+      {
+        "appearance" : "light",
+        "check" : "textContrast",
+        "measured" : 3.26,
+        "severity" : "fail",
+        "subject" : "secondaryInk on background",
+        "threshold" : 4.5
+      },
+      {
+        "appearance" : "light",
+        "check" : "textContrast",
+        "measured" : 3.26,
+        "severity" : "fail",
+        "subject" : "secondaryInk on surface",
+        "threshold" : 4.5
+      },
+      {
+        "appearance" : "light",
+        "check" : "textContrast",
+        "measured" : 3.52,
+        "severity" : "fail",
+        "subject" : "link on background",
+        "threshold" : 4.5
+      },
+      {
+        "appearance" : "light",
+        "check" : "textContrast",
+        "measured" : 3.52,
+        "severity" : "fail",
+        "subject" : "link on surface",
+        "threshold" : 4.5
+      },
+      {
+        "appearance" : "light",
+        "check" : "textContrast",
+        "measured" : 2.22,
+        "severity" : "warn",
+        "subject" : "positive on background",
+        "threshold" : 4.5
+      },
+      {
+        "appearance" : "light",
+        "check" : "textContrast",
+        "measured" : 2.22,
+        "severity" : "warn",
+        "subject" : "positive on surface",
+        "threshold" : 4.5
+      },
+      {
+        "appearance" : "light",
+        "check" : "textContrast",
+        "measured" : 3.57,
+        "severity" : "warn",
+        "subject" : "negative on background",
+        "threshold" : 4.5
+      },
+      {
+        "appearance" : "light",
+        "check" : "textContrast",
+        "measured" : 3.57,
+        "severity" : "warn",
+        "subject" : "negative on surface",
+        "threshold" : 4.5
+      },
+      {
+        "appearance" : "light",
+        "check" : "markContrast",
+        "measured" : 2.31,
+        "severity" : "warn",
+        "subject" : "accent on background",
+        "threshold" : 3
+      },
+      {
+        "appearance" : "light",
+        "check" : "markContrast",
+        "measured" : 2.31,
+        "severity" : "warn",
+        "subject" : "accent on surface",
+        "threshold" : 3
+      },
+      {
+        "appearance" : "light",
+        "check" : "markContrast",
+        "measured" : 1.51,
+        "severity" : "warn",
+        "subject" : "warning on background",
+        "threshold" : 3
+      },
+      {
+        "appearance" : "light",
+        "check" : "markContrast",
+        "measured" : 1.51,
+        "severity" : "warn",
+        "subject" : "warning on surface",
+        "threshold" : 3
+      },
+      {
+        "appearance" : "light",
+        "check" : "rampMonotone",
+        "measured" : 3,
+        "severity" : "fail",
+        "subject" : "sequential",
+        "threshold" : 0
+      },
+      {
+        "appearance" : "light",
+        "check" : "rampStepGap",
+        "measured" : 0.034,
+        "severity" : "fail",
+        "subject" : "sequential 1-2",
+        "threshold" : 0.06
+      },
+      {
+        "appearance" : "light",
+        "check" : "rampStepGap",
+        "measured" : 0.05,
+        "severity" : "fail",
+        "subject" : "sequential 2-3",
+        "threshold" : 0.06
+      },
+      {
+        "appearance" : "light",
+        "check" : "rampLightEnd",
+        "measured" : 1.53,
+        "severity" : "fail",
+        "subject" : "sequential",
+        "threshold" : 2
+      },
+      {
+        "appearance" : "light",
+        "check" : "rampSingleHue",
+        "measured" : 106,
+        "severity" : "fail",
+        "subject" : "sequential",
+        "threshold" : 40
+      },
+      {
+        "appearance" : "light",
+        "check" : "rampLightEnd",
+        "measured" : 1.45,
+        "severity" : "fail",
+        "subject" : "extraRamps.distribution",
+        "threshold" : 2
+      },
+      {
+        "appearance" : "light",
+        "check" : "rampMonotone",
+        "measured" : 1,
+        "severity" : "fail",
+        "subject" : "extraRamps.sharpe",
+        "threshold" : 0
+      },
+      {
+        "appearance" : "light",
+        "check" : "rampLightEnd",
+        "measured" : 1.51,
+        "severity" : "fail",
+        "subject" : "extraRamps.sharpe",
+        "threshold" : 2
+      },
+      {
+        "appearance" : "light",
+        "check" : "rampSingleHue",
+        "measured" : 122,
+        "severity" : "fail",
+        "subject" : "extraRamps.sharpe",
+        "threshold" : 40
+      },
+      {
+        "appearance" : "light",
+        "check" : "rampMonotone",
+        "measured" : 3,
+        "severity" : "fail",
+        "subject" : "extraRamps.volatility",
+        "threshold" : 0
+      },
+      {
+        "appearance" : "light",
+        "check" : "rampStepGap",
+        "measured" : 0.034,
+        "severity" : "fail",
+        "subject" : "extraRamps.volatility 1-2",
+        "threshold" : 0.06
+      },
+      {
+        "appearance" : "light",
+        "check" : "rampStepGap",
+        "measured" : 0.05,
+        "severity" : "fail",
+        "subject" : "extraRamps.volatility 2-3",
+        "threshold" : 0.06
+      },
+      {
+        "appearance" : "light",
+        "check" : "rampLightEnd",
+        "measured" : 1.53,
+        "severity" : "fail",
+        "subject" : "extraRamps.volatility",
+        "threshold" : 2
+      },
+      {
+        "appearance" : "light",
+        "check" : "rampSingleHue",
+        "measured" : 106,
+        "severity" : "fail",
+        "subject" : "extraRamps.volatility",
+        "threshold" : 40
+      },
+      {
+        "appearance" : "dark",
+        "check" : "lightnessBand",
+        "measured" : 0.756,
+        "severity" : "fail",
+        "subject" : "green",
+        "threshold" : 0.67
+      },
+      {
+        "appearance" : "dark",
+        "check" : "lightnessBand",
+        "measured" : 0.762,
+        "severity" : "fail",
+        "subject" : "orange",
+        "threshold" : 0.67
+      },
+      {
+        "appearance" : "dark",
+        "check" : "lightnessBand",
+        "measured" : 0.808,
+        "severity" : "fail",
+        "subject" : "cyan",
+        "threshold" : 0.67
+      },
+      {
+        "appearance" : "dark",
+        "check" : "lightnessBand",
+        "measured" : 0.885,
+        "severity" : "fail",
+        "subject" : "yellow",
+        "threshold" : 0.67
+      },
+      {
+        "appearance" : "dark",
+        "check" : "lightnessBand",
+        "measured" : 0.797,
+        "severity" : "fail",
+        "subject" : "mint",
+        "threshold" : 0.67
+      },
+      {
+        "appearance" : "dark",
+        "check" : "cvdSeparation",
+        "measured" : 4.9,
+        "severity" : "fail",
+        "subject" : "green / orange",
+        "threshold" : 6
+      },
+      {
+        "appearance" : "dark",
+        "check" : "rampMonotone",
+        "measured" : 3,
+        "severity" : "fail",
+        "subject" : "sequential",
+        "threshold" : 0
+      },
+      {
+        "appearance" : "dark",
+        "check" : "rampStepGap",
+        "measured" : 0.034,
+        "severity" : "fail",
+        "subject" : "sequential 1-2",
+        "threshold" : 0.06
+      },
+      {
+        "appearance" : "dark",
+        "check" : "rampStepGap",
+        "measured" : 0.05,
+        "severity" : "fail",
+        "subject" : "sequential 2-3",
+        "threshold" : 0.06
+      },
+      {
+        "appearance" : "dark",
+        "check" : "rampSingleHue",
+        "measured" : 106,
+        "severity" : "fail",
+        "subject" : "sequential",
+        "threshold" : 40
+      },
+      {
+        "appearance" : "dark",
+        "check" : "rampLightEnd",
+        "measured" : 1.56,
+        "severity" : "fail",
+        "subject" : "extraRamps.distribution",
+        "threshold" : 2
+      },
+      {
+        "appearance" : "dark",
+        "check" : "rampMonotone",
+        "measured" : 1,
+        "severity" : "fail",
+        "subject" : "extraRamps.sharpe",
+        "threshold" : 0
+      },
+      {
+        "appearance" : "dark",
+        "check" : "rampSingleHue",
+        "measured" : 122,
+        "severity" : "fail",
+        "subject" : "extraRamps.sharpe",
+        "threshold" : 40
+      },
+      {
+        "appearance" : "dark",
+        "check" : "rampMonotone",
+        "measured" : 3,
+        "severity" : "fail",
+        "subject" : "extraRamps.volatility",
+        "threshold" : 0
+      },
+      {
+        "appearance" : "dark",
+        "check" : "rampStepGap",
+        "measured" : 0.034,
+        "severity" : "fail",
+        "subject" : "extraRamps.volatility 1-2",
+        "threshold" : 0.06
+      },
+      {
+        "appearance" : "dark",
+        "check" : "rampStepGap",
+        "measured" : 0.05,
+        "severity" : "fail",
+        "subject" : "extraRamps.volatility 2-3",
+        "threshold" : 0.06
+      },
+      {
+        "appearance" : "dark",
+        "check" : "rampSingleHue",
+        "measured" : 106,
+        "severity" : "fail",
+        "subject" : "extraRamps.volatility",
+        "threshold" : 40
+      },
+      {
+        "appearance" : "lightIncreased",
+        "check" : "cvdSeparation",
+        "measured" : 6.3,
+        "severity" : "warn",
+        "subject" : "green / orange",
+        "threshold" : 8
+      },
+      {
+        "appearance" : "lightIncreased",
+        "check" : "cvdSeparation",
+        "measured" : 7.9,
+        "severity" : "warn",
+        "subject" : "yellow / pink",
+        "threshold" : 8
+      },
+      {
+        "appearance" : "lightIncreased",
+        "check" : "markContrast",
+        "measured" : 2.12,
+        "severity" : "warn",
+        "subject" : "mint on background",
+        "threshold" : 3
+      },
+      {
+        "appearance" : "darkIncreased",
+        "check" : "lightnessBand",
+        "measured" : 0.756,
+        "severity" : "fail",
+        "subject" : "blue",
+        "threshold" : 0.67
+      },
+      {
+        "appearance" : "darkIncreased",
+        "check" : "lightnessBand",
+        "measured" : 0.784,
+        "severity" : "fail",
+        "subject" : "green",
+        "threshold" : 0.67
+      },
+      {
+        "appearance" : "darkIncreased",
+        "check" : "lightnessBand",
+        "measured" : 0.789,
+        "severity" : "fail",
+        "subject" : "orange",
+        "threshold" : 0.67
+      },
+      {
+        "appearance" : "darkIncreased",
+        "check" : "lightnessBand",
+        "measured" : 0.781,
+        "severity" : "fail",
+        "subject" : "purple",
+        "threshold" : 0.67
+      },
+      {
+        "appearance" : "darkIncreased",
+        "check" : "lightnessBand",
+        "measured" : 0.698,
+        "severity" : "fail",
+        "subject" : "red",
+        "threshold" : 0.67
+      },
+      {
+        "appearance" : "darkIncreased",
+        "check" : "lightnessBand",
+        "measured" : 0.836,
+        "severity" : "fail",
+        "subject" : "cyan",
+        "threshold" : 0.67
+      },
+      {
+        "appearance" : "darkIncreased",
+        "check" : "lightnessBand",
+        "measured" : 0.904,
+        "severity" : "fail",
+        "subject" : "yellow",
+        "threshold" : 0.67
+      },
+      {
+        "appearance" : "darkIncreased",
+        "check" : "lightnessBand",
+        "measured" : 0.797,
+        "severity" : "fail",
+        "subject" : "mint",
+        "threshold" : 0.67
+      },
+      {
+        "appearance" : "darkIncreased",
+        "check" : "lightnessBand",
+        "measured" : 0.769,
+        "severity" : "fail",
+        "subject" : "indigo",
+        "threshold" : 0.67
+      },
+      {
+        "appearance" : "darkIncreased",
+        "check" : "cvdSeparation",
+        "measured" : 3.4,
+        "severity" : "fail",
+        "subject" : "green / orange",
+        "threshold" : 6
+      }
+    ],
+    "kind" : "legacy"
+  },
+  "id" : "legacy-default",
+  "name" : "Legacy Default",
+  "palette" : {
+    "accent" : {
+      "dark" : "#FF9230",
+      "darkIncreased" : "#FFA056",
+      "light" : "#FF8D28",
+      "lightIncreased" : "#C55300",
+      "system" : "orange"
+    },
+    "background" : {
+      "dark" : "#1E1E1E",
+      "light" : "#FFFFFF"
+    },
+    "colourOverrides" : {
+      "boxplot.secondary" : {
+        "opacity" : 1,
+        "source" : "secondaryInk"
+      },
+      "correlation.negative" : {
+        "opacity" : 1,
+        "source" : "primary"
+      },
+      "correlation.neutral" : {
+        "opacity" : 1,
+        "source" : "white"
+      },
+      "correlation.positive" : {
+        "opacity" : 1,
+        "source" : "negative"
+      },
+      "montecarlo.conservative" : {
+        "opacity" : 0.7,
+        "source" : "negative"
+      },
+      "montecarlo.optimistic" : {
+        "opacity" : 0.7,
+        "source" : "positive"
+      },
+      "scatter.regression" : {
+        "opacity" : 0.6,
+        "source" : "negative"
+      },
+      "scatter.residual.negative" : {
+        "opacity" : 1,
+        "source" : "negative"
+      },
+      "scatter.residual.positive" : {
+        "opacity" : 1,
+        "source" : "positive"
+      },
+      "timeseries.residual" : {
+        "opacity" : 1,
+        "source" : "secondaryInk"
+      },
+      "timeseries.seasonal" : {
+        "opacity" : 1,
+        "source" : "accent"
+      },
+      "timeseries.trend" : {
+        "opacity" : 1,
+        "source" : "primary"
+      }
+    },
+    "diverging" : {
+      "dark" : [
+        "#0091FF",
+        "#FFFFFF",
+        "#FF4245"
+      ],
+      "light" : [
+        "#0088FF",
+        "#FFFFFF",
+        "#FF383C"
+      ]
+    },
+    "extraRamps" : {
+      "distribution" : {
+        "dark" : [
+          "#0091FF4D",
+          "#0091FF99",
+          "#0091FFE6"
+        ],
+        "light" : [
+          "#0088FF4D",
+          "#0088FF99",
+          "#0088FFE6"
+        ]
+      },
+      "sharpe" : {
+        "dark" : [
+          "#FF4245",
+          "#FF9230",
+          "#FFD600",
+          "#30D158"
+        ],
+        "light" : [
+          "#FF383C",
+          "#FF8D28",
+          "#FFCC00",
+          "#34C759"
+        ]
+      },
+      "volatility" : {
+        "light" : [
+          "#532EE6",
+          "#2EE6E6",
+          "#32E62E",
+          "#E6D32E",
+          "#E62E2E"
+        ]
+      }
+    },
+    "extras" : {
+      "emphasis" : {
+        "dark" : "#DB34F2",
+        "darkIncreased" : "#EA8DFF",
+        "light" : "#CB30E0",
+        "lightIncreased" : "#B02FC2",
+        "system" : "purple"
+      },
+      "highlight" : {
+        "dark" : "#FFD6004D",
+        "light" : "#FFCC004D",
+        "system" : "yellow"
+      },
+      "info" : {
+        "dark" : "#3CD3FE",
+        "darkIncreased" : "#6DD9FF",
+        "light" : "#00C0E8",
+        "lightIncreased" : "#007EAE",
+        "system" : "cyan"
+      },
+      "neutral" : {
+        "dark" : "#98989D",
+        "light" : "#8E8E93",
+        "system" : "gray"
+      },
+      "primary" : {
+        "dark" : "#0091FF",
+        "darkIncreased" : "#5CB8FF",
+        "light" : "#0088FF",
+        "lightIncreased" : "#1E6EF4",
+        "system" : "blue"
+      },
+      "shadow" : {
+        "dark" : "#0000001A",
+        "light" : "#0000001A"
+      },
+      "subtle" : {
+        "dark" : "#98989D1A",
+        "light" : "#8E8E931A",
+        "system" : "gray"
+      },
+      "white" : {
+        "dark" : "#FFFFFF",
+        "light" : "#FFFFFF"
+      }
+    },
+    "ink" : {
+      "dark" : "#FFFFFFD8",
+      "light" : "#000000D8"
+    },
+    "link" : {
+      "dark" : "#0091FF",
+      "darkIncreased" : "#5CB8FF",
+      "light" : "#0088FF",
+      "lightIncreased" : "#1E6EF4",
+      "system" : "blue"
+    },
+    "muted" : {
+      "dark" : "#98989D",
+      "light" : "#8E8E93",
+      "system" : "gray"
+    },
+    "negative" : {
+      "dark" : "#FF4245",
+      "darkIncreased" : "#FF6165",
+      "light" : "#FF383C",
+      "lightIncreased" : "#E9152D",
+      "system" : "red"
+    },
+    "onAccent" : {
+      "dark" : "#000000",
+      "light" : "#000000"
+    },
+    "positive" : {
+      "dark" : "#30D158",
+      "darkIncreased" : "#4AD968",
+      "light" : "#34C759",
+      "lightIncreased" : "#008932",
+      "system" : "green"
+    },
+    "rampOverrides" : {
+      "efficientfrontier" : "sharpe",
+      "probability" : "distribution",
+      "riskreturn" : "sharpe",
+      "surfacemorph" : "sequential"
+    },
+    "rule" : {
+      "dark" : "#FFFFFF1F",
+      "light" : "#0000001A"
+    },
+    "secondaryInk" : {
+      "dark" : "#98989D",
+      "light" : "#8E8E93",
+      "system" : "gray"
+    },
+    "sequential" : {
+      "light" : [
+        "#532EE6",
+        "#2EE6E6",
+        "#32E62E",
+        "#E6D32E",
+        "#E62E2E"
+      ]
+    },
+    "series" : [
+      {
+        "color" : {
+          "dark" : "#0091FF",
+          "darkIncreased" : "#5CB8FF",
+          "light" : "#0088FF",
+          "lightIncreased" : "#1E6EF4",
+          "system" : "blue"
+        },
+        "name" : "blue"
+      },
+      {
+        "color" : {
+          "dark" : "#30D158",
+          "darkIncreased" : "#4AD968",
+          "light" : "#34C759",
+          "lightIncreased" : "#008932",
+          "system" : "green"
+        },
+        "name" : "green"
+      },
+      {
+        "color" : {
+          "dark" : "#FF9230",
+          "darkIncreased" : "#FFA056",
+          "light" : "#FF8D28",
+          "lightIncreased" : "#C55300",
+          "system" : "orange"
+        },
+        "name" : "orange"
+      },
+      {
+        "color" : {
+          "dark" : "#DB34F2",
+          "darkIncreased" : "#EA8DFF",
+          "light" : "#CB30E0",
+          "lightIncreased" : "#B02FC2",
+          "system" : "purple"
+        },
+        "name" : "purple"
+      },
+      {
+        "color" : {
+          "dark" : "#FF4245",
+          "darkIncreased" : "#FF6165",
+          "light" : "#FF383C",
+          "lightIncreased" : "#E9152D",
+          "system" : "red"
+        },
+        "name" : "red"
+      },
+      {
+        "color" : {
+          "dark" : "#3CD3FE",
+          "darkIncreased" : "#6DD9FF",
+          "light" : "#00C0E8",
+          "lightIncreased" : "#007EAE",
+          "system" : "cyan"
+        },
+        "name" : "cyan"
+      },
+      {
+        "color" : {
+          "dark" : "#FFD600",
+          "darkIncreased" : "#FEDF43",
+          "light" : "#FFCC00",
+          "lightIncreased" : "#A16A00",
+          "system" : "yellow"
+        },
+        "name" : "yellow"
+      },
+      {
+        "color" : {
+          "dark" : "#FF375F",
+          "light" : "#FF2D55",
+          "system" : "pink"
+        },
+        "name" : "pink"
+      },
+      {
+        "color" : {
+          "dark" : "#00DAC3",
+          "light" : "#00C8B3",
+          "system" : "mint"
+        },
+        "name" : "mint"
+      },
+      {
+        "color" : {
+          "dark" : "#6D7CFF",
+          "darkIncreased" : "#A7AAFF",
+          "light" : "#6155F5",
+          "lightIncreased" : "#564ADE",
+          "system" : "indigo"
+        },
+        "name" : "indigo"
+      }
+    ],
+    "surface" : {
+      "dark" : "#1E1E1E",
+      "light" : "#FFFFFF"
+    },
+    "warning" : {
+      "dark" : "#FFD600",
+      "darkIncreased" : "#FEDF43",
+      "light" : "#FFCC00",
+      "lightIncreased" : "#A16A00",
+      "system" : "yellow"
+    }
+  },
+  "structure" : {
+    "labels" : {
+      "axisLabelPlacement" : "besideAxis",
+      "axisSide" : "leading",
+      "series" : "legend",
+      "sourceLine" : false,
+      "values" : "off"
+    },
+    "layout" : {
+      "annotationRadius" : 8,
+      "baseUnit" : 4,
+      "columns" : 12,
+      "containerRadius" : 0,
+      "controlRadius" : 4,
+      "gaps" : {
+        "plot" : 8,
+        "source" : 10,
+        "subtitle" : 12,
+        "title" : 4
+      },
+      "gridlines" : "platformAutomatic",
+      "gutter" : 16,
+      "margins" : {
+        "bottom" : 14,
+        "leading" : 16,
+        "top" : 16,
+        "trailing" : 16
+      },
+      "shadow" : {
+        "colour" : {
+          "opacity" : 1,
+          "source" : "shadow"
+        },
+        "radius" : 4,
+        "x" : 0,
+        "y" : 2
+      }
+    },
+    "marks" : {
+      "areaOpacity" : 0.22,
+      "bandOpacity" : 0.18,
+      "barCornerRadius" : 0,
+      "barFill" : "autoGradient",
+      "barWidthRatio" : 0.6,
+      "detailLineWidth" : 1.5,
+      "fillOpacity" : 0.35,
+      "lineEnd" : "none",
+      "lineWidth" : 2.5,
+      "pointSize" : 30,
+      "selectedLineWidth" : 3.5
+    },
+    "numbers" : {
+      "count" : {
+        "abbreviate" : true,
+        "decimals" : 0,
+        "percentScales" : true,
+        "prefix" : "",
+        "style" : "decimal",
+        "suffix" : ""
+      },
+      "currency" : {
+        "abbreviate" : true,
+        "percentScales" : true,
+        "prefix" : "$",
+        "style" : "currency",
+        "suffix" : ""
+      },
+      "index" : {
+        "abbreviate" : false,
+        "decimals" : 1,
+        "percentScales" : true,
+        "prefix" : "",
+        "style" : "decimal",
+        "suffix" : ""
+      },
+      "percent" : {
+        "abbreviate" : false,
+        "decimals" : 1,
+        "percentScales" : true,
+        "prefix" : "",
+        "style" : "percent",
+        "suffix" : ""
+      },
+      "plain" : {
+        "abbreviate" : false,
+        "decimals" : 2,
+        "percentScales" : true,
+        "prefix" : "",
+        "style" : "decimal",
+        "suffix" : ""
+      },
+      "ratio" : {
+        "abbreviate" : false,
+        "decimals" : 2,
+        "percentScales" : true,
+        "prefix" : "",
+        "style" : "decimal",
+        "suffix" : "×"
+      },
+      "temperature" : {
+        "abbreviate" : false,
+        "decimals" : 1,
+        "percentScales" : true,
+        "prefix" : "",
+        "style" : "decimal",
+        "suffix" : "°"
+      }
+    },
+    "rules" : {
+      "baseline" : 1,
+      "gridline" : 1,
+      "hairline" : 1,
+      "page" : 8,
+      "plotBorder" : 0,
+      "reference" : {
+        "dash" : [
+          4,
+          4
+        ],
+        "weight" : 1
+      },
+      "section" : 3,
+      "title" : {
+        "colour" : "ink",
+        "inset" : 0,
+        "position" : "none",
+        "weight" : 0
+      }
+    },
+    "type" : {
+      "annotation" : {
+        "family" : {
+          "kind" : "sans"
+        },
+        "italic" : false,
+        "lineHeight" : 1.3,
+        "platformStyle" : "caption",
+        "size" : 11,
+        "tracking" : 0,
+        "uppercase" : false,
+        "weight" : 700
+      },
+      "axisLabel" : {
+        "family" : {
+          "kind" : "sans"
+        },
+        "italic" : false,
+        "lineHeight" : 1.3,
+        "platformStyle" : "caption2",
+        "size" : 11,
+        "tracking" : 0,
+        "uppercase" : false,
+        "weight" : 400
+      },
+      "axisTitle" : {
+        "family" : {
+          "kind" : "sans"
+        },
+        "italic" : false,
+        "lineHeight" : 1.3,
+        "platformStyle" : "caption",
+        "size" : 11,
+        "tracking" : 0,
+        "uppercase" : false,
+        "weight" : 500
+      },
+      "body" : {
+        "family" : {
+          "kind" : "sans"
+        },
+        "italic" : false,
+        "lineHeight" : 1.5,
+        "size" : 16,
+        "tracking" : 0,
+        "uppercase" : false,
+        "weight" : 400
+      },
+      "caption" : {
+        "family" : {
+          "kind" : "sans"
+        },
+        "italic" : false,
+        "lineHeight" : 1.4,
+        "size" : 13,
+        "tracking" : 0,
+        "uppercase" : false,
+        "weight" : 400
+      },
+      "display" : {
+        "family" : {
+          "kind" : "sans"
+        },
+        "italic" : false,
+        "lineHeight" : 0.86,
+        "size" : 168,
+        "tracking" : -0.05,
+        "uppercase" : false,
+        "weight" : 800
+      },
+      "heading" : {
+        "family" : {
+          "kind" : "sans"
+        },
+        "italic" : false,
+        "lineHeight" : 1.2,
+        "size" : 28,
+        "tracking" : -0.02,
+        "uppercase" : false,
+        "weight" : 700
+      },
+      "label" : {
+        "family" : {
+          "kind" : "sans"
+        },
+        "italic" : false,
+        "lineHeight" : 1.3,
+        "size" : 11,
+        "tracking" : 0.08,
+        "uppercase" : true,
+        "weight" : 600
+      },
+      "note" : {
+        "family" : {
+          "kind" : "sans"
+        },
+        "italic" : false,
+        "lineHeight" : 1.3,
+        "platformStyle" : "caption2",
+        "size" : 11,
+        "tracking" : 0,
+        "uppercase" : false,
+        "weight" : 400
+      },
+      "seriesLabel" : {
+        "family" : {
+          "kind" : "sans"
+        },
+        "italic" : false,
+        "lineHeight" : 1.3,
+        "platformStyle" : "caption",
+        "size" : 12,
+        "tracking" : 0,
+        "uppercase" : false,
+        "weight" : 600
+      },
+      "source" : {
+        "family" : {
+          "kind" : "sans"
+        },
+        "italic" : false,
+        "lineHeight" : 1.3,
+        "platformStyle" : "caption2",
+        "size" : 11,
+        "tracking" : 0,
+        "uppercase" : false,
+        "weight" : 400
+      },
+      "subtitle" : {
+        "family" : {
+          "kind" : "sans"
+        },
+        "italic" : false,
+        "lineHeight" : 1.3,
+        "platformStyle" : "subheadline",
+        "size" : 13,
+        "tracking" : 0,
+        "uppercase" : false,
+        "weight" : 400
+      },
+      "tag" : {
+        "family" : {
+          "kind" : "sans"
+        },
+        "italic" : false,
+        "lineHeight" : 1.3,
+        "platformStyle" : "caption2",
+        "size" : 11,
+        "tracking" : 0,
+        "uppercase" : false,
+        "weight" : 700
+      },
+      "title" : {
+        "family" : {
+          "kind" : "sans"
+        },
+        "italic" : false,
+        "lineHeight" : 1.3,
+        "platformStyle" : "headline",
+        "size" : 17,
+        "tracking" : 0,
+        "uppercase" : false,
+        "weight" : 700
+      },
+      "uiTitle" : {
+        "family" : {
+          "kind" : "sans"
+        },
+        "italic" : false,
+        "lineHeight" : 1.12,
+        "size" : 34,
+        "tracking" : -0.03,
+        "uppercase" : false,
+        "weight" : 800
+      }
+    }
+  }
+}

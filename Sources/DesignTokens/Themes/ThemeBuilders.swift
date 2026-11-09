@@ -65,12 +65,13 @@ enum ThemeBuilders {
 
     /// Margins, gaps and the grid. Gutter, columns, base unit and radii are the package's, not themed.
     static func layout(top: Double, leading: Double, bottom: Double, trailing: Double, title: Double, subtitle: Double,
-                       plot: Double, source: Double, gridlines: GridlineStyle, shadow: ShadowSpec? = nil) -> LayoutSpec {
+                       plot: Double, source: Double, gridlines: GridlineStyle, shadow: ShadowSpec? = nil,
+                       annotationRadius: Double = Double(Radius.container)) -> LayoutSpec {
         LayoutSpec(margins: Insets(top: top, leading: leading, bottom: bottom, trailing: trailing),
                    gaps: Gaps(title: title, subtitle: subtitle, plot: plot, source: source),
                    gutter: Double(Grid.gutter), columns: Grid.columns, baseUnit: Double(Grid.baseUnit),
                    containerRadius: Double(Radius.container), controlRadius: Double(Radius.control),
-                   gridlines: gridlines, shadow: shadow)
+                   gridlines: gridlines, shadow: shadow, annotationRadius: annotationRadius)
     }
 
     /// A ramp from packed colours, light only.

@@ -215,3 +215,34 @@ public struct ColourReference: Sendable, Hashable, Codable {
         self.opacity = opacity
     }
 }
+
+public extension ColorValue {
+    /// The colour a fraction of the way from this one to `other`, channel by channel (sRGB, not perceptual),
+    /// alpha included. The fraction is clamped to 0 to 1; NaN is 0. It is what a ramp sample is made of.
+    func interpolated(to other: ColorValue, fraction: Double) -> ColorValue {
+        let f = fraction.isNaN ? 0 : min(max(fraction, 0), 1)
+        func mix(_ a: UInt8, _ b: UInt8) -> UInt8 {
+            let value = (Double(a) + (Double(b) - Double(a)) * f).rounded()
+            return UInt8(exactly: min(max(value, 0), 255)) ?? a
+        }
+        return ColorValue(RGB(red: mix(rgb.red, other.rgb.red), green: mix(rgb.green, other.rgb.green),
+                              blue: mix(rgb.blue, other.rgb.blue)),
+                          alpha: alpha + (other.alpha - alpha) * f)
+    }
+}
+
+public extension Ramp {
+    /// The colour at a position along the ramp, 0 to 1, interpolating between neighbouring steps.
+    ///
+    /// Uses the dark ramp when `dark` is true and one exists, otherwise the light one as it is. A position
+    /// outside 0 to 1 is clamped, NaN is 0, an empty ramp returns `nil` and a one-step ramp returns its step.
+    func sample(_ position: Double, dark: Bool = false) -> ColorValue? {
+        let steps = (dark ? self.dark : nil) ?? light
+        guard let first = steps.first else { return nil }
+        guard steps.count > 1 else { return first }
+        let t = position.isNaN ? 0 : min(max(position, 0), 1)
+        let scaled = t * Double(steps.count - 1)
+        let lower = min(Int(scaled.rounded(.down)), steps.count - 2)
+        return steps[lower].interpolated(to: steps[lower + 1], fraction: scaled - Double(lower))
+    }
+}
