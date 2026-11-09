@@ -155,4 +155,34 @@ struct ThemeValidatorTests {
         theme.palette.ink.dark = nil
         #expect(ThemeValidator.validate(theme).contains { $0.check == .structure && $0.subject == "palette.ink" })
     }
+
+    @Test("a hex that is not a colour is an error, not a silent black")
+    func badHexIsAnError() throws {
+        #expect(throws: ValidationInputError.invalidHex("#GG0000")) {
+            try ThemeValidator.measure(hexes: ["#112233", "#GG0000"], surface: "#FFFFFF", dark: false, pairs: .adjacent)
+        }
+        #expect(throws: ValidationInputError.invalidHex("white")) {
+            try ThemeValidator.measure(hexes: ["#112233", "#445566"], surface: "white", dark: false, pairs: .adjacent)
+        }
+        #expect(throws: ValidationInputError.invalidHex("#+12345")) {
+            try ThemeValidator.measureRamp(hexes: ["#+12345", "#445566"], surface: "#FFFFFF", dark: false)
+        }
+        #expect(throws: ValidationInputError.invalidHex("")) {
+            try ThemeValidator.measureRamp(hexes: ["#112233", "#445566"], surface: "", dark: false)
+        }
+        // black is a colour, and is measured as black
+        let black = try ThemeValidator.measure(hexes: ["#000000", "#FFFFFF"], surface: "#FFFFFF", dark: false, pairs: .adjacent)
+        #expect(black.hexes == ["#000000", "#FFFFFF"])
+    }
+
+    @Test("a registered id is unique, found by named(), and a lookup returns the same value every time")
+    func registryLookups() {
+        let ids = Theme.all.map(\.id)
+        #expect(Set(ids).count == ids.count)
+        for theme in Theme.all { #expect(Theme.named(theme.id) == theme, "\(theme.id)") }
+        #expect(Theme.named("nope") == nil)
+        #expect(Theme.named("Swiss") == nil, "ids are exact")
+        #expect(Theme.swiss == Theme.named("swiss"))
+        #expect(Theme.all == Theme.all)
+    }
 }

@@ -2,14 +2,14 @@ import Foundation
 import Testing
 @testable import DesignTokens
 
-/// Runs the dataviz skill's own `validate_palette.js` under Node on the same palettes and compares numbers.
-/// Needs Node and the script; where either is absent the test is SKIPPED and the skip is visible in the test
-/// report with the reason (it is never a silent pass).
+/// Runs the vendored copy of the dataviz skill's `validate_palette.js` (`Vendored/`, hash-pinned by
+/// `VendoredScriptTests`) under Node on the same palettes and compares numbers. Needs Node; where it is absent
+/// the tests are SKIPPED and the skip is visible in the test report with the reason (it is never a silent pass).
 @Suite("JavaScript cross-check")
 struct JavaScriptCrossCheckTests {
     static let node: String? = JavaScriptValidator.nodePath()
     static let script: String? = JavaScriptValidator.scriptPath()
-    static let reason = "needs Node (found: \(node ?? "none")) and validate_palette.js (found: \(script ?? "none")); set DATAVIZ_VALIDATOR to the script path"
+    static let reason = "needs Node (found: \(node ?? "none"); set NODE to its path) and the vendored validate_palette.js (found: \(script ?? "none"))"
 
     @Test("validatorMatchesJavaScriptOnAllPalettes", .enabled(if: node != nil && script != nil, Comment(rawValue: reason)))
     func validatorMatchesJavaScriptOnAllPalettes() throws {
@@ -32,7 +32,7 @@ struct JavaScriptCrossCheckTests {
         #expect(results.count == cases.count)
         var failuresSeen = 0
         for (c, js) in zip(cases, results) {
-            let m = ThemeValidator.measure(hexes: c.palette, surface: c.surface, dark: c.dark, pairs: c.pairs == "all" ? .all : .adjacent)
+            let m = try ThemeValidator.measure(hexes: c.palette, surface: c.surface, dark: c.dark, pairs: c.pairs == "all" ? .all : .adjacent)
             #expect(js.bandOffenders == m.outOfBand.map { JavaScriptValidator.Offender(hex: m.hexes[$0.index], value: Rounding.places($0.value, 3)) }, "\(c.name) band")
             #expect(js.chromaOffenders == m.chromaBelowFloor.map { JavaScriptValidator.Offender(hex: m.hexes[$0.index], value: Rounding.places($0.value, 3)) }, "\(c.name) chroma")
             let cvd = try #require(m.worstCVD, "\(c.name) has a compared pair")
@@ -60,7 +60,7 @@ struct JavaScriptCrossCheckTests {
         ]
         let results = try JavaScriptValidator.runOrdinal(node: node, script: script, ramps: ramps)
         for ((name, hexes, dark, surface), js) in zip(ramps, results) {
-            let m = ThemeValidator.measureRamp(hexes: hexes, surface: surface, dark: dark)
+            let m = try ThemeValidator.measureRamp(hexes: hexes, surface: surface, dark: dark)
             #expect(js.monotone == m.monotone, "\(name) monotone")
             #expect(js.thinSteps == m.thinSteps.count, "\(name) thin steps")
             #expect(same([js.lightEnd], [Rounding.places(m.lightEndContrast, 2)]), "\(name) light end")

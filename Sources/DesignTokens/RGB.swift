@@ -20,10 +20,18 @@ public struct RGB: Sendable, Hashable {
     }
 
     /// Parses `#RRGGBB` or `RRGGBB`, in any case. Returns `nil` for anything else.
+    ///
+    /// Every character must be an ASCII hex digit. `UInt32(_, radix: 16)` alone would also accept a leading
+    /// `+` or `-` (`"#+12345"` is six characters), so the digits are checked first.
     public init?(hex: String) {
         let digits = hex.hasPrefix("#") ? String(hex.dropFirst()) : hex
-        guard digits.count == 6, let packed = UInt32(digits, radix: 16) else { return nil }
+        guard digits.count == 6, Self.isHexDigits(digits), let packed = UInt32(digits, radix: 16) else { return nil }
         self.init(rgb: packed)
+    }
+
+    /// Whether `text` is non-empty and made only of ASCII hex digits (no sign, no space, no other script).
+    static func isHexDigits(_ text: String) -> Bool {
+        !text.isEmpty && text.utf8.allSatisfy { ($0 >= 0x30 && $0 <= 0x39) || ($0 >= 0x41 && $0 <= 0x46) || ($0 >= 0x61 && $0 <= 0x66) }
     }
 
     /// The colour as uppercase `#RRGGBB`.

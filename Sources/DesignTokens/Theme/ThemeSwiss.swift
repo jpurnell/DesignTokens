@@ -16,10 +16,10 @@ public extension Theme {
     ///
     /// The palette's lightness band and contrast are not met by Apple's system colours for some slots. See
     /// the conformance ledger in the project documentation; those slots need direct labels.
-    static var swiss: Theme {
-        Theme(id: "swiss", name: "Swiss", structure: swissStructure, palette: swissPalette, appearances: .both,
-              conformance: swissConformance)
-    }
+    ///
+    /// Built once and stored (it was a computed property before 0.6.0; a use site does not change).
+    static let swiss = Theme(id: "swiss", name: "Swiss", structure: swissStructure, palette: swissPalette,
+                             appearances: .both, conformance: swissConformance)
 
     private static var swissPalette: ThemePalette {
         func role(_ token: ColorToken, system: SystemColorName? = nil) -> Adaptive {

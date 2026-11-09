@@ -49,12 +49,16 @@ struct ConformanceTests {
         }
     }
 
-    @Test("the legacy themes carry legacy ledgers and nothing was tuned: values equal the BusinessMath-UI sources")
-    func legacyLedgersAndUntunedValues() {
+    @Test("the legacy themes carry legacy ledgers that match the validator, and three series arrays are pinned to the BusinessMath-UI values")
+    func legacyLedgersAndThreeSeriesArrays() {
         for theme in [Theme.legacyDefault, .legacyDark, .legacyFinancial, .legacyAccessible] {
             #expect(theme.conformance.kind == .legacy, "\(theme.id)")
             #expect(ThemeValidator.deviations(of: theme) == [], "\(theme.id)")
         }
+        // Only the light series of these three themes are written out here. Every other legacy value (extras,
+        // surfaces, ramps, structure) is pinned by the committed Generated/themes/<id>.json and .css files, which
+        // `ThemeEmitterTests.generatedFilesMatchCommitted` compares with a fresh emit; there is no BusinessMath-UI
+        // source in this repository to compare them with, so "equal to the sources" is not something a test here proves.
         #expect(Theme.legacyFinancial.palette.series.map(\.color.light.hex)
             == ["#004C99", "#008040", "#CC9933", "#663399", "#B21A1A", "#3380B2", "#996633", "#4C4C80"])
         #expect(Theme.legacyAccessible.palette.series.map(\.color.light.hex)
@@ -63,15 +67,18 @@ struct ConformanceTests {
             == ["#66B2FF", "#4CE666", "#FFB24C", "#B280FF", "#FF6666", "#66CCE6", "#FFD94C", "#FF80B2", "#80E6B2", "#9999FF"])
     }
 
-    @Test("Theme.conformance decodes to strict when absent, so 0.4.0 JSON stays readable")
-    func conformanceDecodesWithDefault() throws {
+    @Test("Theme.conformance is required in JSON since 0.5.0: absent is an error, not a silent strict")
+    func conformanceIsRequired() throws {
         let data = try ThemeCodec.encode(.swiss)
         var object = try #require(JSONSerialization.jsonObject(with: data) as? [String: Any])
         _ = try #require(object["conformance"] as? [String: Any], "the encoded theme carries its conformance")
         object["conformance"] = nil
         let old = try JSONSerialization.data(withJSONObject: object)
-        let decoded = try ThemeCodec.decode(old)
-        #expect(decoded.conformance == .strict)
-        #expect(decoded.palette == Theme.swiss.palette)
+        #expect(throws: DecodingError.self) { try ThemeCodec.decode(old) }
+        #expect(throws: DecodingError.self) { try JSONDecoder().decode(Theme.self, from: old) }
+        // a theme whose conformance is strict says so, and that is what Theme.init defaults to in Swift
+        var strict = Theme.house
+        strict.conformance = .strict
+        #expect(try ThemeCodec.decode(ThemeCodec.encode(strict)).conformance == .strict)
     }
 }

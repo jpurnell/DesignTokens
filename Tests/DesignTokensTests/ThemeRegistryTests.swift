@@ -91,7 +91,8 @@ struct ThemeRegistryTests {
         #expect(composed.palette.accent.light.rgb == Palette.princetonAccent)
         #expect(composed.palette.series.map(\.color.light.hex)
             == ["#E77500", "#03B9FC", "#AD274F", "#03C4BB", "#A34AAC", "#007912", "#98A1FF", "#867500"])
-        #expect(composed.palette.background == Theme.swiss.palette.background)
+        #expect(composed.palette.background.light == Theme.swiss.palette.background.light)
+        #expect(composed.palette.background.dark == nil, "a light-only palette makes the result light only")
         #expect(composed.conformance == .strict, "composition drops the receiver's ledger; the result must be measured on its own")
         let princeton = Theme.princeton
         #expect(princeton.id == "princeton")
@@ -119,9 +120,14 @@ struct ThemeRegistryTests {
             #expect(listed.contains { $0.check == .normalSeparation })
             #expect(ThemeValidator.requiresDirectLabels(palette([pair]), on: .swiss).count == 1)
         }
-        // a listed pair that does not fail, or names an unknown series, is stale
+        // a listed pair that does not fail, or names an unknown series, is reported: exactly these two findings
         let stale = ThemeValidator.validate(palette([SeriesPair("red", "full white"), SeriesPair("nope", "red")]), on: .swiss)
-        #expect(stale.filter { $0.check == .labelRequired && $0.subject.contains("stale") || $0.subject.contains("unknown") }.count >= 2)
+            .filter { $0.check == .labelRequired }
+        #expect(stale.contains { $0.subject == "red / full white (stale: the pair does not need labels)" && $0.severity == .warn })
+        #expect(stale.contains { $0.subject == "nope / red (unknown series)" && $0.severity == .fail })
+        // and the real failing pair, which neither entry lists, is still reported as unlisted
+        #expect(stale.contains { $0.subject == "light white / full white" && $0.severity == .fail })
+        #expect(stale.count == 3, "\(stale.map(\.subject))")
         // entity order checks every pair, adjacent mode only the neighbours
         let all = ThemeValidator.validate(palette([]), on: .swiss).filter { $0.check == .normalSeparation }
         #expect(all.count >= 1)
@@ -143,7 +149,8 @@ struct ThemeRegistryTests {
         #expect(theme.palette.background.dark?.hex == "#1E1E1E")
         #expect(theme.structure.layout.gridlines == .platformAutomatic)
         #expect(theme.structure.marks.barFill == .autoGradient)
-        #expect(theme.structure.layout.shadow == LegacyThemes.structure.layout.shadow)
+        #expect(theme.structure.layout.shadow == ShadowSpec(colour: ColourReference(source: "shadow"), radius: 4, x: 0, y: 2))
+        #expect(theme.palette.extras["shadow"]?.light.hex == "#0000001A")
     }
 
     @Test("every legacy theme is platform-automatic and gradient-filled; none has a title rule or value labels")

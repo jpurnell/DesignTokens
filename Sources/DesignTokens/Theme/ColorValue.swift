@@ -23,9 +23,11 @@ public struct ColorValue: Sendable, Hashable, Codable {
         self.alpha = Self.quantised(alpha)
     }
 
-    /// Parses `#RRGGBB` or `#RRGGBBAA` (the `#` is optional, case is ignored). Returns `nil` for anything else.
+    /// Parses `#RRGGBB` or `#RRGGBBAA` (the `#` is optional, case is ignored). Returns `nil` for anything else,
+    /// including a sign where a digit should be: every character must be an ASCII hex digit.
     public init?(hex: String) {
         let digits = hex.hasPrefix("#") ? String(hex.dropFirst()) : hex
+        guard RGB.isHexDigits(digits) else { return nil }
         switch digits.count {
         case 6:
             guard let rgb = RGB(hex: digits) else { return nil }

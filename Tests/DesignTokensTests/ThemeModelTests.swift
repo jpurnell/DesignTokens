@@ -123,9 +123,13 @@ struct ThemeAppearanceTests {
         #expect(issues.allSatisfy { $0.kind == .unexpectedDark })
         #expect(issues.contains { $0.subject == "palette.ink" })
         #expect(issues.contains { $0.subject == "palette.series.orange" })
-        // and the codec refuses it
-        let data = try ThemeCodec.encode(theme)
-        #expect(throws: ThemeError.self) { try ThemeCodec.decode(data) }
+        // and the codec refuses it in both directions: it will not write it, and it will not read it
+        #expect(throws: ThemeError.self) { try ThemeCodec.encode(theme) }
+        let valid = try ThemeCodec.encode(.swiss)
+        let flipped = Data(String(decoding: valid, as: UTF8.self)
+            .replacingOccurrences(of: "\"appearances\" : \"both\"", with: "\"appearances\" : \"lightOnly\"").utf8)
+        #expect(flipped != valid, "the fixture really changed")
+        #expect(throws: ThemeError.self) { try ThemeCodec.decode(flipped) }
 
         // A genuinely light-only theme is clean.
         var clean = Theme.swiss
@@ -203,6 +207,38 @@ struct ThemeCodecTests {
         #expect(!text.contains("\\/"))
         #expect(text.contains("\"id\" : \"swiss\""))
         #expect(text.contains("\"ink\""))
+    }
+
+    /// The same JSON written with its object keys in descending order, at every depth.
+    private func descendingKeyJSON(_ node: Any) -> String {
+        if let dictionary = node as? [String: Any] {
+            let members = dictionary.keys.sorted(by: >).map { key in
+                "\(descendingKeyJSON(key)):\(descendingKeyJSON(dictionary[key] ?? NSNull()))"
+            }
+            return "{" + members.joined(separator: ",") + "}"
+        }
+        if let array = node as? [Any] { return "[" + array.map(descendingKeyJSON).joined(separator: ",") + "]" }
+        if let text = node as? String {
+            return (try? String(decoding: JSONEncoder().encode(text), as: UTF8.self)) ?? "\"\""
+        }
+        if let number = node as? NSNumber {
+            return (number === NSNumber(value: true) || number === NSNumber(value: false)) ? number.boolValue.description : "\(number)"
+        }
+        return "null"
+    }
+
+    @Test("the canonical bytes do not depend on the order of the keys in the input")
+    func canonicalBytesIgnoreInputKeyOrder() throws {
+        for theme in [Theme.swiss, Theme.legacyDefault, sampleWithExtras()] {
+            let canonical = try ThemeCodec.encode(theme)
+            let object = try JSONSerialization.jsonObject(with: canonical)
+            let reversed = descendingKeyJSON(object)
+            #expect(reversed != String(decoding: canonical, as: UTF8.self), "\(theme.id): the input really is reordered")
+            #expect(reversed.contains("\"series\""))
+            let decoded = try ThemeCodec.decode(Data(reversed.utf8))
+            #expect(decoded == theme, "\(theme.id)")
+            #expect(try ThemeCodec.encode(decoded) == canonical, "\(theme.id)")
+        }
     }
 
     @Test("decoding junk throws instead of returning a default theme")

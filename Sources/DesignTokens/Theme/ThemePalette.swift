@@ -143,7 +143,8 @@ public struct ThemePalette: Sendable, Hashable, Codable {
         case series, sequential, diverging, extraRamps, extras, colourOverrides, rampOverrides
     }
 
-    /// Decodes a palette; the fields added in 0.5.0 default to empty when absent.
+    /// Decodes a palette. Every field is required, including `extras`, `colourOverrides` and `rampOverrides`
+    /// (added in 0.5.0, so JSON written by 0.4.0 no longer decodes: nothing wrote theme JSON before 0.6.0's emitters).
     public init(from decoder: any Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
         ink = try c.decode(Adaptive.self, forKey: .ink)
@@ -162,9 +163,9 @@ public struct ThemePalette: Sendable, Hashable, Codable {
         sequential = try c.decode(Ramp.self, forKey: .sequential)
         diverging = try c.decode(Ramp.self, forKey: .diverging)
         extraRamps = try c.decode([String: Ramp].self, forKey: .extraRamps)
-        extras = try c.decodeIfPresent([String: Adaptive].self, forKey: .extras) ?? [:]
-        colourOverrides = try c.decodeIfPresent([String: ColourReference].self, forKey: .colourOverrides) ?? [:]
-        rampOverrides = try c.decodeIfPresent([String: String].self, forKey: .rampOverrides) ?? [:]
+        extras = try c.decode([String: Adaptive].self, forKey: .extras)
+        colourOverrides = try c.decode([String: ColourReference].self, forKey: .colourOverrides)
+        rampOverrides = try c.decode([String: String].self, forKey: .rampOverrides)
     }
 
     /// The colour for a role.

@@ -41,20 +41,16 @@ enum JavaScriptValidator {
         return candidates.first { FileManager.default.isExecutableFile(atPath: $0) }
     }
 
+    /// The vendored copy of the script, `Tests/DesignTokensTests/Vendored/validate_palette.js`, or `nil` if it
+    /// is missing. It is the only script the cross-check runs: no search of temporary directories, no
+    /// environment override, so the comparison is against one pinned file (`VendoredScriptTests`).
     static func scriptPath() -> String? {
-        let fm = FileManager.default
-        if let given = ProcessInfo.processInfo.environment["DATAVIZ_VALIDATOR"], fm.fileExists(atPath: given) { return given }
-        let roots = ["/private/tmp/claude-501/bundled-skills", NSHomeDirectory() + "/.claude/skills/dataviz/scripts"]
-        for root in roots {
-            if root.hasSuffix(".js"), fm.fileExists(atPath: root) { return root }
-            guard let walker = fm.enumerator(atPath: root) else { continue }
-            for case let path as String in walker where path.hasSuffix("dataviz/scripts/validate_palette.js") {
-                return root + "/" + path
-            }
-        }
-        let direct = NSHomeDirectory() + "/.claude/skills/dataviz/scripts/validate_palette.js"
-        return fm.fileExists(atPath: direct) ? direct : nil
+        let path = vendoredScriptURL.path
+        return FileManager.default.fileExists(atPath: path) ? path : nil
     }
+
+    static let vendoredScriptURL = URL(fileURLWithPath: #filePath)
+        .deletingLastPathComponent().appendingPathComponent("Vendored/validate_palette.js")
 
     private static func runNode(_ node: String, source: String) throws -> Data {
         let directory = FileManager.default.temporaryDirectory.appendingPathComponent("dt-js-\(UUID().uuidString)")

@@ -56,11 +56,37 @@ struct SwissConformanceLedgerTests {
         }
     }
 
-    @Test("the slots that need direct labels are exactly the ones that fail contrast or the band")
+    @Test("the slots that need direct labels are what the validator finds off the band or under 3:1, appearance by appearance")
     func slotsRequiringDirectLabels() {
-        #expect(SwissLedger.directLabelSlots == ["orange", "green", "yellow", "cyan"])
-        let failing = Set(["yellow"]).union(["orange", "green", "yellow", "cyan"])
-        #expect(Set(SwissLedger.directLabelSlots) == failing)
-        #expect(SwissLedger.directLabelSlots.allSatisfy { name in Theme.swiss.palette.series.contains { $0.name == name } })
+        let findings = ThemeValidator.validate(.swiss)
+        let names = Theme.swiss.palette.series.map(\.name)
+        func failing(_ appearances: Set<ValidationAppearance>) -> [String] {
+            names.filter { name in
+                findings.contains { finding in
+                    appearances.contains(finding.appearance) && (finding.check == .lightnessBand || finding.check == .markContrast)
+                        && (finding.subject == name || finding.subject == "\(name) on background")
+                }
+            }
+        }
+        // the standard appearances: the four named in the README, by the measured table
+        #expect(failing([.light, .dark]) == ["orange", "green", "yellow", "cyan"])
+        #expect(SwissLedger.directLabelSlots == failing([.light, .dark]))
+        // with Increase Contrast on, the dark values are all above the dark band: every series
+        #expect(failing([.darkIncreased]) == names)
+        #expect(SwissLedger.slotsNeedingDirectLabels(in: [.darkIncreased]) == names)
+        #expect(SwissLedger.slotsNeedingDirectLabels(in: [.light, .dark, .lightIncreased, .darkIncreased]) == names)
+        for appearance in ValidationAppearance.allCases {
+            #expect(SwissLedger.slotsNeedingDirectLabels(in: [appearance]) == failing([appearance]), "\(appearance)")
+        }
+        #expect(SwissLedger.slotsNeedingDirectLabels(in: [.lightIncreased]).isEmpty)
+        #expect(SwissLedger.slotsNeedingDirectLabels(in: []).isEmpty)
+    }
+
+    @Test("a ledger change moves the list: the slots are derived from the ledger, not written beside it")
+    func slotsFollowTheLedger() {
+        var entries = Theme.swiss.conformance.entries
+        entries.append(Finding(severity: .warn, check: .markContrast, appearance: .light, subject: "blue on background", measured: 2.9, threshold: 3))
+        #expect(SwissLedger.slotsNeedingDirectLabels(in: [.light], ledger: entries) == ["orange", "green", "yellow", "blue", "cyan"])
+        #expect(SwissLedger.slotsNeedingDirectLabels(in: [.light], ledger: []).isEmpty)
     }
 }

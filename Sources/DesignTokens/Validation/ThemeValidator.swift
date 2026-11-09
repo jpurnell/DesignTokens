@@ -54,11 +54,18 @@ public enum ThemeValidator {
         return measure(colours: colours, surface: surface.rgb, dark: dark, pairs: pairs)
     }
 
-    /// Measures colours given as `#RRGGBB` strings. A string that is not a colour is measured as black, so
-    /// a typo is a visible failure rather than a crash; use ``ColorValue/init(hex:)`` to validate input.
-    public static func measure(hexes: [String], surface: String, dark: Bool, pairs: PairSelection) -> SeriesMeasurement {
-        let colours = hexes.map { RGB(hex: $0) ?? RGB(rgb: 0) }
-        return measure(colours: colours, surface: RGB(hex: surface) ?? RGB(rgb: 0), dark: dark, pairs: pairs)
+    /// Measures colours given as `#RRGGBB` strings.
+    ///
+    /// - Throws: ``ValidationInputError/invalidHex(_:)`` naming the first string (a colour or the surface) that
+    ///   is not a colour. It is never measured as black: a typo is an error, not a plausible-looking result.
+    public static func measure(hexes: [String], surface: String, dark: Bool, pairs: PairSelection) throws -> SeriesMeasurement {
+        let colours = try hexes.map(parseHex)
+        return measure(colours: colours, surface: try parseHex(surface), dark: dark, pairs: pairs)
+    }
+
+    private static func parseHex(_ text: String) throws -> RGB {
+        guard let colour = RGB(hex: text) else { throw ValidationInputError.invalidHex(text) }
+        return colour
     }
 
     static func measure(colours: [RGB], surface: RGB, dark: Bool, pairs: PairSelection) -> SeriesMeasurement {
@@ -112,8 +119,10 @@ public enum ThemeValidator {
     /// except that steps with no hue (chroma under ``ValidationThresholds/achromaticChroma``) are left out of
     /// the hue spread, because the hue of a grey is numerical noise. (A diverging ramp's neutral midpoint is
     /// likewise left out of each arm's hue spread, which the JavaScript has no check for.)
-    public static func measureRamp(hexes: [String], surface: String, dark: Bool) -> RampMeasurement {
-        measureRamp(colours: hexes.map { RGB(hex: $0) ?? RGB(rgb: 0) }, surface: RGB(hex: surface) ?? RGB(rgb: 0), dark: dark)
+    ///
+    /// - Throws: ``ValidationInputError/invalidHex(_:)`` for a string that is not a colour.
+    public static func measureRamp(hexes: [String], surface: String, dark: Bool) throws -> RampMeasurement {
+        measureRamp(colours: try hexes.map(parseHex), surface: try parseHex(surface), dark: dark)
     }
 
     static func measureRamp(colours: [RGB], surface: RGB, dark: Bool, ignoringHueAt ignored: Int? = nil) -> RampMeasurement {

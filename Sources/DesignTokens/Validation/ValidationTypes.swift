@@ -33,6 +33,12 @@ public enum ValidationThresholds {
     public static let achromaticChroma = 0.02
 }
 
+/// Why the validator refused its input.
+public enum ValidationInputError: Error, Sendable, Equatable {
+    /// A string given as a colour is not `#RRGGBB` (or `RRGGBB`); the payload is the string as it was given.
+    case invalidHex(String)
+}
+
 /// How serious a finding is.
 public enum Severity: String, Sendable, Hashable, Codable, CaseIterable {
     /// The theme fails the method.
