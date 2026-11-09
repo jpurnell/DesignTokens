@@ -11,6 +11,12 @@ let package = Package(
             name: "DesignTokens",
             targets: ["DesignTokens"]
         ),
+        // Apple platforms only in practice: the target is empty where SwiftUI cannot be imported, so the core
+        // product above stays Foundation-only.
+        .library(
+            name: "DesignTokensSwiftUI",
+            targets: ["DesignTokensSwiftUI"]
+        ),
         .executable(
             name: "design-tokens",
             targets: ["design-tokens"]
@@ -32,6 +38,13 @@ let package = Package(
                 .enableUpcomingFeature("ApproachableConcurrency"),
             ],
         ),
+        .target(
+            name: "DesignTokensSwiftUI",
+            dependencies: ["DesignTokens"],
+            swiftSettings: [
+                .enableUpcomingFeature("ApproachableConcurrency"),
+            ],
+        ),
         .executableTarget(
             name: "design-tokens",
             dependencies: ["DesignTokens"],
@@ -42,6 +55,13 @@ let package = Package(
         .testTarget(
             name: "DesignTokensTests",
             dependencies: ["DesignTokens"],
+            swiftSettings: [
+                .enableUpcomingFeature("ApproachableConcurrency"),
+            ],
+        ),
+        .testTarget(
+            name: "DesignTokensSwiftUITests",
+            dependencies: ["DesignTokensSwiftUI", "DesignTokens"],
             swiftSettings: [
                 .enableUpcomingFeature("ApproachableConcurrency"),
             ],
