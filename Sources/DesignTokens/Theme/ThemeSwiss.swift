@@ -13,9 +13,9 @@ public extension Theme {
     /// `muted` token, and none is invented); chart text line height is 1.3, the label role's, because the
     /// editorial theme has none.
     ///
-    /// After the chart alignment (owner decisions 2026-11-09): `muted` is the neutral mark grey (``neutralMark``), the
-    /// magnitude ramp is one-hue blue (``blueSequential``) and the diverging ramp has a dark version
-    /// (``darkDiverging``). The structure draws the heavy rule above the title, marks neutral with the latest column in
+    /// After the chart alignment (owner decisions 2026-11-09): `muted` is the neutral mark grey (``neutralMark``), and the
+    /// magnitude and signed ramps are grey to orange, with dark versions (``greyToOrangeSequential``,
+    /// ``greyToOrangeDiverging``); the blue ramps are the named alternates `sequentialBlue` and `divergingBlueOrange`. The structure draws the heavy rule above the title, marks neutral with the latest column in
     /// the accent, and a muted solid hairline for a target line.
     ///
     /// `positive` and `negative` are **deliberately not the system colours** (owner decision 2026-11-09).
@@ -73,8 +73,8 @@ public extension Theme {
             surface: role(.secondaryBackground), rule: role(.separator), accent: role(.accent, system: .orange),
             onAccent: role(.onAccent), link: role(.link), positive: textSafePositive,
             negative: textSafeNegative, warning: role(.warning), muted: neutralMark,
-            series: series, sequential: blueSequential,
-            diverging: Ramp(light: Palette.diverging.map { ColorValue($0) }, dark: darkDiverging))
+            series: series, sequential: greyToOrangeSequential, diverging: greyToOrangeDiverging,
+            extraRamps: alternateRamps)
     }
 
     /// Swiss's `muted`: the neutral grey of a mark that is not emphasised. Light #B9BBBD and dark #4E5053 are the
@@ -89,24 +89,47 @@ public extension Theme {
                  lightIncreased: ColorValue(RGB(rgb: 0x8E9196)), darkIncreased: ColorValue(RGB(rgb: 0x6F7176)))
     }
 
-    /// Swiss's magnitude ramp: one hue, blue, because orange is emphasis only (owner decision 2026-11-09).
-    /// Light "blue C", light to dark: #6AB0FF #2E92F5 #0A74D6 #0757A6 #053C73 (monotone, no thin step, 2.17:1 at the
-    /// light end, hue spread 2.2 degrees). Dark, authored and not the light ramp reversed (reversed it is 1.7:1 at
-    /// its darkest step): dark to light, #064E8B #0167B8 #1382E1 #449FFA #7FBCFE, the light ramp's hue (OKLCH 251.5,
-    /// the system dark blue's) at OKLCH L 0.42 to 0.78 in even 0.09 steps, the darkest step 2.22:1 on #101112.
-    /// `Palette.sequential` (orange) and `tokens.css` are unchanged.
-    static var blueSequential: Ramp {
-        func steps(_ values: [UInt32]) -> [ColorValue] { values.map { ColorValue(RGB(rgb: $0)) } }
-        return Ramp(light: steps([0x6AB0FF, 0x2E92F5, 0x0A74D6, 0x0757A6, 0x053C73]),
-                    dark: steps([0x064E8B, 0x0167B8, 0x1382E1, 0x449FFA, 0x7FBCFE]))
+    private static func steps(_ values: [UInt32]) -> [ColorValue] { values.map { ColorValue(RGB(rgb: $0)) } }
+
+    /// Swiss's magnitude ramp: light neutral grey to orange, the family of the bars (neutral marks, the accent for
+    /// emphasis; owner decision 2026-11-09). Three steps, so each gap is at least 0.06 of OKLCH lightness.
+    ///
+    /// Light: #D6D8DB (the Swiss separator grey, OKLCH L 0.882) #F0B58B (L 0.818, the midpoint in OKLCH, chroma 0.089) and
+    /// system orange #FF8D28 (L 0.753): lightness falls 0.064 and 0.065. Dark, increasing toward orange on #101112:
+    /// #4E5053 (the dark muted grey, L 0.43, 2.34:1) #A6714A (L 0.595) and the system dark orange #FF9230 (L 0.762):
+    /// rises 0.165 and 0.167. Both are monotone with no thin step and pass the hue check.
+    ///
+    /// **One finding, ledgered:** the light grey end is 1.37:1 on the background, under the 2:1 ramp floor. A grey
+    /// lighter than orange has to be that light for the steps to stay apart, so the lowest cells sit close to the
+    /// surface; their values are printed. `Palette.sequential` (orange) and `tokens.css` are unchanged.
+    static var greyToOrangeSequential: Ramp {
+        Ramp(light: steps([0xD6D8DB, 0xF0B58B, 0xFF8D28]), dark: steps([0x4E5053, 0xA6714A, 0xFF9230]))
     }
 
-    /// Swiss's dark diverging ramp, built like the series: the endpoints are the system dark blue #0091FF and
-    /// orange #FF9230, the midpoint is a dark neutral #414344 (OKLCH L 0.38, 1.9:1 on #101112: it is meant to sit
-    /// near the surface), and each arm's middle step is the endpoint's hue at L 0.52 (blue, #246BB1) and 0.57
-    /// (orange, #AB6224). Lightness runs 0.65, 0.52, 0.38, 0.57, 0.76: no step under 0.13 apart.
-    static var darkDiverging: [ColorValue] {
-        [0x0091FF, 0x246BB1, 0x414344, 0xAB6224, 0xFF9230].map { ColorValue(RGB(rgb: $0)) }
+    /// Swiss's signed ramp (correlations): the dark neutral at the negative pole, a light neutral midpoint, orange at the
+    /// positive pole. Light: #6A6D72 (the secondary ink, L 0.534, 4.98:1) #A6A8AA (L 0.731) #E8E8E8 (the midpoint, L 0.931,
+    /// 1.17:1 on #FAFAFA: near the surface by design) #F7BD95 (L 0.842) #FF8D28 (L 0.753); arms fall by 0.20 and 0.20, then
+    /// 0.089 and 0.089. Dark: #4E5053 (L 0.43) #66686A (0.516) #7E8082 (the midpoint, 0.599, 4.77:1 on #101112) #C78859
+    /// (0.68) #FF9230 (0.762). A midpoint lighter than orange cannot hold the steps apart on the dark surface, so there
+    /// the midpoint is a mid grey. The poles are 15 or more apart in normal vision and 8 or more under protan, deutan and
+    /// tritan simulation (`SwissGreyOrangeRampTests`).
+    static var greyToOrangeDiverging: Ramp {
+        Ramp(light: steps([0x6A6D72, 0xA6A8AA, 0xE8E8E8, 0xF7BD95, 0xFF8D28]),
+             dark: steps([0x4E5053, 0x66686A, 0x7E8082, 0xC78859, 0xFF9230]))
+    }
+
+    /// The named alternates, for a theme variant or a chart that asks for them: `sequentialBlue`, a one-hue blue ramp
+    /// (light #6AB0FF #2E92F5 #0A74D6 #0757A6 #053C73, 2.17:1 at the light end; authored dark #064E8B #0167B8 #1382E1
+    /// #449FFA #7FBCFE, 2.22:1) and `divergingBlueOrange` (the package's `Palette.diverging` with an authored dark
+    /// version, #0091FF #246BB1 #414344 #AB6224 #FF9230). Both pass the ramp checks. They were Swiss's defaults for
+    /// a few hours on 2026-11-09 before the grey-to-orange decision.
+    static var alternateRamps: [String: Ramp] {
+        [
+            "sequentialBlue": Ramp(light: steps([0x6AB0FF, 0x2E92F5, 0x0A74D6, 0x0757A6, 0x053C73]),
+                                   dark: steps([0x064E8B, 0x0167B8, 0x1382E1, 0x449FFA, 0x7FBCFE])),
+            "divergingBlueOrange": Ramp(light: Palette.diverging.map { ColorValue($0) },
+                                        dark: steps([0x0091FF, 0x246BB1, 0x414344, 0xAB6224, 0xFF9230])),
+        ]
     }
 
     private static var swissStructure: Structure {

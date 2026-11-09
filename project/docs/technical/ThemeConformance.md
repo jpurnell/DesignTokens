@@ -23,7 +23,7 @@ with labels or a table):
 
 | Theme | Kind | Findings | Failing | What |
 |---|---|---|---|---|
-| swiss | ledger | 28 | 14 | see `SwissConformanceLedger.md`; 31 before 2026-11-09, when `positive` and `negative` became the text-safe pair (not system colours) and their six rows went; then the chart alignment dropped the orange dark ramp row and added four `muted` mark-contrast rows (1.84, 1.93, 2.34, 2.20) |
+| swiss | ledger | 29 | 15 | see `SwissConformanceLedger.md`; 31 before 2026-11-09, when `positive` and `negative` became the text-safe pair (not system colours) and their six rows went; then the chart alignment dropped the orange dark ramp row and added four `muted` mark-contrast rows (1.84, 1.93, 2.34, 2.20) and, with the grey-to-orange ramp, one light `sequential` row (grey end 1.37:1) |
 | house | ledger | 9 | 3 | cyan 2.98 on background (mark); `secondaryInk` 4.02 (text); status colours under 4.5 as text; sequential ramp lightest step 1.08:1 on white |
 | princeton | ledger | 10 | 0 | orange 2.9, sky 2.15, teal 2.09, periwinkle 2.27 under 3:1 on the light surface (and sky, teal, periwinkle on the card surface); `accent` 2.9; `muted` 1.84 and 1.93 (the neutral mark grey it inherits from Swiss). No status rows: it has Swiss's text-safe gain and loss (12 before the chart alignment, 14 with `muted`, 10 once it followed Swiss) |
 | ft | ledger | 10 | 3 | light: purple L 0.407 (band 0.43), teal chroma 0.086 (0.10), orange 2.15 under 3:1, sequential lightest step 1.09:1; authored dark: claret 2.89 and purple 2.85 on the card surface (3:1) |

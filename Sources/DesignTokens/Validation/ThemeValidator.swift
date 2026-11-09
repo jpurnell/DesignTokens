@@ -347,7 +347,16 @@ public enum ThemeValidator {
             emit("diverging", diverging, outer: nil)
         }
         for name in theme.palette.extraRamps.keys.sorted() {
-            if let ramp = theme.palette.extraRamps[name] { emit("extraRamps.\(name)", steps(ramp), outer: nil) }
+            guard let ramp = theme.palette.extraRamps[name] else { continue }
+            let colours = steps(ramp)
+            // a key that begins `diverging` is a two-pole ramp: its arms are checked, as `diverging` is
+            if name.lowercased().hasPrefix("diverging"), colours.count >= 3 {
+                let middle = colours.count / 2
+                emit("extraRamps.\(name).low", Array(colours[0...middle]), outer: colours.first, midpoint: middle)
+                emit("extraRamps.\(name).high", Array(colours[middle...]), outer: colours.last, midpoint: 0)
+            } else {
+                emit("extraRamps.\(name)", colours, outer: nil)
+            }
         }
         return out
     }

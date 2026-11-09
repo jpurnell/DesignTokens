@@ -174,8 +174,9 @@ struct SwissTextSafeStatusTests {
         let rows = Theme.swissConformance.entries
         #expect(rows.filter { $0.subject.hasPrefix("positive") || $0.subject.hasPrefix("negative") }.isEmpty)
         // 25 findings before the chart alignment; then the orange dark ramp row left and four muted rows arrived
-        #expect(rows.count == 28)
-        #expect(rows.filter { $0.severity == .fail }.count == 14)
+        // then the grey-to-orange sequential ramp added one light row (its grey end is 1.37:1): 29 findings, 15 failing
+        #expect(rows.count == 29)
+        #expect(rows.filter { $0.severity == .fail }.count == 15)
         #expect(ThemeValidator.deviations(of: .swiss).isEmpty)
         #expect(ThemeValidator.validate(.swiss).filter { $0.subject.hasPrefix("positive") || $0.subject.hasPrefix("negative") }.isEmpty)
     }

@@ -176,12 +176,12 @@ struct ChartStyleColourTests {
     func rampSamples() throws {
         let light = ChartStyle(theme: .swiss, appearance: .light, defersToSystemColors: false)
         let first = Theme.swiss.palette.sequential.light[0]
-        let last = Theme.swiss.palette.sequential.light[4]
+        let last = Theme.swiss.palette.sequential.light[2]
         #expect(matches(resolve(light.sequential(0), dark: false, increased: false), first))
         #expect(matches(resolve(light.sequential(1), dark: false, increased: false), last))
         let dark = ChartStyle(theme: .swiss, appearance: .dark, defersToSystemColors: false)
         let darkRamp = Theme.swiss.palette.sequential.dark ?? []
-        #expect(darkRamp.count == 5)
+        #expect(darkRamp.count == 3)
         #expect(matches(resolve(dark.sequential(0), dark: true, increased: false), darkRamp[0]))
         // Swiss's dark diverging ramp is authored (chart alignment, 2026-11-09): the dark ramp is sampled in dark.
         let darkDiverging = Theme.swiss.palette.diverging.dark ?? []

@@ -2,6 +2,19 @@
 
 ## [Unreleased]
 
+### Heatmaps and scatter grey to orange (owner decision 2026-11-09), unreleased
+Same branch, `fix/princeton-follows-swiss`. This replaces the blue ramps the entry below says Swiss got a few hours earlier.
+- **Swiss `palette.sequential`:** light #D6D8DB #F0B58B #FF8D28, dark #4E5053 #A6714A #FF9230 (neutral grey to the system orange; three steps so each OKLCH
+  lightness gap is at least 0.06). **`palette.diverging`:** light #6A6D72 #A6A8AA #E8E8E8 #F7BD95 #FF8D28, dark #4E5053 #66686A #7E8082 #C78859 #FF9230
+  (dark neutral at the negative pole, light neutral midpoint, orange at the positive pole). Dark variants exist for both.
+- **Named alternates** in `palette.extraRamps`: `sequentialBlue` and `divergingBlueOrange` (the previous defaults, with dark versions).
+  `ThemeValidator` validates an `extraRamps` key beginning `diverging` as a two-pole ramp. `Palette.sequential`, `Palette.diverging`, `tokens.css` and `tokens.json`
+  are byte-identical.
+- **Ledger:** Swiss gains one row, `rampLightEnd` light `sequential` 1.37 (2.0), failing: 29 findings, 15 failing (was 28 and 14). Princeton defines its own
+  orange sequential and blue-orange diverging ramps and keeps them (its ledger is unchanged at 10); it inherits the two alternates, light only.
+- **Scatter:** no field was needed. Points take `markFill` like bars (neutral, the emphasised point in the accent) and a third variable uses `sequential`.
+- Regenerated: `themes/swiss.*`, `themes/princeton.*` (the inherited alternates) and nothing else. Tests: 285 core, 42 SwiftUI.
+
 ### Princeton follows Swiss fully; Swiss bars square; the halo rule (owner decisions 2026-11-09), unreleased
 Branch `fix/princeton-follows-swiss` from 5ae1cbc.
 - **Princeton:** the override that kept the system green and red is removed, so `Theme.princeton` inherits Swiss's text-safe `positive` and
@@ -45,7 +58,7 @@ reserved for emphasis.
   reference-label gap 5; the target line is a muted solid hairline with an ink label; `numbers.plain` minimal up to two decimals; neutral marks with the
   latest column emphasised. The card border is an option and is off (decision 8).
 - `palette.muted` is the approved grey (#B9BBBD / #4E5053; Increase Contrast #8E9196 / #6F7176), no system colour.
-- Magnitude ramp: one-hue blue (light #6AB0FF #2E92F5 #0A74D6 #0757A6 #053C73; authored dark #064E8B #0167B8 #1382E1 #449FFA #7FBCFE) replaces the
+- (Superseded the same day by grey to orange, see above.) Magnitude ramp: one-hue blue (light #6AB0FF #2E92F5 #0A74D6 #0757A6 #053C73; authored dark #064E8B #0167B8 #1382E1 #449FFA #7FBCFE) replaces the
   orange ramp. Diverging ramp: light unchanged, authored dark #0091FF #246BB1 #414344 #AB6224 #FF9230. Both pass the ramp checks in light and dark.
   `Palette.sequential`, `Palette.diverging` and `Generated/tokens.css` / `tokens.json` are byte-identical (hash pins pass).
 - Ledger: four `muted` mark-contrast rows added (1.84 and 1.93 light, 2.34 and 2.20 dark) and the orange dark sequential row (1.99) removed: 25 findings

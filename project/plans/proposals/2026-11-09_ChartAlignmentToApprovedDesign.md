@@ -292,6 +292,8 @@ Later the same day (owner adjustments, binding):
    approved drawing's card; the theme result has id `swiss+card`). Swiss's `cardPadding` is also 0 by default (a deviation from the table
    above, which said 8: padding without a border would double the 8 pt margins).
 
+9. **Heatmaps and scatter grey-to-orange, owner 2026-11-09 (later).** Swiss's sequential and diverging ramps are grey to orange, with dark variants, replacing the blue ones from decision 3; the blue ramps stay as named alternates (`sequentialBlue`, `divergingBlueOrange`). Diverging has the dark neutral at the negative pole. Scatter: neutral points, accent emphasis, the sequential ramp for a third variable; no new field. Princeton keeps its own ramps. The sequential ramp's light grey end is 1.37:1 (ledgered); the values are printed.
+
 ## Implementation notes (DesignTokens, 2026-11-09)
 
 Values taken from the table in section 4, and where this implementation differs or confirms an "inferred" value:

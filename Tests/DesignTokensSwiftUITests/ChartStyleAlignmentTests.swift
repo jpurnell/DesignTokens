@@ -175,12 +175,12 @@ struct ChartStyleAlignmentTests {
         #expect(style(.house).fractionDigits(.currency) == nil)
     }
 
-    @Test("the dark diverging ramp is sampled in dark: its ends are the system dark blue and orange")
+    @Test("the dark diverging ramp is sampled in dark: the dark neutral pole to the system dark orange; the sequential ramp ends in orange")
     func darkDiverging() {
         let dark = style(dark: true)
-        #expect(matches(resolve(dark.diverging(0), dark: true), ColorValue(RGB(rgb: 0x0091FF))))
+        #expect(matches(resolve(dark.diverging(0), dark: true), ColorValue(RGB(rgb: 0x4E5053))))
         #expect(matches(resolve(dark.diverging(1), dark: true), ColorValue(RGB(rgb: 0xFF9230))))
-        #expect(matches(resolve(dark.sequential(1), dark: true), ColorValue(RGB(rgb: 0x7FBCFE))))
+        #expect(matches(resolve(dark.sequential(1), dark: true), ColorValue(RGB(rgb: 0xFF9230))))
     }
 }
 #endif

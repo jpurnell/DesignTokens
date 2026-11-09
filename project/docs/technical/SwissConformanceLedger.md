@@ -62,6 +62,11 @@ grey darker than the orange (OKLCH L 0.66 against 0.75) and invert the emphasis;
 normal dE 17.95 / 37.35 (light / dark) and CVD 15.50 / 30.14, and with Increase Contrast 18.58 / 28.36 and 14.49 / 22.11, all above the
 method's 15 and 8 (pinned by `SwissPaletteAlignmentTests`). Princeton's ledger gains the two light rows (its muted has no dark value).
 
-The ramp rows: Swiss's sequential ramp is now blue (light #6AB0FF #2E92F5 #0A74D6 #0757A6 #053C73; dark #064E8B #0167B8 #1382E1
-#449FFA #7FBCFE) and its diverging ramp has a dark version (#0091FF #246BB1 #414344 #AB6224 #FF9230). Both pass every ramp check in
-light and dark, so they add no rows.
+The ramp rows: Swiss's ramps are grey to orange (owner decision 2026-11-09, "Heatmaps and scatter grey-to-orange"). Sequential: light
+#D6D8DB #F0B58B #FF8D28, dark #4E5053 #A6714A #FF9230. Diverging (dark neutral at the negative pole, a light neutral midpoint, orange at the
+positive): light #6A6D72 #A6A8AA #E8E8E8 #F7BD95 #FF8D28, dark #4E5053 #66686A #7E8082 #C78859 #FF9230. All are monotone in OKLCH lightness with no thin
+step; the diverging poles are 15 or more apart in normal vision and 8 or more under protan, deutan and tritan simulation. One row: the sequential
+ramp's light grey end is **1.37:1** on the background (floor 2:1, failing): a grey lighter than orange has to be that light for the steps to stay
+apart, so the lowest cells sit near the surface and their values are printed. The diverging midpoint is 1.17:1 on the light background (by design,
+it is the zero) and 4.77:1 on the dark; the validator does not check a midpoint, so this is documented, not a row. The blue ramps are the named
+alternates `sequentialBlue` (light end 2.17:1, dark end 2.22:1) and `divergingBlueOrange`, and pass.

@@ -20,6 +20,7 @@ extension Theme {
             ledgerWarn(.markContrast, .light, "accent on surface", 2.31, 3.0),
             ledgerWarn(.markContrast, .light, "muted on background", 1.84, 3.0),
             ledgerWarn(.markContrast, .light, "muted on surface", 1.93, 3.0),
+            ledgerFail(.rampLightEnd, .light, "sequential", 1.37, 2.0),
             ledgerFail(.lightnessBand, .dark, "orange", 0.762, 0.67),
             ledgerFail(.lightnessBand, .dark, "green", 0.756, 0.67),
             ledgerFail(.lightnessBand, .dark, "yellow", 0.885, 0.67),

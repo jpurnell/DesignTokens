@@ -71,8 +71,10 @@ The design system's values, held once as typed Swift and generated for every sur
   values are the relief), `MarkSpec.defaultFill` / `defaultEmphasis` / `emphasisFill`, the title rule above the title (`gapAfter`), a 1.5 pt ink
   baseline, bars 0.7 of the slot, a muted solid hairline target line with an ink label, `LabelSpec.valueHalo`, minimal decimals
   (`NumberFormatSpec.maxDecimals`), margins 6/8/12/8, and an opt-in card border (`Theme.withCardBorder(_:padding:)`, off by default). Swiss's
-  magnitude ramp is now one-hue blue (with an authored dark variant) and its diverging ramp has a dark version; orange is emphasis only
-  (`Palette.sequential` and `tokens.css` are unchanged). Every new field defaults to the old behaviour, so House, FT, Economist and the
+  sequential and diverging ramps are **grey to orange**, the family of the bars (owner decision 2026-11-09, "Heatmaps and scatter
+  grey-to-orange"), each with an authored dark variant; the blue sequential and blue-orange diverging ramps are the named alternates
+  `extraRamps["sequentialBlue"]` and `["divergingBlueOrange"]`. Scatter points take the same fills as bars (neutral, the emphasised point in
+  the accent) and a colour-encoded third variable uses `sequential`. `Palette.sequential`, `Palette.diverging` and `tokens.css` are unchanged. Every new field defaults to the old behaviour, so House, FT, Economist and the
   legacy themes behave as before; Princeton, a Swiss variant, inherits the new structure. `ChartStyle` exposes all of it
   (`markFill(emphasised:)`, `emphasisColour`, `titleRuleGap`, `referenceColor`, `valueHalo`, `fractionDigits(_:)` and the rest).
 

@@ -107,6 +107,14 @@
         "threshold" : 3
       },
       {
+        "appearance" : "light",
+        "check" : "rampLightEnd",
+        "measured" : 1.37,
+        "severity" : "fail",
+        "subject" : "sequential",
+        "threshold" : 2
+      },
+      {
         "appearance" : "dark",
         "check" : "lightnessBand",
         "measured" : 0.762,
@@ -248,22 +256,53 @@
     },
     "diverging" : {
       "dark" : [
-        "#0091FF",
-        "#246BB1",
-        "#414344",
-        "#AB6224",
+        "#4E5053",
+        "#66686A",
+        "#7E8082",
+        "#C78859",
         "#FF9230"
       ],
       "light" : [
-        "#0088FF",
-        "#8ABBF8",
+        "#6A6D72",
+        "#A6A8AA",
         "#E8E8E8",
         "#F7BD95",
         "#FF8D28"
       ]
     },
     "extraRamps" : {
-
+      "divergingBlueOrange" : {
+        "dark" : [
+          "#0091FF",
+          "#246BB1",
+          "#414344",
+          "#AB6224",
+          "#FF9230"
+        ],
+        "light" : [
+          "#0088FF",
+          "#8ABBF8",
+          "#E8E8E8",
+          "#F7BD95",
+          "#FF8D28"
+        ]
+      },
+      "sequentialBlue" : {
+        "dark" : [
+          "#064E8B",
+          "#0167B8",
+          "#1382E1",
+          "#449FFA",
+          "#7FBCFE"
+        ],
+        "light" : [
+          "#6AB0FF",
+          "#2E92F5",
+          "#0A74D6",
+          "#0757A6",
+          "#053C73"
+        ]
+      }
     },
     "extras" : {
 
@@ -311,18 +350,14 @@
     },
     "sequential" : {
       "dark" : [
-        "#064E8B",
-        "#0167B8",
-        "#1382E1",
-        "#449FFA",
-        "#7FBCFE"
+        "#4E5053",
+        "#A6714A",
+        "#FF9230"
       ],
       "light" : [
-        "#6AB0FF",
-        "#2E92F5",
-        "#0A74D6",
-        "#0757A6",
-        "#053C73"
+        "#D6D8DB",
+        "#F0B58B",
+        "#FF8D28"
       ]
     },
     "series" : [

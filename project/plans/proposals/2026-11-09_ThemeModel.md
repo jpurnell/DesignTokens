@@ -74,6 +74,8 @@ model; they do not reopen the decisions above. **0.6.0 grew** (it is still unrel
    `numbers.plain` minimal up to two decimals. Every new field defaults to the old behaviour; House, FT, Economist and the four legacy
    themes are unchanged in behaviour (their JSON less the new keys is byte-identical). Princeton inherits Swiss's structure.
 
+**Heatmaps and scatter grey to orange (owner, 2026-11-09, later the same day):** Swiss's sequential and diverging ramps are grey to orange with dark variants (decision 4 above is superseded for the defaults); the blue ramps are named `extraRamps` alternates; see the audit doc, decision 9.
+
 **Princeton follows Swiss fully (owner, 2026-11-09, later the same day):** it inherits the text-safe `positive` and `negative` too (superseding the earlier "Princeton keeps the system green and red"); it keeps only its own accent, series and ramps.
 
 ## Corrections found while implementing 0.4.0

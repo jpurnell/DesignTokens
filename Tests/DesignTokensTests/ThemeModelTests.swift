@@ -18,10 +18,11 @@ struct ThemeModelTests {
         #expect(swiss.palette.series.compactMap(\.color.dark?.rgb) == Palette.seriesDark)
         #expect(swiss.palette.series.compactMap(\.color.lightIncreased?.rgb) == Palette.seriesIncreasedContrast)
         #expect(swiss.palette.series.compactMap(\.color.darkIncreased?.rgb) == Palette.seriesIncreasedContrastDark)
-        // the magnitude ramp is no longer Palette.sequential (orange is emphasis only, owner decision 2026-11-09);
-        // the diverging light ramp still is, and gained an authored dark ramp. See SwissPaletteAlignmentTests.
+        // the ramps are grey to orange (owner decision 2026-11-09), no longer Palette.sequential / Palette.diverging, which stay
+        // as the named alternates. See SwissGreyOrangeRampTests.
         #expect(swiss.palette.sequential.light.map(\.rgb) != Palette.sequential)
-        #expect(swiss.palette.diverging.light.map(\.rgb) == Palette.diverging)
+        #expect(swiss.palette.diverging.light.map(\.rgb) != Palette.diverging, "grey to orange; Palette.diverging is the named alternate")
+        #expect(swiss.palette.extraRamps["divergingBlueOrange"]?.light.map(\.rgb) == Palette.diverging)
         #expect(swiss.palette.diverging.dark?.count == 5)
         // Structure half: weights come from Rule, layout from Grid and Radius.
         #expect(swiss.structure.rules.title.weight.isEqual(to: Double(Rule.section.points)))

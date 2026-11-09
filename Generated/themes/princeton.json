@@ -107,7 +107,24 @@
       ]
     },
     "extraRamps" : {
-
+      "divergingBlueOrange" : {
+        "light" : [
+          "#0088FF",
+          "#8ABBF8",
+          "#E8E8E8",
+          "#F7BD95",
+          "#FF8D28"
+        ]
+      },
+      "sequentialBlue" : {
+        "light" : [
+          "#6AB0FF",
+          "#2E92F5",
+          "#0A74D6",
+          "#0757A6",
+          "#053C73"
+        ]
+      }
     },
     "extras" : {
 

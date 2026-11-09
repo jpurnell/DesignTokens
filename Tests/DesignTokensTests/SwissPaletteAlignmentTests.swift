@@ -93,13 +93,13 @@ struct SwissPaletteAlignmentTests {
         #expect(!ThemeValidator.validate(passing).contains { $0.subject.hasPrefix("muted") })
     }
 
-    @Test("the ledger records the four muted rows, drops the orange dark sequential row, and still equals the validator")
+    @Test("the ledger records the four muted rows and, since the grey-to-orange ramp, one light sequential row; it still equals the validator")
     func ledgerChanges() {
         let rows = Theme.swissConformance.entries
         #expect(rows.filter { $0.subject.hasPrefix("muted") }.count == 4)
-        #expect(!rows.contains { $0.check == .rampLightEnd })
-        #expect(rows.count == 28)
-        #expect(rows.filter { $0.severity == .fail }.count == 14)
+        #expect(rows.filter { $0.check == .rampLightEnd }.map(\.appearance) == [.light], "the orange dark row left; the light grey end arrived")
+        #expect(rows.count == 29)
+        #expect(rows.filter { $0.severity == .fail }.count == 15)
         #expect(ThemeValidator.deviations(of: .swiss).isEmpty)
     }
 
@@ -119,51 +119,7 @@ struct SwissPaletteAlignmentTests {
     }
 
     // MARK: The ramps
-
-    @Test("sequential is a one-hue blue ramp, light to dark on a light surface; the dark ramp is authored, lighter for more")
-    func sequentialRamp() {
-        #expect(swiss.palette.sequential.light.map(\.hex) == ["#6AB0FF", "#2E92F5", "#0A74D6", "#0757A6", "#053C73"])
-        #expect(swiss.palette.sequential.dark?.map(\.hex) == ["#064E8B", "#0167B8", "#1382E1", "#449FFA", "#7FBCFE"])
-    }
-
-    @Test("both sequential ramps pass every ramp check: monotone, no thin step, an end at 2:1 or more, one hue")
-    func sequentialPasses() throws {
-        let light = try ThemeValidator.measureRamp(hexes: swiss.palette.sequential.light.map(\.hex), surface: "#FAFAFA", dark: false)
-        #expect(light.monotone && light.thinSteps.isEmpty)
-        #expect(light.lightEndContrast >= ValidationThresholds.rampEndContrast)
-        #expect(light.hueSpread <= ValidationThresholds.rampMaxHueSpread)
-        let dark = try ThemeValidator.measureRamp(hexes: (swiss.palette.sequential.dark ?? []).map(\.hex), surface: "#101112", dark: true)
-        #expect(dark.monotone && dark.thinSteps.isEmpty)
-        #expect(dark.lightEndContrast >= ValidationThresholds.rampEndContrast)
-        #expect(dark.hueSpread <= ValidationThresholds.rampMaxHueSpread)
-        #expect(!ThemeValidator.validate(swiss).contains { $0.check.isRamp })
-    }
-
-    @Test("the diverging ramp keeps its light blue to neutral to orange values and gains an authored dark ramp with the dark system endpoints")
-    func divergingRamp() {
-        #expect(swiss.palette.diverging.light.map(\.rgb) == Palette.diverging)
-        let dark = swiss.palette.diverging.dark?.map(\.hex)
-        #expect(dark == ["#0091FF", "#246BB1", "#414344", "#AB6224", "#FF9230"])
-        // the endpoints are the system dark blue and orange of the series
-        #expect(dark?.first == Palette.seriesDark[5].hex)
-        #expect(dark?.last == Palette.seriesDark[0].hex)
-    }
-
-    @Test("the dark diverging ramp is validated: each arm is monotone toward the midpoint, with no thin step, an outer end at 2:1 or more, and one hue")
-    func divergingDarkPasses() throws {
-        let hexes = (swiss.palette.diverging.dark ?? []).map(\.hex)
-        #expect(hexes.count == 5)
-        for (name, arm) in [("low", Array(hexes[0...2])), ("high", Array(hexes[2...4]))] {
-            let m = try ThemeValidator.measureRamp(hexes: arm, surface: "#101112", dark: true)
-            #expect(m.monotone, "\(name)")
-            #expect(m.thinSteps.isEmpty, "\(name)")
-        }
-        let outerLow = try ThemeValidator.measureRamp(hexes: [hexes[0]], surface: "#101112", dark: true)
-        let outerHigh = try ThemeValidator.measureRamp(hexes: [hexes[4]], surface: "#101112", dark: true)
-        #expect(outerLow.lightEndContrast >= ValidationThresholds.rampEndContrast)
-        #expect(outerHigh.lightEndContrast >= ValidationThresholds.rampEndContrast)
-        #expect(!ThemeValidator.validate(swiss).contains { $0.check.isRamp && $0.subject.hasPrefix("diverging") })
-    }
+    // Swiss's default ramps are grey to orange (SwissGreyOrangeRampTests); the blue ramps are named alternates there.
 
     @Test("Palette.sequential and Palette.diverging, and so tokens.css, are unchanged: the orange ramp is only Swiss's no longer")
     func paletteConstantsUntouched() {
@@ -178,9 +134,4 @@ struct SwissPaletteAlignmentTests {
         #expect(same([Rounding.places(m.lightEndContrast, 2)], [1.99]))
     }
 
-    @Test("Princeton keeps its own orange ramps, as composed")
-    func princetonRampsAreItsOwn() {
-        #expect(Theme.princeton.palette.sequential.light.map(\.hex) == ["#FE913F", "#E17204", "#BA5D01", "#944900", "#703500"])
-        #expect(Theme.princeton.palette.sequential.dark == nil)
-    }
 }
