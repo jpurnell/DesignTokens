@@ -39,6 +39,16 @@ public enum CSSEmitter {
             lines.append("  --type-\(style.name)-transform: \(style.uppercase ? "uppercase" : "none");")
         }
         lines.append("}")
+        let hcLight = increasedContrastDeclarations(dark: false)
+        let hcDark = increasedContrastDeclarations(dark: true)
+        // Order matters: the light contrast block comes before the dark blocks so that a dark scheme
+        // (higher specificity, or later at equal specificity) wins over it, then the dark contrast
+        // blocks come last so they win over the standard dark values.
+        lines.append("@media (prefers-contrast: more) {")
+        lines.append("  :root {")
+        lines.append(contentsOf: hcLight.map { "  " + $0 })
+        lines.append("  }")
+        lines.append("}")
         let dark = darkDeclarations()
         lines.append("@media (prefers-color-scheme: dark) {")
         lines.append("  :root:not([data-theme=\"light\"]):not([data-bs-theme=\"light\"]) {")
@@ -48,6 +58,17 @@ public enum CSSEmitter {
         lines.append("[data-theme=\"dark\"],")
         lines.append("[data-bs-theme=\"dark\"] {")
         lines.append(contentsOf: dark)
+        lines.append("}")
+        lines.append("@media (prefers-contrast: more) and (prefers-color-scheme: dark) {")
+        lines.append("  :root:not([data-theme=\"light\"]):not([data-bs-theme=\"light\"]) {")
+        lines.append(contentsOf: hcDark.map { "  " + $0 })
+        lines.append("  }")
+        lines.append("}")
+        lines.append("@media (prefers-contrast: more) {")
+        lines.append("  [data-theme=\"dark\"],")
+        lines.append("  [data-bs-theme=\"dark\"] {")
+        lines.append(contentsOf: hcDark.map { "  " + $0 })
+        lines.append("  }")
         lines.append("}")
         return lines.joined(separator: "\n") + "\n"
     }
@@ -63,6 +84,20 @@ public enum CSSEmitter {
             out.append("  --series-\(index + 1): \(color.hex);")
         }
         out.append("  color-scheme: dark;")
+        return out
+    }
+
+    private static func increasedContrastDeclarations(dark: Bool) -> [String] {
+        var out: [String] = []
+        for token in ColorToken.allCases {
+            guard let color = dark ? token.increasedContrastDark : token.increasedContrastLight else { continue }
+            out.append("  --\(kebab(token.rawValue)): \(color.hex);")
+            out.append("  --\(kebab(token.rawValue))-rgb: \(triple(color));")
+        }
+        let series = dark ? Palette.seriesIncreasedContrastDark : Palette.seriesIncreasedContrast
+        for (index, color) in series.enumerated() {
+            out.append("  --series-\(index + 1): \(color.hex);")
+        }
         return out
     }
 

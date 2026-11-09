@@ -42,6 +42,41 @@ struct EmitterTests {
         #expect(dark.contains("--series-8: #3CD3FE;"))
     }
 
+    @Test("CSS has prefers-contrast: more blocks, and the dark one is nested with the dark scheme")
+    func cssIncreasedContrast() throws {
+        let css = CSSEmitter.emit()
+        let light = css.components(separatedBy: "@media (prefers-contrast: more) {\n  :root {")[1]
+            .components(separatedBy: "\n  }\n}")[0]
+        #expect(light.contains("--accent: #C55300;"))
+        #expect(light.contains("--series-8: #007EAE;"))
+        #expect(!light.contains("--link"))
+        #expect(!light.contains("--label"))
+        let darkMedia = "@media (prefers-contrast: more) and (prefers-color-scheme: dark) {\n  :root:not([data-theme=\"light\"]):not([data-bs-theme=\"light\"]) {"
+        let dark = css.components(separatedBy: darkMedia)[1].components(separatedBy: "\n  }\n}")[0]
+        #expect(dark.contains("--accent: #FFA056;"))
+        #expect(dark.contains("--series-2: #A7AAFF;"))
+        #expect(css.contains("@media (prefers-contrast: more) {\n  [data-theme=\"dark\"],\n  [data-bs-theme=\"dark\"] {"))
+        // cascade: the light contrast block must precede the dark blocks so dark scheme wins over it
+        let hcLight = try #require(css.range(of: "@media (prefers-contrast: more) {\n  :root {")).lowerBound
+        let darkScheme = try #require(css.range(of: "@media (prefers-color-scheme: dark)")).lowerBound
+        #expect(hcLight < darkScheme)
+    }
+
+    @Test("JSON carries increased-contrast values only where measured")
+    func jsonIncreasedContrast() throws {
+        let object = try #require(JSONSerialization.jsonObject(with: Data(JSONEmitter.emit().utf8)) as? [String: Any])
+        let colors = try #require(object["colors"] as? [String: [String: String]])
+        #expect(colors["accent"]?["increasedContrastLight"] == "#C55300")
+        #expect(colors["accent"]?["increasedContrastDark"] == "#FFA056")
+        #expect(colors["label"]?["increasedContrastLight"] == nil)
+        #expect(colors["separator"]?["increasedContrastDark"] == nil)
+        let palette = try #require(object["palette"] as? [String: Any])
+        let hc = try #require(palette["seriesIncreasedContrast"] as? [[String: String]])
+        #expect(hc.map { $0["hex"] } == Palette.seriesIncreasedContrast.map(\.hex))
+        let hcDark = try #require(palette["seriesIncreasedContrastDark"] as? [[String: String]])
+        #expect(hcDark.map { $0["hex"] } == Palette.seriesIncreasedContrastDark.map(\.hex))
+    }
+
     @Test("JSON is valid, sorted and carries the snapshot release")
     func jsonStructure() throws {
         let data = Data(JSONEmitter.emit().utf8)

@@ -56,4 +56,50 @@ struct ColorTokenTests {
             #expect(ratio >= 4.5)
         }
     }
+
+    @Test("increased-contrast values are the system colours measured with Increase Contrast on, macOS 27.2")
+    func increasedContrastMeasured() {
+        #expect(ColorToken.accent.increasedContrastLight?.hex == "#C55300")
+        #expect(ColorToken.accent.increasedContrastDark?.hex == "#FFA056")
+        #expect(ColorToken.success.increasedContrastLight?.hex == "#008932")
+        #expect(ColorToken.success.increasedContrastDark?.hex == "#4AD968")
+        #expect(ColorToken.destructive.increasedContrastLight?.hex == "#E9152D")
+        #expect(ColorToken.destructive.increasedContrastDark?.hex == "#FF6165")
+    }
+
+    @Test("roles that could not be measured have no increased-contrast value, never a guess")
+    func increasedContrastUnmeasured() {
+        let measured: Set<ColorToken> = [.accent, .success, .destructive]
+        for token in ColorToken.allCases where !measured.contains(token) {
+            #expect(token.increasedContrastLight == nil)
+            #expect(token.increasedContrastDark == nil)
+        }
+        #expect(Set(ColorToken.unmeasuredIncreasedContrast) == Set(ColorToken.allCases).subtracting(measured))
+    }
+
+    @Test("increased-contrast accent and status colours read against the surface at least as well as the standard value")
+    func increasedContrastNotWorse() {
+        for token in [ColorToken.accent, .success, .destructive] {
+            for appearance in Appearance.allCases {
+                let surface = ColorToken.background.value(in: appearance)
+                let hc = token.value(in: appearance, increasedContrast: true)
+                #expect(Contrast.ratio(hc, surface) >= Contrast.ratio(token.value(in: appearance), surface))
+            }
+        }
+    }
+
+    @Test("link has no increased-contrast value: the measured system link has less contrast than the package's own link")
+    func linkNotAdopted() {
+        #expect(ColorToken.link.increasedContrastLight == nil)
+        #expect(ColorToken.link.increasedContrastDark == nil)
+        let measuredLight = RGB(rgb: 0x0068DA), measuredDark = RGB(rgb: 0x419CFF)
+        #expect(Contrast.ratio(measuredLight, ColorToken.background.light) < Contrast.ratio(ColorToken.link.light, ColorToken.background.light))
+        #expect(Contrast.ratio(measuredDark, ColorToken.background.value(in: .dark)) < Contrast.ratio(ColorToken.link.value(in: .dark), ColorToken.background.value(in: .dark)))
+    }
+
+    @Test("value(in:increasedContrast:) falls back to the standard value when unmeasured")
+    func increasedContrastFallback() {
+        #expect(ColorToken.label.value(in: .dark, increasedContrast: true) == ColorToken.label.value(in: .dark))
+        #expect(ColorToken.accent.value(in: .light, increasedContrast: false) == ColorToken.accent.light)
+    }
 }

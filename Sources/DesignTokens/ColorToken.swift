@@ -68,6 +68,40 @@ public enum ColorToken: String, Sendable, Hashable, CaseIterable {
         }
     }
 
+    /// The light-appearance value with Increase Contrast on, or `nil` when it was not measured.
+    ///
+    /// Measured on ``Snapshot/systemRelease`` from the system colours under the increased-contrast
+    /// appearances. Only the colours with an opaque system value are here; see ``unmeasuredIncreasedContrast``.
+    public var increasedContrastLight: RGB? {
+        switch self {
+        case .accent: RGB(rgb: 0xC55300)
+        case .success: RGB(rgb: 0x008932)
+        case .destructive: RGB(rgb: 0xE9152D)
+        default: nil
+        }
+    }
+
+    /// The dark-appearance value with Increase Contrast on, or `nil` when it was not measured.
+    public var increasedContrastDark: RGB? {
+        switch self {
+        case .accent: RGB(rgb: 0xFFA056)
+        case .success: RGB(rgb: 0x4AD968)
+        case .destructive: RGB(rgb: 0xFF6165)
+        default: nil
+        }
+    }
+
+    /// The value for an appearance, optionally with Increase Contrast on.
+    ///
+    /// With `increasedContrast` true, a role that was not measured falls back to the standard value.
+    public func value(in appearance: Appearance, increasedContrast: Bool) -> RGB {
+        guard increasedContrast else { return value(in: appearance) }
+        switch appearance {
+        case .light: return increasedContrastLight ?? value(in: .light)
+        case .dark: return increasedContrastDark ?? value(in: .dark)
+        }
+    }
+
     /// The value for an appearance; an unmeasured dark value falls back to the light one.
     public func value(in appearance: Appearance) -> RGB {
         switch appearance {
@@ -79,5 +113,15 @@ public enum ColorToken: String, Sendable, Hashable, CaseIterable {
     /// The roles whose dark value has not been measured yet.
     public static var unmeasuredDark: [ColorToken] {
         allCases.filter { $0.dark == nil }
+    }
+
+    /// The roles with no increased-contrast value. `link` was measured (system link #0068DA light,
+    /// #419CFF dark) but is left out on purpose: this package's own link (#1F57D6, #7BA3FF) has more contrast
+    /// against the background than the system's increased-contrast link (5.9 to 1 against 5.0, 7.7 against 6.7),
+    /// so adopting it would lower contrast. `separator`, `secondaryLabel` and `label` have
+    /// alpha, which a hex readout loses; `background`, `secondaryBackground` and `onAccent` are this
+    /// package's own values rather than a system colour, and `warning` has no system counterpart.
+    public static var unmeasuredIncreasedContrast: [ColorToken] {
+        allCases.filter { $0.increasedContrastLight == nil || $0.increasedContrastDark == nil }
     }
 }

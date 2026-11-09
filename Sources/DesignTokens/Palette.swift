@@ -17,6 +17,22 @@ public enum Palette {
         RGB(rgb: 0xFFD600), RGB(rgb: 0x0091FF), RGB(rgb: 0xFF4245), RGB(rgb: 0x3CD3FE),
     ]
 
+    /// The series colours with Increase Contrast on, light appearance, in the same order as ``series``.
+    ///
+    /// Measured on ``Snapshot/systemRelease``.
+    public static let seriesIncreasedContrast: [RGB] = [
+        RGB(rgb: 0xC55300), RGB(rgb: 0x564ADE), RGB(rgb: 0x008932), RGB(rgb: 0xB02FC2),
+        RGB(rgb: 0xA16A00), RGB(rgb: 0x1E6EF4), RGB(rgb: 0xE9152D), RGB(rgb: 0x007EAE),
+    ]
+
+    /// The series colours with Increase Contrast on, dark appearance, in the same order as ``series``.
+    ///
+    /// Measured on ``Snapshot/systemRelease``.
+    public static let seriesIncreasedContrastDark: [RGB] = [
+        RGB(rgb: 0xFFA056), RGB(rgb: 0xA7AAFF), RGB(rgb: 0x4AD968), RGB(rgb: 0xEA8DFF),
+        RGB(rgb: 0xFEDF43), RGB(rgb: 0x5CB8FF), RGB(rgb: 0xFF6165), RGB(rgb: 0x6DD9FF),
+    ]
+
     /// The names of ``series``, in the same order.
     public static let seriesNames = ["orange", "indigo", "green", "purple", "yellow", "blue", "red", "cyan"]
 

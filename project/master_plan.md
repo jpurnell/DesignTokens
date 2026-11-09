@@ -90,10 +90,10 @@ Tokens (Swift) -> Apple resolver -> Color (system values, not hard-coded)
 ## Roadmap
 
 ### Phase 1: the package
-- [ ] Colour roles with light, dark, increased contrast
-- [ ] Palette with the validator run as a test
-- [ ] Type, space, rules, grid, radius
-- [ ] CSS and JSON emitters, golden files
+- [x] Colour roles with light, dark, increased contrast (0.3.0: increased contrast measured for accent, success, destructive and the eight series; link, label, secondaryLabel, separator, surfaces absent, see CHANGELOG)
+- [x] Palette with the validator run as a test
+- [x] Type, space, rules, grid, radius
+- [x] CSS and JSON emitters, golden files
 
 ### Phase 2: the site
 ### Phase 3: the chart libraries
@@ -102,4 +102,4 @@ Tokens (Swift) -> Apple resolver -> Color (system values, not hard-coded)
 
 ---
 
-**Last Updated:** 2026-11-08 (initial plan from the accepted design proposal)
+**Last Updated:** 2026-11-09 (0.3.0: reconciled Phase 1 checklist against shipped code; increased-contrast values added)

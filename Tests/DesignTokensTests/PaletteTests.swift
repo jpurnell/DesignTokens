@@ -42,6 +42,41 @@ struct PaletteTests {
         }
     }
 
+    @Test("increased-contrast series are the system colours measured with Increase Contrast on, same order")
+    func seriesIncreasedContrast() {
+        #expect(Palette.seriesIncreasedContrast.map(\.hex) == [
+            "#C55300", "#564ADE", "#008932", "#B02FC2", "#A16A00", "#1E6EF4", "#E9152D", "#007EAE",
+        ])
+        #expect(Palette.seriesIncreasedContrastDark.map(\.hex) == [
+            "#FFA056", "#A7AAFF", "#4AD968", "#EA8DFF", "#FEDF43", "#5CB8FF", "#FF6165", "#6DD9FF",
+        ])
+        #expect(Palette.seriesIncreasedContrast[0] == ColorToken.accent.increasedContrastLight)
+        #expect(Palette.seriesIncreasedContrastDark[2] == ColorToken.success.increasedContrastDark)
+    }
+
+    @Test("each increased-contrast series colour contrasts with its surface at least as much as the standard one")
+    func seriesIncreasedContrastNotWorse() {
+        let pairs: [(hc: [RGB], standard: [RGB], appearance: Appearance)] = [
+            (Palette.seriesIncreasedContrast, Palette.series, .light),
+            (Palette.seriesIncreasedContrastDark, Palette.seriesDark, .dark),
+        ]
+        for pair in pairs {
+            let surface = ColorToken.background.value(in: pair.appearance)
+            for (hc, standard) in zip(pair.hc, pair.standard) {
+                #expect(Contrast.ratio(hc, surface) >= Contrast.ratio(standard, surface))
+            }
+        }
+    }
+
+    @Test("adjacent increased-contrast series colours differ by at least 15 in OKLab x100")
+    func adjacentDistanceIncreasedContrast() {
+        for series in [Palette.seriesIncreasedContrast, Palette.seriesIncreasedContrastDark] {
+            for (a, b) in zip(series, series.dropFirst()) {
+                #expect(OKLab.distance(a, b) >= 15)
+            }
+        }
+    }
+
     @Test("the dark sequential ramp is the light ramp reversed, so more is lighter on a dark surface")
     func sequentialDark() {
         #expect(Palette.sequentialDark == Palette.sequential.reversed())

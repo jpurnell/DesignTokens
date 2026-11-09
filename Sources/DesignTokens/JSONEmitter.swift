@@ -10,10 +10,16 @@ public enum JSONEmitter {
         let colors = ColorToken.allCases.sorted { $0.rawValue < $1.rawValue }.map { token -> String in
             var fields = ["      \"light\": \"\(token.light.hex)\""]
             if let dark = token.dark { fields.insert("      \"dark\": \"\(dark.hex)\"", at: 0) }
+            var extra: [String] = []
+            if let hcDark = token.increasedContrastDark { extra.append("      \"increasedContrastDark\": \"\(hcDark.hex)\"") }
+            if let hcLight = token.increasedContrastLight { extra.append("      \"increasedContrastLight\": \"\(hcLight.hex)\"") }
+            fields.insert(contentsOf: extra, at: token.dark == nil ? 0 : 1)
             return "    \"\(token.rawValue)\": {\n" + fields.joined(separator: ",\n") + "\n    }"
         }
         let series = zip(Palette.seriesNames, Palette.series).map { "      { \"name\": \"\($0)\", \"hex\": \"\($1.hex)\" }" }
         let seriesDark = zip(Palette.seriesNames, Palette.seriesDark).map { "      { \"name\": \"\($0)\", \"hex\": \"\($1.hex)\" }" }
+        let seriesHC = zip(Palette.seriesNames, Palette.seriesIncreasedContrast).map { "      { \"name\": \"\($0)\", \"hex\": \"\($1.hex)\" }" }
+        let seriesHCDark = zip(Palette.seriesNames, Palette.seriesIncreasedContrastDark).map { "      { \"name\": \"\($0)\", \"hex\": \"\($1.hex)\" }" }
         let rules = Rule.allCases.sorted { $0.name < $1.name }.map { "    \"\($0.name)\": \($0.points)" }
         let types = TypeStyle.allCases.sorted { $0.name < $1.name }.map { style in
             "    \"\(style.name)\": { \"line\": \"\(style.line)\", \"size\": \"\(escaped(style.size))\", "
@@ -41,6 +47,12 @@ public enum JSONEmitter {
             "    ],",
             "    \"seriesDark\": [",
             seriesDark.joined(separator: ",\n"),
+            "    ],",
+            "    \"seriesIncreasedContrast\": [",
+            seriesHC.joined(separator: ",\n"),
+            "    ],",
+            "    \"seriesIncreasedContrastDark\": [",
+            seriesHCDark.joined(separator: ",\n"),
             "    ]",
             "  },",
             "  \"radius\": { \"container\": \(Radius.container), \"control\": \(Radius.control) },",
