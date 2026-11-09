@@ -2,6 +2,49 @@
 
 ## [Unreleased]
 
+### 0.6.0 grew: the chart alignment (owner decisions 2026-11-09), unreleased
+0.6.0 is untagged, so this is added to it rather than renumbered; the section below it is no longer the whole of what 0.6.0 contains.
+Written on branch `feature/chart-alignment-spec` from the 0.6.0 candidate (8e29e5c). Source:
+`project/plans/proposals/2026-11-09_ChartAlignmentToApprovedDesign.md` ("Decisions 2026-11-09"). Marks are neutral by default; the accent is
+reserved for emphasis.
+
+**Added (every field defaults to today's behaviour, `decodeIfPresent`)**
+- `MarkSpec.defaultFill` (`MarkFill`: `.series` | `.muted`), `defaultEmphasis` (`EmphasisDefault`: `.none` | `.latest`), `emphasisFill` (`ColorRole`).
+- `TitleRule.gapAfter` (`Double?`, nil is `gaps.title`); `RuleSpec.baselineColour` (default `.rule`), `referenceColour` and
+  `referenceLabelColour` (default `.secondaryInk`); `Gaps.referenceLabel` (3); `LayoutSpec.cardBorder` and `cardPadding` (0); `LabelSpec.valueHalo` (0);
+  `NumberFormatSpec.maxDecimals` (`Int?`; with `decimals` nil it makes a minimal format: 41.2, 80, never 41.20).
+- `Structure.withCardBorder(_:padding:)` and `Theme.withCardBorder(_:padding:)` (a variant with id `<id>+card`); `MarkSpec.defaultEmphasisIndex(count:isVertical:)`;
+  `NumberFormatSpec.fractionDigits`.
+- The validator checks `muted` for 3:1 mark contrast where `marks.defaultFill == .muted`.
+- `DesignTokensSwiftUI` `ChartStyle`: `markFill(emphasised:emphasisNamed:series:)`, `markFillValue(...)`, `emphasisColour`, `emphasisValue`, `defaultMarkFill`,
+  `defaultEmphasis`, `defaultEmphasisIndex(count:isVertical:)`, `neutralLadder(_:)`, `neutralLadderValue(_:)`, `titleRuleGap`, `TitleRule.gap`
+  (`Rule.gap`), `baselineColor`, `referenceColor`, `referenceLabelColor`, `referenceLabelGap`, `valueHalo`, `hasValueHalo`, `valueHaloColor`,
+  `cardBorderWeight`, `hasCardBorder`, `cardBorderColor`, `cardPadding`, `fractionDigits(_:)`.
+- CSS variables for the new fields (`--rule-baseline-color`, `--rule-reference-color`, `--rule-reference-label-color`, `--rule-title-gap-after`
+  when set, `--gap-reference-label`, `--card-border`, `--card-padding`, `--label-value-halo`, `--mark-default-fill`, `--mark-default-emphasis`, `--mark-emphasis-fill`).
+
+**Changed: Swiss**
+- Title rule above the title (gap 8, inferred and not confirmed by overlay); baseline 1.5 pt ink; bars 0.7 of the slot; margins 6/8/12/8; value halo 3;
+  reference-label gap 5; the target line is a muted solid hairline with an ink label; `numbers.plain` minimal up to two decimals; neutral marks with the
+  latest column emphasised. The card border is an option and is off (decision 8).
+- `palette.muted` is the approved grey (#B9BBBD / #4E5053; Increase Contrast #8E9196 / #6F7176), no system colour.
+- Magnitude ramp: one-hue blue (light #6AB0FF #2E92F5 #0A74D6 #0757A6 #053C73; authored dark #064E8B #0167B8 #1382E1 #449FFA #7FBCFE) replaces the
+  orange ramp. Diverging ramp: light unchanged, authored dark #0091FF #246BB1 #414344 #AB6224 #FF9230. Both pass the ramp checks in light and dark.
+  `Palette.sequential`, `Palette.diverging` and `Generated/tokens.css` / `tokens.json` are byte-identical (hash pins pass).
+- Ledger: four `muted` mark-contrast rows added (1.84 and 1.93 light, 2.34 and 2.20 dark) and the orange dark sequential row (1.99) removed: 25 findings
+  become 28, 15 failing become 14.
+- Princeton is composed on Swiss and **inherits the new structure** and the `muted` grey (its ledger gains the two light `muted` rows, 12 to 14); it keeps
+  its own accent, orange ramps and the system green and red.
+
+**Generated files (regenerated deliberately)**
+- House, FT, Economist and the four legacy themes: `themes/<id>.json` gains the new defaulted keys and nothing else (a test pins that the JSON less those keys
+  has the pre-change fingerprint); `themes/<id>.css` gains the new variables at their defaults; both fingerprints, and so the hash in each CSS header, change.
+  Their behaviour is unchanged.
+- Swiss and Princeton: values changed as above. `themes/swiss.tumblr.css`: the stamp only (`fnv1a64:6677d068491bb103` became `ef99641db9228157`); the Tumblr
+  template is unchanged and does not use the chart structure, so a pasted block reports stale from `check-blog` until re-pasted.
+- Tests: 244 core and 28 SwiftUI before; 276 core and 41 SwiftUI after. Red-first: `ChartAlignmentStructureTests`, `SwissPaletteAlignmentTests`,
+  `ChartAlignmentHelpersTests`, `ChartStyleAlignmentTests`.
+
 Written on branch `feature/tumblr-emitter` (from tag 0.5.0) and merged into the 0.6.0 line on `merge/tumblr-into-0.6.0`. Kept
 under Unreleased, not under 0.6.0: the release it ships in is the owner's call. Additive; `Generated/tokens.css`, `tokens.json`
 and the other `Generated/themes/` files are unchanged by the merge.

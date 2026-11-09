@@ -18,7 +18,7 @@ The design system's values, held once as typed Swift and generated for every sur
 - **Palette** (`Palette`): eight series colours in a fixed order, validated for adjacency and colour-vision separation (it fails the dataviz lightness band for yellow in light and for orange, green, yellow and cyan in dark, and orange, green, yellow and cyan are under 3:1 on the light surface, so those four slots need direct labels in the light and standard dark appearances: `SwissLedger.directLabelSlots`, derived from the Swiss ledger. With Increase Contrast on in dark all eight series are above the dark band, so there every slot needs one: `SwissLedger.slotsNeedingDirectLabels(in:)`), in light (`series`) and dark
   (`seriesDark`, measured) and with Increase Contrast on (`seriesIncreasedContrast`,
   `seriesIncreasedContrastDark`, measured); the sequential ramp, and `sequentialDark` (the same ramp reversed, derived, not
-  measured); the diverging ramp (no dark ramp yet: its tints would have to be invented); and Princeton
+  measured); the diverging ramp (`Palette` has no dark ramp; Swiss's theme authors one, see "Chart alignment"); and Princeton
   orange as a custom accent.
 - **Metrics** (`Rule`, `Grid`, `Radius`): rule weights 1, 3 and 8 pt; a 12-column grid with a 16 pt gutter
   and a 4 pt base; container radius 0, control radius 4 pt.
@@ -65,7 +65,18 @@ The design system's values, held once as typed Swift and generated for every sur
   throws on a bad hex. Theme JSON written by 0.4.0 (no `conformance`, `extras`, `colourOverrides` or `rampOverrides`) no longer
   decodes; nothing emitted theme JSON before 0.6.0.
 
-Not yet here: increased-contrast values for the roles listed above, and a dark diverging ramp.
+- **Chart alignment** (0.6.0, unreleased; owner decisions 2026-11-09, `project/plans/proposals/2026-11-09_ChartAlignmentToApprovedDesign.md`):
+  Swiss expresses the approved "Swiss and Apple" chart. Marks are neutral by default and the accent is reserved for emphasis:
+  `palette.muted` is the history grey (#B9BBBD / #4E5053; Increase Contrast #8E9196 / #6F7176; 1.84:1 and 2.34:1, ledgered, printed
+  values are the relief), `MarkSpec.defaultFill` / `defaultEmphasis` / `emphasisFill`, the title rule above the title (`gapAfter`), a 1.5 pt ink
+  baseline, bars 0.7 of the slot, a muted solid hairline target line with an ink label, `LabelSpec.valueHalo`, minimal decimals
+  (`NumberFormatSpec.maxDecimals`), margins 6/8/12/8, and an opt-in card border (`Theme.withCardBorder(_:padding:)`, off by default). Swiss's
+  magnitude ramp is now one-hue blue (with an authored dark variant) and its diverging ramp has a dark version; orange is emphasis only
+  (`Palette.sequential` and `tokens.css` are unchanged). Every new field defaults to the old behaviour, so House, FT, Economist and the
+  legacy themes behave as before; Princeton, a Swiss variant, inherits the new structure. `ChartStyle` exposes all of it
+  (`markFill(emphasised:)`, `emphasisColour`, `titleRuleGap`, `referenceColor`, `valueHalo`, `fractionDigits(_:)` and the rest).
+
+Not yet here: increased-contrast values for the roles listed above, and dark values for Princeton.
 
 ## Platforms
 

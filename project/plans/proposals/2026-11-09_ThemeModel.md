@@ -1,7 +1,7 @@
 # Design Proposal: a Theme model hosted in DesignTokens
 
 **Date:** 2026-11-09
-**Status:** Approved with decisions 2026-11-09 (see "Decisions 2026-11-09" below). Release 0.4.0 is tagged; release 0.5.0 (validator, conformance ledgers and the nine themes) is tagged (see "Corrections found while implementing 0.5.0"); release 0.6.0, DesignTokens half (per-theme CSS and JSON emitters and the `DesignTokensSwiftUI` target), is implemented on branch `feature/emitters-swiftui-0.6.0` (untagged, see "Corrections found while implementing 0.6.0"); the BusinessMath-UI half of 0.6.0 is not started; sections 3 to 18 are otherwise as proposed, with the corrections listed under "Corrections found while implementing 0.4.0".
+**Status:** Approved with decisions 2026-11-09 (see "Decisions 2026-11-09" below). Release 0.4.0 is tagged; release 0.5.0 (validator, conformance ledgers and the nine themes) is tagged (see "Corrections found while implementing 0.5.0"); release 0.6.0, DesignTokens half (per-theme CSS and JSON emitters and the `DesignTokensSwiftUI` target; grown on 2026-11-09 by the chart-alignment structure, see "Decisions 2026-11-09, chart alignment"), is implemented on branch `feature/emitters-swiftui-0.6.0` (untagged, see "Corrections found while implementing 0.6.0"); the BusinessMath-UI half of 0.6.0 is not started; sections 3 to 18 are otherwise as proposed, with the corrections listed under "Corrections found while implementing 0.4.0".
 **Update 2026-11-09 (Tumblr block):** the Tumblr block emitter and `check-blog` (sections 5.3 and the 0.7.0 row) are implemented on branch `feature/tumblr-emitter` (cut from tag 0.5.0) and merged into the 0.6.0 line on `merge/tumblr-into-0.6.0`, unreleased, ahead of the 0.7.0 they were scheduled for. Outcomes that differ from the sketch: the stamp has a fourth field, the template revision (`swiss 0.6.0 t1 fnv1a64:...` on the 0.6.0 line), as 5.3 said it should; `check-blog` has two more exit codes (3 garbled stamp, 4 page unreadable) and `--html-file`; headless Chrome **does** return the real blog (home page and `/page/2`, 2026-11-09) but exits with status 2 after a complete `--dump-dom`, and the live blog's DOM contains the Swiss draft's CSS comment and variables intact, with no stamp, so it reports unstamped. `check-blog` reads the stamp from the `<style>` text of the dumped DOM, not from `getComputedStyle`. Not done: the computed-value drift check (needs a Tumblr preview), the `tumblrBlockHasNoLiterals` test is scoped to colour literals (layout pixel constants with no token stay in the template), and the block's links are ink in light and accent in dark, taken from the draft rather than from the theme's `link` role. Nothing rendered in Tumblr, nothing pasted; Linux untested.
 **Author:** Claude (session with Justin Purnell)
 **Supersedes:** `Playgrounds/Math/BusinessMath-UI/project/plans/proposals/2026-11-09_StructuralThemeLayer.md`
@@ -54,6 +54,25 @@ Owner decisions on the open questions of section 17. They are binding and overri
    row are amended accordingly; `appearances: .lightOnly` stays in the model for themes that genuinely have no dark.
 5. **A conformance ledger of exact measurements that fails on any change is accepted** for themes that fail checks
    (legacy themes, and Swiss for the slots above), instead of suppressions or annotations.
+
+## Decisions 2026-11-09, chart alignment (second set, after the approved "Swiss and Apple" chart)
+
+Source and reasoning: `2026-11-09_ChartAlignmentToApprovedDesign.md` ("Decisions 2026-11-09" there lists every one). These extend the
+model; they do not reopen the decisions above. **0.6.0 grew** (it is still unreleased): the structure gained fields and Swiss's values changed.
+
+1. Marks are **neutral by default; the accent is reserved for emphasis.** Swiss `muted` is the approved grey (#B9BBBD / #4E5053, IC #8E9196 /
+   #6F7176), no new role. `MarkSpec.defaultFill` (`.series` | `.muted`), `defaultEmphasis` (`.none` | `.latest`) and `emphasisFill`.
+2. The grey's 1.84:1 and 2.34:1 stay; `ThemeValidator` checks `muted` for 3:1 where `defaultFill == .muted`; Swiss's ledger gains four rows.
+3. `LabelSpec.valueHalo` (3 pt, Swiss).
+4. Ramps: Swiss keeps blue to neutral to orange diverging, gains a dark diverging ramp and a blue sequential ramp with a dark variant; orange
+   is emphasis only; `Palette.sequential` and `tokens.css` unchanged.
+5. `.automatic` emphasis: none for horizontal ranked bars, latest for vertical charts (BusinessMath-UI view API). Grouped-bar key: a direct
+   label in ink (BusinessMath-UI).
+6. Target line: a muted solid hairline, label in ink (`rules.reference` dash `[]`, `referenceColour`, `referenceLabelColour`); dashed stays expressible.
+7. Card border: an option, off for Swiss (`layout.cardBorder`, `cardPadding`, `withCardBorder`).
+8. The rule moves above the title (`gapAfter` 8), baseline 1.5 pt ink, bar ratio 0.7, margins 6/8/12/8, `gaps.referenceLabel` 5,
+   `numbers.plain` minimal up to two decimals. Every new field defaults to the old behaviour; House, FT, Economist and the four legacy
+   themes are unchanged in behaviour (their JSON less the new keys is byte-identical). Princeton inherits Swiss's structure.
 
 ## Corrections found while implementing 0.4.0
 
