@@ -35,7 +35,29 @@ system's own colours and use these values only where the system cannot reach.
 - ``Adaptive``
 - ``ColorValue``
 - ``ThemeCodec``
+- ``ThemeError``
+- ``Theme/all``
 - ``SwissLedger``
+
+### Validation
+
+- ``ThemeValidator``
+- ``ValidationThresholds``
+- ``ValidationInputError``
+- ``Finding``
+- ``Conformance``
+- ``Check``
+- ``Severity``
+- ``ValidationAppearance``
+- ``SeriesMeasurement``
+- ``RampMeasurement``
+
+### Colour references and ramps
+
+- ``Ramp``
+- ``ColourReference``
+- ``AppearanceSupport``
+- ``SystemColorName``
 
 ### Generated files
 

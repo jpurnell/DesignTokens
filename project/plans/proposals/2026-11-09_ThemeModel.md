@@ -115,6 +115,28 @@ Owner decisions on the open questions of section 17. They are binding and overri
 - **The Machado port was verified by mutation:** changing one deutan coefficient fails the recorded-run test and the Node
   cross-check.
 
+## Open items for the owner (read this first)
+
+- **Swiss `positive` and `negative` (open owner decision, raised by the 0.6.0 review; NOT changed).** `Theme.swiss` takes `positive` and `negative`
+  from `ColorToken.success` and `.destructive`, the system green and red. As text on the Swiss background (#FAFAFA) `positive` is **2.13:1**
+  (ledgered: warn under 4.5) and `negative` 3.42:1. BusinessMath-UI's own Swiss uses a darker green `#1F9D55` at **3.49:1** (and red `#D64545`).
+  A Swiss chart that prints a status in `positive` is therefore harder to read than BusinessMath-UI's today. Options: keep the system colours
+  and require a glyph or a label (the "status is never colour alone" rule already says so), add a darker text-only `positive`/`negative`
+  (`extras` or new roles), or adopt BusinessMath-UI's values for the text use. Decide before the BusinessMath-UI conversion.
+- **Princeton has no dark variant** (see the Phase 1b item in the master plan).
+- **0.4.0 theme JSON no longer decodes** (since the review fixes); nothing emitted theme JSON before 0.6.0, but say so if something stored it.
+
+## Corrections found while fixing the 0.4.0/0.5.0 review (0.6.0)
+
+- **`composed(with:)` is total over valid receivers.** An app palette without dark values on a `both` theme makes the result `lightOnly` with every
+  dark value stripped (this is how Princeton was already built, now by the method itself). The 0.5.0 note "Princeton is the composition with every
+  dark value stripped" describes the same result by a different path.
+- **Decoding is strict and encoding is symmetric** (unknown keys, dangling references, negative weights, ramp length, strict with entries, appearance issues).
+  The 0.4.0 note "`Theme.conformance` ... decode default, so 0.4.0 JSON stays readable" is superseded: the 0.5.0 fields are required again.
+- **A ledger is not a golden file.** It pins findings at the validator's rounding; the committed `Generated/themes/` files pin every value.
+- **`SwissLedger.directLabelSlots` is the light and standard-dark list** (orange, green, yellow, cyan); with Increase Contrast on in dark all eight series
+  need labels. Derived from the ledger.
+
 ## Corrections found while implementing 0.6.0 (DesignTokens half)
 
 - **The emitters cover what a stylesheet can use.** Value-label and series-label flags, axis placement and number formats are in the

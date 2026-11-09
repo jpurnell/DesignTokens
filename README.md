@@ -2,7 +2,7 @@
 
 The design system's values, held once as typed Swift and generated for every surface that cannot import Swift.
 
-**Status:** pre-release (`0.x`, latest tag 0.5.0; 0.6.0 in preparation on `feature/emitters-swiftui-0.6.0`, untagged). Phase 1 and 1b of `project/master_plan.md`.
+**Status:** pre-release (`0.x`, latest tag 0.5.0; 0.6.0 is unreleased and untagged, and carries the fixes from an independent review of 0.4.0 and 0.5.0: see `CHANGELOG.md`). Phase 1 and 1b of `project/master_plan.md`.
 
 ## What it holds
 
@@ -15,7 +15,7 @@ The design system's values, held once as typed Swift and generated for every sur
   `separator` carry alpha, which a hex readout loses; `background`, `secondaryBackground` and `onAccent` are
   this package's own values; `warning` has no system colour; and the measured system `link` has *less*
   contrast than this package's link, so it is deliberately not adopted.
-- **Palette** (`Palette`): eight series colours in a fixed order, validated for adjacency and colour-vision separation (it fails the dataviz lightness band for yellow in light and for orange, green, yellow and cyan in dark, and orange, green, yellow and cyan are under 3:1 on the light surface, so those slots need direct labels: see `SwissLedger`), in light (`series`) and dark
+- **Palette** (`Palette`): eight series colours in a fixed order, validated for adjacency and colour-vision separation (it fails the dataviz lightness band for yellow in light and for orange, green, yellow and cyan in dark, and orange, green, yellow and cyan are under 3:1 on the light surface, so those four slots need direct labels in the light and standard dark appearances: `SwissLedger.directLabelSlots`, derived from the Swiss ledger. With Increase Contrast on in dark all eight series are above the dark band, so there every slot needs one: `SwissLedger.slotsNeedingDirectLabels(in:)`), in light (`series`) and dark
   (`seriesDark`, measured) and with Increase Contrast on (`seriesIncreasedContrast`,
   `seriesIncreasedContrastDark`, measured); the sequential ramp, and `sequentialDark` (the same ramp reversed, derived, not
   measured); the diverging ramp (no dark ramp yet: its tints would have to be invented); and Princeton
@@ -33,9 +33,13 @@ The design system's values, held once as typed Swift and generated for every sur
 
 - **Validator and themes** (0.5.0, additive): `ThemeValidator`, a Swift port of the dataviz skill's
   `validate_palette.js` (OKLCH lightness band, chroma floor, colour-vision and normal-vision separation, mark
-  and text contrast, ramps, structure), cross-checked against the script under Node when Node and the script are
-  present (`JavaScriptCrossCheckTests`; the test is skipped with a visible reason otherwise). `Theme.conformance`:
-  `strict`, or a `ledger` / `legacy` ledger of exact measurements that fails on any change (not a suppression).
+  and text contrast, ramps, structure), cross-checked under Node against a vendored, hash-pinned copy of the script
+  (`Tests/DesignTokensTests/Vendored/`, `JavaScriptCrossCheckTests`; skipped with a visible reason when Node is absent), and its
+  thresholds are read out of the script's text by a test that needs no Node. `Theme.conformance`:
+  `strict`, or a `ledger` / `legacy` ledger of the exact findings (measured values at the validator's displayed rounding):
+  a finding that appears, disappears or changes value fails a test; a ledger is not a suppression. A colour change that
+  moves no finding is not caught by the ledger: it is caught by the committed `Generated/themes/` files (0.6.0), which a
+  test compares with a fresh emit.
   `AppPalette` `entityOrder`: every failing pair must be listed in `labelRequired` and becomes a mandatory direct
   label (`ThemeValidator.requiresDirectLabels`). `Theme.all`: Swiss, House, Princeton, FT and Economist (with
   authored dark variants, our interpretation of those houses), and the four legacy BusinessMath-UI themes (the
@@ -48,6 +52,14 @@ The design system's values, held once as typed Swift and generated for every sur
   `DesignTokensSwiftUI` (`import DesignTokensSwiftUI`), turns a `Theme` into a `ChartStyle`: SwiftUI colours, fonts,
   rule weights (including the title rule), flags, layout, marks and number formats for the current appearance and
   Increase Contrast, with `EnvironmentValues.theme`, `ChartStyleReader` and `.chartTheme(_:)`. See "SwiftUI" below.
+
+- **Review fixes** (0.6.0): `Theme` decoding is strict (an unknown or misspelt key, a dangling colour or ramp reference, a
+  negative rule weight, a ramp whose dark and light steps differ in number, a strict theme with ledger entries and dark values that
+  contradict the declared appearances are all errors, for a plain `JSONDecoder` as much as for `ThemeCodec`), and `ThemeCodec.encode`
+  refuses what decode would refuse. `Theme.composed(with:)` always returns a valid theme: an app palette without dark values makes
+  the result light only (how `Theme.princeton` is built). Hex parsing takes ASCII hex digits only. `ThemeValidator.measure(hexes:)`
+  throws on a bad hex. Theme JSON written by 0.4.0 (no `conformance`, `extras`, `colourOverrides` or `rampOverrides`) no longer
+  decodes; nothing emitted theme JSON before 0.6.0.
 
 Not yet here: increased-contrast values for the roles listed above, and a dark diverging ramp.
 

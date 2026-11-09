@@ -2,11 +2,59 @@
 
 ## [Unreleased]
 
-## [0.6.0] - unreleased (branch `feature/emitters-swiftui-0.6.0`; not tagged)
+## [0.6.0] - unreleased (not tagged; carries the review fixes below)
 
-Additive. `Generated/tokens.css` and `tokens.json` are byte-identical to 0.5.0 (SHA-256 `7f64d385...0342` and
-`9c770feb...0056`, pinned by test). Source-compatible with 0.5.0. Theme JSON written before 0.6.0 still decodes:
-the four fields added to `MarkSpec` and `LayoutSpec` take their current BusinessMath-UI values when absent.
+Mostly additive. `Generated/tokens.css` and `tokens.json` are byte-identical to 0.5.0 (SHA-256 `7f64d385...0342` and
+`9c770feb...0056`, pinned by test). **Not strictly source-compatible with 0.5.0**, because of the review fixes: `ThemeValidator.measure(hexes:...)`
+and `measureRamp(hexes:...)` now `throws`; `Theme.composed(with:)` can change `appearances` (see Changed);
+`Theme`'s `Decodable` and `Encodable` refuse inputs 0.5.0 accepted; `Theme.swiss` and `Theme.all` are stored `static let`s (a
+use site does not change). Theme JSON written by 0.5.0's `ThemeCodec` still decodes (the four fields added to `MarkSpec` and
+`LayoutSpec` take their current BusinessMath-UI values when absent); JSON written by 0.4.0 does not (see Changed).
+
+### Fixed (review of 0.4.0 and 0.5.0; each has a test that failed first)
+- **Hex parsing:** `RGB(hex:)` and `ColorValue(hex:)` accepted a sign (`"#+12345"`, `"#-00000"`, `"#112233+F"`) because
+  `UInt32(_, radix: 16)` does. Every character must now be an ASCII hex digit.
+- **`Theme.composed(with:)` returned invalid themes** (`Theme.swiss.composed(with: .princetonPalette)` had nine appearance issues) and
+  `ThemeCodec.encode` wrote what `decode` refused. Composition now always yields a valid theme: an app palette (accent or any
+  series) without a dark value on a `both` receiver gives a `lightOnly` result with every dark value stripped; a `lightOnly` or
+  `fixedDark` receiver drops dark values the palette brings. `Theme.princeton` is now built by exactly this path.
+  `ThemeCodec.encode` (and any `JSONEncoder`) throws `ThemeError.invalid` or `EncodingError.invalidValue` for any theme `decode` would refuse.
+- **Decoding was lenient.** `Theme`'s own `Decodable` now refuses (so a plain `JSONDecoder` is as strict as `ThemeCodec.decode`): an unknown
+  key anywhere in the tree (a misspelt `conformence` was a silent default), a colour override, ramp override or shadow colour that names no
+  role/extra/ramp, an opacity outside 0 to 1, a negative or NaN rule weight, a ramp whose dark and light steps differ in number, a
+  `strict` theme carrying ledger entries, and dark values that contradict `appearances` (`ThemeError.invalid`). Defaults remain only for
+  fields added after 0.5.0 (`annotationRadius`, `areaOpacity`, `fillOpacity`, `detailLineWidth`) and for the genuinely optional ones.
+- **`SwissLedger.directLabelSlots`** said it held the slots that fail "in some appearance", but the ledger also has `darkIncreased` band
+  rows for all eight series, and its test compared the list with itself. It is now derived from `swissConformance` and documented as the
+  light and standard-dark list; `SwissLedger.slotsNeedingDirectLabels(in:)` answers for any appearance (all eight for `.darkIncreased`).
+- **Cross-check script:** `JavaScriptValidator.scriptPath()` searched a Claude session's temp directory. `validate_palette.js` is now
+  vendored under `Tests/DesignTokensTests/Vendored/` (README: provenance, licence note) with a SHA-256 pin, and the cross-check runs against it
+  only. `VendoredScriptTests` pins the hash and reads the method's thresholds out of the script's text (no Node needed).
+- **Weak tests:** thresholds are pinned at their edges (`ValidationThresholdTests`: both lightness bands, `rampMinStep`, and the
+  Swift-only `achromaticChroma`, the deviation from the JavaScript documented); the `entityOrder` stale/unknown assertion had an operator
+  precedence bug (`a && b || c`); the legacy Default's shadow was compared with its own source; the canonical-format test claimed stability
+  under reordering and tested none (it now decodes reversed-key JSON and re-encodes it byte-identically); the legacy test claimed values
+  "equal the BusinessMath-UI sources" and checked three series arrays (retitled; the rest is pinned by the `Generated/themes/` files).
+- **`ThemeValidator.measure(hexes:...)` and `measureRamp(hexes:...)`** measured a bad hex as black. They throw `ValidationInputError.invalidHex`.
+- **Registry:** `Theme.swiss`, `Theme.all` and `Theme.named(_:)` are built once instead of on every access.
+- **Wording:** a ledger pins each finding's value at the validator's rounding; it does not pin colours that move no finding. The ledger
+  claim "fails on any change" in 0.5.0's README and notes was overstated: on 0.5.0 five single-value mutations (FT dark ink, FT light muted,
+  legacy Financial `info`, FT `marks.lineWidth`, House `surface`) left every test green. On 0.6.0 all five fail
+  `ThemeEmitterTests.generatedFilesMatchCommitted`, because the committed `Generated/themes/` files pin every value; that is a golden-file
+  guarantee (regenerating deliberately makes it pass), not a ledger one.
+- **Docs:** the FT and Economist notes said `warning` is a series colour without saying it is so in light only (FT dark `warning` #FF9A52 vs
+  the dark orange series #B65E02; Economist dark `warning` #F0C04A vs the dark yellow series #865D00).
+
+### Changed
+- **Breaking, decoding:** `conformance`, `palette.extras`, `colourOverrides` and `rampOverrides` are required in theme JSON again (they were
+  added in 0.5.0 with a default so 0.4.0 JSON stayed readable). JSON written by 0.4.0's codec no longer decodes. Nothing emitted theme JSON before 0.6.0.
+- `Theme.composed(with:)` may change `appearances` (to `lightOnly`) and strips dark values; see Fixed.
+- `ThemeValidator.validate(_:on:)` for an `AppPalette` measures the composed theme in the appearances it now declares: a palette without
+  dark values on a `both` theme is measured in light only instead of reporting missing-dark findings.
+
+### Open owner decision (not changed here)
+- Swiss `positive` and `negative` are the system green and red. `positive` as text is 2.13:1 on the background (ledgered); BusinessMath-UI's Swiss
+  uses a darker green `#1F9D55` at 3.49:1. Not changed: see the proposal's open items.
 
 ### Added
 - `ThemeCSSEmitter.emit(_:)`: one stylesheet per theme, every selector scoped to `[data-theme-name="<id>"]` (no
@@ -43,11 +91,13 @@ the four fields added to `MarkSpec` and `LayoutSpec` take their current Business
 - Increase Contrast under system-colour deferral is untested: `EnvironmentValues.colorSchemeContrast` is read-only.
 - Fixed point sizes: no Dynamic Type scaling in `ChartText` yet.
 
-## [0.5.0] - unreleased (branch `feature/themes-validator-0.5.0`; not tagged)
+## [0.5.0] - 2026-11-09
 
-Additive. `Generated/tokens.css` and `tokens.json` are byte-identical to 0.3.0 (asserted by test). Source-compatible
-with 0.4.0 except that `Theme` JSON now carries `conformance` and `ThemePalette` JSON carries `extras`,
-`colourOverrides` and `rampOverrides` (all decode to empty or `strict` when absent, so 0.4.0 JSON stays readable).
+Mostly additive. `Generated/tokens.css` and `tokens.json` are byte-identical to 0.3.0 (asserted by test). **Not strictly source-compatible
+with 0.4.0**: the new enum cases `AppearanceSupport.fixedDark` and `SystemColorName.pink` / `.mint` / `.gray` break an exhaustive `switch`
+over those enums; `Theme.composed(with:)` now resets `conformance` to `strict`; and `Theme` JSON now carries `conformance` and
+`ThemePalette` JSON carries `extras`, `colourOverrides` and `rampOverrides` (they decoded to empty or `strict` when absent in 0.5.0, which
+0.6.0 no longer allows).
 
 ### Added
 - `ThemeValidator`: `validate(_:)`, `validate(_:on:)` for an `AppPalette`, `requiresDirectLabels(_:on:)`,
@@ -77,7 +127,7 @@ with 0.4.0 except that `Theme` JSON now carries `conformance` and `ThemePalette`
 ### Not included
 - Emitters for themes (0.6.0). Nothing was rendered. Linux was not built.
 
-## [0.4.0] - unreleased (branch `feature/theme-model-0.4.0`; not tagged)
+## [0.4.0] - 2026-11-09
 
 Additive. `Generated/tokens.css` and `tokens.json` are byte-identical to 0.3.0 (asserted by test).
 
@@ -154,7 +204,7 @@ Additive. `Generated/tokens.css` and `tokens.json` are byte-identical to 0.3.0 (
   selectors honour Bootstrap's `data-bs-theme` as well as `data-theme`.
 - Palette tests: fixed order (validated for adjacency and colour-vision separation; fails the lightness band for the slots listed under 0.4.0), adjacent OKLab distance of at least 15, contrast of label on background.
 
-[Unreleased]: https://github.com/jpurnell/DesignTokens/compare/0.6.0...HEAD
+[Unreleased]: https://github.com/jpurnell/DesignTokens/compare/0.5.0...HEAD
 [0.6.0]: https://github.com/jpurnell/DesignTokens/compare/0.5.0...0.6.0
 [0.5.0]: https://github.com/jpurnell/DesignTokens/compare/0.4.0...0.5.0
 [0.4.0]: https://github.com/jpurnell/DesignTokens/compare/0.3.0...0.4.0

@@ -2,7 +2,9 @@ import Foundation
 
 public extension ThemeValidator {
     /// Validates an app's palette on a theme: the app's series (and accent, if it has one) are composed onto
-    /// the theme and measured against the theme's own surfaces, in every appearance the theme declares.
+    /// the theme (``Theme/composed(with:)``) and measured against the theme's own surfaces, in every appearance
+    /// the composed theme declares. A palette without dark values on a theme that declares both appearances
+    /// therefore yields a light-only composition, measured in light only, rather than a set of missing-dark findings.
     ///
     /// For ``SeriesOrder/Mode/validatedOrder`` the separation checks compare neighbours. For
     /// ``SeriesOrder/Mode/entityOrder`` they compare every pair, and every pair that needs a secondary

@@ -13,7 +13,7 @@ public extension Theme {
     /// The vocabulary the model gains for it (gaps G2, G4, G6): a red rule above the title (1 pt) and a red
     /// tag block (28 by 6 pt) in the top-left corner, value labels above their gridline with the axis on
     /// the trailing edge, and slim bars (0.45 of the slot). Those are claims about The Economist drawn from
-    /// general knowledge, not confirmed against a rendering. `link`, `warning` and `onAccent` are authored.
+    /// general knowledge, not confirmed against a rendering. `link`, `warning` and `onAccent` are authored. `warning` is the yellow series (#EBB434) in light only: in dark it is #F0C04A, while the dark yellow series is #865D00, so the two differ there.
     static var economist: Theme {
         typealias B = ThemeBuilders
         let face = FontFamilyRef.named("Econ Sans Cnd", fallback: .sans)

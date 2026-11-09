@@ -12,8 +12,9 @@ public extension Theme {
     /// band by a search that also kept every adjacent pair above the separation floors (the authored dark
     /// series, and `sequential.dark`, which is the light ramp reversed as `Palette.sequentialDark` is).
     ///
-    /// Roles editorial themes do not have are authored: `link` is the accent, `warning` is the orange series,
-    /// `onAccent` is white in light and the dark background in dark. The vocabulary the model gains for the
+    /// Roles editorial themes do not have are authored: `link` is the accent, `onAccent` is white in light and the
+    /// dark background in dark, and `warning` is the orange series (#FF8833) in light only: in dark `warning` is
+    /// #FF9A52, a lighter orange than the dark orange series (#B65E02), so the two are not the same colour there. The vocabulary the model gains for the
     /// FT (gaps G1, G8, G9): direct series labels, a dot at the end of a line, the axis on the trailing
     /// edge. Those are claims about the FT drawn from general knowledge and not confirmed against a rendering.
     static var ft: Theme {

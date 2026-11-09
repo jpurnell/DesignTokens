@@ -5,7 +5,17 @@ theme despite its findings) or `legacy` (BusinessMath-UI's four legacy themes, c
 the exact list of findings, in `Sources/DesignTokens/Themes/ThemeLedgers.swift`. `ThemeValidator.deviations(of:)`
 returns every way the validator's findings and the ledger disagree (a new finding, a changed value, a vanished
 finding) and `everyRegisteredThemeValidates` fails on any. Nothing in a ledger is a suppression, and nothing was
-tuned to reduce it. Method: the dataviz skill's `validate_palette.js`, ported to Swift and cross-checked against
+tuned to reduce it.
+
+What a ledger pins, exactly: each finding's check, appearance, subject and measured value at the validator's displayed
+rounding (3 decimals for lightness and chroma, 1 for colour-vision and normal-vision distance, 2 for contrast), and its threshold.
+It does not pin a colour: a change that moves no finding (an ink that stays above 4.5:1, a surface that stays under the same
+threshold) leaves the ledger green. The whole theme, every colour and structure value, is pinned by the committed
+`Generated/themes/<id>.css` and `.json` (0.6.0): `ThemeEmitterTests.generatedFilesMatchCommitted` fails when a value
+changes until the files are regenerated and committed, a deliberate step. On 0.5.0, before those files existed, five single-value mutations
+(FT dark ink, FT light muted, legacy Financial `info`, FT `marks.lineWidth`, House `surface`) left every test green; on 0.6.0 all five fail
+that test. `ConformanceTests.legacyLedgersAndThreeSeriesArrays` writes out only three legacy series arrays; there is no BusinessMath-UI
+source in this repository for a test to compare the rest with. Method: the dataviz skill's `validate_palette.js`, ported to Swift and cross-checked against
 the script under Node (`JavaScriptCrossCheckTests`).
 
 Findings by theme (a finding is a measured result short of a threshold; "fail" breaks the method, "warn" is legal only

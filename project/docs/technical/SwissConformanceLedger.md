@@ -3,7 +3,7 @@
 Owner decision 2026-11-09: Swiss keeps Apple's system colours and the palette is not re-stepped. The dataviz
 method (`validate_palette.js`) finds the following. These are exact measurements. Since 0.5.0 they are held in
 `Theme.swiss.conformance` (`Sources/DesignTokens/Themes/ThemeLedgers.swift`) and checked against the Swift
-`ThemeValidator`, which fails on any change, so the finding is neither hidden nor silenced. The 0.4.0 rows are
+`ThemeValidator`: a finding that appears, changes value (at the validator's displayed rounding) or disappears fails a test, so the finding is neither hidden nor silenced. The 0.4.0 rows are
 also pinned by `Tests/DesignTokensTests/SwissConformanceLedgerTests.swift`. Measured against the Swiss
 `background` (#FAFAFA light, #101112 dark).
 
@@ -36,5 +36,7 @@ rather than fixed:
 The increased-contrast dark values are lighter than the standard dark ones, so they are further outside the dark
 band: increasing contrast against the dark surface and staying inside a lightness band pull opposite ways.
 
-Required of consumers: orange, green, yellow and cyan (`SwissLedger.directLabelSlots`) are labelled directly
-or have their values printed; colour is never the only encoding. Lowercase names are `Palette.seriesNames`.
+Required of consumers: orange, green, yellow and cyan (`SwissLedger.directLabelSlots`: the slots with a lightness-band or
+3:1 mark-contrast row in the light or standard dark appearance, derived from the ledger) are labelled directly or have their
+values printed; colour is never the only encoding. With Increase Contrast on in dark, every one of the eight series has a
+`darkIncreased` band row, so there all eight need that treatment (`SwissLedger.slotsNeedingDirectLabels(in: [.darkIncreased])`). Lowercase names are `Palette.seriesNames`.
