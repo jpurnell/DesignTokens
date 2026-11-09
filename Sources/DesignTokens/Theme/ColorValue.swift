@@ -39,6 +39,11 @@ public struct ColorValue: Sendable, Hashable, Codable {
         }
     }
 
+    /// A colour from a packed `0xRRGGBB` value and an optional alpha byte, for theme definitions.
+    static func packed(_ rgb: UInt32, alpha: UInt8 = 0xFF) -> ColorValue {
+        ColorValue(RGB(rgb: rgb), alpha: Double(alpha) / byteMax)
+    }
+
     /// The colour as uppercase `#RRGGBB`, or `#RRGGBBAA` when its alpha is below 1.
     public var hex: String {
         guard alpha < 1, let byte = UInt8(exactly: (alpha * Self.byteMax).rounded()) else { return rgb.hex }
@@ -89,6 +94,12 @@ public enum SystemColorName: String, Sendable, Hashable, Codable, CaseIterable {
     case red
     /// `Color.cyan`.
     case cyan
+    /// `Color.pink`. Added in 0.5.0 for the legacy Default theme.
+    case pink
+    /// `Color.mint`. Added in 0.5.0 for the legacy Default theme.
+    case mint
+    /// `Color.gray`. Added in 0.5.0 for the legacy Default theme.
+    case gray
 }
 
 /// A colour for every appearance: light, dark, and an increased-contrast value for each.
@@ -181,4 +192,26 @@ public enum AppearanceSupport: String, Sendable, Hashable, Codable, CaseIterable
     case both
     /// Light only: no dark values exist, and a dark context shows the theme on its own background.
     case lightOnly
+    /// A single, dark appearance: the theme's colours are for a dark surface and are stored in the
+    /// `light` slot (the only slot), with no `dark` values. The validator measures it with the dark band.
+    /// Added in 0.5.0 for the legacy Dark theme.
+    case fixedDark
+}
+
+/// A reference to one of a theme's colours by name, optionally at some opacity.
+///
+/// The source is a ``ColorRole`` raw value (`"accent"`) or a key of ``ThemePalette/extras`` (`"primary"`).
+/// It carries the per-chart colour overrides and the shadow colour of the legacy themes, which are role
+/// mappings rather than colours of their own. Added in 0.5.0.
+public struct ColourReference: Sendable, Hashable, Codable {
+    /// A role raw value or an `extras` key.
+    public var source: String
+    /// Opacity, 0 to 1.
+    public var opacity: Double
+
+    /// Creates a reference.
+    public init(source: String, opacity: Double = 1) {
+        self.source = source
+        self.opacity = opacity
+    }
 }

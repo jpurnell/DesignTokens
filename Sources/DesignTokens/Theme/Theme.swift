@@ -43,15 +43,32 @@ public struct Theme: Sendable, Hashable, Codable, Identifiable {
     public var palette: ThemePalette
     /// Which appearances the theme supports.
     public var appearances: AppearanceSupport
+    /// The theme's relationship to the validation method: strict, or a ledger of exact measurements.
+    /// Added in 0.5.0; JSON written before it decodes as ``Conformance/strict``.
+    public var conformance: Conformance
 
     /// Creates a theme.
     public init(id: String, name: String, structure: Structure, palette: ThemePalette,
-                appearances: AppearanceSupport) {
+                appearances: AppearanceSupport, conformance: Conformance = .strict) {
         self.id = id
         self.name = name
         self.structure = structure
         self.palette = palette
         self.appearances = appearances
+        self.conformance = conformance
+    }
+
+    private enum CodingKeys: String, CodingKey { case id, name, structure, palette, appearances, conformance }
+
+    /// Decodes a theme; a missing `conformance` is ``Conformance/strict``.
+    public init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.id = try container.decode(String.self, forKey: .id)
+        self.name = try container.decode(String.self, forKey: .name)
+        self.structure = try container.decode(Structure.self, forKey: .structure)
+        self.palette = try container.decode(ThemePalette.self, forKey: .palette)
+        self.appearances = try container.decode(AppearanceSupport.self, forKey: .appearances)
+        self.conformance = try container.decodeIfPresent(Conformance.self, forKey: .conformance) ?? .strict
     }
 
     /// Where the theme's values contradict its declared ``appearances``. Empty means consistent.
@@ -66,7 +83,7 @@ public struct Theme: Sendable, Hashable, Codable, Identifiable {
             switch appearances {
             case .both:
                 if adaptive.dark == nil { issues.append(AppearanceIssue(kind: .missingDark, subject: subject)) }
-            case .lightOnly:
+            case .lightOnly, .fixedDark:
                 if adaptive.dark != nil || adaptive.darkIncreased != nil {
                     issues.append(AppearanceIssue(kind: .unexpectedDark, subject: subject))
                 }
@@ -74,7 +91,8 @@ public struct Theme: Sendable, Hashable, Codable, Identifiable {
         }
         for role in ColorRole.allCases { check(palette[role], "palette.\(role.rawValue)") }
         for entry in palette.series { check(entry.color, "palette.series.\(entry.name)") }
-        if appearances == .lightOnly {
+        for (name, adaptive) in palette.extras.sorted(by: { $0.key < $1.key }) { check(adaptive, "palette.extras.\(name)") }
+        if appearances != .both {
             func checkRamp(_ ramp: Ramp, _ subject: String) {
                 if ramp.dark != nil { issues.append(AppearanceIssue(kind: .unexpectedDark, subject: subject)) }
             }
@@ -90,11 +108,13 @@ public struct Theme: Sendable, Hashable, Codable, Identifiable {
     /// The theme with an app's own accent and series on top. Structure and surfaces are kept.
     ///
     /// The result's id is `"<theme id>+<app id>"` and its name `"<name> (<app id>)"`. Whatever the app
-    /// palette leaves `nil` stays as the theme has it. This is a copy; the receiver is unchanged.
+    /// palette leaves `nil` stays as the theme has it. The result's ``conformance`` is ``Conformance/strict``:
+    /// the receiver's ledger describes its own colours, not these. This is a copy; the receiver is unchanged.
     public func composed(with app: AppPalette) -> Theme {
         var copy = self
         copy.id = "\(id)+\(app.id)"
         copy.name = "\(name) (\(app.id))"
+        copy.conformance = .strict
         if let accent = app.accent { copy.palette.accent = accent }
         if let series = app.series { copy.palette.series = series }
         if let sequential = app.sequential { copy.palette.sequential = sequential }

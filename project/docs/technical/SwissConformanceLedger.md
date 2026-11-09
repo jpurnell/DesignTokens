@@ -1,9 +1,13 @@
 # Swiss conformance ledger
 
 Owner decision 2026-11-09: Swiss keeps Apple's system colours and the palette is not re-stepped. The dataviz
-method (`validate_palette.js`) finds the following. These are exact measurements, pinned by
-`Tests/DesignTokensTests/SwissConformanceLedgerTests.swift`, which fails on any change, so the finding is
-neither hidden nor silenced. Measured against the Swiss `background` (#FAFAFA light, #101112 dark).
+method (`validate_palette.js`) finds the following. These are exact measurements. Since 0.5.0 they are held in
+`Theme.swiss.conformance` (`Sources/DesignTokens/Themes/ThemeLedgers.swift`) and checked against the Swift
+`ThemeValidator`, which fails on any change, so the finding is neither hidden nor silenced. The 0.4.0 rows are
+also pinned by `Tests/DesignTokensTests/SwissConformanceLedgerTests.swift`. Measured against the Swiss
+`background` (#FAFAFA light, #101112 dark).
+
+## The 0.4.0 rows (unchanged; now reproduced by the Swift validator)
 
 | Check | Appearance | Failing slots | Measured | Threshold |
 |---|---|---|---|---|
@@ -11,9 +15,26 @@ neither hidden nor silenced. Measured against the Swiss `background` (#FAFAFA li
 | OKLCH lightness band | dark | orange #FF9230 / green #30D158 / yellow #FFD600 / cyan #3CD3FE | L 0.762 / 0.756 / 0.885 / 0.808 | 0.48 to 0.67 |
 | Mark contrast vs surface | light | orange / green / yellow / cyan | 2.21 / 2.13 / 1.45 / 2.07 | 3:1 |
 
-Passing: chroma floor; adjacent colour-vision separation (worst adjacent dE 22.4 light, 24.1 dark, from the
-JavaScript validator run recorded in the proposal; not re-measured in Swift until 0.5.0); normal-vision
-adjacent separation (37.8, 36.1, same source); dark contrast vs surface at least 3:1 (tested).
+Passing: chroma floor; adjacent colour-vision separation (worst adjacent dE 22.4 light, 24.1 dark) and
+normal-vision adjacent separation (37.8, 36.1), measured in Swift in 0.5.0 and equal to the JavaScript run
+recorded in the proposal; dark contrast vs surface at least 3:1.
+
+## Rows first measured in 0.5.0 (31 findings in all, 15 failing)
+
+The 0.5.0 validator measures more than the 0.4.0 tests did. These are the additional findings on Swiss, recorded
+rather than fixed:
+
+| Check | Appearance | Finding |
+|---|---|---|
+| Mark contrast vs the card surface | light | orange 2.31, green 2.22, yellow 1.51, cyan 2.16 (3:1) |
+| Text contrast (4.5:1) | light | `positive` 2.13 on background, `negative` 3.42 (warn: status colours are never text alone) |
+| Mark contrast (3:1) | light | `accent` 2.21 on background, 2.31 on the card surface |
+| Sequential ramp, darkest step on the dark surface | dark | 1.99:1 against a 2:1 floor (the ramp is the light one reversed: derived, not measured) |
+| Increase Contrast on, light | lightIncreased | `positive` 4.35 and `negative` 4.36 on background (4.5); `onAccent` on the increased accent 4.12 (fail, 4.5) |
+| OKLCH lightness band, Increase Contrast on, dark | darkIncreased | all eight above 0.67: orange 0.789, indigo 0.769, green 0.784, purple 0.781, yellow 0.904, blue 0.756, red 0.698, cyan 0.836 |
+
+The increased-contrast dark values are lighter than the standard dark ones, so they are further outside the dark
+band: increasing contrast against the dark surface and staying inside a lightness band pull opposite ways.
 
 Required of consumers: orange, green, yellow and cyan (`SwissLedger.directLabelSlots`) are labelled directly
 or have their values printed; colour is never the only encoding. Lowercase names are `Palette.seriesNames`.

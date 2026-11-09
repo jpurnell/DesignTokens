@@ -2,6 +2,40 @@
 
 ## [Unreleased]
 
+## [0.5.0] - unreleased (branch `feature/themes-validator-0.5.0`; not tagged)
+
+Additive. `Generated/tokens.css` and `tokens.json` are byte-identical to 0.3.0 (asserted by test). Source-compatible
+with 0.4.0 except that `Theme` JSON now carries `conformance` and `ThemePalette` JSON carries `extras`,
+`colourOverrides` and `rampOverrides` (all decode to empty or `strict` when absent, so 0.4.0 JSON stays readable).
+
+### Added
+- `ThemeValidator`: `validate(_:)`, `validate(_:on:)` for an `AppPalette`, `requiresDirectLabels(_:on:)`,
+  `deviations(of:)`, `measure(series:on:dark:pairs:)`, `measure(hexes:...)`, `measureRamp(hexes:...)`, `resolved(_:over:)`.
+  `Finding`, `Severity`, `Check`, `ValidationAppearance`, `ValidationThresholds` (every threshold in one place),
+  `SeriesMeasurement`, `RampMeasurement`, `PairSelection`, `CVDState`. Checks: OKLCH lightness band, chroma floor,
+  colour-vision separation (Machado 2009, severity 1.0), normal-vision floor, mark contrast on the background and the
+  card surface, text contrast, ramps (one-hue ordinal; each arm of a diverging ramp), series count, structure.
+  Light, dark, and each increased-contrast appearance where the theme holds increased values.
+- `Conformance` (`strict`, `ledger`, `legacy`) and `Theme.conformance`; `Finding` is the ledger entry.
+- `SeriesOrder.entityOrder`: checked on every pair; a pair that needs a secondary encoding must be in `labelRequired`
+  (an unlisted one is a failing `labelRequired` finding; a stale or unknown entry is reported); listed pairs are not
+  suppressed.
+- `Theme.house`, `.ft`, `.economist`, `.princeton` (`Theme.princetonPalette` composed on Swiss, light only),
+  `.legacyDefault`, `.legacyDark`, `.legacyFinancial`, `.legacyAccessible`, `Theme.all` (stable order) and
+  `Theme.named(_:)`.
+- Fields added so the legacy and editorial values fit the model: `AppearanceSupport.fixedDark`, `ThemePalette.extras`,
+  `.colourOverrides`, `.rampOverrides`, `ColourReference`, `LayoutSpec.shadow` (`ShadowSpec`), `TextSpec.platformStyle`
+  (`PlatformTextStyle`), `SystemColorName.pink` / `.mint` / `.gray`.
+- Tests: `ThemeValidatorTests`, `ConformanceTests`, `ThemeRegistryTests`, `JavaScriptCrossCheckTests`.
+- `project/docs/technical/ThemeConformance.md`; `SwissConformanceLedger.md` extended with the rows first measured in 0.5.0.
+
+### Changed
+- `Theme.composed(with:)` returns a theme whose `conformance` is `strict`: the receiver's ledger describes its own colours.
+- `Theme.swiss` carries its ledger (31 findings), including rows the 0.4.0 tests did not measure.
+
+### Not included
+- Emitters for themes (0.6.0). Nothing was rendered. Linux was not built.
+
 ## [0.4.0] - unreleased (branch `feature/theme-model-0.4.0`; not tagged)
 
 Additive. `Generated/tokens.css` and `tokens.json` are byte-identical to 0.3.0 (asserted by test).
@@ -79,7 +113,8 @@ Additive. `Generated/tokens.css` and `tokens.json` are byte-identical to 0.3.0 (
   selectors honour Bootstrap's `data-bs-theme` as well as `data-theme`.
 - Palette tests: fixed order (validated for adjacency and colour-vision separation; fails the lightness band for the slots listed under 0.4.0), adjacent OKLab distance of at least 15, contrast of label on background.
 
-[Unreleased]: https://github.com/jpurnell/DesignTokens/compare/0.3.0...HEAD
+[Unreleased]: https://github.com/jpurnell/DesignTokens/compare/0.4.0...HEAD
+[0.5.0]: https://github.com/jpurnell/DesignTokens/compare/0.4.0...0.5.0
 [0.4.0]: https://github.com/jpurnell/DesignTokens/compare/0.3.0...0.4.0
 [0.3.0]: https://github.com/jpurnell/DesignTokens/compare/0.2.0...0.3.0
 [0.2.0]: https://github.com/jpurnell/DesignTokens/compare/0.1.0...0.2.0

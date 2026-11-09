@@ -2,7 +2,7 @@
 
 The design system's values, held once as typed Swift and generated for every surface that cannot import Swift.
 
-**Status:** pre-release (`0.x`, latest 0.3.0; 0.4.0 in preparation). Phase 1 of `project/master_plan.md`.
+**Status:** pre-release (`0.x`, latest tag 0.4.0; 0.5.0 in preparation on `feature/themes-validator-0.5.0`, untagged). Phase 1 and 1b of `project/master_plan.md`.
 
 ## What it holds
 
@@ -30,6 +30,17 @@ The design system's values, held once as typed Swift and generated for every sur
   an increased-contrast value for each); `ColorValue` with alpha; `Theme.swiss`, built from the constants
   above; `AppPalette` composed onto a theme; `ThemeCodec`, a canonical, byte-stable JSON form; numeric
   `TypeStyle` accessors. `Generated/tokens.css` and `tokens.json` are unchanged.
+
+- **Validator and themes** (0.5.0, additive): `ThemeValidator`, a Swift port of the dataviz skill's
+  `validate_palette.js` (OKLCH lightness band, chroma floor, colour-vision and normal-vision separation, mark
+  and text contrast, ramps, structure), cross-checked against the script under Node when Node and the script are
+  present (`JavaScriptCrossCheckTests`; the test is skipped with a visible reason otherwise). `Theme.conformance`:
+  `strict`, or a `ledger` / `legacy` ledger of exact measurements that fails on any change (not a suppression).
+  `AppPalette` `entityOrder`: every failing pair must be listed in `labelRequired` and becomes a mandatory direct
+  label (`ThemeValidator.requiresDirectLabels`). `Theme.all`: Swiss, House, Princeton, FT and Economist (with
+  authored dark variants, our interpretation of those houses), and the four legacy BusinessMath-UI themes (the
+  Default as a labelled snapshot of the system colours), each a `Theme` value that round-trips through
+  `ThemeCodec`. Findings: `project/docs/technical/ThemeConformance.md`. No emitters for themes yet.
 
 Not yet here: increased-contrast values for the roles listed above, and a dark diverging ramp.
 

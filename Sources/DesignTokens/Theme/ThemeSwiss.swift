@@ -17,7 +17,8 @@ public extension Theme {
     /// The palette's lightness band and contrast are not met by Apple's system colours for some slots. See
     /// the conformance ledger in the project documentation; those slots need direct labels.
     static var swiss: Theme {
-        Theme(id: "swiss", name: "Swiss", structure: swissStructure, palette: swissPalette, appearances: .both)
+        Theme(id: "swiss", name: "Swiss", structure: swissStructure, palette: swissPalette, appearances: .both,
+              conformance: swissConformance)
     }
 
     private static var swissPalette: ThemePalette {

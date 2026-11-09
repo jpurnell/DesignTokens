@@ -128,6 +128,24 @@ public indirect enum FontFamilyRef: Sendable, Hashable, Codable {
     }
 }
 
+/// A platform text style, for the legacy themes whose views use the system's semantic styles rather than
+/// numbers. When set, a renderer on a platform that has the style uses it; the numeric fields are the
+/// fallback. Added in 0.5.0.
+public enum PlatformTextStyle: String, Sendable, Hashable, Codable, CaseIterable {
+    /// `.title`.
+    case title
+    /// `.headline`.
+    case headline
+    /// `.subheadline`.
+    case subheadline
+    /// `.body`.
+    case body
+    /// `.caption`.
+    case caption
+    /// `.caption2`.
+    case caption2
+}
+
 /// One text style, in numbers a renderer can use.
 public struct TextSpec: Sendable, Hashable, Codable {
     /// The family.
@@ -144,10 +162,13 @@ public struct TextSpec: Sendable, Hashable, Codable {
     public var uppercase: Bool
     /// Unitless line height.
     public var lineHeight: Double
+    /// The platform text style this role stands for, when the theme defers to the platform. `nil` otherwise.
+    public var platformStyle: PlatformTextStyle?
 
     /// Creates a text style.
     public init(family: FontFamilyRef, size: Double, weight: Int, tracking: Double, italic: Bool,
-                uppercase: Bool, lineHeight: Double) {
+                uppercase: Bool, lineHeight: Double, platformStyle: PlatformTextStyle? = nil) {
+        self.platformStyle = platformStyle
         self.family = family
         self.size = size
         self.weight = weight
@@ -331,6 +352,26 @@ public struct Gaps: Sendable, Hashable, Codable {
     }
 }
 
+/// A drop shadow under a card or tooltip. Added in 0.5.0 for the legacy themes.
+public struct ShadowSpec: Sendable, Hashable, Codable {
+    /// The shadow colour, a role or extra.
+    public var colour: ColourReference
+    /// Blur radius in points.
+    public var radius: Double
+    /// Horizontal offset in points.
+    public var x: Double
+    /// Vertical offset in points.
+    public var y: Double
+
+    /// Creates a shadow.
+    public init(colour: ColourReference, radius: Double, x: Double, y: Double) {
+        self.colour = colour
+        self.radius = radius
+        self.x = x
+        self.y = y
+    }
+}
+
 /// Margins, gaps, the page grid, radii and gridlines.
 public struct LayoutSpec: Sendable, Hashable, Codable {
     /// Margins around a chart.
@@ -349,10 +390,14 @@ public struct LayoutSpec: Sendable, Hashable, Codable {
     public var controlRadius: Double
     /// Gridline style.
     public var gridlines: GridlineStyle
+    /// A drop shadow under cards, or `nil` for flat surfaces (Swiss). Added in 0.5.0.
+    public var shadow: ShadowSpec?
 
     /// Creates a layout.
     public init(margins: Insets, gaps: Gaps, gutter: Double, columns: Int, baseUnit: Double,
-                containerRadius: Double, controlRadius: Double, gridlines: GridlineStyle) {
+                containerRadius: Double, controlRadius: Double, gridlines: GridlineStyle,
+                shadow: ShadowSpec? = nil) {
+        self.shadow = shadow
         self.margins = margins
         self.gaps = gaps
         self.gutter = gutter

@@ -36,10 +36,14 @@ enum OKLab {
         return c <= 0.04045 ? c / 12.92 : pow((c + 0.055) / 1.055, 2.4)
     }
 
-    private static func convert(_ color: RGB) -> (Double, Double, Double) {
-        let r = linear(color.red)
-        let g = linear(color.green)
-        let b = linear(color.blue)
+    /// OKLab coordinates (L, a, b) of an sRGB colour.
+    static func convert(_ color: RGB) -> (Double, Double, Double) {
+        fromLinear((linear(color.red), linear(color.green), linear(color.blue)))
+    }
+
+    /// OKLab coordinates of a colour given as linear-light sRGB.
+    static func fromLinear(_ rgb: (Double, Double, Double)) -> (Double, Double, Double) {
+        let (r, g, b) = rgb
         let l = cbrt(0.4122214708 * r + 0.5363325363 * g + 0.0514459929 * b)
         let m = cbrt(0.2119034982 * r + 0.6806995451 * g + 0.1073969566 * b)
         let s = cbrt(0.0883024619 * r + 0.2817188376 * g + 0.6299787005 * b)

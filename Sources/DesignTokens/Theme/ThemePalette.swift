@@ -101,12 +101,22 @@ public struct ThemePalette: Sendable, Hashable, Codable {
     public var diverging: Ramp
     /// Further named ramps (a legacy theme's 3D gradients), keyed by name.
     public var extraRamps: [String: Ramp]
+    /// Further named colours beyond the twelve roles (a legacy theme's `primary`, `info`, `highlight`,
+    /// `subtle`, `emphasis`, `shadow`, and `neutral`), keyed by name. Added in 0.5.0.
+    public var extras: [String: Adaptive]
+    /// Per-chart colour overrides, keyed by chart colour key (`"tornado.low"`): which role or extra, at
+    /// what opacity. Only the legacy themes override. Added in 0.5.0.
+    public var colourOverrides: [String: ColourReference]
+    /// Per-chart gradient overrides, keyed by chart gradient key (`"efficientfrontier"`): the name of the
+    /// ramp (`"sharpe"`) in ``extraRamps``, ``sequential`` or ``diverging``. Added in 0.5.0.
+    public var rampOverrides: [String: String]
 
     /// Creates a palette.
     public init(ink: Adaptive, secondaryInk: Adaptive, background: Adaptive, surface: Adaptive, rule: Adaptive,
                 accent: Adaptive, onAccent: Adaptive, link: Adaptive, positive: Adaptive, negative: Adaptive,
                 warning: Adaptive, muted: Adaptive, series: [NamedAdaptive], sequential: Ramp, diverging: Ramp,
-                extraRamps: [String: Ramp] = [:]) {
+                extraRamps: [String: Ramp] = [:], extras: [String: Adaptive] = [:],
+                colourOverrides: [String: ColourReference] = [:], rampOverrides: [String: String] = [:]) {
         self.ink = ink
         self.secondaryInk = secondaryInk
         self.background = background
@@ -123,6 +133,38 @@ public struct ThemePalette: Sendable, Hashable, Codable {
         self.sequential = sequential
         self.diverging = diverging
         self.extraRamps = extraRamps
+        self.extras = extras
+        self.colourOverrides = colourOverrides
+        self.rampOverrides = rampOverrides
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case ink, secondaryInk, background, surface, rule, accent, onAccent, link, positive, negative, warning, muted
+        case series, sequential, diverging, extraRamps, extras, colourOverrides, rampOverrides
+    }
+
+    /// Decodes a palette; the fields added in 0.5.0 default to empty when absent.
+    public init(from decoder: any Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        ink = try c.decode(Adaptive.self, forKey: .ink)
+        secondaryInk = try c.decode(Adaptive.self, forKey: .secondaryInk)
+        background = try c.decode(Adaptive.self, forKey: .background)
+        surface = try c.decode(Adaptive.self, forKey: .surface)
+        rule = try c.decode(Adaptive.self, forKey: .rule)
+        accent = try c.decode(Adaptive.self, forKey: .accent)
+        onAccent = try c.decode(Adaptive.self, forKey: .onAccent)
+        link = try c.decode(Adaptive.self, forKey: .link)
+        positive = try c.decode(Adaptive.self, forKey: .positive)
+        negative = try c.decode(Adaptive.self, forKey: .negative)
+        warning = try c.decode(Adaptive.self, forKey: .warning)
+        muted = try c.decode(Adaptive.self, forKey: .muted)
+        series = try c.decode([NamedAdaptive].self, forKey: .series)
+        sequential = try c.decode(Ramp.self, forKey: .sequential)
+        diverging = try c.decode(Ramp.self, forKey: .diverging)
+        extraRamps = try c.decode([String: Ramp].self, forKey: .extraRamps)
+        extras = try c.decodeIfPresent([String: Adaptive].self, forKey: .extras) ?? [:]
+        colourOverrides = try c.decodeIfPresent([String: ColourReference].self, forKey: .colourOverrides) ?? [:]
+        rampOverrides = try c.decodeIfPresent([String: String].self, forKey: .rampOverrides) ?? [:]
     }
 
     /// The colour for a role.
@@ -169,6 +211,7 @@ public struct ThemePalette: Sendable, Hashable, Codable {
         copy.sequential.dark = nil
         copy.diverging.dark = nil
         copy.extraRamps = extraRamps.mapValues { Ramp(light: $0.light, dark: nil) }
+        copy.extras = extras.mapValues { $0.strippingDark() }
         return copy
     }
 }

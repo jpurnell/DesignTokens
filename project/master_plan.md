@@ -49,6 +49,7 @@ Tests/DesignTokensTests/     value tests, palette validation, golden-file tests
 | `TypeRole` | The type scale: UI register and display register |
 | `Rule`, `Grid`, `Radius`, `Space` | Rule weights (1, 3, 8), 12 columns with a 16 pt gutter, radii, 4 pt base |
 | `Theme`, `Structure`, `ThemePalette`, `Adaptive`, `ColorValue`, `AppPalette`, `ThemeCodec` (0.4.0) | A theme is structure + palette; `Theme.swiss` is built from the constants above; canonical JSON codec |
+| `ThemeValidator`, `Finding`, `Conformance`, `ValidationThresholds`, `Theme.all` (0.5.0) | The dataviz method as Swift; a theme's measured findings against its ledger; the nine registered themes |
 | `Emitter` | Turns the tokens into CSS, JSON or SVG |
 
 ### Data Flow
@@ -98,7 +99,7 @@ Tokens (Swift) -> Apple resolver -> Color (system values, not hard-coded)
 
 ### Phase 1b: the theme model (proposal `project/plans/proposals/2026-11-09_ThemeModel.md`, approved 2026-11-09)
 - [x] 0.4.0 model: `Theme`, `Adaptive`, `ColorValue`, `Theme.swiss`, canonical JSON codec, numeric `TypeStyle`, Swiss conformance ledger (branch `feature/theme-model-0.4.0`, untagged)
-- [ ] 0.5.0 validator and registry (house, FT and Economist with authored dark variants, Princeton, legacy themes with a snapshotted Default marked legacy)
+- [x] 0.5.0 validator and registry (branch `feature/themes-validator-0.5.0`, untagged): `ThemeValidator` cross-checked against `validate_palette.js`, `Theme.conformance` ledgers, House, FT and Economist with authored dark variants, Princeton on Swiss, the four legacy themes with a snapshotted Default marked legacy, `Theme.all`; Princeton is light only (the proposal's "dark values stay out until measured" kept)
 - [ ] 0.6.0 emitters I, then `DesignTokensSwiftUI` (second target in this package); 0.7.0 to 0.9.0 per the proposal's release table
 
 ### Phase 2: the site
@@ -108,4 +109,4 @@ Tokens (Swift) -> Apple resolver -> Color (system values, not hard-coded)
 
 ---
 
-**Last Updated:** 2026-11-09 (0.4.0 on branch: theme model added, Phase 1b checklist added, "validated" wording corrected to adjacency and colour-vision separation with the failing slots listed)
+**Last Updated:** 2026-11-09 (0.5.0 on branch: validator, conformance ledgers and the nine themes added, Phase 1b 0.5.0 item moved to done, Key Types table extended; earlier: 0.4.0 on branch: theme model added, Phase 1b checklist added, "validated" wording corrected to adjacency and colour-vision separation with the failing slots listed)
