@@ -3,7 +3,7 @@ import Testing
 
 @Suite("Palette")
 struct PaletteTests {
-    @Test("series colours are the eight system colours in the validated order")
+    @Test("series colours are the eight system colours in the fixed order (validated for adjacency and colour-vision separation; fails the lightness band for yellow, and in dark for orange, green, yellow and cyan)")
     func series() {
         #expect(Palette.series.map(\.hex) == [
             "#FF8D28", "#6155F5", "#34C759", "#CB30E0", "#FFCC00", "#0088FF", "#FF383C", "#00C0E8",

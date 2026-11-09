@@ -1,6 +1,6 @@
 /// The design system's values, held once as typed Swift.
 ///
-/// `DesignTokens` defines the colour roles, the validated chart palette, rule weights, grid and radii
+/// `DesignTokens` defines the colour roles, the chart palette (validated for adjacency and colour-vision separation), rule weights, grid and radii
 /// that every surface of the portfolio shares, and emits them as CSS and JSON for the surfaces that
 /// cannot import Swift. Apple platforms keep deferring to the system's own colours; the values here
 /// are a labelled snapshot for the places the system cannot reach (web, SVG, slides, spreadsheets).

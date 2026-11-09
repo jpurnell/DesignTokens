@@ -1,7 +1,11 @@
-/// The chart palette: eight series colours in a fixed, validated order, plus the ramps.
+/// The chart palette: eight series colours in a fixed order, plus the ramps.
 ///
-/// The order was validated for neighbour separation, lightness band and colour-blind separation. A ninth
-/// series is never a generated hue: fold it into "Other", facet, or use a composite encoding.
+/// The order is validated for adjacency and colour-vision separation. It fails the dataviz lightness band
+/// for these slots: yellow in the light appearance (OKLCH L 0.865, band 0.43 to 0.77), and orange, green,
+/// yellow and cyan in the dark appearance (0.762, 0.756, 0.885, 0.808; band 0.48 to 0.67), because Apple's
+/// system colours are kept as they are. Orange, green, yellow and cyan are also under 3:1 against the light
+/// surface (2.21, 2.13, 1.45, 2.07). Those slots need direct labels or printed values; see ``SwissLedger``.
+/// A ninth series is never a generated hue: fold it into "Other", facet, or use a composite encoding.
 public enum Palette {
     /// The series colours: Apple's system orange, indigo, green, purple, yellow, blue, red and cyan.
     public static let series: [RGB] = [

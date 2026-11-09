@@ -1,7 +1,7 @@
 # Design Proposal: a Theme model hosted in DesignTokens
 
 **Date:** 2026-11-09
-**Status:** Proposed, awaiting owner approval. Phase 0, design only: no package code was changed.
+**Status:** Approved with decisions 2026-11-09 (see "Decisions 2026-11-09" below). Release 0.4.0 is implemented on branch `feature/theme-model-0.4.0` (untagged); sections 3 to 18 are otherwise as proposed, with the corrections listed under "Corrections found while implementing 0.4.0".
 **Author:** Claude (session with Justin Purnell)
 **Supersedes:** `Playgrounds/Math/BusinessMath-UI/project/plans/proposals/2026-11-09_StructuralThemeLayer.md`
 (branch `design/structural-theme-proposal`, commit `1a6c914`). That proposal kept `EditorialTheme` in
@@ -30,6 +30,50 @@ proposal carries out: Swift is the source, and only this package plus declared a
 8. The Tumblr blog is in scope and held to the same rule as everything else. Its mechanism is a generated block
    that the owner pastes into the Tumblr theme; it is not an external stylesheet. A theme change reaches the
    blog by regenerate, then manual re-paste, and a staleness check says when that has not happened.
+
+---
+
+## Decisions 2026-11-09
+
+Owner decisions on the open questions of section 17. They are binding and override any wording below that conflicts.
+
+1. **Swiss keeps Apple's system colours; the palette is not re-stepped.** The lightness-band failure is a ledger
+   entry with exact measured values (`project/docs/technical/SwissConformanceLedger.md`, pinned by
+   `SwissConformanceLedgerTests`, which fails on any change): light, yellow #FFCC00 L 0.865 (band 0.43 to 0.77);
+   dark, orange 0.762, green 0.756, yellow 0.885, cyan 0.808 (band 0.48 to 0.67); light mark contrast under 3:1 for
+   orange 2.21, green 2.13, yellow 1.45, cyan 2.07. **Direct labels (or printed values) are required on orange,
+   green, yellow and cyan** (`SwissLedger.directLabelSlots`). The README, CHANGELOG and test wording changes from
+   "validated" to "validated for adjacency and colour-vision separation; fails the dataviz lightness band for these
+   slots", with the slots listed.
+2. **The SwiftUI adapter is a second target `DesignTokensSwiftUI` in this package**, in a later release (0.6.0). Not built in 0.4.0.
+3. **The legacy Default theme is snapshotted with the measurer in 0.5.0 and marked legacy.**
+4. **FT and Economist get authored dark variants; they are not light-only.** Dark variants are authored by us as an
+   interpretation of those houses, not taken from them. Where we diverge from what the houses do is a finding to
+   record (in the 0.5.0 ledger and the contact-sheet notes). Section 3.3, gap G1, section 3.5 and the 0.5.0 release
+   row are amended accordingly; `appearances: .lightOnly` stays in the model for themes that genuinely have no dark.
+5. **A conformance ledger of exact measurements that fails on any change is accepted** for themes that fail checks
+   (legacy themes, and Swiss for the slots above), instead of suppressions or annotations.
+
+## Corrections found while implementing 0.4.0
+
+- `RuleSpec` gains `page` (the 8 pt page-header weight). Section 3.2 left it out while the Tumblr block and the
+  page-level rules need all three of 1, 3 and 8.
+- `LabelSpec` has no `title: Alignment` field: gap G11 defers alignment, so the field would be one nobody reads.
+- `ValueLabels` is flattened to `off | aboveOrEnd | insideEnd`, not `.onData(...)`, so every enum is a plain string.
+- `ColorValue.alpha` is quantised to a byte at creation so every colour round-trips exactly as `#RRGGBBAA`.
+- `LayoutSpec` also carries `baseUnit`, `containerRadius`, `controlRadius` (from `Grid` and `Radius`); `shadow` is
+  deferred to 0.5.0 with the legacy themes that use it.
+- `Theme.conformance` is not in 0.4.0: the ledger arrives with the validator in 0.5.0 and will be added with a
+  decode default, so 0.4.0 JSON stays readable. Until then the Swiss ledger is `SwissLedger` plus tests.
+- Swiss `positive` and `negative` are `ColorToken.success` and `.destructive`; BusinessMath-UI's Swiss uses darker
+  local greens and reds for text (#1F9D55, #D64545), which the package does not hold. Swiss `muted` is the
+  secondary ink, since there is no `muted` token and none was invented (BusinessMath-UI uses a local #B4B7BC).
+  Both are findings for the 0.5.0 validator and for BusinessMath-UI's conversion.
+- Swiss chart-role sizes and weights are BusinessMath-UI's current Swiss values; chart `lineHeight` (1.3), bar width
+  ratio (0.6, seen in the line chart's band marks) and the reference line dash ([3, 3]) are not in any source of
+  record and were set to the nearest existing value; the 0.6.0 spike should confirm them.
+- Ramps are exempt from "a `.both` theme requires dark on every role": `Palette` has no dark diverging ramp and
+  none is invented. A light-only theme must have no dark ramps.
 
 ---
 
@@ -92,9 +136,7 @@ Swiss, dark, against #101112: lightness band FAIL for four of eight (orange 0.76
 cyan 0.808; dark band 0.48 to 0.67), contrast pass. The package's own tests check only adjacent OKLab distance
 >= 15 and dark contrast >= 3, and its README says the palette "is validated" and the order "was validated for
 neighbour separation, lightness band and colour-blind separation". The order is validated for neighbours; the
-lightness band is not met by Apple's system colours. The honest claim is "validated for adjacency and CVD;
-system colours sit outside the lightness band by construction". Decision 1 in section 4.4 and open question 1
-deal with it. This is a result of running the method, not an opinion.
+lightness band is not met by Apple's system colours. The honest claim is "validated for adjacency and colour-vision separation; fails the dataviz lightness band for these slots" (listed). Decision 1 above settles it: the system colours stay and the finding is ledgered. This is a result of running the method, not an opinion.
 
 **Finding B: a dictionary keyed by an enum does not encode deterministically.** In the scratch prototype
 (section 10) a model with `[Role: Adaptive]` round-tripped equal but re-encoded to different bytes with
@@ -235,10 +277,10 @@ What changes in the existing types:
 | Theme | Palette half | Structure half | Appearances | Notes |
 |---|---|---|---|---|
 | **Swiss** | `ColorToken` + `Palette` (system colours, `system:` set so Apple adapters defer) | Rule: title 3 pt below title (`Rule.section`), gridline and baseline 1 pt; value labels above bars; SF; flat fills; direct series labels | both, plus increased contrast | The only theme with measured dark and increased-contrast values |
-| **House** | Local hexes become the `Theme.house` palette (blue #2B6CB0 ...). The package's earlier list shows SVGTheme's `#4AA3E0` differs from it; both disappear | Neutral: no title rule, value labels off, hairline grid | light only until dark values are authored | Replaces `EditorialTheme.house` and `SVGTheme.slate` |
+| **House** | Local hexes become the `Theme.house` palette (blue #2B6CB0 ...). The package's earlier list shows SVGTheme's `#4AA3E0` differs from it; both disappear | Neutral: no title rule, value labels off, hairline grid | light only until dark values are authored (House: owner may author dark later) | Replaces `EditorialTheme.house` and `SVGTheme.slate` |
 | **Princeton** | An `AppPalette` (accent #E77500 = `Palette.princetonAccent`, its eight series, its ramps) composed onto Swiss | Swiss | both: dark reference values exist in the source comments (#DF7105 ...) but are not measured, so they stay out until measured (section 4.2) | Becomes the model's first composition example |
-| **FT** | Paper #FFF1E5 background, claret/teal/blue series, salmon ramps | Serif title (named face, serif fallback), no title rule, horizontal faint grid, sans for data | light only (the paper is the surface; G1) | Gaps G1, G2, G4, G5, G8, G9 |
-| **Economist** | Blue/red series, #F3F2F0 surface | Condensed named face (`Econ Sans Cnd`, sans fallback), red tag block and title rule above the title, labels above gridlines, axis on the trailing side | light only | Gaps G2, G4, G6, G10 |
+| **FT** | Paper #FFF1E5 background, claret/teal/blue series, salmon ramps | Serif title (named face, serif fallback), no title rule, horizontal faint grid, sans for data | both: authored dark variant (decision 4); the light paper #FFF1E5 is FT's own | Gaps G1, G2, G4, G5, G8, G9 |
+| **Economist** | Blue/red series, #F3F2F0 surface | Condensed named face (`Econ Sans Cnd`, sans fallback), red tag block and title rule above the title, labels above gridlines, axis on the trailing side | both: authored dark variant (decision 4) | Gaps G2, G4, G6, G10 |
 | **Legacy Default** | SwiftUI system colours (`.blue .green ...`, dynamic) | Platform-automatic axes, gradient bars, hover annotations | system dynamic | Partly inexpressible: section 3.6 |
 | **Legacy Dark** | Hexes plus white/black at alpha | Same legacy structure | dark | Needs `ColorValue.alpha` |
 | **Legacy Financial** | Hexes | Same legacy structure | light | Fully expressible once `extraRamps` exists |
@@ -253,7 +295,7 @@ confirm, and the owner may correct me.
 
 | # | Gap | Exposed by | What the model gains | Decided |
 |---|---|---|---|---|
-| G1 | No appearance support. FT's identity is its paper; a dark FT is an invention | FT | `appearances: .lightOnly`. A light-only theme in a dark context renders on its own surface (a card), it does not get invented dark colours | Yes |
+| G1 | No appearance support. FT's identity is its paper; a dark FT is our interpretation | FT, Economist | `appearances` (`.both` or `.lightOnly`). **Decision 4: FT and Economist get authored dark variants.** They are authored by us as an interpretation of those houses; where we diverge is a finding to record. `.lightOnly` stays for themes with no dark | Yes (amended) |
 | G2 | A mark in the chart's top-left corner (Economist's red tab) and a rule **above** the title; today's `ChartFrame` has neither | Economist | `TitleRule.position` (`aboveTitle`/`belowTitle`/`none`) and optional `MarkSpec.tagMark` | Yes |
 | G3 | Alpha. Borders, shadows, highlights are colour-at-opacity in the legacy themes and in `ColorToken`'s own unmeasured roles | Legacy Dark, `ColorToken` | `ColorValue.alpha`; validator composites over the surface before measuring contrast | Yes |
 | G4 | Axis side and label placement. Economist sets value labels above their gridline on one side; FT puts them at the trailing edge. Today they are renderer constants | FT, Economist | `LabelSpec.axisSide`, `axisLabelPlacement` | Yes |
@@ -272,7 +314,7 @@ confirmed or struck, because they are claims about how two publishers draw chart
 
 Every `Adaptive` resolves by one rule, the rule `ColorToken` already has: increased contrast uses its measured
 value when present and otherwise the standard value; dark uses its dark value when present. A theme declares
-`appearances`. If `.both`, a missing `dark` on a role is a validation error (not a silent light fallback, which is
+`appearances` (FT and Economist declare `.both` with authored dark values, decision 4). If `.both`, a missing `dark` on a role is a validation error (not a silent light fallback, which is
 what an unmeasured `ColorToken.dark` does today, guarded by a test). If `.lightOnly`, `dark` must be `nil` and
 the theme renders on its own `background` in a dark context. No theme derives a dark value from a light one
 (consistent with `sequentialDark`, which is called out as derived and not measured).
@@ -658,7 +700,7 @@ release changes any default look. Test names are red-first names; written before
 | Version | Ships | Red-first tests (named) | Consumer change that lands with it |
 |---|---|---|---|
 | **0.4.0** Model | `ColorValue`, `Adaptive`, `ThemePalette`, `Structure` and its parts, `Theme`, `AppPalette`; `Theme.swiss` built from `ColorToken`/`Palette`/`Rule`; canonical JSON codec; numeric `TypeStyle` accessors; the `Theme` file layout | `swissIsBuiltFromTokens`, `adaptiveAgreesWithColorTokenForAllRoles`, `themeRoundTripsDeterministically` (Finding B), `dictionaryKeysAreStringsNotEnums`, `lightOnlyThemeRejectsDarkValue`, `bothThemeRequiresDarkOnEveryRole`, `existingTokensCSSUnchanged`, `alphaColourRoundTripsAsRRGGBBAA` | None. Additive; existing consumers on 0.2.0 or 0.3.0 are unaffected |
-| **0.5.0** Validator and registry | `ThemeValidator` (band, chroma, CVD via Machado matrices, normal floor, contrast, ordinal ramps, structure sanity); `Theme.house`, `.ft`, `.economist`, `.princeton` (as `AppPalette` on Swiss), the four legacy themes (Default snapshot per question 3), `Theme.all`; `conformance`/ledger | `validatorMatchesJavaScriptOnAllPalettes` (Node, tagged), `validatorFindsFailureOnBadPalette` ("silence is not a result"), `swissLightBandFindingIsLedgered` (measured 0.865), `ftAndEconomistFindingsAreExactlyTheLedger`, `legacyDarkCVDFailureIsRecorded` (ΔE 3.6), `entityOrderRequiresEveryFailingPairListed`, `princetonComposesOnSwissKeepingStructure`, `everyRegisteredThemeValidates` | None. Gaps G1 to G11 become the field list the three new themes force |
+| **0.5.0** Validator and registry | `ThemeValidator` (band, chroma, CVD via Machado matrices, normal floor, contrast, ordinal ramps, structure sanity); `Theme.house`, `.ft` and `.economist` (each with an authored dark variant, decision 4), `.princeton` (as `AppPalette` on Swiss), the four legacy themes (Default snapshotted and marked legacy, decision 3), `Theme.all`; `conformance`/ledger | `validatorMatchesJavaScriptOnAllPalettes` (Node, tagged), `validatorFindsFailureOnBadPalette` ("silence is not a result"), `swissLightBandFindingIsLedgered` (measured 0.865), `ftAndEconomistFindingsAreExactlyTheLedger`, `legacyDarkCVDFailureIsRecorded` (ΔE 3.6), `entityOrderRequiresEveryFailingPairListed`, `princetonComposesOnSwissKeepingStructure`, `everyRegisteredThemeValidates` | None. Gaps G1 to G11 become the field list the three new themes force |
 | **0.6.0** Emitters I: JSON, CSS | `design-tokens emit --all`; `themes/<id>.json` and `.css` (scoped, with light, dark, contrast); `tokens.css` still byte-identical; DesignTokensSwiftUI target (`Color(theme:role:)`, `ChartStyle`) if question 2 is yes | `themeCSSMatchesCommitted`, `themeJSONMatchesCommitted`, `tokensCSSStillEqualsToday`, `cssHasNoLiteralOutsideGenerated`, `scopedSelectorsDoNotLeakAcrossThemes` | **BusinessMath-UI converts** (the large change, on its own branch, in the phases of 6.1): pin 0.6.0; delete `ChartThemeProviding`, `EditorialTheme`, `TokenColor`, the five themes; views read `ChartStyle`; `showValues: Bool?`; `source:`; per-view `...resolve` tests; legacy themes render via `.platformAutomatic`. `swissThemeStructureHonouredByBarChart` etc. |
 | **Visual checkpoint 1** | **Not a release; a gate.** Contact sheets, produced by a test target in BusinessMath-UI: every theme (Swiss, House, Princeton, FT, Economist, the four legacy) x every standard view and Editorial archetype x {light, dark, increased contrast} x {SwiftUI standard views, Editorial, SVG}, each **before (BusinessMath-UI `main` at the pre-change commit) beside after (the branch)**, as PNG and an HTML index. Plus a second sheet: gaps G2, G4, G9 as drawn | `contactSheetCoversEveryThemeViewAppearance` (the sheet generator fails if a cell is missing: a blank cell is not a pass) | The owner looks. **No default theme or default structure changes, in BusinessMath-UI, the site or anywhere, before the owner has seen this** and says so. `design/swiss-default-theme` stays unmerged |
 | **0.7.0** Emitters II: SVG, web, blog | SVG emitter and `SVGStyle`; **Tumblr block emitter** with stamp (version, hash, template revision); `design-tokens check-blog` (stamp check and computed-value check, headless Chrome); site gains `themes/<id>.css` use if wanted | `svgStyleMatchesCommitted`, `tumblrBlockMatchesCommitted`, `tumblrBlockContainsNoTumblrTags`, `tumblrBlockHasNoLiterals`, `stampParsesAndRoundTrips`, `staleStampIsReported`/`missingStampIsReported`/`currentStampIsAccepted` (against fixture HTML, no network), `tumblrBlockCoversEveryRoleTheDraftUses` (compares to `~/Desktop/tumblr-swiss.html`'s variable names) | **BusinessMathCharts** replaces `SVGTheme` with `SVGStyle`; BusinessMath-UI SVG exporters take `theme:`; **the blog**: owner pastes the first generated block (after the verification on a Tumblr preview, section 9); the site re-pins |
@@ -745,7 +787,7 @@ step can stop.
    conformance test cross-runs both; but the test needs Node, and anything not run on the owner's Mac is unrun.
 4. *A ledger can become a dumping ground.* Mitigation: it records exact numbers, fails on any change, and a theme
    entering `.legacy` shows in the diff. If it grows, that is a signal, not a feature.
-5. *Light-only themes (FT, Economist) in a dark app* render as a bright card, which may look worse than a
+5. *(Superseded by decision 4: FT and Economist get authored dark variants; the remaining risk is that our dark is an interpretation of the houses. Original text follows, for the light-only case.)* *Light-only themes in a dark app* render as a bright card, which may look worse than a
    derived dark would. I preferred that to an invented palette; a rendering decides.
 6. *A paste-in block re-introduces the problem of the original drift:* a person edits the block in Tumblr's
    editor. The stamp does not catch a hand edit; the computed-value check does. If the headless check is flaky
@@ -803,7 +845,7 @@ by assertions on pixels.
   `GridlineStyle`, were not searched.
 - Consumers' `Package.resolved` other than BusinessMath-UI's (0.2.0) were not checked.
 
-## 17. Open questions for the owner (five)
+## 17. Open questions for the owner (five) — all answered 2026-11-09, see "Decisions 2026-11-09"
 
 1. **Swiss fails the lightness band (Finding A). Keep Apple's system colours and ledger the finding, or re-step the
    palette?** *Lean: keep, ledger the measured values, and require direct labels or printed values for the slots
@@ -815,8 +857,7 @@ by assertions on pixels.
 3. **Legacy Default theme uses SwiftUI system colours with no hex. Snapshot it with the measurer (and keep
    `Adaptive.system`), or drop it?** *Lean: snapshot it and keep it as `legacy`, since it is today's default and the
    before-and-after sheets need it; drop it only if the owner decides the default is going away.*
-4. **FT and Economist in dark: light-only themes that render as a card, or authored dark variants?** *Lean:
-   light-only and declared; authoring dark FT is inventing the publisher's design.*
+4. **FT and Economist in dark: light-only themes that render as a card, or authored dark variants?** *Lean (overruled): light-only. **Decided: authored dark variants**, flagged as our interpretation.*
 5. **Is a ledger acceptable for legacy conformance** (section 4.3), given the standing "no suppression" rule?
    *Lean: yes, because it records a measurement and fails on any change, and a theme entering it is a visible diff;
    if not, the four legacy themes have to be re-stepped before 0.5.0 can merge.*

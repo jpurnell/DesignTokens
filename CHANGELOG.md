@@ -2,6 +2,30 @@
 
 ## [Unreleased]
 
+## [0.4.0] - unreleased (branch `feature/theme-model-0.4.0`; not tagged)
+
+Additive. `Generated/tokens.css` and `tokens.json` are byte-identical to 0.3.0 (asserted by test).
+
+### Added
+- `ColorValue` (RGB plus alpha, stored as `#RRGGBB` or `#RRGGBBAA`), `SystemColorName`, `Adaptive` (light,
+  dark, increased-contrast light and dark, same fallback rule as `ColorToken`), `NamedAdaptive`, `Ramp`,
+  `AppearanceSupport`.
+- `ColorRole`, `ThemePalette`, `Structure` and its parts (`RuleSpec`, `TitleRule`, `LineSpec`, `TypeRoles`,
+  `TextSpec`, `FontFamilyRef`, `LabelSpec`, `LayoutSpec`, `MarkSpec`, `NumberFormats`), `Theme`, `AppPalette`,
+  `SeriesOrder`, `SeriesPair`, `Theme.composed(with:)`, `Theme.appearanceIssues`.
+- `Theme.swiss`, built from `ColorToken`, `Palette`, `Rule`, `Grid`, `Radius` and `TypeStyle`.
+- `ThemeCodec`: canonical JSON (sorted keys, fixed fields, `String`-keyed dictionaries only, trailing newline),
+  `Fingerprint.fnv1a64`.
+- `TypeStyle.points`, `.lineHeight`, `.trackingEm`, `.fluid` (`FluidSize`). The CSS strings are now written
+  from the numbers.
+- `SwissLedger` and tests that pin the exact Swiss measurements.
+
+### Changed (wording only)
+- "Validated" now reads "validated for adjacency and colour-vision separation; fails the dataviz lightness
+  band for these slots": yellow in light (OKLCH L 0.865, band 0.43 to 0.77); orange 0.762, green 0.756, yellow
+  0.885, cyan 0.808 in dark (band 0.48 to 0.67). Orange, green, yellow and cyan are also under 3:1 on the
+  light surface (2.21, 2.13, 1.45, 2.07). Those slots need direct labels. Apple's system colours are kept.
+
 ## [0.3.0] - 2026-11-09
 
 ### Added
@@ -53,9 +77,10 @@
 - CSS: the explicit dark selectors (`[data-theme="dark"]`, `[data-bs-theme="dark"]`) match any element, not only the root.
 - CSS: every colour also emitted as an `-rgb` triple (Bootstrap builds link colours from them); the dark
   selectors honour Bootstrap's `data-bs-theme` as well as `data-theme`.
-- Palette tests: validated order, adjacent OKLab distance of at least 15, contrast of label on background.
+- Palette tests: fixed order (validated for adjacency and colour-vision separation; fails the lightness band for the slots listed under 0.4.0), adjacent OKLab distance of at least 15, contrast of label on background.
 
 [Unreleased]: https://github.com/jpurnell/DesignTokens/compare/0.3.0...HEAD
+[0.4.0]: https://github.com/jpurnell/DesignTokens/compare/0.3.0...0.4.0
 [0.3.0]: https://github.com/jpurnell/DesignTokens/compare/0.2.0...0.3.0
 [0.2.0]: https://github.com/jpurnell/DesignTokens/compare/0.1.0...0.2.0
 [0.1.0]: https://github.com/jpurnell/DesignTokens/releases/tag/0.1.0

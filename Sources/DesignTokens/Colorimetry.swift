@@ -26,6 +26,11 @@ enum OKLab {
         return (dl * dl + da * da + db * db).squareRoot() * 100
     }
 
+    /// Perceptual lightness, 0 (black) to 1 (white): the L of OKLab, which is also the L of OKLCH.
+    static func lightness(_ color: RGB) -> Double {
+        convert(color).0
+    }
+
     static func linear(_ channel: UInt8) -> Double {
         let c = Double(channel) / 255
         return c <= 0.04045 ? c / 12.92 : pow((c + 0.055) / 1.055, 2.4)

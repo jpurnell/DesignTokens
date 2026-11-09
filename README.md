@@ -2,7 +2,7 @@
 
 The design system's values, held once as typed Swift and generated for every surface that cannot import Swift.
 
-**Status:** pre-release (`0.x`, latest 0.3.0). Phase 1 of `project/master_plan.md`.
+**Status:** pre-release (`0.x`, latest 0.3.0; 0.4.0 in preparation). Phase 1 of `project/master_plan.md`.
 
 ## What it holds
 
@@ -15,7 +15,7 @@ The design system's values, held once as typed Swift and generated for every sur
   `separator` carry alpha, which a hex readout loses; `background`, `secondaryBackground` and `onAccent` are
   this package's own values; `warning` has no system colour; and the measured system `link` has *less*
   contrast than this package's link, so it is deliberately not adopted.
-- **Palette** (`Palette`): eight series colours in a validated order, in light (`series`) and dark
+- **Palette** (`Palette`): eight series colours in a fixed order, validated for adjacency and colour-vision separation (it fails the dataviz lightness band for yellow in light and for orange, green, yellow and cyan in dark, and orange, green, yellow and cyan are under 3:1 on the light surface, so those slots need direct labels: see `SwissLedger`), in light (`series`) and dark
   (`seriesDark`, measured) and with Increase Contrast on (`seriesIncreasedContrast`,
   `seriesIncreasedContrastDark`, measured); the sequential ramp, and `sequentialDark` (the same ramp reversed, derived, not
   measured); the diverging ramp (no dark ramp yet: its tints would have to be invented); and Princeton
@@ -25,6 +25,11 @@ The design system's values, held once as typed Swift and generated for every sur
 
 - **Typography** (`FontStack`, `TypeStyle`): SF with a Helvetica fallback as the default; New York and
   Garamond stacks as a switch; six type roles from label to display.
+
+- **Theme model** (0.4.0, additive): `Theme` = `Structure` + `ThemePalette`; `Adaptive` colours (light, dark and
+  an increased-contrast value for each); `ColorValue` with alpha; `Theme.swiss`, built from the constants
+  above; `AppPalette` composed onto a theme; `ThemeCodec`, a canonical, byte-stable JSON form; numeric
+  `TypeStyle` accessors. `Generated/tokens.css` and `tokens.json` are unchanged.
 
 Not yet here: increased-contrast values for the roles listed above, and a dark diverging ramp.
 

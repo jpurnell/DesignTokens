@@ -4,7 +4,7 @@ The design system's values, held once as typed Swift and generated for the surfa
 
 ## Overview
 
-``ColorToken`` names the colour roles, ``Palette`` holds the validated chart colours, and ``Rule``,
+``ColorToken`` names the colour roles, ``Palette`` holds the chart colours (validated for adjacency and colour-vision separation; see ``SwissLedger`` for the slots that fail the lightness band), and ``Rule``,
 ``Grid`` and ``Radius`` hold the structural metrics. ``CSSEmitter`` and ``JSONEmitter`` turn them into
 files; the `design-tokens` executable writes those files into `Generated/`.
 
@@ -25,6 +25,17 @@ system's own colours and use these values only where the system cannot reach.
 - ``Rule``
 - ``Grid``
 - ``Radius``
+
+### Themes
+
+- ``Theme``
+- ``Structure``
+- ``ThemePalette``
+- ``AppPalette``
+- ``Adaptive``
+- ``ColorValue``
+- ``ThemeCodec``
+- ``SwissLedger``
 
 ### Generated files
 
