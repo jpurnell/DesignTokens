@@ -2,7 +2,7 @@
 
 The design system's values, held once as typed Swift and generated for every surface that cannot import Swift.
 
-**Status:** pre-release (`0.x`, latest tag 0.5.0; 0.6.0 is unreleased and untagged; the Tumblr block and `check-blog` are merged into it on `merge/tumblr-into-0.6.0`; 0.6.0 carries the fixes from an independent review of 0.4.0 and 0.5.0: see `CHANGELOG.md`). Phase 1 and 1b of `project/master_plan.md`.
+**Status:** pre-release (`0.x`, latest tag 0.6.0 (2026-11-09), which includes the Tumblr block and `check-blog`; 0.6.0 carries the fixes from an independent review of 0.4.0 and 0.5.0: see `CHANGELOG.md`). Phase 1 and 1b of `project/master_plan.md`.
 
 ## What it holds
 
@@ -66,7 +66,7 @@ The design system's values, held once as typed Swift and generated for every sur
   throws on a bad hex. Theme JSON written by 0.4.0 (no `conformance`, `extras`, `colourOverrides` or `rampOverrides`) no longer
   decodes; nothing emitted theme JSON before 0.6.0.
 
-- **Chart alignment** (0.6.0, unreleased; owner decisions 2026-11-09, `project/plans/proposals/2026-11-09_ChartAlignmentToApprovedDesign.md`):
+- **Chart alignment** (0.6.0; owner decisions 2026-11-09, `project/plans/proposals/2026-11-09_ChartAlignmentToApprovedDesign.md`):
   Swiss expresses the approved "Swiss and Apple" chart. Marks are neutral by default and the accent is reserved for emphasis:
   `palette.muted` is the history grey (#B9BBBD / #4E5053; Increase Contrast #8E9196 / #6F7176; 1.84:1 and 2.34:1, ledgered, printed
   values are the relief), `MarkSpec.defaultFill` / `defaultEmphasis` / `emphasisFill`, the title rule above the title (`gapAfter`), a 1.5 pt ink

@@ -1,9 +1,12 @@
 # Changelog
 
-## [Unreleased]
+## [0.6.0] - 2026-11-09
 
-### Reference script no longer vendored, unreleased
-Branch `fix/no-vendored-script`. Reverses the "vendored" half of the entry below: the repository is public and `validate_palette.js` has no licence of its own
+### Princeton follows Swiss's ramps
+Princeton's palette no longer defines sequential or diverging ramps, so it inherits Swiss's grey-to-orange ones (owner decision 2026-11-09); its blue-orange ramp is retired. Its ledger gains Swiss's inherited sequential light-end row (1.37 against 2.0).
+
+### Reference script no longer vendored
+Reverses the "vendored" half of the entry below: the repository is public and `validate_palette.js` has no licence of its own
 (only an embedded Color.js MIT notice), so we cannot confirm we may redistribute it. Nothing was ever pushed with it (it was only on unpushed local branches).
 - **Removed** `Tests/DesignTokensTests/Vendored/validate_palette.js`. `Vendored/README.md` is now a note: where the script comes from, the pin, `DATAVIZ_VALIDATOR`, why it is not vendored. (The directory stays, excluded from the test target, to hold that note.)
 - **`ReferenceScript`** (test support) locates the script: `DATAVIZ_VALIDATOR` (authoritative when set), else `~/.claude/skills/dataviz/scripts/` and Claude Code's bundled-skills directory (bounded, sorted, first whose SHA-256 matches the pin). Absent or mismatching: never run.
@@ -143,7 +146,7 @@ and the other `Generated/themes/` files are unchanged by the merge.
   fixtures. Linux is untested. The block's look against the draft is reasoned from the CSS, not compared on screen.
 
 
-## [0.6.0] - unreleased (not tagged; carries the review fixes below)
+### Earlier 0.6.0 entries (emitters, SwiftUI target, review fixes)
 
 Mostly additive. `Generated/tokens.css` and `tokens.json` are byte-identical to 0.5.0 (SHA-256 `7f64d385...0342` and
 `9c770feb...0056`, pinned by test). **Not strictly source-compatible with 0.5.0**, because of the review fixes: `ThemeValidator.measure(hexes:...)`
@@ -345,7 +348,7 @@ Additive. `Generated/tokens.css` and `tokens.json` are byte-identical to 0.3.0 (
   selectors honour Bootstrap's `data-bs-theme` as well as `data-theme`.
 - Palette tests: fixed order (validated for adjacency and colour-vision separation; fails the lightness band for the slots listed under 0.4.0), adjacent OKLab distance of at least 15, contrast of label on background.
 
-[Unreleased]: https://github.com/jpurnell/DesignTokens/compare/0.5.0...HEAD
+[Unreleased]: https://github.com/jpurnell/DesignTokens/compare/0.6.0...HEAD
 [0.6.0]: https://github.com/jpurnell/DesignTokens/compare/0.5.0...0.6.0
 [0.5.0]: https://github.com/jpurnell/DesignTokens/compare/0.4.0...0.5.0
 [0.4.0]: https://github.com/jpurnell/DesignTokens/compare/0.3.0...0.4.0
