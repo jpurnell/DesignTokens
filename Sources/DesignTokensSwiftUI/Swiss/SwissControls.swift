@@ -126,6 +126,7 @@ public struct SwissSegmentedControl<Value: Hashable>: View {
 
     private func segments(style: ChartStyle, metrics: SwissMetrics) -> some View {
         let onInk = ReadableText.on(style.value(.ink), style: style).colour.color
+        let fill = RoundedRectangle(cornerRadius: metrics.segmentRadius)
         return HStack(spacing: 0) {
             ForEach(options, id: \.self) { option in
                 let selected = option == selection
@@ -136,14 +137,16 @@ public struct SwissSegmentedControl<Value: Hashable>: View {
                         .padding(.horizontal, metrics.step(3))
                         .padding(.vertical, metrics.step(2))
                         .frame(maxWidth: .infinity)
-                        .background(selected ? style.ink : Color.clear)
+                        .background { if selected { fill.fill(style.ink).modifier(CellProbe(key: "segmented/selected")) } }
                         .swissTouchTarget(metrics)
+                        .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
                 .accessibilityAddTraits(selected ? .isSelected : [])
             }
         }
-        .clipShape(metrics.controlShape)
+        // The selected segment sits inside the border by the same inset on every side; the border's line is on top of it.
+        .padding(metrics.segmentInset + metrics.hairline)
         .overlay(metrics.controlShape.strokeBorder(style.ink, lineWidth: metrics.hairline))
         .accessibilityElement(children: .contain)
         .accessibilityLabel(title)

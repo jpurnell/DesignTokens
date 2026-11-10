@@ -40,6 +40,14 @@ public struct SwissMetrics: Sendable, Hashable {
         grid = SwissGrid(columns: layout.columns, gutter: CGFloat(layout.gutter))
     }
 
+    /// The space between a segmented control's border and its selected segment, on every side: one base unit (4 pt in Swiss). The
+    /// border's own line is added to it by the control, so the gap that is seen is this value.
+    public var segmentInset: CGFloat { step(1) }
+
+    /// The selected segment's corner radius: concentric with the control's border, so the outer radius less the inset and the border
+    /// (floored at 0: square in Swiss, where 4 pt minus 5 pt is nothing).
+    public var segmentRadius: CGFloat { max(controlRadius - segmentInset - hairline, 0) }
+
     /// `count` base units.
     public func step(_ count: Int) -> CGFloat { unit * CGFloat(count) }
 
