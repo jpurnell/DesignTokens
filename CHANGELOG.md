@@ -1,5 +1,35 @@
 # Changelog
 
+## [0.11.0] - 2026-11-10
+
+Branch `feature/ui-gaps-0.11.0` from 0.10.0 (`f8a2f7a`). `DesignTokens.version` is 0.11.0; `Generated/` differs from 0.10.0 in that version and in Swiss's new `alert` colour (`themes/swiss.*`, and `princeton.*`, which follows Swiss). Proposal: `project/plans/proposals/2026-11-10_UIGaps0110.md`; API: `project/docs/technical/SwissComponents.md`. Evidence: the dashboard's port onto 0.10.0 (`08a87a2`), the gaps in its `CURRENT_design-tokens.md`.
+
+### Per gap
+1. **Type hierarchy: built.** `UIRole.section` and `UIRole.cardTitle`; the Dynamic Type style is chosen per platform (a Mac's section heading is `title2`, 17 pt, a phone's `title3`, 20 pt). `UITextSpec.pointSize` measures the platform font (`NSFont`, `UIFont`) and a test holds `display > title > section > cardTitle >= heading >= body > caption >= label` under `swift test` and on an iOS Simulator. No new core `TypeStyle`: see the proposal (the web scale already has `heading` 28 as its section heading).
+2. **Card and grid: built.** `.swissCardChrome(.borderless)` (the 3 pt top rule stays); `SwissEqualGrid` / `SwissEqualGridLayout` / `SwissEqualGridArrangement` (equal-width columns, rows as tall as the tallest card, a lone last card keeps its width); inside the grid a `SwissCard` is offered the row's height and pins its footer to the bottom; `SwissCardFooter` wraps and takes views.
+3. **Table: built.** Cells that draw nothing hold their column (measured red against 0.10.0 with a frame probe); single and multiple selection (tap, command or shift, arrow keys, VoiceOver `isSelected`); command-C, Edit > Copy (macOS) and a context menu copy the selected rows as tab-separated text; disclosure rows (`children:`, `expanded:`, left and right arrows, VoiceOver expand and collapse); `SwissTableColumn(sortBy:)` with a stable table-side sort at every tree level; rows stack below `SwissMetrics.tableStackedBelow` (600 pt) and at an accessibility text size, with the sort in a menu; `narrow: .scroll` keeps 0.10.0's behaviour; `isEmpty:` lets a stacked row omit a blank cell's label.
+4. **Colour: built.** `Adaptive.dynamicColor` and `AppPaletteSource.color(_:)`: a `Color` that resolves light, dark and Increase Contrast when drawn.
+5. **Chips and status: built.** `OutlinedChip(shape:)` is square by default (the theme's container radius); `StatusKind` and `ChipTone` gain `.caution` (the existing yellow-brown `warning` role) and `.warning` is now a stronger orange, `Theme.swiss.palette.extras["alert"]` (`ThemePalette.alertName`, `Theme.textSafeAlert`); `ChipTone.status(_:)`; outline contrast tested at 3:1 on both surfaces in four appearances.
+6. **Segmented control: built.** One line per segment; a menu when the segments do not fit or at an accessibility size (`SwissSegmentedPresentation`), the menu dropping its title before a word would break; 44 pt targets.
+7. **Flow: built.** `SwissFlowLayout`, `SwissFlow`, `SwissFlowArrangement`.
+
+### Added: gallery
+`swiss-gallery` scenes moved to a non-product target `SwissGalleryScenes`, extended (type hierarchy at Mac and compact widths, borderless equal-height card rows with a wrapped footer and a lone last card, a table with selection, tree rows and empty cells at three widths, chips, segmented at an accessibility size, flow, dynamic colour), and `GalleryRenderTests` draws the same scenes at iPhone (390 pt) and iPad (1024 pt) widths on an iOS Simulator (`TEST_RUNNER_SWISS_GALLERY_OUT=<folder> xcodebuild test ...`).
+
+### Source-breaking
+* `StatusKind.warning` and `ChipTone.warning` are now the orange; the yellow is `.caution`. `StatusKind.role` is replaced by `StatusKind.adaptive(in:)`.
+* `OutlinedChip` is square by default; `shape: .control` restores 0.10.0's 4 pt.
+* `SwissCard` titles use `cardTitle`: smaller on a Mac (22 to 15 pt), 28 to 17 on a phone. Section headings use `section` (`.heading` is unchanged at 13 / 17 pt).
+* `SwissTable`: below 600 pt it stacks instead of filling twelve columns (`narrow: .scroll` and `minimumWidth:` restore scrolling); when a column has `sortBy` or `compare` the table sorts its own rows.
+* `SwissSegmentedControl.init` gained `presentation:` before `selection:`; calls that name their arguments compile.
+* `SwissCardFooter` is generic over its names (`SwissCardFooter(_:names:)` with a string is unchanged).
+
+### Tests
+397 core (unchanged) and 130 SwiftUI (was 75 at 0.10.0). On an iOS Simulator (iPhone 18 Pro): the role ordering and the phone numbers, dynamic colour including the high-contrast traits, and the gallery render. Quality gate 0 errors, 0 warnings on every commit.
+
+### Not verified
+No device and no Linux toolchain. Nothing was run on visionOS (it builds). `ImageRenderer` draws a `Menu` blank, so the simulator renders show the sort menu and the segmented menu as empty space (the Mac renders show them). Increase Contrast on a Mac reaches a dynamic colour only as the system setting (macOS 27 reports the high-contrast appearance by its plain name), so that path is a pure function tested with the flag, not an end-to-end render. Edit > Copy is macOS only (`copyable` is iOS 27 here). The selection fill and accent bar, copy and the arrow keys are not driven by synthetic events; their rules are tested pure.
+
 ## [0.10.0] - 2026-11-10
 
 Branch `feature/swiss-components-0.10.0` from 0.9.0. `DesignTokens.version` is 0.10.0, so every generated header and the Tumblr stamp say so; the generated files differ from 0.9.0 only in that version (and the stamp's fingerprint). Proposal: `project/plans/proposals/2026-11-10_SwissComponents.md`; API and mapping: `project/docs/technical/SwissComponents.md`.
@@ -463,7 +493,8 @@ Additive. `Generated/tokens.css` and `tokens.json` are byte-identical to 0.3.0 (
   selectors honour Bootstrap's `data-bs-theme` as well as `data-theme`.
 - Palette tests: fixed order (validated for adjacency and colour-vision separation; fails the lightness band for the slots listed under 0.4.0), adjacent OKLab distance of at least 15, contrast of label on background.
 
-[Unreleased]: https://github.com/jpurnell/DesignTokens/compare/0.10.0...HEAD
+[Unreleased]: https://github.com/jpurnell/DesignTokens/compare/0.11.0...HEAD
+[0.11.0]: https://github.com/jpurnell/DesignTokens/compare/0.10.0...0.11.0
 [0.10.0]: https://github.com/jpurnell/DesignTokens/compare/0.9.0...0.10.0
 [0.9.0]: https://github.com/jpurnell/DesignTokens/compare/0.8.0...0.9.0
 [0.8.0]: https://github.com/jpurnell/DesignTokens/compare/0.7.0...0.8.0

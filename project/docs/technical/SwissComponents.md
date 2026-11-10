@@ -1,4 +1,4 @@
-# Swiss components for SwiftUI (0.10.0)
+# Swiss components for SwiftUI (0.10.0, 0.11.0)
 
 Everything here is in `DesignTokensSwiftUI`, reads `\.theme`, `\.colorScheme`, `\.colorSchemeContrast` and Dynamic Type, and contains no
 literal colour, radius or font (`SwissSourceDisciplineTests` scans the sources). Design and decisions:
@@ -9,16 +9,18 @@ component, light and dark, and an `index.html`.
 
 | Piece | API | Notes |
 |---|---|---|
-| Type roles | `.uiText(_ role: UIRole, ink: UIInk = .automatic)`, `.uiFigure()`, `UITextSpec(role, theme:)` | `UIRole`: `label`, `caption`, `body`, `heading`, `title`, `display`. Text style by role (`caption2`, `footnote`, `body`, `headline`, `title`, `largeTitle`); weight, design, capitals and positive tracking from the theme. |
+| Type roles | `.uiText(_ role: UIRole, ink: UIInk = .automatic)`, `.uiFigure()`, `UITextSpec(role, theme:)` | `UIRole`: `label`, `caption`, `body`, `heading`, `cardTitle`, `section`, `title`, `display` (0.11.0 added `cardTitle` and `section`). Text style by role (`caption2`, `footnote`, `body`, `headline`, then per platform `title3` / `headline` for the card title and `title2` / `title3` for the section heading, `title`, `largeTitle`); `UITextSpec.pointSize` measures it. At default size: Mac 26 / 22 / 17 / 15 / 13 / 13 / 10 / 10 (display, title, section, card title, heading, body, caption, label), phone 34 / 28 / 20 / 17 / 17 / 17 / 13 / 11; weight, design, capitals and positive tracking from the theme. |
 | Metrics | `SwissMetrics(theme:)`, `SwissGrid`, `SwissRule(_:tone:)` | unit, `step(n)`, gutter, rule weights 1/3/8, radii 0/4, chip outline (2 x hairline), 12-column spans (label 1-3, reading 4-10). |
 | Container | `.swissContainer()` | Square, hairline `rule` border, no fill. |
-| Card | `SwissCard(label:title:description:chip:footer:)`, `SwissCardFooter(_:names:)` | The Hybrid card. |
-| Chip | `OutlinedChip(_:tone:glyph:)`, `ChipTone` | `.neutral`, `.emphasis`, `.positive`, `.negative`, `.warning`, `.custom(Color)`. |
+| Card | `SwissCard(label:title:description:chip:footer:)`, `SwissCardFooter(_:names:)` / `SwissCardFooter(_:names: { views })`, `.swissCardChrome(.bordered / .borderless)` | The Hybrid card. Borderless keeps the 3 pt rule. In a `SwissEqualGrid` it fills its row and pins the footer to the bottom. |
+| Grid and flow | `SwissEqualGrid(minimumColumnWidth:spacing:)`, `SwissEqualGridLayout`, `SwissEqualGridArrangement`, `SwissFlow`, `SwissFlowLayout`, `SwissFlowArrangement` | Equal-width columns, rows as tall as their tallest card, a lone last card keeps its width; wrapping lines of chips or names. |
+| Chip | `OutlinedChip(_:tone:glyph:shape:)`, `ChipTone`, `ChipShape` | `.neutral`, `.emphasis`, `.positive`, `.negative`, `.caution` (yellow-brown), `.warning` (orange), `.custom(Color)`, `ChipTone.status(_:)`. Square by default; `shape: .control` for 4 pt. |
 | Section | `SwissSection(_:content:)` | 3 pt rule, heading. |
 | Key/value | `KeyValueRow`, `KeyValueList`, `.labeledContentStyle(.swiss)`, `KeyValueGeometry` | Label columns 1-3, value 4-10, stacks when the label column would be narrower than 24 base units (scaled with Dynamic Type). |
-| Segmented | `SwissSegmentedControl(title:options:name:selection:)` | Selected text colour is measured (`ReadableText`). |
+| Segmented | `SwissSegmentedControl(title:options:name:presentation:selection:)`, `SwissSegmentedPresentation` | One line per segment; a menu when they do not fit or at an accessibility size. Selected text colour is measured (`ReadableText`). |
 | Banner | `StatusBanner(_:text:)`, `StatusKind`, `StatusBannerStyle.resolve`, `ReadableText.on(_:style:)` | Text is ink or background, whichever measures higher on the fill in that appearance. |
-| Table | `SwissTable`, `SwissTableColumn`, `SwissTableSort`, `SwissTableGeometry`, `.swissTableStyle()` | On the grid, no system chrome; the native-table modifier is a small helper. |
+| Table | `SwissTable(_:columns:selection:sort:children:expanded:minimumWidth:narrow:)`, `SwissTableColumn(sortBy:copy:isEmpty:)`, `SwissTableSort`, `SwissTableSorting`, `SwissTableTree`, `SwissTableSelectionRule`, `SwissTableCopy`, `SwissTableGeometry`, `.swissTableStyle()` | On the grid, no system chrome; selection (single or multiple), copy, disclosure rows, a table-side sort, stacked rows under 600 pt or at an accessibility size. The native-table modifier is a small helper. |
+| Colour | `Adaptive.dynamicColor`, `AppPaletteSource.color(_:)` | A `Color` that follows light, dark and Increase Contrast. |
 | Forms | `.toggleStyle(.swiss)`, `.formStyle(.swiss)`, `SwissTextField`, `.swissTouchTarget()` | See the table below. |
 | App palette | `AppPalette(background:surface:)` | Composed into the theme and measured. |
 
@@ -51,7 +53,25 @@ they adopt:
   `Theme.structure.rules`, so it is no longer a copy of the tokens. The box-drawing card and ANSI chip stay there, drawn with
   `ANSIEmitter`'s colours; the chip's neutral/emphasis/status tones are the same `ChipTone` vocabulary.
 
-## What the dashboard would delete or replace (do not change its repo; read at `ae45fdc`)
+## What the dashboard can delete on 0.11.0 (read at `08a87a2`; its repo is not changed here)
+
+| Dashboard code that stayed hand-rolled on 0.10.0 | Replaced by |
+|---|---|
+| `EqualHeightGrid.swift` (the layout and `EqualGridArrangement`) | `SwissEqualGrid` / `SwissEqualGridLayout` / `SwissEqualGridArrangement` |
+| The Stack Map gap card (`gapCard`: rule, label and chip, title, hairline, pinned footer, no border) | `SwissCard` with `.swissCardChrome(.borderless)` inside a `SwissEqualGrid`; `SwissCardFooter("Builds on") { buttons }` for the names |
+| `namesRow` and `FlowLayout` | `SwissCardFooter` (wraps), `SwissFlow` / `SwissFlowLayout` for the platform tags |
+| `Role.color` (the bridge from the palette to a dynamic `Color`) | `DashboardPalette.color(role)` or `DashboardPalette.text(role).dynamicColor` |
+| `.title` / `.largeTitle` workarounds for section headings, the card title at `.title` | `.uiText(.section)`, `.uiText(.cardTitle)` |
+| `Color.clear.frame(height: 1)` in the portfolio table's empty cells | nothing: a cell that draws nothing holds its column |
+| The portfolio table's own tree, expansion and sort code | `SwissTable(rows, columns:, selection:, sort:, children: \.children)` with `sortBy:` columns |
+| `ProjectDetailView`'s menu `Picker` fallback for the tabs at an accessibility size | `SwissSegmentedControl` (automatic) |
+| A square-chip wrapper over `OutlinedChip` | `OutlinedChip` (square by default) |
+| A second yellow or orange for caution and warning | `StatusKind.caution` / `.warning`, `ChipTone.caution` / `.warning` |
+| The status sheet's label and value rows | `KeyValueList` (0.10.0). Its label and term parsing is the app's own text handling and stays. |
+
+Still the app's: the native `Form` in Settings, and the sign-in, account and QR scanner screens.
+
+## What the dashboard would delete or replace at 0.10.0 (read at `ae45fdc`)
 
 | Dashboard file / type | Replaced by |
 |---|---|

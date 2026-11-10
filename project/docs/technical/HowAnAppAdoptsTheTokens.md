@@ -102,10 +102,10 @@ declared surfaces (a `textContrast` finding names the one that cannot read), and
 translucent background is measured composited over white (black in dark), so say the real greys in `textSurfaces`. A surface with no dark
 value makes the composition light only, as everywhere else. The marker contract is unchanged (two more labelled arguments of the one call).
 
-## 2d. Components (0.10.0)
+## 2d. Components (0.10.0, 0.11.0)
 
 Type roles, card, chip, section, key/value rows, segmented control, banner, table and form styles are in `DesignTokensSwiftUI`; an app writes
-none of them. `project/docs/technical/SwissComponents.md` has the API, what SwiftUI allows for tables and form controls, and what the dashboard deletes.
+none of them; 0.11.0 adds the section and card-title roles, an equal-height card grid, a selectable tree table, a `Color` from an `Adaptive` (`Palette.color(.failure)`) and the caution and warning statuses. `project/docs/technical/SwissComponents.md` has the API, what SwiftUI allows for tables and form controls, and what the dashboard deletes.
 
 ## 3. Ledger what you keep
 

@@ -2,7 +2,7 @@
 
 The design system's values, held once as typed Swift and generated for every surface that cannot import Swift.
 
-**Status:** pre-release (`0.x`, latest tag 0.8.0 (2026-11-10: app-palette adoption API and `AppPaletteSource`); 0.10.0 (Swiss SwiftUI components, `AppPalette` window and surface, `swiss-gallery`) is on `feature/swiss-components-0.10.0`, after 0.9.0 (text roles, host surfaces, public contrast, Swiss as the environment default) is on `feature/text-roles-0.9.0`, after 0.7.0 (terminal and slides emitters, the Tumblr full theme, `--format`) and 0.6.0 (the Tumblr block and `check-blog`); 0.6.0 carries the fixes from an independent review of 0.4.0 and 0.5.0: see `CHANGELOG.md`). Phase 1 and 1b of `project/master_plan.md`.
+**Status:** pre-release (`0.x`, latest tag 0.8.0 (2026-11-10: app-palette adoption API and `AppPaletteSource`); 0.11.0 (the dashboard's 0.10.0 gaps: type hierarchy, borderless equal-height cards, table selection and tree rows, dynamic colour, square chips, caution and warning, segmented fallback, flow) is on `feature/ui-gaps-0.11.0`, after 0.10.0 (Swiss SwiftUI components, `AppPalette` window and surface, `swiss-gallery`) is on `feature/swiss-components-0.10.0`, after 0.9.0 (text roles, host surfaces, public contrast, Swiss as the environment default) is on `feature/text-roles-0.9.0`, after 0.7.0 (terminal and slides emitters, the Tumblr full theme, `--format`) and 0.6.0 (the Tumblr block and `check-blog`); 0.6.0 carries the fixes from an independent review of 0.4.0 and 0.5.0: see `CHANGELOG.md`). Phase 1 and 1b of `project/master_plan.md`.
 
 ## What it holds
 
@@ -139,7 +139,7 @@ text is drawn on, so the guarantee holds on yours and not only on Swiss's), `App
 views read, cross-checked by `validate()`), and `RGB.contrastRatio(with:)` / `meetsAA(on:)` so an app writes no WCAG of its own. The SwiftUI
 `\.theme` default is now Swiss. Proposal: `project/plans/proposals/2026-11-10_TextRolesAndPaletteSurfaces.md`.
 
-## Swiss components for SwiftUI (0.10.0)
+## Swiss components for SwiftUI (0.10.0, 0.11.0)
 
 `DesignTokensSwiftUI` has the pieces an app would otherwise write itself: UI type roles (`.uiText(.label)`, `.uiFigure()`), `SwissCard`,
 `OutlinedChip`, `SwissSection`, `KeyValueRow`, `SwissSegmentedControl`, `StatusBanner`, `SwissTable`, and Toggle, LabeledContent, Form and text
@@ -147,6 +147,12 @@ field styles. All read the theme, the colour scheme, the contrast setting and Dy
 `AppPalette(background:surface:)` lets an app declare its own window, which charts then sit on and ink is measured against.
 `swift run swiss-gallery <folder>` renders every component, light and dark. API, what SwiftUI does and does not allow for tables and form
 controls, and ownership: `project/docs/technical/SwissComponents.md`.
+
+0.11.0 closes what the dashboard still hand-rolled after porting onto 0.10.0: `UIRole.section` and `.cardTitle` with a measured size ordering (a Mac section heading is 17 pt, a phone's 20),
+`SwissCard` borderless in a `SwissEqualGrid` with the footer pinned to the row's bottom, `SwissFlowLayout`, a `SwissTable` with selection, copy, tree rows, `sortBy` and a stacked
+layout for phone widths and accessibility sizes (and cells that draw nothing no longer shift the columns), `Adaptive.dynamicColor`, square `OutlinedChip`s, `.caution` and `.warning` statuses, and a
+`SwissSegmentedControl` that becomes a menu rather than break words. `swift run swiss-gallery <folder>` draws the new scenes; `GalleryRenderTests` draws them on an iOS Simulator.
+Proposal: `project/plans/proposals/2026-11-10_UIGaps0110.md`.
 
 ## Terminal and slides (0.7.0)
 
