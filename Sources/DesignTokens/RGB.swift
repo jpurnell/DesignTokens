@@ -43,4 +43,30 @@ public struct RGB: Sendable, Hashable {
         let digits = String(value, radix: 16, uppercase: true)
         return digits.count == 1 ? "0" + digits : digits
     }
+
+    /// The WCAG relative luminance, 0 (black) to 1 (white).
+    public var relativeLuminance: Double {
+        Contrast.luminance(self)
+    }
+
+    /// The WCAG contrast ratio between this colour and `other`, from 1 to 21. It does not matter which is the
+    /// text and which the background.
+    ///
+    /// This is the function the validator measures with, so an app's own assertion and ``AppPalette/validate(on:)``
+    /// cannot disagree. Opaque colours only: composite a translucent colour over its surface first
+    /// (``ThemeValidator/resolved(_:over:)``).
+    public func contrastRatio(with other: RGB) -> Double {
+        Contrast.ratio(self, other)
+    }
+
+    /// Whether this colour, as text on `background`, meets WCAG AA: 4.5:1, or 3:1 for large text.
+    ///
+    /// The comparison is on the unrounded ratio and a ratio equal to the threshold passes, as the validator does it.
+    ///
+    /// - Parameters:
+    ///   - background: The colour the text is drawn on.
+    ///   - largeText: Whether the text is large (18 point, or 14 point bold, or more), which AA holds to 3:1.
+    public func meetsAA(on background: RGB, largeText: Bool = false) -> Bool {
+        contrastRatio(with: background) >= (largeText ? ValidationThresholds.largeTextContrast : ValidationThresholds.textContrast)
+    }
 }

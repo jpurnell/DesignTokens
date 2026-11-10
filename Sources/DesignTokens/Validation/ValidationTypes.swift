@@ -21,6 +21,8 @@ public enum ValidationThresholds {
     public static let markContrast = 3.0
     /// WCAG contrast text needs against its surface.
     public static let textContrast = 4.5
+    /// WCAG contrast large text (18 point, or 14 point bold, or more) needs against its surface.
+    public static let largeTextContrast = 3.0
     /// The most series the method allows; a ninth hue is never generated.
     public static let maxSeries = 8
     /// Minimum OKLCH lightness gap between adjacent ramp steps.
