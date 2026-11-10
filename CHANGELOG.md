@@ -1,5 +1,32 @@
 # Changelog
 
+## [0.9.0] - 2026-11-10
+
+Branch `feature/text-roles-0.9.0` from 0.8.0. `DesignTokens.version` is 0.9.0, so every generated header and the Tumblr stamp say so; the generated files differ from 0.8.0 only in that version (and the stamp's fingerprint). Proposal: `project/plans/proposals/2026-11-10_TextRolesAndPaletteSurfaces.md`. Driven by the first real adoption of 0.8.0, the quality-gate dashboard (its report, section 8, lists the six findings; each is decided in the proposal, two are declined in part).
+
+### Added
+- **Text roles**: `AppPalette.textRoles: [NamedAdaptive]` (light, dark and increased-contrast slots). Each is measured as text (`textContrast`, 4.5:1, severity fail) and as nothing else: no lightness band, separation, mark contrast or `labelRequired`. A role named `ink`, `secondaryInk`, `link`, `positive`, `negative` or `warning` overrides that role of the composed theme; any other name becomes an extra of it (so CSS, JSON and ANSI carry it).
+- **Host surfaces**: `TextSurfaces` (`light`, `dark`, `lightIncreased`, `darkIncreased`, packed-hex initialiser) and `AppPalette.textSurfaces`: the backgrounds the text is drawn on. Every role is measured against every one; `nil` means the theme's own `background` and `surface`. Swiss's text-safe pair measures 4.03 (negative) on `#ECECEC` and 3.73 (dark negative) on `#323232`, which is why.
+- **Typed roles**: `AppTextRole` (a `String`-raw `CaseIterable` enum), `AppPaletteSource.TextRoles` (defaulted to `NoTextRoles`) and `AppPaletteSource.text(_:)`. `validate()` fails (`structure`) when an enum case has no declared colour or a declared colour has no case.
+- **Public contrast**: `RGB.relativeLuminance`, `RGB.contrastRatio(with:)`, `RGB.meetsAA(on:largeText:)`, `ValidationThresholds.largeTextContrast`. The validator uses the same function.
+- `AppPalette(id:)` needs nothing else: `accent`, `series` and `seriesOrder` are now defaulted.
+- `AppPalette.text(named:)`. Structure findings for a duplicate text role name and an empty declared surface list.
+
+### Changed (source-breaking)
+- **`EnvironmentValues.theme` and `chartStyle` default to `Theme.swiss`**, not `Theme.legacyDefault`. A view that reads them with no theme injected changes look; inject `.chartTheme(.legacyDefault)` to keep the old one. Swiss is the validated house style that every app palette is composed onto.
+- `AppPalette.init` gained `textRoles:` and `textSurfaces:` between `diverging:` and `seriesOrder:`. Calls that name their arguments in the old order still compile; the order of the labelled arguments matters.
+- `AppPalette`'s JSON gains `textRoles` and `textSurfaces`; 0.8.0 JSON still decodes. A text role with no dark value makes the composition light only, as an accent or series without one does.
+
+### Declined, with the evidence
+- **No `neverPlotted` flag on series.** Text roles are not series, so a set that is only printed is declared as text roles and has no series checks by construction. The dashboard's 22 chart-only ledger rows and 7 `labelRequired` pairs do not exist on the new declaration (asserted in a test, with the old form kept as the "before").
+- **`RGB` is not renamed.** An app's own `RGB` shadows the package's with no ambiguity; `DesignTokens.RGB` does not work as a qualifier (the module's `DesignTokens` enum shadows the module name, and a nested `typealias RGB = RGB` is self-referential). With a public contrast function an app has no reason to declare its own. Documented in `HowAnAppAdoptsTheTokens.md`.
+
+### Drift-checker marker contract
+Unchanged: a type or extension listing `AppPaletteSource` and exactly one `AppPalette(id: "<literal>"` call per file. The new fields are labelled arguments of that call and `typealias TextRoles` is a member of the conforming type. `AppPaletteSource` now has an associated type, so `any AppPaletteSource` is no longer valid as an existential (nothing in the package uses one).
+
+### Tests
+387 core (was 364: 23 new in four files) and 45 SwiftUI (was 42: the environment defaults). The dashboard-shaped worked example (`DashboardShapedExampleTests.swift`) re-expresses the dashboard's seven roles, its backgrounds and its 22-row ledger. Not verified: the dashboard itself on 0.9.0 (that repo was read, not touched), any other app, the SwiftUI default change in a running app.
+
 ## [0.8.0] - 2026-11-10
 
 Branch `feature/app-palette-0.8.0` from 0.7.0. `DesignTokens.version` is 0.8.0, so every generated header and the Tumblr stamp say so; the generated files differ from 0.7.0 only in that version (and the stamp's fingerprint). Proposal: `project/plans/proposals/2026-11-10_AppPaletteAdoption.md`.
@@ -407,7 +434,8 @@ Additive. `Generated/tokens.css` and `tokens.json` are byte-identical to 0.3.0 (
   selectors honour Bootstrap's `data-bs-theme` as well as `data-theme`.
 - Palette tests: fixed order (validated for adjacency and colour-vision separation; fails the lightness band for the slots listed under 0.4.0), adjacent OKLab distance of at least 15, contrast of label on background.
 
-[Unreleased]: https://github.com/jpurnell/DesignTokens/compare/0.8.0...HEAD
+[Unreleased]: https://github.com/jpurnell/DesignTokens/compare/0.9.0...HEAD
+[0.9.0]: https://github.com/jpurnell/DesignTokens/compare/0.8.0...0.9.0
 [0.8.0]: https://github.com/jpurnell/DesignTokens/compare/0.7.0...0.8.0
 [0.7.0]: https://github.com/jpurnell/DesignTokens/compare/0.6.0...0.7.0
 [0.6.0]: https://github.com/jpurnell/DesignTokens/compare/0.5.0...0.6.0

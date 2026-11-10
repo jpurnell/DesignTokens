@@ -57,6 +57,7 @@ Tests/DesignTokensSwiftUITests/ macOS: colour resolution (@MainActor), structure
 | `TumblrThemeEmitter`, `TumblrThemeParameters`, `TumblrDocument` (0.7.0) | The complete Tumblr theme document around the block; per-blog values are validated parameters, none in the package |
 | `ThemeSlot`, `TerminalColour`, `ANSIEmitter`, `SlidesEmitter` (0.7.0) | The terminal role table (truecolor, 256 and 16-colour fallbacks) and the slide colour and font list with PowerPoint colour and font scheme XML (one colour scheme per appearance) |
 | `AppPaletteSource`, `AppPaletteConformance`, `LabelRequirement`, `ChartRuleViolation`, `AppPalette.validate(on:)` (0.8.0) | Adopting an app palette: a marker protocol for the declared one-file palette, validation on Swiss with the palette's own ledger, chart rules as code |
+| `AppPalette.textRoles`, `TextSurfaces`, `AppTextRole`, `NoTextRoles`, `AppPaletteSource.TextRoles` / `text(_:)`, `RGB.contrastRatio(with:)` / `meetsAA(on:)` (0.9.0) | App text roles validated as text on the app's own surfaces; a typed role enum cross-checked by `validate()`; public WCAG contrast |
 | `TumblrEmitter`, `BlogStamp`, `BlogChecker`, `BlogFetching`, `ChromeBlogFetcher`, `TumblrCommand` (0.6.0) | The Tumblr paste-in block with its stamp; the staleness check of the live blog behind a fetcher protocol |
 
 ### Data Flow
@@ -128,7 +129,8 @@ Theme (Swift) -> SVG emitter  (not yet)
 - [ ] **0.6.0 BusinessMath-UI half (open):** the conversion on its own branch, in the phases of proposal section 6.1, then Visual checkpoint 1. Not started; nothing in BusinessMath-UI was changed.
 - [x] 0.7.0 (branch `feature/terminal-slides-emitters` from 0.6.0, untagged, version bumped): terminal (ANSI) and slides emitters, the Tumblr full theme `themes/swiss.tumblr.html`, `emit --format`. Terminal and slides (proposal `project/plans/proposals/2026-11-09_TerminalAndSlidesEmitters.md`): `ANSIEmitter`, `SlidesEmitter`, `ThemeSlot`, `TerminalColour`; one colour scheme per appearance, glyphs up/down triangle; 40 + 1 generated files, 62 new tests). Not opened in Keynote, PowerPoint or Tumblr; no `.thmx`/`.potx`, no Keynote theme, no SVG emitter. Name clash with SwiftCLIKit/SwiftGUIKit (`Theme`, `ColorRole`, `TypeRole`): recommended fix is to rename the SwiftCLIKit side, see the proposal; not applied
 - [x] 0.8.0 candidate (shipped 2026-11-10 as 0.8.0): app-palette adoption API, conformance report, `AppPaletteSource` marker for the drift checker, docs page. Proposal `project/plans/proposals/2026-11-10_AppPaletteAdoption.md`. No app adopted yet (WineTaster, FleetWatch, KEXPPower, narbis, HockeySimApp are other sessions')
-- [ ] SVG emitter, then the rest of 0.8.0 to 0.9.0 per the proposal's release table
+- [x] 0.9.0 candidate (on `feature/text-roles-0.9.0`, version bumped, not tagged or merged): text roles, host surfaces, typed role lookup, public contrast, Swiss as the `\.theme` default, from the dashboard's adoption report. Proposal `project/plans/proposals/2026-11-10_TextRolesAndPaletteSurfaces.md`. Declined with reasons: a `neverPlotted` series flag, renaming `RGB`. The dashboard itself has not been moved to it.
+- [ ] SVG emitter, then the rest of the proposal's release table (renumbered: 0.9.0 above is not the one the old table meant)
 
 ### Phase 2: the site
 ### Phase 3: the chart libraries
@@ -137,4 +139,4 @@ Theme (Swift) -> SVG emitter  (not yet)
 
 ---
 
-**Last Updated:** 2026-11-10 (0.8.0 released: app-palette adoption reconciled into the type table, Roadmap, CHANGELOG and README; version bumped to 0.8.0, Generated/ regenerated; Tumblr full theme, --format, name-clash recommendation added; earlier: terminal and slides emitters added on a branch from 0.6.0: Data Flow, type table, Current Status, CHANGELOG [Unreleased], README; the 0.6.0 reconciliation stands)
+**Last Updated:** 2026-11-10 (0.9.0 on its branch: text roles, host surfaces, typed roles, public contrast, Swiss environment default reconciled into the type table, Roadmap, CHANGELOG and README; version 0.9.0, Generated/ regenerated; earlier: 0.8.0 released: app-palette adoption reconciled into the type table, Roadmap, CHANGELOG and README; version bumped to 0.8.0, Generated/ regenerated; Tumblr full theme, --format, name-clash recommendation added; earlier: terminal and slides emitters added on a branch from 0.6.0: Data Flow, type table, Current Status, CHANGELOG [Unreleased], README; the 0.6.0 reconciliation stands)

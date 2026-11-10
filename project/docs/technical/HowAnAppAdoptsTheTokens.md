@@ -48,6 +48,43 @@ increased-contrast appearance it has values for: lightness band, chroma, colour-
 on the background and the card surface, accent text contrast. `isConformant` means the findings are *exactly* the
 palette's ledger. `report` prints every finding as `severity check | appearance | subject: measured, threshold`.
 
+## 2b. Text colours (0.9.0)
+
+Status words, secondary captions and the like are **text**, not chart series. Declare them as `textRoles`, on the
+backgrounds you actually draw them on, and read them through an enum:
+
+```swift
+enum Role: String, AppTextRole { case secondary, failure, success }
+
+enum AppColours: AppPaletteSource {
+    typealias TextRoles = Role
+    static let palette = AppPalette(
+        id: "my-app",
+        textRoles: [NamedAdaptive("secondary", light: 0x5C5C61, dark: 0xAEAEB2),
+                    NamedAdaptive("failure", light: 0xC4161C, dark: 0xFF6961),
+                    NamedAdaptive("success", light: 0x1B7030, dark: 0x30D158)],
+        textSurfaces: TextSurfaces(light: [0xFFFFFF, 0xF2F2F7, 0xECECEC], dark: [0x000000, 0x1C1C1E, 0x323232]))
+}
+// in a view: ChartStyle.color(_ adaptive:) turns it into a dynamic colour
+let failure = AppColours.text(.failure)
+```
+
+- Each role is measured as text, 4.5:1, against **every** surface listed for the appearance. Nothing chart-shaped applies:
+  no lightness band, separation or `labelRequired`. A palette of text roles only has no ledger to keep.
+- Leave `textSurfaces` out and the roles are measured on Swiss's `background` and `surface`. Swiss's own text-safe colours hold
+  4.5:1 only there (negative is 4.03 on `#ECECEC`, dark negative 3.73 on `#323232`), which is what `textSurfaces` is for.
+- A role named `ink`, `secondaryInk`, `link`, `positive`, `negative` or `warning` overrides Swiss's; any other name is an extra of the
+  composed theme.
+- `validate()` fails if an enum case has no declared colour or a declared colour has no case, so the enum the views read is the set that
+  was validated. A colour typed as a literal in a view is the drift checker's to find, not the package's.
+- Text is held to 4.5:1 always (`meetsAA(on:largeText:)` exists for your own large-text checks, and no role is large).
+- A status colour is not told apart from the others by colour alone; print a word and a glyph with it. That is your rule, no longer a ledger row.
+
+**Contrast without writing WCAG:** `RGB.contrastRatio(with:)`, `RGB.meetsAA(on:largeText:)` and `RGB.relativeLuminance`, the same
+function the validator uses. **If your app has its own `RGB` type, delete it:** it shadows the package's with no error, and
+`DesignTokens.RGB` does not work as a qualifier (the package's `DesignTokens` enum shadows the module name), so a file that needs both has no
+spelling for the package's.
+
 ## 3. Ledger what you keep
 
 Start with `conformance: .strict`, run the test, and read the report. For each finding either change the colour or
@@ -71,4 +108,5 @@ WinePalette.palette.chartViolations(plotting: names, labelled: labelledNames)
 ## The worked example
 
 `Tests/DesignTokensTests/AppPaletteAdoptionTests.swift` holds a WineTaster-*shaped* palette (not WineTaster's), its reviewed
-ledger and the one-line test above. The mark-contrast rows are checked against the WCAG formula from the stated hex values.
+ledger and the one-line test above; `DashboardShapedExampleTests.swift` is the text-role example (the dashboard's seven roles on its own
+backgrounds, with the 0.8.0 series form and its 22 chart rows kept as the "before"). The mark-contrast rows are checked against the WCAG formula from the stated hex values.

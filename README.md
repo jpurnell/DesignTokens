@@ -2,7 +2,7 @@
 
 The design system's values, held once as typed Swift and generated for every surface that cannot import Swift.
 
-**Status:** pre-release (`0.x`, latest tag 0.8.0 (2026-11-10: app-palette adoption API and `AppPaletteSource`), after 0.7.0 (terminal and slides emitters, the Tumblr full theme, `--format`) and 0.6.0 (the Tumblr block and `check-blog`); 0.6.0 carries the fixes from an independent review of 0.4.0 and 0.5.0: see `CHANGELOG.md`). Phase 1 and 1b of `project/master_plan.md`.
+**Status:** pre-release (`0.x`, latest tag 0.8.0 (2026-11-10: app-palette adoption API and `AppPaletteSource`); 0.9.0 (text roles, host surfaces, public contrast, Swiss as the environment default) is on `feature/text-roles-0.9.0`, after 0.7.0 (terminal and slides emitters, the Tumblr full theme, `--format`) and 0.6.0 (the Tumblr block and `check-blog`); 0.6.0 carries the fixes from an independent review of 0.4.0 and 0.5.0: see `CHANGELOG.md`). Phase 1 and 1b of `project/master_plan.md`.
 
 ## What it holds
 
@@ -126,13 +126,18 @@ The CSS has `@media (prefers-contrast: more)` blocks (light, then `and (prefers-
 explicit dark selectors), ordered so the dark scheme wins over the light contrast block and the dark contrast
 block wins over the standard dark values.
 
-## An app's own palette (0.8.0)
+## An app's own palette (0.8.0, text roles in 0.9.0)
 
 An app keeps its accent and series on Swiss's structure by declaring them in one file that conforms to `AppPaletteSource`, and tests them
 with `#expect(WinePalette.validate().isConformant)`. The palette carries its own ledger of exact findings, exactly as the built-in themes do;
 nothing is suppressed. `maxSeriesPerChart`, `labelTogether` and `chartViolations(plotting:labelled:)` state the app's chart rules as code, and
 `palette.theme()` feeds the CSS, JSON and ANSI emitters. Walkthrough: `project/docs/technical/HowAnAppAdoptsTheTokens.md`; contract for the
 drift checker: `project/plans/proposals/2026-11-10_AppPaletteAdoption.md`.
+
+0.9.0 adds text: `textRoles` (status and secondary text, measured as text at 4.5:1 and never as chart marks), `textSurfaces` (the backgrounds your
+text is drawn on, so the guarantee holds on yours and not only on Swiss's), `AppTextRole` and `AppPaletteSource.text(_:)` (one typed source the
+views read, cross-checked by `validate()`), and `RGB.contrastRatio(with:)` / `meetsAA(on:)` so an app writes no WCAG of its own. The SwiftUI
+`\.theme` default is now Swiss. Proposal: `project/plans/proposals/2026-11-10_TextRolesAndPaletteSurfaces.md`.
 
 ## Terminal and slides (0.7.0)
 
