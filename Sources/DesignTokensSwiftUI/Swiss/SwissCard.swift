@@ -54,7 +54,7 @@ public struct SwissCard<Chip: View, Footer: View>: View {
                             if hasChip { chip }
                         }
                     }
-                    Text(title).uiText(.title).fixedSize(horizontal: false, vertical: true)
+                    Text(title).uiText(.cardTitle).fixedSize(horizontal: false, vertical: true)
                     if let description {
                         Text(description).uiText(.body, ink: .secondaryInk)
                             .fixedSize(horizontal: false, vertical: true)
@@ -168,7 +168,7 @@ public struct SwissSection<Content: View>: View {
             let metrics = SwissMetrics(theme: style.theme)
             VStack(alignment: .leading, spacing: metrics.step(2)) {
                 SwissRule(.section, tone: .ink)
-                Text(title).uiText(.heading)
+                Text(title).uiText(.section)
                 VStack(alignment: .leading, spacing: 0) { content }
             }
             .accessibilityElement(children: .contain)

@@ -8,12 +8,26 @@ import Testing
 struct UITextTests {
     @Test("each role is set in the Dynamic Type style the design system names")
     func textStyleMapping() {
-        let expected: [UIRole: Font.TextStyle] = [.label: .caption2, .caption: .footnote, .body: .body,
+        var expected: [UIRole: Font.TextStyle] = [.label: .caption2, .caption: .footnote, .body: .body,
                                                   .heading: .headline, .title: .title, .display: .largeTitle]
+        expected[.section] = .title2   // a Mac's 17 pt; a phone's is title3 (20 pt), see UIRoleHierarchyTests
+        expected[.cardTitle] = .title3
         for role in UIRole.allCases {
             #expect(UITextSpec(role, theme: .swiss).textStyle == expected[role], "\(role)")
         }
         #expect(expected.count == UIRole.allCases.count)
+    }
+
+    @Test("the two roles added in 0.11.0 read the theme: the section the heading's weight, the card title the title's")
+    func newRolesFromTheme() {
+        #expect(UITextSpec(.section, theme: .swiss).weight == .bold)
+        #expect(UITextSpec(.cardTitle, theme: .swiss).weight == .heavy)
+        var theme = Theme.swiss
+        theme.structure.type.heading.weight = 500
+        theme.structure.type.heading.family = .mono
+        #expect(UITextSpec(.section, theme: theme).weight == .medium)
+        #expect(UITextSpec(.section, theme: theme).design == .monospaced)
+        #expect(UITextSpec(.cardTitle, theme: theme).weight == .heavy, "the card title follows the title role, not the heading")
     }
 
     @Test("the label role is capitals, semibold, tracked 0.08 em of its 11 pt, in secondary ink")
@@ -36,16 +50,16 @@ struct UITextTests {
 
     @Test("negative tracking is not applied: the system tracks Dynamic Type text itself")
     func negativeTrackingDropped() {
-        for role in [UIRole.heading, .title, .display] {
+        for role in [UIRole.heading, .section, .cardTitle, .title, .display] {
             #expect(UITextSpec(role, theme: .swiss).tracking.isZero, "\(role)")
         }
     }
 
-    @Test("only heading and title are headers; label and caption are secondary ink, the rest ink")
+    @Test("heading, card title, section and title are headers; label and caption are secondary ink, the rest ink")
     func flags() {
         for role in UIRole.allCases {
             let spec = UITextSpec(role, theme: .swiss)
-            #expect(spec.isHeader == (role == .heading || role == .title), "\(role)")
+            #expect(spec.isHeader == [.heading, .cardTitle, .section, .title].contains(role), "\(role)")
             #expect(spec.usesSecondaryInk == (role == .label || role == .caption), "\(role)")
             #expect(!spec.isUppercase || role == .label, "\(role)")
         }
