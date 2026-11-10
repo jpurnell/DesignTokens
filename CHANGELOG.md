@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.11.1] - 2026-11-10
+
+### Changed
+- **`check-blog` no longer reports a blog as stale because only the package version moved.** The version in the stamp changes with every release of the package, whether or not the theme did, so a blog pasted from 0.6.0 read as stale against 0.8.0 and again against 0.11.0 while its theme, template revision and hash were identical. A stamp that differs from the current one only in the version is now `BlogStatus.currentContent` (exit 0, "blog is current: the theme, template and hash are unchanged ... a re-paste would change nothing"). A different theme id, template revision or hash is still stale (exit 1). 27 tests in the suite; two new ones (the status and the command).
+- `README.md`'s status line and `project/master_plan.md`'s roadmap rows said "branch" and "untagged" for 0.4.0 to 0.11.0, which were all tagged on `main`; reconciled.
+
 ## [0.11.0] - 2026-11-10
 
 Branch `feature/ui-gaps-0.11.0` from 0.10.0 (`f8a2f7a`). `DesignTokens.version` is 0.11.0; `Generated/` differs from 0.10.0 in that version and in Swiss's new `alert` colour (`themes/swiss.*`, and `princeton.*`, which follows Swiss). Proposal: `project/plans/proposals/2026-11-10_UIGaps0110.md`; API: `project/docs/technical/SwissComponents.md`. Evidence: the dashboard's port onto 0.10.0 (`08a87a2`), the gaps in its `CURRENT_design-tokens.md`.
@@ -493,7 +499,8 @@ Additive. `Generated/tokens.css` and `tokens.json` are byte-identical to 0.3.0 (
   selectors honour Bootstrap's `data-bs-theme` as well as `data-theme`.
 - Palette tests: fixed order (validated for adjacency and colour-vision separation; fails the lightness band for the slots listed under 0.4.0), adjacent OKLab distance of at least 15, contrast of label on background.
 
-[Unreleased]: https://github.com/jpurnell/DesignTokens/compare/0.11.0...HEAD
+[Unreleased]: https://github.com/jpurnell/DesignTokens/compare/0.11.1...HEAD
+[0.11.1]: https://github.com/jpurnell/DesignTokens/compare/0.11.0...0.11.1
 [0.11.0]: https://github.com/jpurnell/DesignTokens/compare/0.10.0...0.11.0
 [0.10.0]: https://github.com/jpurnell/DesignTokens/compare/0.9.0...0.10.0
 [0.9.0]: https://github.com/jpurnell/DesignTokens/compare/0.8.0...0.9.0

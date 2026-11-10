@@ -4,8 +4,12 @@ import Foundation
 public enum BlogStatus: Sendable, Equatable {
     /// The pasted stamp equals the current one.
     case current(BlogStamp)
-    /// The pasted stamp parses and differs from the current one: the theme, the package version or the template
-    /// moved since the last paste.
+    /// The pasted stamp has the current theme, template revision and hash, and only the package version differs. The
+    /// version moves with every release of the package whether or not the theme changed, and the hash is what says the
+    /// generated block would be the same, so this is current: a re-paste would change nothing.
+    case currentContent(found: BlogStamp, expected: BlogStamp)
+    /// The pasted stamp parses and differs from the current one in the theme, the template revision or the hash: the
+    /// generated block is not the one pasted.
     case stale(found: BlogStamp, expected: BlogStamp)
     /// The page carries no design-tokens stamp and no block: nothing has been pasted.
     case unstamped
@@ -19,6 +23,8 @@ public enum BlogStatus: Sendable, Equatable {
     public var message: String {
         switch self {
         case .current(let stamp): "blog is current (\(stamp.text))"
+        case .currentContent(let found, let expected):
+            "blog is current: the theme, template and hash are unchanged (blog has \(found.text); this package is \(expected.version)); a re-paste would change nothing"
         case .stale(let found, let expected): "blog is stale: re-paste  (blog has \(found.text), current is \(expected.text))"
         case .unstamped: "blog is unstamped: no design-tokens stamp found; paste the block"
         case .garbled(let why): "blog stamp is garbled: \(BlogChecker.bounded(why)); re-paste the block"
@@ -29,7 +35,7 @@ public enum BlogStatus: Sendable, Equatable {
     /// The process exit code: 0 current, 1 stale, 2 unstamped, 3 garbled, 4 unreadable.
     public var exitCode: Int32 {
         switch self {
-        case .current: 0
+        case .current, .currentContent: 0
         case .stale: 1
         case .unstamped: 2
         case .garbled: 3
@@ -103,7 +109,12 @@ public enum BlogChecker {
     }
 
     private static func decide(_ found: BlogStamp, _ expected: BlogStamp) -> BlogStatus {
-        found == expected ? .current(expected) : .stale(found: found, expected: expected)
+        if found == expected { return .current(expected) }
+        // Only the version differs: the block is the same, and the version is not what the blog's look depends on.
+        if found.id == expected.id, found.template == expected.template, found.hash == expected.hash {
+            return .currentContent(found: found, expected: expected)
+        }
+        return .stale(found: found, expected: expected)
     }
 
     private static func looksLikeChallenge(_ html: String) -> Bool {

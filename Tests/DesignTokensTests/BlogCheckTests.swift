@@ -36,7 +36,18 @@ struct BlogCheckTests {
         #expect(status.message == "blog is current (\(expected.text))")
     }
 
-    @Test("staleStampIsReported: an older version, with both stamps in the message")
+    @Test("a stamp that differs only in the package version is current: the block would be the same")
+    func versionOnlyIsCurrent() {
+        var older = expected; older.version = "0.4.0"
+        let status = BlogChecker.compare(html: page(style: pasted(older)), expected: expected)
+        #expect(status == .currentContent(found: older, expected: expected))
+        #expect(status.exitCode == 0)
+        #expect(status.message.hasPrefix("blog is current: the theme, template and hash are unchanged"))
+        #expect(status.message.contains(older.text))
+        #expect(status.message.contains("this package is 0.6.0"))
+    }
+
+    @Test("a stamp whose version AND hash differ is stale, with both stamps in the message")
     func staleVersion() {
         let status = BlogChecker.compare(html: page(style: pasted(other)), expected: expected)
         #expect(status == .stale(found: other, expected: expected))
@@ -224,6 +235,17 @@ struct BlogCheckTests {
         #expect(stale.exitCode == 1)
         #expect(stale.stdout.contains("blog is stale: re-paste"))
         #expect(stale.stdout.contains(try TumblrEmitter.stamp(for: .swiss).text))
+    }
+
+    @Test("check-blog exits 0 for a block pasted by an older package version when the hash is the same")
+    func commandVersionOnly() throws {
+        var older = try TumblrEmitter.stamp(for: .swiss)
+        older.version = "0.1.0"
+        let html = page(style: ":root { --theme-stamp: \"\(older.text)\"; }")
+        let result = TumblrCommand.run(["check-blog", "--theme", "swiss", "--url", "https://blog.example/"],
+                                       fetcher: FakeFetcher(result: .success(html)))
+        #expect(result.exitCode == 0)
+        #expect(result.stdout.hasPrefix("blog is current: the theme, template and hash are unchanged"))
     }
 
     @Test("check-blog --html-file reads a saved page and never touches the fetcher")

@@ -2,7 +2,7 @@
 
 The design system's values, held once as typed Swift and generated for every surface that cannot import Swift.
 
-**Status:** pre-release (`0.x`, latest tag 0.8.0 (2026-11-10: app-palette adoption API and `AppPaletteSource`); 0.11.0 (the dashboard's 0.10.0 gaps: type hierarchy, borderless equal-height cards, table selection and tree rows, dynamic colour, square chips, caution and warning, segmented fallback, flow) is on `feature/ui-gaps-0.11.0`, after 0.10.0 (Swiss SwiftUI components, `AppPalette` window and surface, `swiss-gallery`) is on `feature/swiss-components-0.10.0`, after 0.9.0 (text roles, host surfaces, public contrast, Swiss as the environment default) is on `feature/text-roles-0.9.0`, after 0.7.0 (terminal and slides emitters, the Tumblr full theme, `--format`) and 0.6.0 (the Tumblr block and `check-blog`); 0.6.0 carries the fixes from an independent review of 0.4.0 and 0.5.0: see `CHANGELOG.md`). Phase 1 and 1b of `project/master_plan.md`.
+**Status:** pre-release (`0.x`, latest tag 0.11.1 (2026-11-10: `check-blog` treats a version-only difference as current), after 0.11.0 (the dashboard's gaps: type hierarchy, borderless equal-height cards, table selection and tree rows, dynamic colour, square chips, caution and warning, segmented fallback, flow), 0.10.0 (Swiss SwiftUI components, `AppPalette` window and surface, `swiss-gallery`), 0.9.0 (text roles, host surfaces, public contrast, Swiss as the environment default), 0.8.0 (app-palette adoption API and `AppPaletteSource`), 0.7.0 (terminal and slides emitters, the Tumblr full theme, `--format`) and 0.6.0 (the Tumblr block and `check-blog`); see `CHANGELOG.md`). Phase 1 and 1b of `project/master_plan.md`.
 
 ## What it holds
 
@@ -183,7 +183,7 @@ a parent-site link, a `rel="me"` link and a Google Tag Manager id (default none)
 ```
 swift run design-tokens tumblr --theme swiss      # writes Generated/themes/swiss.tumblr.css (also written by `emit`)
 swift run design-tokens tumblr --full --wordmark NAME --gtm GTM-XXXX --parent-url URL --parent-label TEXT --rel-me URL   # also the full theme document, tumblr.html
-swift run design-tokens check-blog                # is the blog's pasted block the current one?
+swift run design-tokens check-blog                # is the blog's pasted block the current one? (the theme, template and hash decide; the package version alone does not)
 ```
 
 The blog gets a generated block that the owner pastes by hand into the Tumblr theme's `<style>` element (not a linked

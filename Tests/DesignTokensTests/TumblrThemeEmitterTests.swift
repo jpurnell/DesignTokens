@@ -45,20 +45,25 @@ struct TumblrThemeEmitterTests {
         }
     }
 
-    @Test("the stamp is found by the blog checker: current for the theme, stale for another")
+    @Test("the stamp is found by the blog checker: current for the theme, current for a newer package version, stale for another hash")
     func stampIsFound() throws {
         for theme in Theme.all {
             let html = try TumblrThemeEmitter.emit(theme)
             let stamp = try TumblrEmitter.stamp(for: theme)
             #expect(BlogChecker.compare(html: html, expected: stamp) == .current(stamp), "\(theme.id)")
-            var other = stamp
-            other.version = "0.0.1"
-            guard case .stale = BlogChecker.compare(html: html, expected: other) else {
+            // Only the package version moved: the block is the same, so it is current.
+            var newer = stamp
+            newer.version = "0.0.1"
+            #expect(BlogChecker.compare(html: html, expected: newer) == .currentContent(found: stamp, expected: newer), "\(theme.id)")
+            // The hash moved: the generated block is not the pasted one.
+            var changed = stamp
+            changed.hash = "fnv1a64:0000000000000000"
+            guard case .stale = BlogChecker.compare(html: html, expected: changed) else {
                 Issue.record("\(theme.id): expected stale"); continue
             }
         }
-        #expect(DesignTokens.version == "0.11.0")
-        #expect(try TumblrEmitter.stamp(for: .swiss).text.hasPrefix("swiss 0.11.0 t1 fnv1a64:"))
+        #expect(DesignTokens.version == "0.11.1")
+        #expect(try TumblrEmitter.stamp(for: .swiss).text.hasPrefix("swiss 0.11.1 t1 fnv1a64:"))
     }
 
     @Test("check-blog --html-file accepts the generated document: exit 0, current")
