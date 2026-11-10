@@ -34,34 +34,43 @@ public struct ReadableText: Sendable, Hashable {
 }
 
 /// A status a banner or chip can carry. Colour never says it alone: each has its own glyph, and the caller supplies the words.
+///
+/// From least to most urgent: neutral, positive (a different kind of good), caution, warning, negative. Caution and warning are two
+/// levels of "look at this": caution is the theme's yellow-brown `warning` role (a pass that is not yet confirmed, data a little old),
+/// warning is the stronger orange the theme declares as `extras["alert"]` (a failed refresh, something that needs doing). A theme with
+/// no `alert` colour shows warning as its caution.
 @available(macOS 14.0, iOS 17.0, visionOS 1.0, tvOS 17.0, watchOS 10.0, *)
 public enum StatusKind: Sendable, Hashable, CaseIterable {
     /// Nothing to report, or no data.
     case neutral
     /// Favourable: a pass.
     case positive
+    /// Caution: milder than a warning.
+    case caution
+    /// Warning: needs attention.
+    case warning
     /// Unfavourable: a failure.
     case negative
-    /// Caution.
-    case warning
 
     /// The SF Symbol that says the status in a shape of its own.
     public var glyph: String {
         switch self {
         case .neutral: "minus.circle.fill"
         case .positive: "checkmark.circle.fill"
-        case .negative: "xmark.octagon.fill"
+        case .caution: "exclamationmark.circle.fill"
         case .warning: "exclamationmark.triangle.fill"
+        case .negative: "xmark.octagon.fill"
         }
     }
 
-    /// The theme role whose colour fills a banner of this status.
-    public var role: ColorRole {
+    /// The theme's colour for this status: a role, or for the warning the `alert` extra (falling back to the `warning` role).
+    public func adaptive(in theme: Theme) -> Adaptive {
         switch self {
-        case .neutral: .secondaryInk
-        case .positive: .positive
-        case .negative: .negative
-        case .warning: .warning
+        case .neutral: theme.palette.secondaryInk
+        case .positive: theme.palette.positive
+        case .caution: theme.palette.warning
+        case .warning: theme.palette.extras[ThemePalette.alertName] ?? theme.palette.warning
+        case .negative: theme.palette.negative
         }
     }
 }
@@ -78,7 +87,7 @@ public struct StatusBannerStyle: Sendable, Hashable {
 
     /// Resolves the banner for a status in a style (a theme, an appearance, a contrast setting).
     public static func resolve(_ kind: StatusKind, style: ChartStyle) -> StatusBannerStyle {
-        let fill = style.value(kind.role)
+        let fill = style.value(kind.adaptive(in: style.theme))
         let readable = ReadableText.on(fill, style: style)
         return StatusBannerStyle(fill: fill, text: readable.colour, contrast: readable.contrast)
     }

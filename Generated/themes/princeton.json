@@ -135,7 +135,10 @@
       }
     },
     "extras" : {
-
+      "alert" : {
+        "light" : "#B04A00",
+        "lightIncreased" : "#8F3B00"
+      }
     },
     "ink" : {
       "light" : "#111214"

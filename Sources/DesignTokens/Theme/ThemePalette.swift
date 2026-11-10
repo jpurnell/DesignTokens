@@ -65,6 +65,12 @@ public extension ColorToken {
     }
 }
 
+public extension ThemePalette {
+    /// The key of the `extras` colour that is the stronger warning (an orange), beside the `warning` role (the caution yellow). Swiss
+    /// declares it; a theme without it shows a warning in its `warning` colour. Added in 0.11.0.
+    static let alertName = "alert"
+}
+
 /// The colour half of a theme: surfaces, text, meanings, the ordered series and the ramps.
 ///
 /// Roles are fixed fields, never a dictionary keyed by an enum, so the encoded form is deterministic.

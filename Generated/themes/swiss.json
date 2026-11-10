@@ -305,7 +305,12 @@
       }
     },
     "extras" : {
-
+      "alert" : {
+        "dark" : "#FF7A3D",
+        "darkIncreased" : "#FF9A70",
+        "light" : "#B04A00",
+        "lightIncreased" : "#8F3B00"
+      }
     },
     "ink" : {
       "dark" : "#F2F2EF",

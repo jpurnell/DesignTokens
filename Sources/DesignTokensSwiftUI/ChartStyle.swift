@@ -89,6 +89,8 @@ public struct ChartStyle: Sendable {
     public var negative: Color { color(.negative) }
     /// Caution.
     public var warning: Color { color(.warning) }
+    /// The stronger warning: the theme's `alert` extra, or its `warning` role when it declares none.
+    public var alert: Color { extra(ThemePalette.alertName) ?? warning }
     /// De-emphasised marks.
     public var muted: Color { color(.muted) }
 

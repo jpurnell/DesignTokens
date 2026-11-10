@@ -50,7 +50,8 @@ struct StatusBannerTests {
         let style = ChartStyle(theme: .swiss, appearance: .light, defersToSystemColors: false)
         #expect(StatusBannerStyle.resolve(.positive, style: style).fill == style.value(.positive))
         #expect(StatusBannerStyle.resolve(.negative, style: style).fill == style.value(.negative))
-        #expect(StatusBannerStyle.resolve(.warning, style: style).fill == style.value(.warning))
+        #expect(StatusBannerStyle.resolve(.caution, style: style).fill == style.value(.warning))
+        #expect(StatusBannerStyle.resolve(.warning, style: style).fill == style.value(StatusKind.warning.adaptive(in: .swiss)))
         #expect(StatusBannerStyle.resolve(.neutral, style: style).fill == style.value(.secondaryInk))
     }
 

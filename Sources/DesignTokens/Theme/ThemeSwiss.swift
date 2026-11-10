@@ -56,6 +56,17 @@ public extension Theme {
                  lightIncreased: ColorValue(RGB(rgb: 0xB81D1D)), darkIncreased: ColorValue(RGB(rgb: 0xFF6165)))
     }
 
+    /// Swiss's `alert` extra, the stronger warning beside the `warning` role's yellow-brown caution (0.11.0): a burnt orange that reads
+    /// as a mark and as the fill of a banner. Light #B04A00 (5.26:1 on the background, 5.49 on the card surface), dark a coral orange
+    /// #FF7A3D (7.29 and 6.86), Increase Contrast light #8F3B00 (7.20) and dark #FF9A70 (9.10). It is not the accent, which is the lighter
+    /// system orange used for rules and large type: in the dark appearance the two are 5.6 apart in OKLab at the nearest, so the dark
+    /// value was pushed redder than the system's #FF9F0A (which was 3 from the accent and 7.7 from the caution yellow); the glyph and
+    /// the words say which it is. Against the caution (the `warning` role) it is 8.2 or more apart in every appearance.
+    static var textSafeAlert: Adaptive {
+        Adaptive(light: ColorValue(RGB(rgb: 0xB04A00)), dark: ColorValue(RGB(rgb: 0xFF7A3D)),
+                 lightIncreased: ColorValue(RGB(rgb: 0x8F3B00)), darkIncreased: ColorValue(RGB(rgb: 0xFF9A70)))
+    }
+
     private static var swissPalette: ThemePalette {
         func role(_ token: ColorToken, system: SystemColorName? = nil) -> Adaptive {
             Adaptive(token: token, system: system)
@@ -74,7 +85,7 @@ public extension Theme {
             onAccent: role(.onAccent), link: role(.link), positive: textSafePositive,
             negative: textSafeNegative, warning: role(.warning), muted: neutralMark,
             series: series, sequential: greyToOrangeSequential, diverging: greyToOrangeDiverging,
-            extraRamps: alternateRamps)
+            extraRamps: alternateRamps, extras: [ThemePalette.alertName: textSafeAlert])
     }
 
     /// Swiss's `muted`: the neutral grey of a mark that is not emphasised. Light #B9BBBD and dark #4E5053 are the
