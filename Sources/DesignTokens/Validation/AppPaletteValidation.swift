@@ -113,6 +113,14 @@ public extension ThemeValidator {
         if palette.accent != nil || palette.onAccent != nil {
             out += roleFindings(theme, appearance: appearance).filter { $0.subject.hasPrefix("accent") || $0.subject.hasPrefix("onAccent") }
         }
+        if palette.background != nil || palette.surface != nil {
+            // Declared surfaces change what the theme's own text colours are read on, so they are measured there. A text role
+            // that overrides one of them is measured as a text role, once.
+            let overridden = Set(palette.textRoles.map(\.name))
+            out += roleFindings(theme, appearance: appearance).filter { finding in
+                ["ink", "secondaryInk", "link"].contains { finding.subject.hasPrefix($0 + " on ") && !overridden.contains($0) }
+            }
+        }
         out += textRoleFindings(theme, palette: palette, appearance: appearance)
         let supplied: [String] = (palette.sequential == nil ? [] : ["sequential"]) + (palette.diverging == nil ? [] : ["diverging"])
         if !supplied.isEmpty {

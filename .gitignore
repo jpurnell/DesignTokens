@@ -4,3 +4,8 @@ development-guidelines/
 # Claude Code local settings (personal preferences, not shared)
 .claude/settings.local.json
 CLAUDE.local.md
+
+# SwiftPM build products
+.build/
+.swiftpm/
+Package.resolved

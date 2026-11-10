@@ -188,7 +188,7 @@ public struct Theme: Sendable, Hashable, Codable, Identifiable {
     /// **The result is always a valid theme** (``appearanceIssues`` is empty), and the rule that makes it so is
     /// deterministic:
     /// - A receiver that declares ``AppearanceSupport/both`` stays `both` only if every colour the app palette
-    ///   supplies (its accent, each series entry and each text role) has a dark value. If any lacks one, the result is
+    ///   supplies (its accent, each series entry, its background and surface, and each text role) has a dark value. If any lacks one, the result is
     ///   ``AppearanceSupport/lightOnly`` and every dark value is removed, the receiver's included: a theme with
     ///   some dark colours and some light fallbacks is the half-dark state ``appearanceIssues`` rejects, and no
     ///   dark value is invented. This is how ``Theme/princeton`` is built (Swiss with a light-only palette).
@@ -205,6 +205,8 @@ public struct Theme: Sendable, Hashable, Codable, Identifiable {
         if let accent = app.accent { copy.palette.accent = accent }
         if let onAccent = app.onAccent { copy.palette.onAccent = onAccent }
         if let series = app.series { copy.palette.series = series }
+        if let background = app.background { copy.palette.background = background }
+        if let surface = app.surface { copy.palette.surface = surface }
         if let sequential = app.sequential { copy.palette.sequential = sequential }
         if let diverging = app.diverging { copy.palette.diverging = diverging }
         for text in app.textRoles {
@@ -216,6 +218,7 @@ public struct Theme: Sendable, Hashable, Codable, Identifiable {
         }
         if appearances == .both {
             let supplied = (app.accent.map { [$0] } ?? []) + (app.onAccent.map { [$0] } ?? []) + (app.series ?? []).map(\.color)
+                + (app.background.map { [$0] } ?? []) + (app.surface.map { [$0] } ?? [])
                 + app.textRoles.map(\.color)
             if supplied.contains(where: { $0.dark == nil }) { copy.appearances = .lightOnly }
         }
@@ -282,6 +285,15 @@ public struct AppPalette: Sendable, Hashable, Codable {
     public var onAccent: Adaptive?
     /// The series, or `nil` to keep the theme's.
     public var series: [NamedAdaptive]?
+    /// The window or page the app draws on, or `nil` to keep the theme's (added in 0.10.0).
+    ///
+    /// ``Theme/composed(with:)`` makes it the composed theme's `background`, so everything measured against the theme's
+    /// background (marks, ink, secondary ink, link, the text roles when ``textSurfaces`` is `nil`) is measured against the
+    /// app's own. A translucent value (alpha below 1) lets the window show through; it is measured composited over white
+    /// (black in dark), so declare ``textSurfaces`` with the real colours as well.
+    public var background: Adaptive?
+    /// A card or raised surface, or `nil` to keep the theme's (added in 0.10.0). See ``background``.
+    public var surface: Adaptive?
     /// A sequential ramp, or `nil` to keep the theme's.
     public var sequential: Ramp?
     /// A diverging ramp, or `nil` to keep the theme's.
@@ -318,6 +330,7 @@ public struct AppPalette: Sendable, Hashable, Codable {
     /// Everything but `id` is defaulted (0.9.0), so a palette of text roles only is
     /// `AppPalette(id: "x", textRoles: [...], textSurfaces: ...)`.
     public init(id: String, accent: Adaptive? = nil, onAccent: Adaptive? = nil, series: [NamedAdaptive]? = nil,
+                background: Adaptive? = nil, surface: Adaptive? = nil,
                 sequential: Ramp? = nil, diverging: Ramp? = nil, textRoles: [NamedAdaptive] = [],
                 textSurfaces: TextSurfaces? = nil, seriesOrder: SeriesOrder = .validatedOrder,
                 maxSeriesPerChart: Int? = nil, labelTogether: [SeriesPair] = [], conformance: Conformance = .strict) {
@@ -325,6 +338,8 @@ public struct AppPalette: Sendable, Hashable, Codable {
         self.accent = accent
         self.onAccent = onAccent
         self.series = series
+        self.background = background
+        self.surface = surface
         self.sequential = sequential
         self.diverging = diverging
         self.textRoles = textRoles
@@ -336,7 +351,7 @@ public struct AppPalette: Sendable, Hashable, Codable {
     }
 
     private enum CodingKeys: String, CodingKey {
-        case id, accent, onAccent, series, sequential, diverging, textRoles, textSurfaces, seriesOrder, maxSeriesPerChart, labelTogether, conformance
+        case id, accent, onAccent, series, background, surface, sequential, diverging, textRoles, textSurfaces, seriesOrder, maxSeriesPerChart, labelTogether, conformance
     }
 
     /// Decodes an app palette. The keys added in 0.8.0 (`onAccent`, `maxSeriesPerChart`, `labelTogether`, `conformance`)
@@ -347,6 +362,8 @@ public struct AppPalette: Sendable, Hashable, Codable {
                   accent: try c.decodeIfPresent(Adaptive.self, forKey: .accent),
                   onAccent: try c.decodeIfPresent(Adaptive.self, forKey: .onAccent),
                   series: try c.decodeIfPresent([NamedAdaptive].self, forKey: .series),
+                  background: try c.decodeIfPresent(Adaptive.self, forKey: .background),
+                  surface: try c.decodeIfPresent(Adaptive.self, forKey: .surface),
                   sequential: try c.decodeIfPresent(Ramp.self, forKey: .sequential),
                   diverging: try c.decodeIfPresent(Ramp.self, forKey: .diverging),
                   textRoles: try c.decodeIfPresent([NamedAdaptive].self, forKey: .textRoles) ?? [],
@@ -364,6 +381,8 @@ public struct AppPalette: Sendable, Hashable, Codable {
         try c.encodeIfPresent(accent, forKey: .accent)
         try c.encodeIfPresent(onAccent, forKey: .onAccent)
         try c.encodeIfPresent(series, forKey: .series)
+        try c.encodeIfPresent(background, forKey: .background)
+        try c.encodeIfPresent(surface, forKey: .surface)
         try c.encodeIfPresent(sequential, forKey: .sequential)
         try c.encodeIfPresent(diverging, forKey: .diverging)
         try c.encode(textRoles, forKey: .textRoles)
