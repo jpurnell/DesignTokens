@@ -485,6 +485,20 @@ public struct SwissTable<Row: Identifiable>: View {
     }
 }
 
+/// Edit > Copy on a Mac. `copyable` is iOS 27 and later, so elsewhere the context menu and command-C (a hardware keyboard) copy.
+@available(macOS 14.0, iOS 17.0, visionOS 1.0, tvOS 17.0, watchOS 10.0, *)
+private struct EditCopy: ViewModifier {
+    let text: () -> String
+
+    func body(content: Content) -> some View {
+        #if os(macOS)
+        content.copyable([text()])
+        #else
+        content
+        #endif
+    }
+}
+
 /// Focus, the arrow keys, command-C and Edit > Copy for a table with a selection.
 @available(macOS 14.0, iOS 17.0, visionOS 1.0, tvOS 17.0, watchOS 10.0, *)
 private struct SelectionBehaviour: ViewModifier {
@@ -507,7 +521,7 @@ private struct SelectionBehaviour: ViewModifier {
                     SwissTableCopy.write(copyText())
                     return .handled
                 }
-                .copyable([copyText()])
+                .modifier(EditCopy(text: copyText))
         } else {
             content
         }

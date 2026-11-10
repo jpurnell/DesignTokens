@@ -57,7 +57,6 @@ func renderFrames(_ view: some View, width: CGFloat, dark: Bool = false) -> [Str
 private final class FrameBox {
     var frames: [String: CGRect] = [:]
 }
-#endif
 
 /// Renders a view with the table probe on and returns where each cell landed, in window coordinates.
 @MainActor
@@ -84,3 +83,4 @@ func renderProbedTable(_ view: some View, width: CGFloat) -> [String: CGRect] {
 private final class TableFrameBox {
     var frames: [String: CGRect] = [:]
 }
+#endif

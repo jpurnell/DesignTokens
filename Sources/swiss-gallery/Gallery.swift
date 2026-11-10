@@ -27,8 +27,26 @@ enum Gallery {
             }
             sections.append("<section><h2>\(scene.title)</h2><p>\(scene.note)</p><div class=\"pair\">\(figures.joined())</div></section>")
         }
+        sections.append(contentsOf: try deviceSections(in: folder))
         try html(sections).write(to: folder.appendingPathComponent("index.html"), atomically: true, encoding: .utf8)
         return written
+    }
+
+    /// The iPhone and iPad renders, when the iOS Simulator test (`SWISS_GALLERY_OUT`) has written them beside this index.
+    private static func deviceSections(in folder: URL) throws -> [String] {
+        try [("iphone", "iPhone, 390 pt wide"), ("ipad", "iPad, 1024 pt wide")].compactMap { device, title in
+            let directory = folder.appendingPathComponent(device, isDirectory: true)
+            let names = try pngNames(in: directory)
+            guard !names.isEmpty else { return nil }
+            let figures = names.map { "<figure><figcaption>\($0.replacingOccurrences(of: ".png", with: ""))</figcaption><img src=\"\(device)/\($0)\" alt=\"\($0)\" loading=\"lazy\"></figure>" }
+            return "<section><h2>\(title) (iOS Simulator)</h2><p>Drawn by <code>GalleryRenderTests</code> with <code>ImageRenderer</code> on an iOS Simulator. A <code>Menu</code> is a system control that ImageRenderer draws blank (the segmented control's menu and a stacked table's sort menu): see the Mac renders above for those.</p><div class=\"pair\">\(figures.joined())</div></section>"
+        }
+    }
+
+    /// The PNG file names in a folder; none when the folder is absent (a run with no simulator renders).
+    private static func pngNames(in directory: URL) throws -> [String] {
+        guard FileManager.default.fileExists(atPath: directory.path) else { return [] }
+        return try FileManager.default.contentsOfDirectory(atPath: directory.path).filter { $0.hasSuffix(".png") }.sorted()
     }
 
     private static func render(_ scene: GalleryScene, dark: Bool) throws -> Data {
