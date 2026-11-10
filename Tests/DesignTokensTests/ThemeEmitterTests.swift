@@ -52,16 +52,26 @@ struct ThemeEmitterTests {
         #expect(onDisk.sorted() == files.map(\.path).sorted())
     }
 
-    @Test("the file set is the two default files, a CSS and a JSON file per registered theme, and Swiss's Tumblr block")
+    @Test("the file set is the two default files, then per theme: CSS, JSON, Swiss's Tumblr block, the ANSI table and the slide files")
     func fileSet() throws {
         let paths = try Generator.files().map(\.path)
         var expected = ["tokens.css", "tokens.json"]
+        var slotCount = 0
         for theme in Theme.all {
             expected += ["themes/\(theme.id).css", "themes/\(theme.id).json"]
             if theme.id == "swiss" { expected.append("themes/swiss.tumblr.css") }
+            expected += ["themes/\(theme.id).ansi.txt", "themes/\(theme.id).slides.txt", "themes/\(theme.id).slides.fonts.xml"]
+            // slots by declared appearance, counted here: both 4, light-only 2, fixed-dark 2
+            let slots: [String] = switch theme.appearances {
+            case .both: ["light", "light-increased", "dark", "dark-increased"]
+            case .lightOnly: ["light", "light-increased"]
+            case .fixedDark: ["dark", "dark-increased"]
+            }
+            expected += slots.map { "themes/\(theme.id).slides.colors.\($0).xml" }
+            slotCount += slots.count
         }
         #expect(paths == expected)
-        #expect(paths.count == 2 + 2 * 9 + 1)
+        #expect(paths.count == 2 + 9 * 5 + 1 + slotCount)
     }
 
     @Test("theme JSON is the canonical codec output and decodes back to the theme")
@@ -334,12 +344,14 @@ struct ThemeEmitterTests {
         }
     }
 
-    @Test("emit --theme writes one theme's pair, plus nothing else; emit --all is the default")
+    @Test("emit --theme writes that theme's files (FT declares both appearances: four colour schemes), nothing else; emit --all is the default")
     func generatorSelections() throws {
         let directory = FileManager.default.temporaryDirectory.appendingPathComponent("design-tokens-\(UUID().uuidString)")
         defer { try? FileManager.default.removeItem(at: directory) }
         let one = try Generator.run(arguments: ["emit", "--theme", "ft", directory.path])
-        #expect(one == ["themes/ft.css", "themes/ft.json"])
+        #expect(one == ["themes/ft.css", "themes/ft.json", "themes/ft.ansi.txt", "themes/ft.slides.txt", "themes/ft.slides.fonts.xml",
+                        "themes/ft.slides.colors.light.xml", "themes/ft.slides.colors.light-increased.xml",
+                        "themes/ft.slides.colors.dark.xml", "themes/ft.slides.colors.dark-increased.xml"])
         #expect(try Generator.run(arguments: ["emit", "--all", directory.path]) == (try Generator.files()).map(\.path))
     }
 

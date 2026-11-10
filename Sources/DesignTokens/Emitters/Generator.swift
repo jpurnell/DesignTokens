@@ -29,12 +29,14 @@ public enum GeneratorError: Error, Sendable, Equatable {
 /// The set is `tokens.css` and `tokens.json` (the default look, unchanged since 0.3.0) and, for each theme in
 /// ``Theme/all``, `themes/<id>.css` and `themes/<id>.json`, plus `themes/swiss.tumblr.css` (the Tumblr paste-in block,
 /// for the one theme the blog uses; `design-tokens tumblr --theme <id>` can write any other on request, uncommitted).
-/// Every file is committed and golden-tested.
+/// Each theme also has the terminal table `themes/<id>.ansi.txt` (``ANSIEmitter``) and the slide files
+/// (``SlidesEmitter``): `themes/<id>.slides.txt`, `themes/<id>.slides.fonts.xml` and one
+/// `themes/<id>.slides.colors.<slot>.xml` per ``ThemeSlot``. Every file is committed and golden-tested.
 public enum Generator {
     /// The theme whose Tumblr paste-in block is part of the committed file set.
     public static let tumblrThemeID = "swiss"
 
-    /// Every generated file, in a stable order: the two default files, then each theme's CSS and JSON.
+    /// Every generated file, in a stable order: the two default files, then each theme's files (CSS, JSON, Tumblr for Swiss, terminal, slides).
     ///
     /// - Parameters:
     ///   - themes: The themes to emit.
@@ -50,6 +52,13 @@ public enum Generator {
             files.append(GeneratedFile(path: "themes/\(theme.id).json", contents: try ThemeJSONEmitter.emit(theme)))
             if theme.id == tumblrThemeID {
                 files.append(GeneratedFile(path: "themes/\(theme.id).tumblr.css", contents: try TumblrEmitter.emit(theme)))
+            }
+            files.append(GeneratedFile(path: "themes/\(theme.id).ansi.txt", contents: try ANSIEmitter.emit(theme)))
+            files.append(GeneratedFile(path: "themes/\(theme.id).slides.txt", contents: try SlidesEmitter.emitList(theme)))
+            files.append(GeneratedFile(path: "themes/\(theme.id).slides.fonts.xml", contents: try SlidesEmitter.emitFontScheme(theme)))
+            for slot in ThemeSlot.slots(for: theme) {
+                files.append(GeneratedFile(path: "themes/\(theme.id).slides.colors.\(slot.name).xml",
+                                           contents: try SlidesEmitter.emitColourScheme(theme, slot: slot)))
             }
         }
         return files
