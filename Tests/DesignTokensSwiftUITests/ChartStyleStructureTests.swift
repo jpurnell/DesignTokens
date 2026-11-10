@@ -106,10 +106,10 @@ struct ChartStyleStructureTests {
         #expect(ChartStyle(theme: .swiss, appearance: .light).tag == nil)
     }
 
-    @Test("environment: the default theme is the legacy default, and a set theme is read back")
+    @Test("environment: the default theme is Swiss (0.9.0), and a set theme is read back")
     func environmentValues() {
         var environment = EnvironmentValues()
-        #expect(environment.theme == Theme.legacyDefault)
+        #expect(environment.theme == Theme.swiss)
         environment.theme = .ft
         #expect(environment.theme == Theme.ft)
         environment.chartStyle = ChartStyle(theme: .ft, appearance: .dark, increasedContrast: true)

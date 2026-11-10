@@ -4,19 +4,20 @@ import SwiftUI
 
 @available(macOS 14.0, iOS 17.0, visionOS 1.0, tvOS 17.0, watchOS 10.0, *)
 private struct ThemeKey: EnvironmentKey {
-    /// The legacy default, not Swiss: no default look changes before the owner has seen the contact sheets
-    /// (proposal, visual checkpoint 1).
-    static let defaultValue: Theme = .legacyDefault
+    /// Swiss, the validated house style (0.9.0; it was ``Theme/legacyDefault`` while the owner had not yet seen the
+    /// contact sheets). A view that reads the theme without one injected gets the look an app palette was validated on.
+    static let defaultValue: Theme = .swiss
 }
 
 @available(macOS 14.0, iOS 17.0, visionOS 1.0, tvOS 17.0, watchOS 10.0, *)
 private struct ChartStyleKey: EnvironmentKey {
-    static let defaultValue = ChartStyle(theme: .legacyDefault, appearance: .light)
+    static let defaultValue = ChartStyle(theme: .swiss, appearance: .light)
 }
 
 @available(macOS 14.0, iOS 17.0, visionOS 1.0, tvOS 17.0, watchOS 10.0, *)
 public extension EnvironmentValues {
-    /// The active theme. Defaults to ``Theme/legacyDefault``.
+    /// The active theme. Defaults to ``Theme/swiss`` (0.9.0; it was ``Theme/legacyDefault``). Inject another with
+    /// ``SwiftUI/View/chartTheme(_:)``.
     var theme: Theme {
         get { self[ThemeKey.self] }
         set { self[ThemeKey.self] = newValue }
