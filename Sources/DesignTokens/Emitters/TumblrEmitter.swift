@@ -34,29 +34,28 @@ public enum TumblrEmitter {
     static let contractClasses = ".header .nav .post .post.newday .datetime .day .my .type .row .k .caption .video "
         + ".short_quote .medium_quote .long_quote .pager, and Tumblr's div.npf-link-block, .tumblr_video_container"
 
-    /// The stamp for a theme: its id, the package version, the template revision and the fingerprint of its
-    /// canonical JSON.
+    /// The stamp for a theme: its id, the package version, the template revision and a hash of what the block says.
+    ///
+    /// The hash is of the block's own content (the colour variables with their contrast and dark values, the structure
+    /// variables, the colour scheme and the template CSS), not of the theme's canonical JSON. The theme model grows
+    /// with fields the Tumblr block never reads (text roles, surfaces, extras), and a hash of the whole model made a
+    /// blog pasted from 0.8.0 read as stale against 0.11.0 when its generated block was byte-identical. This hash moves
+    /// when, and only when, the pasted CSS would be different.
     ///
     /// - Throws: An encoding error if the theme cannot be encoded.
     public static func stamp(for theme: Theme) throws -> BlogStamp {
         BlogStamp(id: theme.id, version: packageVersion, template: templateRevision,
-                  hash: "fnv1a64:" + (try ThemeCodec.fingerprint(of: theme)))
+                  hash: "fnv1a64:" + Fingerprint.fnv1a64(Data(content(of: theme).joined(separator: "\n").utf8)))
     }
 
-    /// The paste-in block for a theme, ending in one newline.
-    ///
-    /// - Throws: An encoding error if the theme cannot be encoded.
-    public static func emit(_ theme: Theme) throws -> String {
-        let stamp = try stamp(for: theme)
-        var lines = [beginSentinel]
-        lines.append("/* theme: \(theme.id) | DesignTokens \(stamp.version) | template \(stamp.template) | hash \(stamp.hash) "
-                     + "| snapshot \(Snapshot.systemRelease) | generated, do not edit */")
+    /// The block's lines that depend on the theme's values and the template, and not on the stamp: what the hash covers.
+    private static func content(of theme: Theme) -> [String] {
+        var lines: [String] = []
         lines.append("/* contract: the theme HTML must keep these class names: \(contractClasses) */")
         lines.append("/* paste inside the theme's style element, replacing everything from the begin comment to the end comment */")
 
         let colours = colourVariables(theme)
         lines.append(":root {")
-        lines.append("  --theme-stamp: \"\(stamp.text)\";")
         lines.append("  color-scheme: \(colourScheme(theme.appearances));")
         for variable in colours { lines.append("  --\(variable.name): \(variable.light.hex);") }
         lines.append(contentsOf: structureLines(theme.structure).map { "  " + $0 })
@@ -74,6 +73,24 @@ public enum TumblrEmitter {
 
         lines.append(templateMarker)
         lines.append(TumblrTemplate.css)
+        return lines
+    }
+
+    /// The paste-in block for a theme, ending in one newline.
+    ///
+    /// - Throws: An encoding error if the theme cannot be encoded.
+    public static func emit(_ theme: Theme) throws -> String {
+        let stamp = try stamp(for: theme)
+        var lines = [beginSentinel]
+        lines.append("/* theme: \(theme.id) | DesignTokens \(stamp.version) | template \(stamp.template) | hash \(stamp.hash) "
+                     + "| snapshot \(Snapshot.systemRelease) | generated, do not edit */")
+        let body = content(of: theme)
+        // The two contract comments, then the custom properties with the stamp as the first of them (the order the
+        // block has always had), then the rest of the content.
+        lines.append(contentsOf: body.prefix(2))
+        var rest = Array(body.dropFirst(2))
+        if let open = rest.firstIndex(of: ":root {") { rest.insert("  --theme-stamp: \"\(stamp.text)\";", at: open + 1) }
+        lines.append(contentsOf: rest)
         lines.append(endSentinel)
         return lines.joined(separator: "\n") + "\n"
     }

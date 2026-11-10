@@ -43,12 +43,28 @@ struct TumblrEmitterTests {
         #expect(header.hasSuffix("| generated, do not edit */"))
     }
 
-    @Test("stampIsStable: the same theme gives the same bytes and the same stamp, and the hash is the theme's fingerprint")
+    @Test("the hash covers what the block says, not the whole theme model: an unused field leaves it alone, a colour moves it")
+    func hashIsOfTheBlogContent() throws {
+        let base = try TumblrEmitter.stamp(for: .swiss)
+        // A palette extra the block never reads (the model grew several of these after 0.8.0).
+        var extra = Theme.swiss
+        extra.palette.extras["unrelated-to-the-blog"] = extra.palette.accent
+        #expect(try ThemeCodec.fingerprint(of: extra) != ThemeCodec.fingerprint(of: .swiss), "the model did change")
+        #expect(try TumblrEmitter.stamp(for: extra).hash == base.hash, "the blog block did not")
+        // A colour the block does read.
+        var recoloured = Theme.swiss
+        recoloured.palette.accent = Adaptive(light: 0x112233, dark: 0x332211)
+        #expect(try TumblrEmitter.stamp(for: recoloured).hash != base.hash)
+        // And the stamp in the emitted block is the same one.
+        #expect(try TumblrEmitter.emit(.swiss).contains(base.text))
+    }
+
+    @Test("stampIsStable: the same theme gives the same bytes and the same stamp")
     func stampStable() throws {
         #expect(try block() == block())
         let stamp = try TumblrEmitter.stamp(for: .swiss)
         #expect(stamp == (try TumblrEmitter.stamp(for: .swiss)))
-        #expect(stamp.hash == "fnv1a64:" + (try ThemeCodec.fingerprint(of: .swiss)))
+        #expect(stamp.hash.hasPrefix("fnv1a64:") && stamp.hash.count == "fnv1a64:".count + 16)
         #expect(stamp.id == "swiss")
         #expect(stamp.version == TumblrEmitter.packageVersion)
         #expect(stamp.version == DesignTokens.version, "one source of truth for the version")

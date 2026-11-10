@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.11.2] - 2026-11-10
+
+### Changed
+- **The Tumblr stamp's hash is of what the block says, not of the whole theme model.** It was the fingerprint of the theme's canonical JSON, which grew in 0.9.0 to 0.11.0 with fields the block never reads (text roles, surfaces, extras such as the `alert` orange). A blog pasted from 0.8.0 therefore read as stale against 0.11.1, with a different hash and a byte-identical block (the diff of the two generated documents was the three stamp lines). The hash now covers the block's content: the colour variables with their dark and increased-contrast values, the structure variables, the colour scheme, the contract comments and the template CSS, with the stamp lines left out (they contain the hash). It moves when, and only when, the pasted CSS would differ. The one-time cost: a blog pasted before this release carries the old-style hash and reads as stale once, and is current after the next paste. New test: an unused palette extra changes the model's fingerprint and leaves the stamp's hash alone; a different accent moves it.
+
 ## [0.11.1] - 2026-11-10
 
 ### Changed
@@ -499,7 +504,8 @@ Additive. `Generated/tokens.css` and `tokens.json` are byte-identical to 0.3.0 (
   selectors honour Bootstrap's `data-bs-theme` as well as `data-theme`.
 - Palette tests: fixed order (validated for adjacency and colour-vision separation; fails the lightness band for the slots listed under 0.4.0), adjacent OKLab distance of at least 15, contrast of label on background.
 
-[Unreleased]: https://github.com/jpurnell/DesignTokens/compare/0.11.1...HEAD
+[Unreleased]: https://github.com/jpurnell/DesignTokens/compare/0.11.2...HEAD
+[0.11.2]: https://github.com/jpurnell/DesignTokens/compare/0.11.1...0.11.2
 [0.11.1]: https://github.com/jpurnell/DesignTokens/compare/0.11.0...0.11.1
 [0.11.0]: https://github.com/jpurnell/DesignTokens/compare/0.10.0...0.11.0
 [0.10.0]: https://github.com/jpurnell/DesignTokens/compare/0.9.0...0.10.0

@@ -2,7 +2,7 @@
 
 The design system's values, held once as typed Swift and generated for every surface that cannot import Swift.
 
-**Status:** pre-release (`0.x`, latest tag 0.11.1 (2026-11-10: `check-blog` treats a version-only difference as current), after 0.11.0 (the dashboard's gaps: type hierarchy, borderless equal-height cards, table selection and tree rows, dynamic colour, square chips, caution and warning, segmented fallback, flow), 0.10.0 (Swiss SwiftUI components, `AppPalette` window and surface, `swiss-gallery`), 0.9.0 (text roles, host surfaces, public contrast, Swiss as the environment default), 0.8.0 (app-palette adoption API and `AppPaletteSource`), 0.7.0 (terminal and slides emitters, the Tumblr full theme, `--format`) and 0.6.0 (the Tumblr block and `check-blog`); see `CHANGELOG.md`). Phase 1 and 1b of `project/master_plan.md`.
+**Status:** pre-release (`0.x`, latest tag 0.11.2 (2026-11-10: the Tumblr stamp hashes the block's content, so a theme-model change the blog does not use no longer reads as stale), after 0.11.1 (`check-blog` treats a version-only difference as current) and 0.11.0 (the dashboard's gaps: type hierarchy, borderless equal-height cards, table selection and tree rows, dynamic colour, square chips, caution and warning, segmented fallback, flow), 0.10.0 (Swiss SwiftUI components, `AppPalette` window and surface, `swiss-gallery`), 0.9.0 (text roles, host surfaces, public contrast, Swiss as the environment default), 0.8.0 (app-palette adoption API and `AppPaletteSource`), 0.7.0 (terminal and slides emitters, the Tumblr full theme, `--format`) and 0.6.0 (the Tumblr block and `check-blog`); see `CHANGELOG.md`). Phase 1 and 1b of `project/master_plan.md`.
 
 ## What it holds
 
