@@ -47,7 +47,8 @@ struct ThemeEmitterTests {
         for case let path as String in enumerator {
             var isDirectory: ObjCBool = false
             FileManager.default.fileExists(atPath: generated.appendingPathComponent(path).path, isDirectory: &isDirectory)
-            if !isDirectory.boolValue { onDisk.append(path) }
+            // Finder and Dropbox write .DS_Store into any folder they touch; it is OS metadata, not a generated file
+            if !isDirectory.boolValue && (path as NSString).lastPathComponent != ".DS_Store" { onDisk.append(path) }
         }
         #expect(onDisk.sorted() == files.map(\.path).sorted())
     }
