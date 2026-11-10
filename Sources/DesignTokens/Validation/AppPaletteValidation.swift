@@ -13,9 +13,13 @@ public extension ThemeValidator {
     /// unknown series is reported as stale or unknown. A listed pair is not suppressed: its separation
     /// findings are still returned, and ``requiresDirectLabels(_:on:)`` returns it for the chart adapters.
     static func validate(_ palette: AppPalette, on theme: Theme) -> [Finding] {
+        validate(palette, on: theme, expectedTextRoles: nil)
+    }
+
+    internal static func validate(_ palette: AppPalette, on theme: Theme, expectedTextRoles: [String]?) -> [Finding] {
         let composed = theme.composed(with: palette)
         let pairs: PairSelection = palette.seriesOrder.mode == .entityOrder ? .all : .adjacent
-        var findings = structureFindings(of: palette)
+        var findings = structureFindings(of: palette) + textStructureFindings(of: palette, expectedRoles: expectedTextRoles)
         findings += composed.appearanceIssues.map {
             Finding(severity: .fail, check: .structure, appearance: composed.appearances == .fixedDark ? .dark : .light,
                     subject: $0.subject, measured: $0.kind == .missingDark ? 0 : 1, threshold: $0.kind == .missingDark ? 1 : 0)
@@ -60,7 +64,7 @@ public extension ThemeValidator {
     /// theme's series that the palette does not replace are not measured, so they do not add one.
     static func measuredAppearances(_ palette: AppPalette, on theme: Theme) -> [ValidationAppearance] {
         var probe = theme.composed(with: palette)
-        probe.palette.series = palette.series ?? []
+        probe.palette.series = (palette.series ?? []) + palette.textRoles
         return validatedAppearances(probe)
     }
 
@@ -109,6 +113,7 @@ public extension ThemeValidator {
         if palette.accent != nil || palette.onAccent != nil {
             out += roleFindings(theme, appearance: appearance).filter { $0.subject.hasPrefix("accent") || $0.subject.hasPrefix("onAccent") }
         }
+        out += textRoleFindings(theme, palette: palette, appearance: appearance)
         let supplied: [String] = (palette.sequential == nil ? [] : ["sequential"]) + (palette.diverging == nil ? [] : ["diverging"])
         if !supplied.isEmpty {
             out += rampFindings(theme, appearance: appearance).filter { finding in supplied.contains { finding.subject.hasPrefix($0) } }

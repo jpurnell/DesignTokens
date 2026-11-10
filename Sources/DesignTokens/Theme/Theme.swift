@@ -188,7 +188,7 @@ public struct Theme: Sendable, Hashable, Codable, Identifiable {
     /// **The result is always a valid theme** (``appearanceIssues`` is empty), and the rule that makes it so is
     /// deterministic:
     /// - A receiver that declares ``AppearanceSupport/both`` stays `both` only if every colour the app palette
-    ///   supplies (its accent and each series entry) has a dark value. If any lacks one, the result is
+    ///   supplies (its accent, each series entry and each text role) has a dark value. If any lacks one, the result is
     ///   ``AppearanceSupport/lightOnly`` and every dark value is removed, the receiver's included: a theme with
     ///   some dark colours and some light fallbacks is the half-dark state ``appearanceIssues`` rejects, and no
     ///   dark value is invented. This is how ``Theme/princeton`` is built (Swiss with a light-only palette).
@@ -207,8 +207,16 @@ public struct Theme: Sendable, Hashable, Codable, Identifiable {
         if let series = app.series { copy.palette.series = series }
         if let sequential = app.sequential { copy.palette.sequential = sequential }
         if let diverging = app.diverging { copy.palette.diverging = diverging }
+        for text in app.textRoles {
+            if let role = ColorRole(rawValue: text.name), AppPalette.overridableTextRoles.contains(role) {
+                copy.palette[role] = text.color
+            } else {
+                copy.palette.extras[text.name] = text.color
+            }
+        }
         if appearances == .both {
             let supplied = (app.accent.map { [$0] } ?? []) + (app.onAccent.map { [$0] } ?? []) + (app.series ?? []).map(\.color)
+                + app.textRoles.map(\.color)
             if supplied.contains(where: { $0.dark == nil }) { copy.appearances = .lightOnly }
         }
         if copy.appearances != .both { copy.palette = copy.palette.strippingDark() }
@@ -278,6 +286,16 @@ public struct AppPalette: Sendable, Hashable, Codable {
     public var sequential: Ramp?
     /// A diverging ramp, or `nil` to keep the theme's.
     public var diverging: Ramp?
+    /// The app's text colours by what they mean (status, secondary text), or empty to keep the theme's. Added in 0.9.0.
+    ///
+    /// Each is measured as **text** (4.5:1, ``Check/textContrast``) against ``textSurfaces``, and as nothing else: no
+    /// lightness band, separation or mark contrast, so a colour that is printed with a word and never plotted
+    /// does not belong in ``series``. A role named `ink`, `secondaryInk`, `link`, `positive`, `negative` or `warning`
+    /// overrides that role of the theme the palette is composed onto; any other name becomes an extra of it.
+    public var textRoles: [NamedAdaptive]
+    /// The backgrounds the text roles are drawn on, or `nil` for the theme's own `background` and `surface`.
+    /// Added in 0.9.0. See ``TextSurfaces``.
+    public var textSurfaces: TextSurfaces?
     /// How the series are ordered.
     public var seriesOrder: SeriesOrder
     /// The most series one chart may plot, or `nil` for the method's eight (``ValidationThresholds/maxSeries``).
@@ -296,15 +314,21 @@ public struct AppPalette: Sendable, Hashable, Codable {
     public var conformance: Conformance
 
     /// Creates an app palette.
-    public init(id: String, accent: Adaptive?, onAccent: Adaptive? = nil, series: [NamedAdaptive]?, sequential: Ramp? = nil,
-                diverging: Ramp? = nil, seriesOrder: SeriesOrder, maxSeriesPerChart: Int? = nil,
-                labelTogether: [SeriesPair] = [], conformance: Conformance = .strict) {
+    ///
+    /// Everything but `id` is defaulted (0.9.0), so a palette of text roles only is
+    /// `AppPalette(id: "x", textRoles: [...], textSurfaces: ...)`.
+    public init(id: String, accent: Adaptive? = nil, onAccent: Adaptive? = nil, series: [NamedAdaptive]? = nil,
+                sequential: Ramp? = nil, diverging: Ramp? = nil, textRoles: [NamedAdaptive] = [],
+                textSurfaces: TextSurfaces? = nil, seriesOrder: SeriesOrder = .validatedOrder,
+                maxSeriesPerChart: Int? = nil, labelTogether: [SeriesPair] = [], conformance: Conformance = .strict) {
         self.id = id
         self.accent = accent
         self.onAccent = onAccent
         self.series = series
         self.sequential = sequential
         self.diverging = diverging
+        self.textRoles = textRoles
+        self.textSurfaces = textSurfaces
         self.seriesOrder = seriesOrder
         self.maxSeriesPerChart = maxSeriesPerChart
         self.labelTogether = labelTogether
@@ -312,11 +336,11 @@ public struct AppPalette: Sendable, Hashable, Codable {
     }
 
     private enum CodingKeys: String, CodingKey {
-        case id, accent, onAccent, series, sequential, diverging, seriesOrder, maxSeriesPerChart, labelTogether, conformance
+        case id, accent, onAccent, series, sequential, diverging, textRoles, textSurfaces, seriesOrder, maxSeriesPerChart, labelTogether, conformance
     }
 
     /// Decodes an app palette. The keys added in 0.8.0 (`onAccent`, `maxSeriesPerChart`, `labelTogether`, `conformance`)
-    /// default when absent, so JSON written by 0.7.0 still reads.
+    /// and 0.9.0 (`textRoles`, `textSurfaces`) default when absent, so JSON written by 0.7.0 or 0.8.0 still reads.
     public init(from decoder: any Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
         self.init(id: try c.decode(String.self, forKey: .id),
@@ -325,6 +349,8 @@ public struct AppPalette: Sendable, Hashable, Codable {
                   series: try c.decodeIfPresent([NamedAdaptive].self, forKey: .series),
                   sequential: try c.decodeIfPresent(Ramp.self, forKey: .sequential),
                   diverging: try c.decodeIfPresent(Ramp.self, forKey: .diverging),
+                  textRoles: try c.decodeIfPresent([NamedAdaptive].self, forKey: .textRoles) ?? [],
+                  textSurfaces: try c.decodeIfPresent(TextSurfaces.self, forKey: .textSurfaces),
                   seriesOrder: try c.decode(SeriesOrder.self, forKey: .seriesOrder),
                   maxSeriesPerChart: try c.decodeIfPresent(Int.self, forKey: .maxSeriesPerChart),
                   labelTogether: try c.decodeIfPresent([SeriesPair].self, forKey: .labelTogether) ?? [],
@@ -340,6 +366,8 @@ public struct AppPalette: Sendable, Hashable, Codable {
         try c.encodeIfPresent(series, forKey: .series)
         try c.encodeIfPresent(sequential, forKey: .sequential)
         try c.encodeIfPresent(diverging, forKey: .diverging)
+        try c.encode(textRoles, forKey: .textRoles)
+        try c.encodeIfPresent(textSurfaces, forKey: .textSurfaces)
         try c.encode(seriesOrder, forKey: .seriesOrder)
         try c.encodeIfPresent(maxSeriesPerChart, forKey: .maxSeriesPerChart)
         try c.encode(labelTogether, forKey: .labelTogether)

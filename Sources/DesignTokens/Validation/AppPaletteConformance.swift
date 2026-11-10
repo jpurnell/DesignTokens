@@ -24,14 +24,31 @@ import Foundation
 /// test target then asserts `#expect(WinePalette.validate().isConformant)`. The full contract is
 /// `project/plans/proposals/2026-11-10_AppPaletteAdoption.md`, and "How an app adopts the tokens".
 public protocol AppPaletteSource: Sendable {
+    /// The enum the app's views read its text colours through; ``NoTextRoles`` (the default) when it has none.
+    ///
+    /// Name it with `typealias TextRoles = Role` beside the palette. ``validate(on:)`` then requires the enum's cases
+    /// and the palette's ``AppPalette/textRoles`` to be the same set. Added in 0.9.0.
+    associatedtype TextRoles: AppTextRole = NoTextRoles
     /// The app's palette.
     static var palette: AppPalette { get }
 }
 
 public extension AppPaletteSource {
     /// Validates ``palette`` on `theme` (Swiss by default). See ``AppPalette/validate(on:)``.
+    ///
+    /// When the source names a ``TextRoles`` enum, every case must be declared in ``AppPalette/textRoles`` and every
+    /// declared role must be a case; each failure is a `structure` finding.
     static func validate(on theme: Theme = .swiss) -> AppPaletteConformance {
-        palette.validate(on: theme)
+        let named = ObjectIdentifier(TextRoles.self) != ObjectIdentifier(NoTextRoles.self)
+        return palette.validate(on: theme, expectedTextRoles: named ? TextRoles.allCases.map(\.rawValue) : nil)
+    }
+
+    /// The declared colour for `role`: light, dark and the increased-contrast slots.
+    ///
+    /// Total: a role with no declared colour, already a failing ``validate(on:)`` finding, reads as Swiss's `ink` and
+    /// does not trap.
+    static func text(_ role: TextRoles) -> Adaptive {
+        palette.text(named: role.rawValue) ?? Theme.swiss.palette.ink
     }
 }
 
@@ -148,7 +165,13 @@ public extension AppPalette {
     /// suppressed: a finding that is not in the ledger, a ledgered value that has changed, and a ledgered finding
     /// that no longer occurs are each a deviation.
     func validate(on theme: Theme = .swiss) -> AppPaletteConformance {
-        let findings = ThemeValidator.validate(self, on: theme)
+        validate(on: theme, expectedTextRoles: nil)
+    }
+
+    /// The validation, with the names of the app's ``AppTextRole`` cases when it has the enum
+    /// (``AppPaletteSource/validate(on:)`` passes them). `nil` checks nothing.
+    internal func validate(on theme: Theme, expectedTextRoles: [String]?) -> AppPaletteConformance {
+        let findings = ThemeValidator.validate(self, on: theme, expectedTextRoles: expectedTextRoles)
         let measured = seriesOrder.mode == .entityOrder ? ThemeValidator.requiresDirectLabels(self, on: theme) : []
         func key(_ pair: SeriesPair) -> Set<String> { [pair.first, pair.second] }
         let declared = Set(labelTogether.map(key))
