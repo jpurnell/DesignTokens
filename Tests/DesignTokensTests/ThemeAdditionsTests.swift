@@ -4,9 +4,9 @@ import Testing
 
 @Suite("0.6.0 additions to the model")
 struct ThemeAdditionsTests {
-    @Test("the package version is 0.6.0")
+    @Test("the package version is 0.7.0")
     func versionConstant() {
-        #expect(DesignTokens.version == "0.6.0")
+        #expect(DesignTokens.version == "0.7.0")
     }
 
     @Test("TypeRole lists the nine chart roles and the six UI roles, and subscripts each field")

@@ -59,19 +59,19 @@ struct ThemeEmitterTests {
         var slotCount = 0
         for theme in Theme.all {
             expected += ["themes/\(theme.id).css", "themes/\(theme.id).json"]
-            if theme.id == "swiss" { expected.append("themes/swiss.tumblr.css") }
+            if theme.id == "swiss" { expected += ["themes/swiss.tumblr.css", "themes/swiss.tumblr.html"] }
             expected += ["themes/\(theme.id).ansi.txt", "themes/\(theme.id).slides.txt", "themes/\(theme.id).slides.fonts.xml"]
-            // slots by declared appearance, counted here: both 4, light-only 2, fixed-dark 2
+            // one colour scheme per appearance, counted here: both 2, light-only 1, fixed-dark 1 (increased contrast is in the list only)
             let slots: [String] = switch theme.appearances {
-            case .both: ["light", "light-increased", "dark", "dark-increased"]
-            case .lightOnly: ["light", "light-increased"]
-            case .fixedDark: ["dark", "dark-increased"]
+            case .both: ["light", "dark"]
+            case .lightOnly: ["light"]
+            case .fixedDark: ["dark"]
             }
             expected += slots.map { "themes/\(theme.id).slides.colors.\($0).xml" }
             slotCount += slots.count
         }
         #expect(paths == expected)
-        #expect(paths.count == 2 + 9 * 5 + 1 + slotCount)
+        #expect(paths.count == 2 + 9 * 5 + 2 + slotCount)
     }
 
     @Test("theme JSON is the canonical codec output and decodes back to the theme")
@@ -344,15 +344,36 @@ struct ThemeEmitterTests {
         }
     }
 
-    @Test("emit --theme writes that theme's files (FT declares both appearances: four colour schemes), nothing else; emit --all is the default")
+    @Test("emit --theme writes that theme's files (FT declares both appearances: two colour schemes), nothing else; emit --all is the default")
     func generatorSelections() throws {
         let directory = FileManager.default.temporaryDirectory.appendingPathComponent("design-tokens-\(UUID().uuidString)")
         defer { try? FileManager.default.removeItem(at: directory) }
         let one = try Generator.run(arguments: ["emit", "--theme", "ft", directory.path])
         #expect(one == ["themes/ft.css", "themes/ft.json", "themes/ft.ansi.txt", "themes/ft.slides.txt", "themes/ft.slides.fonts.xml",
-                        "themes/ft.slides.colors.light.xml", "themes/ft.slides.colors.light-increased.xml",
-                        "themes/ft.slides.colors.dark.xml", "themes/ft.slides.colors.dark-increased.xml"])
+                        "themes/ft.slides.colors.light.xml", "themes/ft.slides.colors.dark.xml"])
         #expect(try Generator.run(arguments: ["emit", "--all", directory.path]) == (try Generator.files()).map(\.path))
+    }
+
+    @Test("--format keeps only those kinds: ansi, slides, css and tumblr, repeatable or comma-separated")
+    func generatorFormats() throws {
+        let directory = FileManager.default.temporaryDirectory.appendingPathComponent("design-tokens-\(UUID().uuidString)")
+        defer { try? FileManager.default.removeItem(at: directory) }
+        let all = try Generator.files().map(\.path)
+        let ansi = try Generator.run(arguments: ["emit", "--format", "ansi", directory.path])
+        #expect(ansi == all.filter { $0.hasSuffix(".ansi.txt") })
+        #expect(ansi.count == Theme.all.count)
+        let slides = try Generator.run(arguments: ["emit", "--theme", "swiss", "--format", "slides", directory.path])
+        #expect(slides == ["themes/swiss.slides.txt", "themes/swiss.slides.fonts.xml", "themes/swiss.slides.colors.light.xml",
+                           "themes/swiss.slides.colors.dark.xml"])
+        let two = try Generator.run(arguments: ["emit", "--format", "css,tumblr", "--theme", "swiss", directory.path])
+        #expect(two == ["themes/swiss.css", "themes/swiss.tumblr.css", "themes/swiss.tumblr.html"])
+        let repeated = try Generator.run(arguments: ["emit", "--format", "json", "--format", "tumblr", directory.path])
+        #expect(repeated == all.filter { $0.hasSuffix(".json") || $0.contains(".tumblr.") })
+        #expect(repeated.contains("tokens.json") && !repeated.contains("tokens.css"))
+        #expect(throws: GeneratorError.unknownFormat("svg")) { try Generator.run(arguments: ["emit", "--format", "svg", "x"]) }
+        #expect(throws: GeneratorError.missingValue("--format")) { try Generator.run(arguments: ["emit", "--format"]) }
+        // nothing was written for the refusals
+        #expect(!FileManager.default.fileExists(atPath: "x"))
     }
 
     @Test("an unknown theme, an unknown flag and a missing value are refused, not ignored")
