@@ -1,8 +1,8 @@
 # Changelog
 
-## [Unreleased] (0.8.0 candidate)
+## [0.8.0] - 2026-11-10
 
-Branch `feature/app-palette-0.8.0` from 0.7.0. `DesignTokens.version` is still 0.7.0 (generated headers unchanged); bumping it is the release's act. Proposal: `project/plans/proposals/2026-11-10_AppPaletteAdoption.md`.
+Branch `feature/app-palette-0.8.0` from 0.7.0. `DesignTokens.version` is 0.8.0, so every generated header and the Tumblr stamp say so; the generated files differ from 0.7.0 only in that version (and the stamp's fingerprint). Proposal: `project/plans/proposals/2026-11-10_AppPaletteAdoption.md`.
 
 ### Added: adopting an app palette is a declared, validated, one-file act
 - **`AppPaletteSource`**: protocol (`static var palette: AppPalette`), the marker the drift checker looks for in a declared palette file. The checker contract (what qualifies, what is exempt, why a comment is not the marker) is in the proposal, section 2.
@@ -20,7 +20,7 @@ Branch `feature/app-palette-0.8.0` from 0.7.0. `DesignTokens.version` is still 0
 ### Tests
 17 new (364 core, 42 SwiftUI): the closed-form WCAG ratios of the stated hex values, exact-ledger and one-off/missing/extra deviations, a non-vacuous empty palette (appearances measured), the codec's legacy shape, emitters, a WineTaster-shaped worked example with a reviewed ledger. Not verified: any app's real palette (no app was touched).
 
-## [0.7.0] - 2026-11-10 (tag pending)
+## [0.7.0] - 2026-11-10
 
 Branch `feature/terminal-slides-emitters` from 0.6.0. `DesignTokens.version` is 0.7.0, so every generated header and the Tumblr stamp (`swiss 0.7.0 t1 fnv1a64:106484b8f118e4c0`) say so. `tokens.css`, `tokens.json` and the per-theme CSS and JSON differ only in the header version.
 
@@ -407,7 +407,8 @@ Additive. `Generated/tokens.css` and `tokens.json` are byte-identical to 0.3.0 (
   selectors honour Bootstrap's `data-bs-theme` as well as `data-theme`.
 - Palette tests: fixed order (validated for adjacency and colour-vision separation; fails the lightness band for the slots listed under 0.4.0), adjacent OKLab distance of at least 15, contrast of label on background.
 
-[Unreleased]: https://github.com/jpurnell/DesignTokens/compare/0.7.0...HEAD
+[Unreleased]: https://github.com/jpurnell/DesignTokens/compare/0.8.0...HEAD
+[0.8.0]: https://github.com/jpurnell/DesignTokens/compare/0.7.0...0.8.0
 [0.7.0]: https://github.com/jpurnell/DesignTokens/compare/0.6.0...0.7.0
 [0.6.0]: https://github.com/jpurnell/DesignTokens/compare/0.5.0...0.6.0
 [0.5.0]: https://github.com/jpurnell/DesignTokens/compare/0.4.0...0.5.0

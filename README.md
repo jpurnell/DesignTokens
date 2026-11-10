@@ -2,7 +2,7 @@
 
 The design system's values, held once as typed Swift and generated for every surface that cannot import Swift.
 
-**Status:** pre-release (`0.x`, latest tag 0.6.0 (2026-11-09), which includes the Tumblr block and `check-blog`; 0.7.0 (terminal and slides emitters, the Tumblr full theme, `--format`) is on branch `feature/terminal-slides-emitters`, untagged; 0.6.0 carries the fixes from an independent review of 0.4.0 and 0.5.0: see `CHANGELOG.md`). Phase 1 and 1b of `project/master_plan.md`.
+**Status:** pre-release (`0.x`, latest tag 0.8.0 (2026-11-10: app-palette adoption API and `AppPaletteSource`), after 0.7.0 (terminal and slides emitters, the Tumblr full theme, `--format`) and 0.6.0 (the Tumblr block and `check-blog`); 0.6.0 carries the fixes from an independent review of 0.4.0 and 0.5.0: see `CHANGELOG.md`). Phase 1 and 1b of `project/master_plan.md`.
 
 ## What it holds
 
@@ -126,7 +126,7 @@ The CSS has `@media (prefers-contrast: more)` blocks (light, then `and (prefers-
 explicit dark selectors), ordered so the dark scheme wins over the light contrast block and the dark contrast
 block wins over the standard dark values.
 
-## An app's own palette (0.8.0 candidate)
+## An app's own palette (0.8.0)
 
 An app keeps its accent and series on Swiss's structure by declaring them in one file that conforms to `AppPaletteSource`, and tests them
 with `#expect(WinePalette.validate().isConformant)`. The palette carries its own ledger of exact findings, exactly as the built-in themes do;

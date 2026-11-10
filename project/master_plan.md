@@ -56,7 +56,7 @@ Tests/DesignTokensSwiftUITests/ macOS: colour resolution (@MainActor), structure
 | `ChartStyle`, `ChartText`, `FontPlan`, `ChartStyleReader` (0.6.0, `DesignTokensSwiftUI`) | A theme resolved for an appearance and contrast into SwiftUI colours, fonts, weights and flags; `\.theme` / `\.chartStyle` environment |
 | `TumblrThemeEmitter`, `TumblrThemeParameters`, `TumblrDocument` (0.7.0) | The complete Tumblr theme document around the block; per-blog values are validated parameters, none in the package |
 | `ThemeSlot`, `TerminalColour`, `ANSIEmitter`, `SlidesEmitter` (0.7.0) | The terminal role table (truecolor, 256 and 16-colour fallbacks) and the slide colour and font list with PowerPoint colour and font scheme XML (one colour scheme per appearance) |
-| `AppPaletteSource`, `AppPaletteConformance`, `LabelRequirement`, `ChartRuleViolation`, `AppPalette.validate(on:)` (0.8.0 candidate) | Adopting an app palette: a marker protocol for the declared one-file palette, validation on Swiss with the palette's own ledger, chart rules as code |
+| `AppPaletteSource`, `AppPaletteConformance`, `LabelRequirement`, `ChartRuleViolation`, `AppPalette.validate(on:)` (0.8.0) | Adopting an app palette: a marker protocol for the declared one-file palette, validation on Swiss with the palette's own ledger, chart rules as code |
 | `TumblrEmitter`, `BlogStamp`, `BlogChecker`, `BlogFetching`, `ChromeBlogFetcher`, `TumblrCommand` (0.6.0) | The Tumblr paste-in block with its stamp; the staleness check of the live blog behind a fetcher protocol |
 
 ### Data Flow
@@ -66,7 +66,7 @@ Tokens (Swift) -> Emitter -> tokens.css / tokens.json  (committed, golden-tested
 Theme (Swift) -> ThemeCSSEmitter / ThemeJSONEmitter -> themes/<id>.css, themes/<id>.json  (0.6.0)
 Theme (Swift) -> DesignTokensSwiftUI ChartStyle -> Color, Font, numbers  (0.6.0; system colours deferred to)
 Theme (Swift) -> Tumblr block (0.6.0)
-Theme (Swift) -> ThemeSlot -> ANSIEmitter / SlidesEmitter -> themes/<id>.ansi.txt, .slides.txt, .slides.fonts.xml, .slides.colors.<appearance>.xml  (0.7.0, tag pending)
+Theme (Swift) -> ThemeSlot -> ANSIEmitter / SlidesEmitter -> themes/<id>.ansi.txt, .slides.txt, .slides.fonts.xml, .slides.colors.<appearance>.xml  (0.7.0)
 Theme (Swift) -> TumblrThemeEmitter -> themes/<id>.tumblr.html  (0.7.0; the block inside a complete Tumblr document)
 Theme (Swift) -> SVG emitter  (not yet)
 ```
@@ -94,7 +94,7 @@ Theme (Swift) -> SVG emitter  (not yet)
 
 ### What's Next
 - [x] 0.6.0 tagged
-- [ ] Tag 0.7.0 (owner), after reviewing `feature/terminal-slides-emitters`; then paste `themes/swiss.tumblr.html` into the blog
+- [x] Tag 0.7.0 (shipped 2026-11-10); then paste `themes/swiss.tumblr.html` into the blog
 - [ ] BusinessMath-UI conversion on its own branch (proposal 6.1), now including the chart alignment's renderer and view work (`Emphasis`, `ReferenceLine`, grouped-bar direct labels, heatmap values and key, the 8 pt rule gap overlay), then Visual checkpoint 1
 - [x] **Owner decision 2026-11-09, done:** Swiss `positive` / `negative` are the darker text-safe pair (light #268053 / #DB2C2C, at least 4.5:1 as text on the background and card surface), deliberately not system colours; `success` / `destructive` and `tokens.css` / `tokens.json` are unchanged. Princeton keeps the system pair. Branch `fix/swiss-text-safe-gain-loss`
 - [ ] Phase 2: Ignite site adopts it
@@ -127,7 +127,7 @@ Theme (Swift) -> SVG emitter  (not yet)
 - [x] Chart alignment, DesignTokens side (branch `feature/chart-alignment-spec`, shipped in 0.6.0): structure fields, Swiss values, neutral `muted` grey and its ledger rows, blue sequential and dark diverging ramps, `ChartStyle` accessors. The renderer and view half is BusinessMath-UI's and is not started.
 - [ ] **0.6.0 BusinessMath-UI half (open):** the conversion on its own branch, in the phases of proposal section 6.1, then Visual checkpoint 1. Not started; nothing in BusinessMath-UI was changed.
 - [x] 0.7.0 (branch `feature/terminal-slides-emitters` from 0.6.0, untagged, version bumped): terminal (ANSI) and slides emitters, the Tumblr full theme `themes/swiss.tumblr.html`, `emit --format`. Terminal and slides (proposal `project/plans/proposals/2026-11-09_TerminalAndSlidesEmitters.md`): `ANSIEmitter`, `SlidesEmitter`, `ThemeSlot`, `TerminalColour`; one colour scheme per appearance, glyphs up/down triangle; 40 + 1 generated files, 62 new tests). Not opened in Keynote, PowerPoint or Tumblr; no `.thmx`/`.potx`, no Keynote theme, no SVG emitter. Name clash with SwiftCLIKit/SwiftGUIKit (`Theme`, `ColorRole`, `TypeRole`): recommended fix is to rename the SwiftCLIKit side, see the proposal; not applied
-- [x] 0.8.0 candidate (branch `feature/app-palette-0.8.0` from 0.7.0, unmerged, version not bumped): app-palette adoption API, conformance report, `AppPaletteSource` marker for the drift checker, docs page. Proposal `project/plans/proposals/2026-11-10_AppPaletteAdoption.md`. No app adopted yet (WineTaster, FleetWatch, KEXPPower, narbis, HockeySimApp are other sessions')
+- [x] 0.8.0 candidate (shipped 2026-11-10 as 0.8.0): app-palette adoption API, conformance report, `AppPaletteSource` marker for the drift checker, docs page. Proposal `project/plans/proposals/2026-11-10_AppPaletteAdoption.md`. No app adopted yet (WineTaster, FleetWatch, KEXPPower, narbis, HockeySimApp are other sessions')
 - [ ] SVG emitter, then the rest of 0.8.0 to 0.9.0 per the proposal's release table
 
 ### Phase 2: the site
@@ -137,4 +137,4 @@ Theme (Swift) -> SVG emitter  (not yet)
 
 ---
 
-**Last Updated:** 2026-11-10 (0.8.0 candidate: app-palette adoption reconciled into the type table, Roadmap, CHANGELOG [Unreleased] and README; version 0.7.0; Tumblr full theme, --format, name-clash recommendation added; earlier: terminal and slides emitters added on a branch from 0.6.0: Data Flow, type table, Current Status, CHANGELOG [Unreleased], README; the 0.6.0 reconciliation stands)
+**Last Updated:** 2026-11-10 (0.8.0 released: app-palette adoption reconciled into the type table, Roadmap, CHANGELOG and README; version bumped to 0.8.0, Generated/ regenerated; Tumblr full theme, --format, name-clash recommendation added; earlier: terminal and slides emitters added on a branch from 0.6.0: Data Flow, type table, Current Status, CHANGELOG [Unreleased], README; the 0.6.0 reconciliation stands)
