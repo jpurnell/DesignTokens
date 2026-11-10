@@ -207,6 +207,27 @@ struct SwissTableLayoutTests {
         #expect(near(name.minY, count.minY, tolerance: 2))
     }
 
+    @Test("stacked, a column whose cell is empty for a row leaves its label out; a column that has a value keeps it")
+    func stackedOmitsEmptyLabels() throws {
+        let columns: [SwissTableColumn<Item>] = [
+            columns[0],
+            SwissTableColumn("Status", id: "status", span: 4, isEmpty: { $0.id == 2 }) { Text("v\($0.id)") },
+        ]
+        let table = SwissTable(rows, columns: columns).environment(\.swissTableProbe, true)
+        let f = renderProbedTable(table, width: 390)
+        _ = try #require(f["1/status"])
+        _ = try #require(f["3/status"])
+        #expect(f["2/status"] == nil, "row 2 has nothing for Status, so no label and no value are placed")
+    }
+
+    @Test("with a selection the content sits inside the row by two base units, so the accent bar and the fill do not cover it")
+    func selectionInset() throws {
+        let plain = renderProbedTable(SwissTable(rows, columns: columns).environment(\.swissTableProbe, true), width: 900)
+        let selectable = renderProbedTable(SwissTable(rows, columns: columns, selection: .constant(Set<Int>())).environment(\.swissTableProbe, true), width: 900)
+        let before = try #require(plain["1/name/content"]), after = try #require(selectable["1/name/content"])
+        #expect(near(after.minX - before.minX, 8, tolerance: 0.5))
+    }
+
     @Test("disclosure rows: expanding a group shows its children indented one level, in the first column")
     func treeIndent() throws {
         let tree = [Item(id: 1, name: "group", count: 0, children: [Item(id: 11, name: "child", count: 1, children: nil)]),

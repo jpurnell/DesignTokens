@@ -85,7 +85,7 @@ extension EnvironmentValues {
 }
 
 @available(macOS 14.0, iOS 17.0, visionOS 1.0, tvOS 17.0, watchOS 10.0, *)
-private struct CellProbe: ViewModifier {
+struct CellProbe: ViewModifier {
     let key: String
     @Environment(\.swissTableProbe) private var enabled
 
@@ -196,6 +196,9 @@ public struct SwissTable<Row: Identifiable>: View {
         }
     }
 
+    /// The space inside a row's edges when rows can be selected, so the selection's accent bar and fill sit around the content, not on it.
+    private func rowInset(_ metrics: SwissMetrics) -> CGFloat { selection != nil ? metrics.step(2) : 0 }
+
     private var stacksAtThisSize: Bool { narrow == .stack && typeSize.isAccessibilitySize }
 
     // MARK: Body
@@ -248,6 +251,7 @@ public struct SwissTable<Row: Identifiable>: View {
                             }
                         }
                         .padding(.vertical, metrics.step(2))
+                        .padding(.horizontal, rowInset(metrics))
                         SwissRule(.hairline)
                     }
                 }
@@ -310,10 +314,11 @@ public struct SwissTable<Row: Identifiable>: View {
                                 .modifier(CellProbe(key: "\(entry.id)/\(first.id)"))
                             }
                             ForEach(columns.dropFirst()) { column in
-                                pair(column, entry: entry, metrics: metrics)
+                                if !(column.isEmpty?(entry.row) ?? false) { pair(column, entry: entry, metrics: metrics) }
                             }
                         }
                         .padding(.vertical, metrics.step(3))
+                        .padding(.horizontal, rowInset(metrics))
                         SwissRule(.hairline)
                     }
                 }
@@ -388,6 +393,7 @@ public struct SwissTable<Row: Identifiable>: View {
                 }
             }
             .padding(.bottom, metrics.step(2))
+            .padding(.horizontal, rowInset(metrics))
             SwissRule(.hairline, tone: .ink)
         }
     }

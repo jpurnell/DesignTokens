@@ -52,11 +52,19 @@ let package = Package(
                 .enableUpcomingFeature("ApproachableConcurrency"),
             ],
         ),
+        // The scenes the gallery draws, shared by the macOS gallery executable and the iOS Simulator render test. Not a product.
+        .target(
+            name: "SwissGalleryScenes",
+            dependencies: ["DesignTokens", "DesignTokensSwiftUI"],
+            swiftSettings: [
+                .enableUpcomingFeature("ApproachableConcurrency"),
+            ],
+        ),
         // Renders every Swiss component, light and dark, to PNGs and an index.html: `swift run swiss-gallery <folder>`.
         // Empty where AppKit is unavailable, so the package still builds on Linux.
         .executableTarget(
             name: "swiss-gallery",
-            dependencies: ["DesignTokens", "DesignTokensSwiftUI"],
+            dependencies: ["DesignTokens", "DesignTokensSwiftUI", "SwissGalleryScenes"],
             swiftSettings: [
                 .enableUpcomingFeature("ApproachableConcurrency"),
             ],
@@ -72,7 +80,7 @@ let package = Package(
         ),
         .testTarget(
             name: "DesignTokensSwiftUITests",
-            dependencies: ["DesignTokensSwiftUI", "DesignTokens"],
+            dependencies: ["DesignTokensSwiftUI", "DesignTokens", "SwissGalleryScenes"],
             swiftSettings: [
                 .enableUpcomingFeature("ApproachableConcurrency"),
             ],

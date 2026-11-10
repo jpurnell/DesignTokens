@@ -79,6 +79,8 @@ public struct SwissTableColumn<Row>: Identifiable {
     public let isSortable: Bool
     /// How two rows compare in this column, or `nil` when the app sorts its own rows and the table only reports the choice.
     public let compare: ((Row, Row) -> ComparisonResult)?
+    /// Whether the cell has nothing to show for a row, so a stacked row leaves this column's label out rather than label a blank.
+    public let isEmpty: ((Row) -> Bool)?
     let cell: (Row) -> AnyView
     let copyText: (Row) -> String
 
@@ -92,16 +94,18 @@ public struct SwissTableColumn<Row>: Identifiable {
     ///   - isSortable: Whether the header is a sort button. A column with a `compare` is sortable.
     ///   - compare: How two rows compare, so the table sorts its rows itself; `nil` leaves the order to the app.
     ///   - copy: The cell's words when rows are copied; `nil` copies nothing for this column.
+    ///   - isEmpty: Whether the cell draws nothing for a row; a stacked row then omits this column's label. `nil` never omits.
     ///   - cell: The cell. A cell that draws nothing still holds its column.
     public init<Cell: View>(_ title: String, id: String? = nil, span: Int, isFigure: Bool = false, isSortable: Bool = false,
                             compare: ((Row, Row) -> ComparisonResult)? = nil, copy: ((Row) -> String)? = nil,
-                            @ViewBuilder cell: @escaping (Row) -> Cell) {
+                            isEmpty: ((Row) -> Bool)? = nil, @ViewBuilder cell: @escaping (Row) -> Cell) {
         self.id = id ?? title
         self.title = title
         self.span = span
         self.isFigure = isFigure
         self.isSortable = isSortable || compare != nil
         self.compare = compare
+        self.isEmpty = isEmpty
         self.cell = { AnyView(cell($0)) }
         self.copyText = copy ?? { _ in "" }
     }
@@ -109,14 +113,15 @@ public struct SwissTableColumn<Row>: Identifiable {
     /// A column with any cell view, sorted by a key path to a `Comparable` value: the easy path, the table sorts its own rows.
     public init<Cell: View, Value: Comparable>(_ title: String, id: String? = nil, span: Int, isFigure: Bool = false,
                                                sortBy key: KeyPath<Row, Value>, copy: ((Row) -> String)? = nil,
-                                               @ViewBuilder cell: @escaping (Row) -> Cell) {
-        self.init(title, id: id, span: span, isFigure: isFigure, compare: Self.comparator(key), copy: copy, cell: cell)
+                                               isEmpty: ((Row) -> Bool)? = nil, @ViewBuilder cell: @escaping (Row) -> Cell) {
+        self.init(title, id: id, span: span, isFigure: isFigure, compare: Self.comparator(key), copy: copy, isEmpty: isEmpty, cell: cell)
     }
 
     /// A column of text.
     public init(_ title: String, id: String? = nil, span: Int, isFigure: Bool = false, isSortable: Bool = false,
                 compare: ((Row, Row) -> ComparisonResult)? = nil, text: @escaping (Row) -> String) {
-        self.init(title, id: id, span: span, isFigure: isFigure, isSortable: isSortable, compare: compare, copy: text) { Text(text($0)) }
+        self.init(title, id: id, span: span, isFigure: isFigure, isSortable: isSortable, compare: compare, copy: text,
+                  isEmpty: { text($0).isEmpty }) { Text(text($0)) }
     }
 
     /// A column of text, sorted by a key path to a `Comparable` value.

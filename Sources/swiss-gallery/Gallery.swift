@@ -4,16 +4,7 @@ import DesignTokens
 import DesignTokensSwiftUI
 import Foundation
 import SwiftUI
-
-/// One thing to render: a name, a caption, a width and the view.
-@available(macOS 14.0, iOS 17.0, visionOS 1.0, tvOS 17.0, watchOS 10.0, *)
-struct Scene {
-    let id: String
-    let title: String
-    let note: String
-    let width: CGFloat
-    let view: AnyView
-}
+import SwissGalleryScenes
 
 /// Draws every scene in light and dark through a real window (`cacheDisplay`), so AppKit-backed views such as a native `Table`
 /// are rendered as well as pure SwiftUI ones, and writes the PNGs with an index.
@@ -25,7 +16,7 @@ enum Gallery {
         NSApplication.shared.setActivationPolicy(.accessory)
         var written = 0
         var sections: [String] = []
-        for scene in Scenes.all {
+        for scene in GalleryScenes.all {
             var figures: [String] = []
             for dark in [false, true] {
                 let name = "\(scene.id)-\(dark ? "dark" : "light").png"
@@ -40,13 +31,13 @@ enum Gallery {
         return written
     }
 
-    private static func render(_ scene: Scene, dark: Bool) throws -> Data {
+    private static func render(_ scene: GalleryScene, dark: Bool) throws -> Data {
         let root = scene.view
             .environment(\.theme, .swiss)
             .padding(24)
             .frame(width: scene.width + 48, alignment: .topLeading)
             .fixedSize(horizontal: false, vertical: true)
-            .background(PageBackground())
+            .background(GalleryBackground())
         let host = NSHostingView(rootView: root)
         host.appearance = NSAppearance(named: dark ? .darkAqua : .aqua)
         let size = host.fittingSize
@@ -67,7 +58,7 @@ enum Gallery {
     private static func html(_ sections: [String]) -> String {
         """
         <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-        <title>DesignTokens 0.10.0 components</title>
+        <title>DesignTokens 0.11.0 components</title>
         <style>
         :root{color-scheme:light dark;--bg:#fafafa;--fg:#111214;--muted:#6a6d72;--hair:#d6d8db}
         @media (prefers-color-scheme:dark){:root{--bg:#101112;--fg:#f2f2ef;--muted:#9a9da2;--hair:#2e3033}}
@@ -80,7 +71,7 @@ enum Gallery {
         figure{margin:0}figcaption{font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
         img{max-width:100%;height:auto;border:1px solid var(--hair);display:block}
         </style></head><body>
-        <h1>Swiss components, 0.10.0</h1>
+        <h1>Swiss components, 0.11.0</h1>
         <p>Rendered by <code>swift run swiss-gallery</code> from the package's own components on the Swiss theme, in a real window, light and dark.</p>
         \(sections.joined(separator: "\n"))
         </body></html>
@@ -92,13 +83,5 @@ enum Gallery {
 enum GalleryError: Error {
     case noBitmap(String)
     case noPNG(String)
-}
-
-/// Paints the active theme's background behind a scene.
-@available(macOS 14.0, iOS 17.0, visionOS 1.0, tvOS 17.0, watchOS 10.0, *)
-struct PageBackground: View {
-    var body: some View {
-        ChartStyleReader { style in style.background }
-    }
 }
 #endif
