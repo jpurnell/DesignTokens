@@ -14,9 +14,12 @@ import Foundation
 ///   `38;5;N` and a single code 30-37 or 90-97 (`48;...`, 40-47, 100-107 for `bg`).
 /// - `c256` and `c16` come from ``TerminalColour`` (nearest entry by squared RGB distance, ties to the lowest index; the
 ///   256 column never uses indices 0 to 15).
-/// - `glyph` and `ascii` are set on `positive`, `negative` and `warning` (`✓ +`, `✗ x`, `! !`) and are `-` elsewhere:
+/// - `glyph` and `ascii` are set on `positive`, `negative` and `warning` (`▲ +`, `▼ -`, `! !`) and are `.` elsewhere (so `-` can only mean negative):
 ///   status is never colour alone, so a consumer prints the glyph (or its ASCII fallback) with the colour.
-/// - `note` is the series name for a series row, `-` otherwise.
+/// - `note` is the series name for a series row, `.` otherwise.
+///
+/// The model names its meaning roles `positive` and `negative`; it has no `success` or `destructive` role, so there are no check or
+/// cross glyphs in the table.
 ///
 /// A colour with alpha is composited over the slot's background (``ThemeSlot/rgb(_:in:)``). Ramps are not emitted.
 /// The 256 and 16-colour columns are approximations and are not contrast-measured; only the truecolor values are.
@@ -33,7 +36,8 @@ public enum ANSIEmitter {
             "# 256-colour: nearest of xterm indices 16 to 255 (6x6x6 cube, levels 0 95 135 175 215 255; then greys 8 + 10k) by squared RGB distance, ties to the lowest index.",
             "# 16-colour: nearest of xterm's default sixteen by the same rule. Terminals remap these: it names a colour family, not an exact value.",
             "# kind: bg for background and surface, fg for the rest. This table does not set the terminal's own background.",
-            "# Status is never colour alone: print the glyph, or its ASCII fallback, with positive, negative and warning.",
+            "# Status is never colour alone: print the glyph, or its ASCII fallback, with positive (up triangle, +), negative (down triangle, -) and warning (!).",
+            "# Absent glyph, ASCII and note are \".\", so a \"-\" in the ascii column means negative.",
             "# A colour with alpha is composited over the slot's background.",
         ]
         for slot in ThemeSlot.slots(for: theme) {
@@ -43,15 +47,15 @@ public enum ANSIEmitter {
             for role in ColorRole.allCases {
                 let (glyph, ascii) = status(role)
                 lines.append(row(for: role.rawValue, kind: kind(role), slot.rgb(theme.palette[role], in: theme),
-                                 glyph: glyph, ascii: ascii, note: "-"))
+                                 glyph: glyph, ascii: ascii, note: "."))
             }
             for (index, entry) in theme.palette.series.enumerated() {
                 lines.append(row(for: "series-\(index + 1)", kind: "fg", slot.rgb(entry.color, in: theme),
-                                 glyph: "-", ascii: "-", note: note(entry.name)))
+                                 glyph: ".", ascii: ".", note: note(entry.name)))
             }
             for key in theme.palette.extras.keys.sorted() {
                 guard let adaptive = theme.palette.extras[key] else { continue }
-                lines.append(row(for: "extra.\(key)", kind: "fg", slot.rgb(adaptive, in: theme), glyph: "-", ascii: "-", note: "-"))
+                lines.append(row(for: "extra.\(key)", kind: "fg", slot.rgb(adaptive, in: theme), glyph: ".", ascii: ".", note: "."))
             }
         }
         return lines.joined(separator: "\n") + "\n"
@@ -63,16 +67,16 @@ public enum ANSIEmitter {
 
     private static func status(_ role: ColorRole) -> (glyph: String, ascii: String) {
         switch role {
-        case .positive: ("✓", "+")
-        case .negative: ("✗", "x")
+        case .positive: ("▲", "+")
+        case .negative: ("▼", "-")
         case .warning: ("!", "!")
-        default: ("-", "-")
+        default: (".", ".")
         }
     }
 
     private static func note(_ name: String) -> String {
         let cleaned = name.split(whereSeparator: \.isWhitespace).joined(separator: "-")
-        return cleaned.isEmpty ? "-" : cleaned
+        return cleaned.isEmpty ? "." : cleaned
     }
 
     private static func row(for role: String, kind: String, _ rgb: RGB, glyph: String, ascii: String, note: String) -> String {

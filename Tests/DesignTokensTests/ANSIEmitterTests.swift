@@ -40,7 +40,7 @@ struct ANSIEmitterTests {
         #expect(accent.truecolor == "38;2;255;141;40")
         #expect(accent.c256 == "38;5;208")
         #expect(accent.c16 == "33")
-        #expect(accent.glyph == "-" && accent.ascii == "-" && accent.note == "-")
+        #expect(accent.glyph == "." && accent.ascii == "." && accent.note == ".")
     }
 
     @Test("Swiss dark: the accent is #FF9230 and the background rows are background escapes (48)")
@@ -82,17 +82,17 @@ struct ANSIEmitterTests {
         #expect(legacy.contains("[dark]") && !legacy.contains("[light]"))
     }
 
-    @Test("status is never colour alone: positive, negative and warning carry a glyph and an ASCII fallback; nothing else does")
+    @Test("status is never colour alone: positive (up triangle, +), negative (down triangle, -) and warning (!) carry a glyph and an ASCII fallback; nothing else does, and absence is a dot so a hyphen can only mean negative")
     func statusGlyphs() throws {
         for theme in Theme.all {
             let text = try ANSIEmitter.emit(theme)
             for slot in ThemeSlot.slots(for: theme) {
                 for row in Self.rows(text, slot: slot.name) {
                     switch row.role {
-                    case "positive": #expect(row.glyph == "✓" && row.ascii == "+", "\(theme.id)")
-                    case "negative": #expect(row.glyph == "✗" && row.ascii == "x", "\(theme.id)")
+                    case "positive": #expect(row.glyph == "▲" && row.ascii == "+", "\(theme.id)")
+                    case "negative": #expect(row.glyph == "▼" && row.ascii == "-", "\(theme.id)")
                     case "warning": #expect(row.glyph == "!" && row.ascii == "!", "\(theme.id)")
-                    default: #expect(row.glyph == "-" && row.ascii == "-", "\(theme.id) \(row.role)")
+                    default: #expect(row.glyph == "." && row.ascii == "." && (row.ascii != "-"), "\(theme.id) \(row.role)")
                     }
                 }
             }
@@ -152,6 +152,7 @@ struct ANSIEmitterTests {
         #expect(text.contains("# 256-colour: nearest of xterm indices 16 to 255"))
         #expect(text.contains("# 16-colour: nearest of xterm's default sixteen"))
         #expect(text.contains("# Status is never colour alone"))
+        #expect(text.contains("# Absent glyph, ASCII and note are \".\""))
     }
 
     @Test("emitting is deterministic")

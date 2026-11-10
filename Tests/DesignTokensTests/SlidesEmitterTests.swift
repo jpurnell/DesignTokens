@@ -138,7 +138,7 @@ struct SlidesEmitterTests {
 
     @Test("Swiss dark: dk1 and dk2 are the dark pair (background, surface), lt1 and lt2 the light pair (ink, secondary ink)")
     func swissDarkScheme() throws {
-        let slot = ThemeSlot.slots(for: Theme.swiss)[2]
+        let slot = try #require(ThemeSlot.slots(for: Theme.swiss).first { $0.name == "dark" })
         let reader = try Self.read(try SlidesEmitter.emitColourScheme(Theme.swiss, slot: slot))
         let p = Theme.swiss.palette
         func hex(_ a: Adaptive) -> String { String(slot.rgb(a, in: Theme.swiss).hex.dropFirst()) }
