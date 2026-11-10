@@ -2,7 +2,7 @@
 
 The design system's values, held once as typed Swift and generated for every surface that cannot import Swift.
 
-**Status:** pre-release (`0.x`, latest tag 0.6.0 (2026-11-09), which includes the Tumblr block and `check-blog`; 0.6.0 carries the fixes from an independent review of 0.4.0 and 0.5.0: see `CHANGELOG.md`). Phase 1 and 1b of `project/master_plan.md`.
+**Status:** pre-release (`0.x`, latest tag 0.6.0 (2026-11-09), which includes the Tumblr block and `check-blog`; 0.7.0 (terminal and slides emitters, the Tumblr full theme, `--format`) is on branch `feature/terminal-slides-emitters`, untagged; 0.6.0 carries the fixes from an independent review of 0.4.0 and 0.5.0: see `CHANGELOG.md`). Phase 1 and 1b of `project/master_plan.md`.
 
 ## What it holds
 
@@ -94,6 +94,7 @@ values here are a labelled snapshot (`Snapshot.systemRelease`) for web, SVG, sli
 ```
 swift run design-tokens emit --all Generated      # or just: swift run design-tokens Generated
 swift run design-tokens emit --theme ft Generated # one theme's pair only
+swift run design-tokens emit --format ansi,slides Generated  # only those kinds (css, json, tumblr, ansi, slides)
 swift run design-tokens list                      # the registered theme ids
 ```
 
@@ -125,26 +126,35 @@ The CSS has `@media (prefers-contrast: more)` blocks (light, then `and (prefers-
 explicit dark selectors), ordered so the dark scheme wins over the light contrast block and the dark contrast
 block wins over the standard dark values.
 
-## Terminal and slides (unreleased, 0.7.0 candidate)
+## Terminal and slides (0.7.0)
 
 `themes/<id>.ansi.txt` is a terminal role table, one block per colour slot (`light`, `light-increased`, `dark`, `dark-increased`; a
 light-only theme has the first two, a fixed-dark theme the last two). Each row is `role kind hex truecolor c256 c16 glyph ascii note`,
 where the three colour columns are SGR parameter lists (`38;2;255;141;40`, `38;5;208`, `33`; `48;...` for the `background` and
 `surface` rows). The 256-colour column is the nearest xterm entry from indices 16 to 255 (cube, then greys; never the user's own
 0 to 15), the 16-colour column the nearest of xterm's default sixteen, both by squared RGB distance with ties to the lowest index.
-Status is never colour alone: `positive`, `negative` and `warning` rows carry `✓ ✗ !` and an ASCII fallback. It is a role
+Status is never colour alone: `positive` is `▲` (ASCII `+`), `negative` `▼` (`-`), `warning` `!`; an absent value is `.`. It is a role
 table, not a terminal theme: it does not set the terminal's background.
 
 `themes/<id>.slides.txt` is the colour and font list for Keynote and PowerPoint templates (hex per slot, series, then the fifteen type
-roles with font chain SF Pro Text, SF Pro, Helvetica Neue, Helvetica, Arial). `themes/<id>.slides.colors.<slot>.xml` and
+roles with font chain SF Pro Text, SF Pro, Helvetica Neue, Helvetica, Arial). `themes/<id>.slides.colors.<appearance>.xml` (light, dark) and
 `themes/<id>.slides.fonts.xml` are DrawingML `<a:clrScheme>` and `<a:fontScheme>` documents, the roots of PowerPoint's Theme Colors and
 Theme Fonts files; the mapping (dk1 to lt2, accent1 to 6, hlink) is in the `SlidesEmitter` documentation. They have been checked for
 well-formedness and mapping, not opened in Keynote or PowerPoint, and no `.thmx` / `.potx` package or Keynote theme is produced.
+
+## The Tumblr full theme (0.7.0)
+
+The block alone gives a blank page: Tumblr's *Edit HTML* needs a whole document. `Generated/themes/swiss.tumblr.html` is one: the
+markup the block's selectors expect, every Tumblr tag block the blog uses, and the generated block (with its stamp) in the single
+`<style>`. Replace the editor's contents with it. The blog's own values are not in the package: the wordmark (default Tumblr's `{Title}`),
+a parent-site link, a `rel="me"` link and a Google Tag Manager id (default none) are options of `design-tokens tumblr --full`, validated.
+`check-blog` reads the stamp from this document too. It has not been opened in Tumblr's editor by this tooling.
 
 ## The Tumblr block
 
 ```
 swift run design-tokens tumblr --theme swiss      # writes Generated/themes/swiss.tumblr.css (also written by `emit`)
+swift run design-tokens tumblr --full --wordmark NAME --gtm GTM-XXXX --parent-url URL --parent-label TEXT --rel-me URL   # also the full theme document, tumblr.html
 swift run design-tokens check-blog                # is the blog's pasted block the current one?
 ```
 

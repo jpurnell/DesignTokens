@@ -93,3 +93,68 @@ Public, Foundation-only: `ThemeSlot` (`.slots(for:)`, `name`), `TerminalColour` 
 1. Glyph choice (`✓ ✗ !`) and whether `positive` and `negative` should instead be `▲ ▼` for gain and loss.
 2. Whether PowerPoint colour files for the increased-contrast slots are wanted at all (they are cheap, and clutter `Generated/`).
 3. Whether the 0.7.0 release should also carry a `--format` filter on the CLI (not built).
+
+---
+
+## Decisions 2026-11-10 (owner answers to section 7, and two further tasks)
+
+These override any wording above that conflicts.
+
+1. **Glyphs.** `positive` is an up triangle (`▲`, ASCII `+`), `negative` a down triangle (`▼`, ASCII `-`), `warning` is `!`. The owner
+   also asked for check and cross on success and destructive roles "if those roles exist in the table": they do not. The model's
+   roles are `positive`, `negative` and `warning` (``ColorRole``); `success` and `destructive` are `ColorToken` names that map onto them
+   (`ColorToken.themeRole`). So there is no check or cross glyph. Consequence: ASCII `-` is now a real value, so an absent glyph, ASCII
+   and note is written `.` instead of `-`, and a `-` in the ascii column can only mean negative.
+2. **Slides colour files:** one scheme per appearance (`light`, `dark`), no increased-contrast files. The increased-contrast slots
+   stay in `<id>.slides.txt` and in the ANSI table; `SlidesEmitter.emitColourScheme(_:slot:)` can still write one, `Generator` does not.
+3. **`--format` filter** on `design-tokens emit`: `--format css|json|tumblr|ansi|slides`, repeatable or comma-separated. `tumblr` is the
+   paste-in block and the full theme document. An unknown name or a missing value is refused before anything is written.
+4. **Version 0.7.0.** `DesignTokens.version` is 0.7.0, `Generated/` regenerated, so the Tumblr stamp reads `swiss 0.7.0 t1 fnv1a64:...`
+   (the theme hash is unchanged: the theme did not change). Tagging is the owner's.
+
+### Tumblr full theme
+
+**Problem.** `themes/swiss.tumblr.css` is only the block. Tumblr's *Edit HTML* needs a whole document; a block pasted alone gives a blank page.
+
+**Design.** `TumblrThemeEmitter.emit(_:parameters:)` returns the complete document, `themes/<id>.tumblr.html` (committed for Swiss, like
+the block). It is the owner's working theme (`~/Desktop/tumblr-swiss-0.6.0.html`: the block already substituted into their markup) with
+the generated block, byte for byte as `TumblrEmitter.emit`, in its one `<style>` element. The markup lives in `TumblrDocument` (fixed text:
+Tumblr tags and the contract's class names, no colour or font literal). Verified by diffing a document made with the owner's own values
+against their file: the only differences are the header comment line, the dead ad-snippet comment, a stray blank line, the commented-out `<h1>`, and
+the `{block:Following}` tail (below).
+- **Kept out of the package** (`TumblrThemeParameters`, all optional, all validated): the wordmark (default Tumblr's own `{Title}`; the
+  owner's "Purns" is a parameter), its link, a parent-site link (the owner's justinpurnell.com), a `rel="me"` URL (micro.blog) and the Google Tag
+  Manager id (`GTM-` + 4 to 12 capitals or digits, written in the head and the noscript; absent means no analytics markup at all). A value that
+  could leave an attribute, an element or a Tumblr tag (quote, angle bracket, brace, whitespace, newline, a non-http(s) URL) is refused with the parameter's name.
+- **How to fill them:** `design-tokens tumblr --full --wordmark Purns --wordmark-url https://www.justinpurnell.com/ --parent-url https://www.justinpurnell.com/ --parent-label justinpurnell.com --rel-me https://micro.blog/jpurnell --gtm GTM-XXXXXXX`
+  (the owner's real id is not in the repository). The committed `swiss.tumblr.html` has the placeholders and is for any blog.
+- **Left out of the owner's markup:** the Google ad-snippet comment, the commented-out `<h1>`, and the tail from `{block:Following}`: that
+  tag was opened and never closed in their file (the only unbalanced Tumblr block), and everything after it was commented out except
+  three `</div>`, one more than the document has open. The document ends with the two closes it needs. This changes the owner's markup: they should look at it.
+- **Stamp and `check-blog`:** unchanged and still found: `BlogChecker` reads the style element, there is one, and the stamp is in it
+  (tests: current for every theme, stale for another version, `check-blog --html-file` exits 0 on the document). The markup itself has no
+  stamp; its own revision (`TumblrThemeEmitter.documentRevision`, 1) is in a header comment, so a markup-only change is visible to a person but
+  not to `check-blog`. That is a known gap.
+- **Not done:** the document was not opened in Tumblr's editor or rendered; `{block:...}` balance is checked as text (a stack walk), not by Tumblr's parser.
+
+### Name clash: DesignTokens and SwiftGUIKit / SwiftCLIKit
+
+Both export `Theme`, `ColorRole` and `TypeRole`, so a file importing both needs scoped imports (`import struct DesignTokens.Theme`, as
+`SwissTier.swift` does). Where the names are defined: `SwiftCLIKit/Theme/Theme.swift` (`Theme`, the terminal theme), `SwiftGUIKit/Tokens.swift`
+(`ColorRole`, `TypeRole`). Word-match counts on 2026-11-10, comments and tests included, excluding `.build` and the sibling worktree
+`SwiftCLIKit-themeresolvers`:
+
+| Name | SwiftCLIKit side (uses / files) | DesignTokens side, outside the package (uses) | inside the package (uses / files) |
+|---|---|---|---|
+| `Theme` | 50 / 10 | 239 (BusinessMath-UI, BusinessMathCharts, justinpurnell.com) | about 410 / 45 |
+| `ColorRole` | 105 / 36 | 8 | about 56 / 14 |
+| `TypeRole` | 7 / 6 | 6 | about 10 / 5 |
+
+The counts overstate (a word match includes prose and unrelated "Theme"), but not by enough to change the order. DesignTokens is the
+foundation: BusinessMath-UI alone has about 90 files importing it, and `Theme` is the public vocabulary of the single-source design
+(`Theme.swiss`, `ChartStyle(theme:)`, the JSON). **Recommendation: rename the SwiftCLIKit side**, not DesignTokens:
+`SwiftCLIKit.Theme` to `TerminalTheme`, `SwiftGUIKit.ColorRole` to `GUIColorRole` and `SwiftGUIKit.TypeRole` to `GUITypeRole`
+(about 160 uses in 52 files, plus the 2 files that use them outside the package, concordance and quality-gate-dashboard). After that,
+`SwissTier.swift`'s scoped imports and any `DesignTokens.` qualification can go. **Not applied here:** it is another repository, being edited
+in parallel; the exact change list is in the report. A DesignTokens rename would touch roughly 700 references in four repositories and
+break every consumer's source.

@@ -1,8 +1,21 @@
 # Changelog
 
-## [Unreleased]
+## [0.7.0] - 2026-11-10 (tag pending)
 
-### Added: terminal (ANSI) and slides emitters (0.7.0 candidate, branch `feature/terminal-slides-emitters`)
+Branch `feature/terminal-slides-emitters` from 0.6.0. `DesignTokens.version` is 0.7.0, so every generated header and the Tumblr stamp (`swiss 0.7.0 t1 fnv1a64:106484b8f118e4c0`) say so. `tokens.css`, `tokens.json` and the per-theme CSS and JSON differ only in the header version.
+
+### Added: Tumblr full theme (`TumblrThemeEmitter`, `themes/swiss.tumblr.html`)
+The block alone is not a theme: Tumblr needs a whole document. `TumblrThemeEmitter.emit(_:parameters:)` writes the complete HTML (the
+owner's working markup, with the generated block unchanged in its one `<style>` element). The wordmark, its link, a parent-site link, a
+`rel="me"` link and the Google Tag Manager id are `TumblrThemeParameters`, validated, with placeholders by default (the wordmark is Tumblr's `{Title}`, no
+analytics): none of the owner's values is in the package. `design-tokens tumblr --full [--wordmark ... --gtm ...]` writes it with the block.
+`check-blog` still finds the stamp in it. Left out of the owner's markup: the ad-snippet comment, the commented-out `<h1>` and the unclosed
+`{block:Following}` tail with its extra `</div>`. Not opened in Tumblr's editor or rendered. See the proposal's "Tumblr full theme".
+
+### Added: `design-tokens emit --format`
+`--format css|json|tumblr|ansi|slides` (repeatable or comma-separated) keeps only those kinds of file; an unknown name is refused before anything is written.
+
+### Added: terminal (ANSI) and slides emitters
 Proposal: `project/plans/proposals/2026-11-09_TerminalAndSlidesEmitters.md`. Pure functions from `Theme` to text, deterministic,
 committed under `Generated/themes/`, golden-tested by the existing "every generated file equals a fresh emit, nothing else is in
 `Generated`" test, and part of `Generator.files`, so `design-tokens emit` writes them. Every file carries the generated header
@@ -13,17 +26,17 @@ committed under `Generated/themes/`, golden-tested by the existing "every genera
 - **`TerminalColour`**: nearest xterm 256-colour index (16 to 255: the 6x6x6 cube, then the 24 greys; never the user's own 0 to 15) and nearest of
   xterm's default sixteen, by squared RGB distance with ties to the lowest index. SGR codes 30-37 / 90-97 (40-47 / 100-107).
 - **`ANSIEmitter`** -> `themes/<id>.ansi.txt`: a role table per slot with `role kind hex truecolor c256 c16 glyph ascii note`. Truecolor,
-  256 and 16-colour are SGR parameter lists. Status is never colour alone: `positive`, `negative`, `warning` carry `✓ ✗ !` with ASCII
-  fallbacks `+ x !`. It is a role table, not a terminal theme: the terminal's own background is not set.
+  256 and 16-colour are SGR parameter lists. Status is never colour alone: `positive` is `▲` (ASCII `+`), `negative` `▼` (`-`),
+  `warning` `!`; an absent glyph, ASCII or note is `.`. There is no check or cross: the model has no `success` or `destructive` role. It is a role table, not a terminal theme: the terminal's own background is not set.
 - **`SlidesEmitter`** -> `themes/<id>.slides.txt` (hex per slot, series, extras, then the fifteen type roles with font chain, size, weight,
-  tracking, case, italic and line height), `themes/<id>.slides.colors.<slot>.xml` (a DrawingML `<a:clrScheme>`, the root of a PowerPoint
-  Theme Colors file) and `themes/<id>.slides.fonts.xml` (an `<a:fontScheme>`, the root of a Theme Fonts file). Font chains drop the
+  tracking, case, italic and line height), `themes/<id>.slides.colors.<appearance>.xml` (one per appearance, `light` and `dark`; a DrawingML `<a:clrScheme>`, the root of a PowerPoint
+  Theme Colors file; no increased-contrast files, those slots are in the list and the ANSI table) and `themes/<id>.slides.fonts.xml` (an `<a:fontScheme>`, the root of a Theme Fonts file). Font chains drop the
   CSS-only names: SF Pro Text, SF Pro, Helvetica Neue, Helvetica, Arial for sans. Mapping documented in the type's DocC.
-- **Generated files:** 53 added (per theme: ansi, slides list, slides fonts, and one colour scheme per slot: 26 in all), so `Generator.files` returns 74 files, was 21.
-- Tests: 47 new (332 core, 42 SwiftUI). Expected values are hand-computed or enumerated (the xterm table built from its published
+- **Generated files:** 40 added (per theme: ansi, slides list, slides fonts, and one colour scheme per appearance: 13 in all), plus `themes/swiss.tumblr.html`: `Generator.files` returns 62 files, was 21.
+- Tests: 62 new (347 core, 42 SwiftUI). Expected values are hand-computed or enumerated (the xterm table built from its published
   construction; every one of its 240 entries maps to itself; a tie case; Swiss orange is 208 and SGR 33 by hand), not read back from the emitter.
 - **Not built:** a `.thmx` / `.potx` package, a Keynote theme file, a slide-master colour map, an SVG emitter, ramps in the terminal table, a
-  `--format` CLI filter. Not verified: the XML and text have not been opened in Keynote or PowerPoint (checked for well-formedness and for the documented mapping only);
+  SVG emitter. Not verified: the XML and text have not been opened in Keynote or PowerPoint (checked for well-formedness and for the documented mapping only);
   the 256 and 16-colour approximations are not contrast-measured; Foundation-only and expected to build on Linux, untested (the XML tests use `FoundationXML` where it exists).
 
 ## [0.6.0] - 2026-11-09
@@ -374,7 +387,8 @@ Additive. `Generated/tokens.css` and `tokens.json` are byte-identical to 0.3.0 (
   selectors honour Bootstrap's `data-bs-theme` as well as `data-theme`.
 - Palette tests: fixed order (validated for adjacency and colour-vision separation; fails the lightness band for the slots listed under 0.4.0), adjacent OKLab distance of at least 15, contrast of label on background.
 
-[Unreleased]: https://github.com/jpurnell/DesignTokens/compare/0.6.0...HEAD
+[Unreleased]: https://github.com/jpurnell/DesignTokens/compare/0.7.0...HEAD
+[0.7.0]: https://github.com/jpurnell/DesignTokens/compare/0.6.0...0.7.0
 [0.6.0]: https://github.com/jpurnell/DesignTokens/compare/0.5.0...0.6.0
 [0.5.0]: https://github.com/jpurnell/DesignTokens/compare/0.4.0...0.5.0
 [0.4.0]: https://github.com/jpurnell/DesignTokens/compare/0.3.0...0.4.0
