@@ -52,6 +52,15 @@ let package = Package(
                 .enableUpcomingFeature("ApproachableConcurrency"),
             ],
         ),
+        // Renders every Swiss component, light and dark, to PNGs and an index.html: `swift run swiss-gallery <folder>`.
+        // Empty where AppKit is unavailable, so the package still builds on Linux.
+        .executableTarget(
+            name: "swiss-gallery",
+            dependencies: ["DesignTokens", "DesignTokensSwiftUI"],
+            swiftSettings: [
+                .enableUpcomingFeature("ApproachableConcurrency"),
+            ],
+        ),
         .testTarget(
             name: "DesignTokensTests",
             dependencies: ["DesignTokens"],
