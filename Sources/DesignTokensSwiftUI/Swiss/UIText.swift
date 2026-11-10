@@ -107,12 +107,38 @@ public struct UITextSpec: Sendable, Hashable {
     }
 }
 
+/// The ink a UI role is drawn in: the role's own, or a choice.
+///
+/// SwiftUI's innermost foreground style wins, so a `.foregroundStyle` written after ``SwiftUI/View/uiText(_:ink:)`` does not
+/// override it; choose the ink here.
+@available(macOS 14.0, iOS 17.0, visionOS 1.0, tvOS 17.0, watchOS 10.0, *)
+public enum UIInk: Sendable, Hashable {
+    /// The role's own: secondary ink for the label and caption, ink for the rest.
+    case automatic
+    /// The theme's `ink`.
+    case ink
+    /// The theme's `secondaryInk`.
+    case secondaryInk
+    /// Another colour: an app's status role, a colour measured to read on a fill.
+    case custom(Color)
+}
+
 @available(macOS 14.0, iOS 17.0, visionOS 1.0, tvOS 17.0, watchOS 10.0, *)
 private struct UITextModifier: ViewModifier {
     let role: UIRole
+    let ink: UIInk
     @Environment(\.theme) private var theme
     @Environment(\.colorScheme) private var colorScheme
     @Environment(\.colorSchemeContrast) private var contrast
+
+    private func foreground(spec: UITextSpec, style: ChartStyle) -> Color {
+        switch ink {
+        case .automatic: spec.usesSecondaryInk ? style.secondaryInk : style.ink
+        case .ink: style.ink
+        case .secondaryInk: style.secondaryInk
+        case .custom(let colour): colour
+        }
+    }
 
     func body(content: Content) -> some View {
         let spec = UITextSpec(role, theme: theme)
@@ -121,7 +147,7 @@ private struct UITextModifier: ViewModifier {
             .font(spec.font)
             .tracking(spec.tracking)
             .textCase(spec.isUppercase ? .uppercase : nil)
-            .foregroundStyle(spec.usesSecondaryInk ? style.secondaryInk : style.ink)
+            .foregroundStyle(foreground(spec: spec, style: style))
             .accessibilityAddTraits(spec.isHeader ? .isHeader : [])
     }
 }
@@ -129,9 +155,14 @@ private struct UITextModifier: ViewModifier {
 @available(macOS 14.0, iOS 17.0, visionOS 1.0, tvOS 17.0, watchOS 10.0, *)
 public extension View {
     /// Sets text in a UI role: the font (a Dynamic Type style), tracking and case from the active theme, the foreground in ink or
-    /// secondary ink, and the header trait for a heading or title. Override the foreground after it where another colour is meant.
-    func uiText(_ role: UIRole) -> some View {
-        modifier(UITextModifier(role: role))
+    /// secondary ink, and the header trait for a heading or title.
+    ///
+    /// - Parameters:
+    ///   - role: The role.
+    ///   - ink: The foreground; ``UIInk/automatic`` is the role's own. A `.foregroundStyle` written after this modifier would not
+    ///     win (SwiftUI's innermost style does), so another colour is chosen here.
+    func uiText(_ role: UIRole, ink: UIInk = .automatic) -> some View {
+        modifier(UITextModifier(role: role, ink: ink))
     }
 
     /// Numbers that line up: monospaced digits. Combine with a role: `.uiText(.body).uiFigure()`.
