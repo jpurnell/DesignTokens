@@ -70,9 +70,32 @@ public struct SwissCard<Chip: View, Footer: View>: View {
                 .padding(metrics.step(3))
             }
             .frame(maxWidth: .infinity, alignment: .leading)
-            .overlay(metrics.containerShape.strokeBorder(style.rule, lineWidth: metrics.hairline))
+            .swissContainer()
             .accessibilityElement(children: .contain)
         }
+    }
+}
+
+@available(macOS 14.0, iOS 17.0, visionOS 1.0, tvOS 17.0, watchOS 10.0, *)
+private struct ContainerModifier: ViewModifier {
+    @Environment(\.theme) private var theme
+    @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.colorSchemeContrast) private var contrast
+
+    func body(content: Content) -> some View {
+        let style = ChartStyle(theme: theme, colorScheme: colorScheme, contrast: contrast)
+        let metrics = SwissMetrics(theme: theme)
+        return content.overlay(metrics.containerShape.strokeBorder(style.rule, lineWidth: metrics.hairline))
+    }
+}
+
+@available(macOS 14.0, iOS 17.0, visionOS 1.0, tvOS 17.0, watchOS 10.0, *)
+public extension View {
+    /// A container as the design draws it: the container shape (square in Swiss) with a hairline border in the neutral `rule`
+    /// colour, and nothing else: no fill (the page is the surface), no shadow, no dashed edge. For a panel or a row that is not a
+    /// ``SwissCard``.
+    func swissContainer() -> some View {
+        modifier(ContainerModifier())
     }
 }
 

@@ -1,5 +1,34 @@
 # Changelog
 
+## [0.10.0] - 2026-11-10
+
+Branch `feature/swiss-components-0.10.0` from 0.9.0. `DesignTokens.version` is 0.10.0, so every generated header and the Tumblr stamp say so; the generated files differ from 0.9.0 only in that version (and the stamp's fingerprint). Proposal: `project/plans/proposals/2026-11-10_SwissComponents.md`; API and mapping: `project/docs/technical/SwissComponents.md`.
+
+### Added: the Swiss building blocks the dashboard had to hand-roll, in `DesignTokensSwiftUI`
+- **UI-register type roles**: `UIRole` (`label`, `caption`, `body`, `heading`, `title`, `display`), `UITextSpec(role, theme:)`, `.uiText(_:ink:)`, `.uiFigure()`. Text style by role (a stated mapping onto Dynamic Type), weight, design, capitals and positive tracking from the theme; the label is capitals, 0.08 em, semibold, secondary ink. `UIInk` chooses another colour (SwiftUI's innermost foreground wins, so a later `.foregroundStyle` would not).
+- **Metrics**: `SwissMetrics(theme:)`, `SwissGrid` (12 columns; label 1-3, reading 4-10), `SwissRule`, `.swissContainer()`, `.swissTouchTarget()`.
+- **Components**: `SwissCard` and `SwissCardFooter`, `OutlinedChip` and `ChipTone`, `SwissSection`, `KeyValueRow`, `KeyValueList` and `.labeledContentStyle(.swiss)`, `SwissSegmentedControl`, `StatusBanner` with `StatusKind`, `StatusBannerStyle` and `ReadableText` (text chosen by measured contrast in each appearance).
+- **Tables**: `SwissTable`, `SwissTableColumn`, `SwissTableSort`, `SwissTableGeometry` (on the grid, sortable header, no system chrome); `.swissTableStyle()` for a native `Table`.
+- **Form controls**: `SwissToggleStyle`, `SwissFormStyle`, `SwissTextField`.
+- **`AppPalette.background` and `AppPalette.surface`** (core): composed into the theme, so charts sit on the app's window and `validate()` measures Swiss's ink, secondary ink and link (and the text roles, when `textSurfaces` is nil) against them. A surface with no dark value makes the composition light only. Replaces the dashboard's hand-cloned `DashboardChartTheme`.
+- **`swiss-gallery`**: an executable that renders every component, light and dark, to PNGs and an `index.html` (`swift run swiss-gallery <folder>`); empty off macOS.
+- `.gitignore`: `.build/`, `.swiftpm/`, `Package.resolved`.
+
+### Per gap
+1. Type roles: built. 2. Components: built. 3. Tables: built differently (a native `Table`'s header text is a string and its chrome is AppKit's, so `SwissTable`; a small native modifier for what can be set). 4. Form controls: `Toggle`, `LabeledContent` and `Form` built; `TextField` built as a view (`TextFieldStyle` has no public requirements); `Picker` declined (`PickerStyle` is sealed). 5. App palette surfaces: built. 6. Ownership: the components are here; SwiftCLIKit and SwiftGUIKit keep their renderers and adopt later (`SwissComponents.md`), neither modified.
+
+### Source-breaking
+`AppPalette.init` gained `background:` and `surface:` between `series:` and `sequential:`. Calls that name their arguments compile unchanged. Nothing else.
+
+### Drift-checker marker contract
+Unchanged: a type conforming to `AppPaletteSource` and exactly one `AppPalette(id: "<literal>"` call per file; the new fields are labelled arguments of that call.
+
+### Tests
+397 core (was 387: 8 palette surface, 2 dashboard window) and 75 SwiftUI (was 45: type roles, metrics and grid, banner contrast in every appearance, chip tones, key/value geometry, table geometry and sort, source discipline, dashboard re-expression). Quality gate 0 errors, 0 warnings on every commit.
+
+### Verified builds
+macOS `swift build` and `swift test`; `xcodebuild -scheme DesignTokensSwiftUI` for the iOS Simulator and visionOS Simulator (SDK 27.2). The SwiftUI tests run on macOS only; nothing was run in an iOS or visionOS simulator. The core stays Foundation-only (a test asserts no UI import); no Linux toolchain was available to build it there.
+
 ## [0.9.0] - 2026-11-10
 
 Branch `feature/text-roles-0.9.0` from 0.8.0. `DesignTokens.version` is 0.9.0, so every generated header and the Tumblr stamp say so; the generated files differ from 0.8.0 only in that version (and the stamp's fingerprint). Proposal: `project/plans/proposals/2026-11-10_TextRolesAndPaletteSurfaces.md`. Driven by the first real adoption of 0.8.0, the quality-gate dashboard (its report, section 8, lists the six findings; each is decided in the proposal, two are declined in part).
@@ -434,7 +463,8 @@ Additive. `Generated/tokens.css` and `tokens.json` are byte-identical to 0.3.0 (
   selectors honour Bootstrap's `data-bs-theme` as well as `data-theme`.
 - Palette tests: fixed order (validated for adjacency and colour-vision separation; fails the lightness band for the slots listed under 0.4.0), adjacent OKLab distance of at least 15, contrast of label on background.
 
-[Unreleased]: https://github.com/jpurnell/DesignTokens/compare/0.9.0...HEAD
+[Unreleased]: https://github.com/jpurnell/DesignTokens/compare/0.10.0...HEAD
+[0.10.0]: https://github.com/jpurnell/DesignTokens/compare/0.9.0...0.10.0
 [0.9.0]: https://github.com/jpurnell/DesignTokens/compare/0.8.0...0.9.0
 [0.8.0]: https://github.com/jpurnell/DesignTokens/compare/0.7.0...0.8.0
 [0.7.0]: https://github.com/jpurnell/DesignTokens/compare/0.6.0...0.7.0

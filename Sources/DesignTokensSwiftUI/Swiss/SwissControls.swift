@@ -9,8 +9,27 @@ extension SwissMetrics {
 }
 
 @available(macOS 14.0, iOS 17.0, visionOS 1.0, tvOS 17.0, watchOS 10.0, *)
+@available(macOS 14.0, iOS 17.0, visionOS 1.0, tvOS 17.0, watchOS 10.0, *)
+private struct TouchTargetModifier: ViewModifier {
+    @Environment(\.theme) private var theme
+
+    func body(content: Content) -> some View {
+        content.swissTouchTarget(SwissMetrics(theme: theme))
+    }
+}
+
+@available(macOS 14.0, iOS 17.0, visionOS 1.0, tvOS 17.0, watchOS 10.0, *)
+public extension View {
+    /// At least 44 pt square (``SwissMetrics/minimumTouchTarget``) where a finger or a gaze taps; nothing on a Mac. Put it on every
+    /// control a person taps that is not already one of the package's.
+    func swissTouchTarget() -> some View {
+        modifier(TouchTargetModifier())
+    }
+}
+
+@available(macOS 14.0, iOS 17.0, visionOS 1.0, tvOS 17.0, watchOS 10.0, *)
 extension View {
-    /// At least ``SwissMetrics/minimumTouchTarget`` square where a finger or a gaze taps; nothing on a Mac.
+    /// The same, with metrics already in hand.
     func swissTouchTarget(_ metrics: SwissMetrics) -> some View {
         #if os(iOS) || os(visionOS)
         frame(minWidth: metrics.minimumTouchTarget, minHeight: metrics.minimumTouchTarget).contentShape(Rectangle())

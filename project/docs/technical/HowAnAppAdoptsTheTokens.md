@@ -85,6 +85,28 @@ function the validator uses. **If your app has its own `RGB` type, delete it:** 
 `DesignTokens.RGB` does not work as a qualifier (the package's `DesignTokens` enum shadows the module name), so a file that needs both has no
 spelling for the package's.
 
+## 2c. Your own window and surfaces (0.10.0)
+
+An app that draws on its own window grey declares it, so charts sit on it and the theme's text colours are measured on it:
+
+```swift
+AppPalette(id: "my-app",
+           background: Adaptive(light: ColorValue(RGB(rgb: 0xECECEC), alpha: 0), dark: ColorValue(RGB(rgb: 0x323232), alpha: 0)),
+           surface: Adaptive(light: 0xFFFFFF, dark: 0x1C1C1E),
+           textRoles: [NamedAdaptive("secondaryInk", light: 0x5C5C61, dark: 0xAEAEB2)],
+           textSurfaces: TextSurfaces(light: [0xFFFFFF, 0xF2F2F7, 0xECECEC], dark: [0x000000, 0x1C1C1E, 0x323232]))
+```
+
+`palette.theme()` is Swiss with those surfaces (no hand-cloned theme). `validate()` measures Swiss's `ink`, `secondaryInk` and `link` against the
+declared surfaces (a `textContrast` finding names the one that cannot read), and the text roles on them when `textSurfaces` is `nil`. A
+translucent background is measured composited over white (black in dark), so say the real greys in `textSurfaces`. A surface with no dark
+value makes the composition light only, as everywhere else. The marker contract is unchanged (two more labelled arguments of the one call).
+
+## 2d. Components (0.10.0)
+
+Type roles, card, chip, section, key/value rows, segmented control, banner, table and form styles are in `DesignTokensSwiftUI`; an app writes
+none of them. `project/docs/technical/SwissComponents.md` has the API, what SwiftUI allows for tables and form controls, and what the dashboard deletes.
+
 ## 3. Ledger what you keep
 
 Start with `conformance: .strict`, run the test, and read the report. For each finding either change the colour or
