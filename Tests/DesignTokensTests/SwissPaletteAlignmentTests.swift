@@ -107,10 +107,10 @@ struct SwissPaletteAlignmentTests {
     func princetonLedger() {
         let rows = Theme.princetonConformance.entries
         #expect(same(rows.filter { $0.subject.hasPrefix("muted") }.map(\.measured), [1.84, 1.93]))
-        // 12 rows before the chart alignment, 14 with muted, 10 once Princeton follows Swiss's text-safe gain and loss
-        #expect(rows.count == 10)
+        // 12 rows before the chart alignment, 14 with muted, 10 once Princeton follows Swiss's text-safe gain and loss, 11 with Swiss's inherited sequential ramp row
+        #expect(rows.count == 11)
         // its own accent and series rows are untouched: orange 2.9, sky 2.15, teal 2.09, periwinkle 2.27 on the background
-        let own = rows.filter { !$0.subject.hasPrefix("muted") }.map { "\($0.subject) \($0.measured)" }
+        let own = rows.filter { !$0.subject.hasPrefix("muted") && !$0.subject.hasPrefix("sequential") }.map { "\($0.subject) \($0.measured)" }
         #expect(own == ["orange on background 2.9", "sky on background 2.15", "teal on background 2.09", "periwinkle on background 2.27",
                         "sky on surface 2.25", "teal on surface 2.18", "periwinkle on surface 2.37", "accent on background 2.9"])
         #expect(ThemeValidator.deviations(of: .princeton).isEmpty)

@@ -126,12 +126,13 @@ struct SwissGreyOrangeRampTests {
         #expect(Palette.diverging.map(\.hex) == ["#0088FF", "#8ABBF8", "#E8E8E8", "#F7BD95", "#FF8D28"])
     }
 
-    @Test("Princeton defines its own sequential and diverging ramps and keeps them; it inherits Swiss's named alternates")
+    @Test("Princeton follows Swiss's grey-to-orange ramps (owner decision 2026-11-09): its palette defines none, and it inherits the named alternates")
     func princetonRamps() {
         let princeton = Theme.princeton.palette
-        #expect(princeton.sequential == Theme.princetonPalette.sequential)
-        #expect(princeton.diverging == Theme.princetonPalette.diverging)
-        #expect(princeton.sequential != swiss.palette.sequential)
+        #expect(Theme.princetonPalette.sequential == nil)
+        #expect(Theme.princetonPalette.diverging == nil)
+        #expect(princeton.sequential.light == swiss.palette.sequential.light)
+        #expect(princeton.diverging.light == swiss.palette.diverging.light)
         #expect(Set(princeton.extraRamps.keys) == ["sequentialBlue", "divergingBlueOrange"])
         #expect(princeton.extraRamps.values.allSatisfy { $0.dark == nil }, "light only")
     }

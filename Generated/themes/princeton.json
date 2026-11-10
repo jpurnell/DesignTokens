@@ -81,6 +81,14 @@
         "severity" : "warn",
         "subject" : "muted on surface",
         "threshold" : 3
+      },
+      {
+        "appearance" : "light",
+        "check" : "rampLightEnd",
+        "measured" : 1.37,
+        "severity" : "fail",
+        "subject" : "sequential",
+        "threshold" : 2
       }
     ],
     "kind" : "ledger"
@@ -99,11 +107,11 @@
     },
     "diverging" : {
       "light" : [
-        "#0791C7",
-        "#8DBDD9",
+        "#6A6D72",
+        "#A6A8AA",
         "#E8E8E8",
-        "#ECB18B",
-        "#E77500"
+        "#F7BD95",
+        "#FF8D28"
       ]
     },
     "extraRamps" : {
@@ -161,11 +169,9 @@
     },
     "sequential" : {
       "light" : [
-        "#FE913F",
-        "#E17204",
-        "#BA5D01",
-        "#944900",
-        "#703500"
+        "#D6D8DB",
+        "#F0B58B",
+        "#FF8D28"
       ]
     },
     "series" : [
