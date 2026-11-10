@@ -132,6 +132,23 @@ public struct Adaptive: Sendable, Hashable, Codable {
         self.system = system
     }
 
+    /// An adaptive colour from packed `0xRRGGBB` values, so an app palette file reads as its colours.
+    ///
+    /// ```swift
+    /// Adaptive(light: 0x7F0017, dark: 0xE0788A)
+    /// ```
+    ///
+    /// - Parameters:
+    ///   - light: The light value.
+    ///   - dark: The dark value, or `nil` for a light-only colour.
+    ///   - lightIncreased: Light with Increase Contrast on, or `nil` to carry the light value through.
+    ///   - darkIncreased: Dark with Increase Contrast on, or `nil` to carry the dark value through.
+    public init(light: UInt32, dark: UInt32? = nil, lightIncreased: UInt32? = nil, darkIncreased: UInt32? = nil) {
+        func colour(_ packed: UInt32) -> ColorValue { ColorValue(RGB(rgb: packed)) }
+        self.init(light: colour(light), dark: dark.map(colour), lightIncreased: lightIncreased.map(colour),
+                  darkIncreased: darkIncreased.map(colour))
+    }
+
     /// The adaptive colour for a ``ColorToken``, with every measured slot it has.
     ///
     /// - Parameters:
@@ -172,6 +189,18 @@ public struct NamedAdaptive: Sendable, Hashable, Codable {
         self.name = name
         self.color = color
     }
+
+    /// Creates a named colour from packed `0xRRGGBB` values.
+    ///
+    /// - Parameters:
+    ///   - name: The colour's name.
+    ///   - light: The light value.
+    ///   - dark: The dark value, or `nil` for a light-only colour.
+    ///   - lightIncreased: Light with Increase Contrast on, or `nil`.
+    ///   - darkIncreased: Dark with Increase Contrast on, or `nil`.
+    public init(_ name: String, light: UInt32, dark: UInt32? = nil, lightIncreased: UInt32? = nil, darkIncreased: UInt32? = nil) {
+        self.init(name: name, color: Adaptive(light: light, dark: dark, lightIncreased: lightIncreased, darkIncreased: darkIncreased))
+    }
 }
 
 /// An ordered colour ramp: a light-surface version and, where one has been authored, a dark-surface one.
@@ -181,7 +210,12 @@ public struct Ramp: Sendable, Hashable, Codable {
     /// The steps on a dark surface; `nil` means the light ramp is used as it is.
     public var dark: [ColorValue]?
 
-    /// Creates a ramp.
+    /// Creates a ramp from packed `0xRRGGBB` steps.
+    public init(packedLight light: [UInt32], packedDark dark: [UInt32]? = nil) {
+        self.init(light: light.map { ColorValue(RGB(rgb: $0)) }, dark: dark.map { $0.map { ColorValue(RGB(rgb: $0)) } })
+    }
+
+    /// Creates a ramp from colour values.
     public init(light: [ColorValue], dark: [ColorValue]?) {
         self.light = light
         self.dark = dark

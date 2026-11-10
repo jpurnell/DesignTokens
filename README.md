@@ -126,6 +126,14 @@ The CSS has `@media (prefers-contrast: more)` blocks (light, then `and (prefers-
 explicit dark selectors), ordered so the dark scheme wins over the light contrast block and the dark contrast
 block wins over the standard dark values.
 
+## An app's own palette (0.8.0 candidate)
+
+An app keeps its accent and series on Swiss's structure by declaring them in one file that conforms to `AppPaletteSource`, and tests them
+with `#expect(WinePalette.validate().isConformant)`. The palette carries its own ledger of exact findings, exactly as the built-in themes do;
+nothing is suppressed. `maxSeriesPerChart`, `labelTogether` and `chartViolations(plotting:labelled:)` state the app's chart rules as code, and
+`palette.theme()` feeds the CSS, JSON and ANSI emitters. Walkthrough: `project/docs/technical/HowAnAppAdoptsTheTokens.md`; contract for the
+drift checker: `project/plans/proposals/2026-11-10_AppPaletteAdoption.md`.
+
 ## Terminal and slides (0.7.0)
 
 `themes/<id>.ansi.txt` is a terminal role table, one block per colour slot (`light`, `light-increased`, `dark`, `dark-increased`; a

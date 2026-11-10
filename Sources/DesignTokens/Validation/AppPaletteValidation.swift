@@ -15,14 +15,15 @@ public extension ThemeValidator {
     static func validate(_ palette: AppPalette, on theme: Theme) -> [Finding] {
         let composed = theme.composed(with: palette)
         let pairs: PairSelection = palette.seriesOrder.mode == .entityOrder ? .all : .adjacent
-        var findings: [Finding] = composed.appearanceIssues.map {
+        var findings = structureFindings(of: palette)
+        findings += composed.appearanceIssues.map {
             Finding(severity: .fail, check: .structure, appearance: composed.appearances == .fixedDark ? .dark : .light,
                     subject: $0.subject, measured: $0.kind == .missingDark ? 0 : 1, threshold: $0.kind == .missingDark ? 1 : 0)
         }
-        for (position, appearance) in validatedAppearances(composed).enumerated() {
-            findings += seriesChecks(composed, appearance: appearance, pairs: pairs, includeCount: position == 0)
+        for (position, appearance) in measuredAppearances(palette, on: theme).enumerated() {
+            findings += seriesChecks(composed, palette: palette, appearance: appearance, pairs: pairs, includeCount: position == 0)
         }
-        guard palette.seriesOrder.mode == .entityOrder else { return findings }
+        guard palette.seriesOrder.mode == .entityOrder, palette.series != nil else { return findings }
         let required = requiredPairs(composed, pairs: pairs)
         let names = Set(composed.palette.series.map(\.name))
         let listed = palette.seriesOrder.labelRequired
@@ -49,8 +50,36 @@ public extension ThemeValidator {
     /// in series order, on the theme's surfaces. Every pair needing a secondary encoding is returned
     /// whether or not the palette lists it.
     static func requiresDirectLabels(_ palette: AppPalette, on theme: Theme) -> [SeriesPair] {
+        guard palette.series != nil else { return [] }
         let composed = theme.composed(with: palette)
         return requiredPairs(composed, pairs: .all)
+    }
+
+    /// The appearances an app palette is measured in on a theme: those the composed theme declares, plus an
+    /// increased-contrast appearance wherever one of the palette's own series has an increased value. A
+    /// theme's series that the palette does not replace are not measured, so they do not add one.
+    static func measuredAppearances(_ palette: AppPalette, on theme: Theme) -> [ValidationAppearance] {
+        var probe = theme.composed(with: palette)
+        probe.palette.series = palette.series ?? []
+        return validatedAppearances(probe)
+    }
+
+    /// Findings about the palette's own declarations, before any colour is measured.
+    private static func structureFindings(of palette: AppPalette) -> [Finding] {
+        var out: [Finding] = []
+        func add(_ subject: String) {
+            out.append(Finding(severity: .fail, check: .structure, appearance: .light, subject: subject, measured: 0, threshold: 1))
+        }
+        if let maximum = palette.maxSeriesPerChart, maximum < 1 { add("maxSeriesPerChart") }
+        var seen = Set<String>()
+        var reported = Set<String>()
+        for entry in palette.series ?? [] where !seen.insert(entry.name).inserted && reported.insert(entry.name).inserted {
+            add("series \(entry.name) (duplicate name)")
+        }
+        for pair in palette.labelTogether where !seen.contains(pair.first) || !seen.contains(pair.second) {
+            add("labelTogether \(pair.first) / \(pair.second) (unknown series)")
+        }
+        return out
     }
 
     private static func requiredPairs(_ theme: Theme, pairs: PairSelection) -> [SeriesPair] {
@@ -70,9 +99,20 @@ public extension ThemeValidator {
         return out
     }
 
-    private static func seriesChecks(_ theme: Theme, appearance: ValidationAppearance, pairs: PairSelection,
-                                     includeCount: Bool) -> [Finding] {
-        return seriesFindings(theme, series: theme.palette.series, appearance: appearance, pairs: pairs, includeCount: includeCount)
-            + roleFindings(theme, appearance: appearance).filter { $0.subject.hasPrefix("accent") || $0.subject.hasPrefix("onAccent") }
+    /// The findings for what the palette supplies, and nothing it does not: its series, its accent, its ramps.
+    private static func seriesChecks(_ theme: Theme, palette: AppPalette, appearance: ValidationAppearance,
+                                     pairs: PairSelection, includeCount: Bool) -> [Finding] {
+        var out: [Finding] = []
+        if let series = palette.series, !series.isEmpty {
+            out += seriesFindings(theme, series: series, appearance: appearance, pairs: pairs, includeCount: includeCount)
+        }
+        if palette.accent != nil || palette.onAccent != nil {
+            out += roleFindings(theme, appearance: appearance).filter { $0.subject.hasPrefix("accent") || $0.subject.hasPrefix("onAccent") }
+        }
+        let supplied: [String] = (palette.sequential == nil ? [] : ["sequential"]) + (palette.diverging == nil ? [] : ["diverging"])
+        if !supplied.isEmpty {
+            out += rampFindings(theme, appearance: appearance).filter { finding in supplied.contains { finding.subject.hasPrefix($0) } }
+        }
+        return out
     }
 }

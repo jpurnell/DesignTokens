@@ -32,6 +32,10 @@ system's own colours and use these values only where the system cannot reach.
 - ``Structure``
 - ``ThemePalette``
 - ``AppPalette``
+- ``AppPaletteSource``
+- ``AppPaletteConformance``
+- ``LabelRequirement``
+- ``ChartRuleViolation``
 - ``Adaptive``
 - ``ColorValue``
 - ``ThemeCodec``

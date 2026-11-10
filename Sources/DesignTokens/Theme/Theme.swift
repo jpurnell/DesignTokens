@@ -203,11 +203,12 @@ public struct Theme: Sendable, Hashable, Codable, Identifiable {
         copy.name = "\(name) (\(app.id))"
         copy.conformance = .strict
         if let accent = app.accent { copy.palette.accent = accent }
+        if let onAccent = app.onAccent { copy.palette.onAccent = onAccent }
         if let series = app.series { copy.palette.series = series }
         if let sequential = app.sequential { copy.palette.sequential = sequential }
         if let diverging = app.diverging { copy.palette.diverging = diverging }
         if appearances == .both {
-            let supplied = (app.accent.map { [$0] } ?? []) + (app.series ?? []).map(\.color)
+            let supplied = (app.accent.map { [$0] } ?? []) + (app.onAccent.map { [$0] } ?? []) + (app.series ?? []).map(\.color)
             if supplied.contains(where: { $0.dark == nil }) { copy.appearances = .lightOnly }
         }
         if copy.appearances != .both { copy.palette = copy.palette.strippingDark() }
@@ -267,6 +268,10 @@ public struct AppPalette: Sendable, Hashable, Codable {
     public var id: String
     /// The accent, or `nil` to keep the theme's.
     public var accent: Adaptive?
+    /// The colour of text and marks on the accent, or `nil` to keep the theme's. A dark accent such as WineTaster's
+    /// `#7F0017` needs its own: Swiss's `onAccent` is chosen for Swiss's orange and fails against it
+    /// (added in 0.8.0).
+    public var onAccent: Adaptive?
     /// The series, or `nil` to keep the theme's.
     public var series: [NamedAdaptive]?
     /// A sequential ramp, or `nil` to keep the theme's.
@@ -275,15 +280,69 @@ public struct AppPalette: Sendable, Hashable, Codable {
     public var diverging: Ramp?
     /// How the series are ordered.
     public var seriesOrder: SeriesOrder
+    /// The most series one chart may plot, or `nil` for the method's eight (``ValidationThresholds/maxSeries``).
+    ///
+    /// This is a limit per chart, not a palette size: WineTaster has more wine types than the five it allows in
+    /// one chart. ``chartViolations(plotting:labelled:)`` applies it.
+    public var maxSeriesPerChart: Int?
+    /// Pairs that must be labelled directly wherever a chart plots both, by the app's own rule, whether or not
+    /// the colours fail a threshold (WineTaster: Light White and Full White).
+    ///
+    /// Unlike ``SeriesOrder/labelRequired``, which records measured failures and is checked for staleness, this
+    /// is a declared rule and is never stale.
+    public var labelTogether: [SeriesPair]
+    /// The palette's ledger: the exact findings the owner keeps, as the built-in themes have. ``Conformance/strict``
+    /// (the default) allows none. See ``validate(on:)``.
+    public var conformance: Conformance
 
     /// Creates an app palette.
-    public init(id: String, accent: Adaptive?, series: [NamedAdaptive]?, sequential: Ramp? = nil,
-                diverging: Ramp? = nil, seriesOrder: SeriesOrder) {
+    public init(id: String, accent: Adaptive?, onAccent: Adaptive? = nil, series: [NamedAdaptive]?, sequential: Ramp? = nil,
+                diverging: Ramp? = nil, seriesOrder: SeriesOrder, maxSeriesPerChart: Int? = nil,
+                labelTogether: [SeriesPair] = [], conformance: Conformance = .strict) {
         self.id = id
         self.accent = accent
+        self.onAccent = onAccent
         self.series = series
         self.sequential = sequential
         self.diverging = diverging
         self.seriesOrder = seriesOrder
+        self.maxSeriesPerChart = maxSeriesPerChart
+        self.labelTogether = labelTogether
+        self.conformance = conformance
+    }
+
+    private enum CodingKeys: String, CodingKey {
+        case id, accent, onAccent, series, sequential, diverging, seriesOrder, maxSeriesPerChart, labelTogether, conformance
+    }
+
+    /// Decodes an app palette. The keys added in 0.8.0 (`onAccent`, `maxSeriesPerChart`, `labelTogether`, `conformance`)
+    /// default when absent, so JSON written by 0.7.0 still reads.
+    public init(from decoder: any Decoder) throws {
+        let c = try decoder.container(keyedBy: CodingKeys.self)
+        self.init(id: try c.decode(String.self, forKey: .id),
+                  accent: try c.decodeIfPresent(Adaptive.self, forKey: .accent),
+                  onAccent: try c.decodeIfPresent(Adaptive.self, forKey: .onAccent),
+                  series: try c.decodeIfPresent([NamedAdaptive].self, forKey: .series),
+                  sequential: try c.decodeIfPresent(Ramp.self, forKey: .sequential),
+                  diverging: try c.decodeIfPresent(Ramp.self, forKey: .diverging),
+                  seriesOrder: try c.decode(SeriesOrder.self, forKey: .seriesOrder),
+                  maxSeriesPerChart: try c.decodeIfPresent(Int.self, forKey: .maxSeriesPerChart),
+                  labelTogether: try c.decodeIfPresent([SeriesPair].self, forKey: .labelTogether) ?? [],
+                  conformance: try c.decodeIfPresent(Conformance.self, forKey: .conformance) ?? .strict)
+    }
+
+    /// Encodes the palette. The three 0.8.0 keys are always written, so a round trip is exact.
+    public func encode(to encoder: any Encoder) throws {
+        var c = encoder.container(keyedBy: CodingKeys.self)
+        try c.encode(id, forKey: .id)
+        try c.encodeIfPresent(accent, forKey: .accent)
+        try c.encodeIfPresent(onAccent, forKey: .onAccent)
+        try c.encodeIfPresent(series, forKey: .series)
+        try c.encodeIfPresent(sequential, forKey: .sequential)
+        try c.encodeIfPresent(diverging, forKey: .diverging)
+        try c.encode(seriesOrder, forKey: .seriesOrder)
+        try c.encodeIfPresent(maxSeriesPerChart, forKey: .maxSeriesPerChart)
+        try c.encode(labelTogether, forKey: .labelTogether)
+        try c.encode(conformance, forKey: .conformance)
     }
 }
