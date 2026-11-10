@@ -5,9 +5,12 @@ import SwiftUI
 /// The Hybrid card of the design system: a 3 pt ink rule across the top, a small label and an outlined-chip slot, the title large,
 /// a secondary-ink description, and a footer set off by an ink hairline ("Builds on ...").
 ///
-/// Square (the container radius), a hairline border in the neutral `rule` colour, no fill (the page is the surface), no shadow, no
-/// dashed edge. State is the chip and its words, never a tinted or dashed card. VoiceOver reads it as a container whose children
-/// are still reachable, so a button in the footer is.
+/// Square (the container radius), a hairline border in the neutral `rule` colour (or none: ``SwiftUI/View/swissCardChrome(_:)``),
+/// no fill (the page is the surface), no shadow, no dashed edge. State is the chip and its words, never a tinted or dashed card.
+/// VoiceOver reads it as a container whose children are still reachable, so a button in the footer is.
+///
+/// In a ``SwissEqualGrid`` the card is offered its row's height and pins the footer to the bottom edge, so footers line up across a
+/// row. Anywhere else it is as tall as its content.
 ///
 /// ```swift
 /// SwissCard(label: "#13", title: "Design tokens", description: "Shared colour, type and spacing.",
@@ -23,6 +26,8 @@ public struct SwissCard<Chip: View, Footer: View>: View {
     private let footer: Footer
     private let hasChip: Bool
     private let hasFooter: Bool
+    @Environment(\.swissCardChrome) private var chrome
+    @Environment(\.swissFillsHeight) private var fillsHeight
 
     fileprivate init(label: String?, title: String, description: String?, chip: Chip, hasChip: Bool, footer: Footer, hasFooter: Bool) {
         self.label = label
@@ -44,6 +49,7 @@ public struct SwissCard<Chip: View, Footer: View>: View {
     public var body: some View {
         ChartStyleReader { style in
             let metrics = SwissMetrics(theme: style.theme)
+            let inset = chrome == .bordered ? metrics.step(3) : 0
             VStack(alignment: .leading, spacing: 0) {
                 SwissRule(.section, tone: .ink)
                 VStack(alignment: .leading, spacing: metrics.step(3)) {
@@ -60,6 +66,9 @@ public struct SwissCard<Chip: View, Footer: View>: View {
                             .fixedSize(horizontal: false, vertical: true)
                     }
                     if hasFooter {
+                        // The spacer is what pins the footer: it takes whatever height the row gives beyond the content's. Only in
+                        // an equal grid: a spacer anywhere else would stretch the card to the tallest of its neighbours.
+                        if fillsHeight { Spacer(minLength: 0) }
                         VStack(alignment: .leading, spacing: metrics.step(2)) {
                             SwissRule(.hairline, tone: .ink)
                             footer
@@ -67,12 +76,52 @@ public struct SwissCard<Chip: View, Footer: View>: View {
                         .padding(.top, metrics.step(1))
                     }
                 }
-                .padding(metrics.step(3))
+                .padding(.horizontal, inset)
+                .padding(.vertical, metrics.step(3))
+                .frame(maxHeight: fillsHeight ? .infinity : nil, alignment: .top)
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .swissContainer()
+            .frame(maxWidth: .infinity, maxHeight: fillsHeight ? .infinity : nil, alignment: .topLeading)
+            .modifier(CardBorder(bordered: chrome == .bordered))
             .accessibilityElement(children: .contain)
         }
+    }
+}
+
+/// Whether a ``SwissCard`` draws its hairline border.
+@available(macOS 14.0, iOS 17.0, visionOS 1.0, tvOS 17.0, watchOS 10.0, *)
+public enum SwissCardChrome: Sendable, Hashable {
+    /// A hairline border in the `rule` colour around the card, and padding inside it (0.10.0's card).
+    case bordered
+    /// No border: the 3 pt top rule is the card's edge, and the text sits flush with the column (the Stack Map's gap cards).
+    case borderless
+}
+
+@available(macOS 14.0, iOS 17.0, visionOS 1.0, tvOS 17.0, watchOS 10.0, *)
+private struct CardChromeKey: EnvironmentKey {
+    static let defaultValue = SwissCardChrome.bordered
+}
+
+@available(macOS 14.0, iOS 17.0, visionOS 1.0, tvOS 17.0, watchOS 10.0, *)
+extension EnvironmentValues {
+    var swissCardChrome: SwissCardChrome {
+        get { self[CardChromeKey.self] }
+        set { self[CardChromeKey.self] = newValue }
+    }
+}
+
+@available(macOS 14.0, iOS 17.0, visionOS 1.0, tvOS 17.0, watchOS 10.0, *)
+public extension View {
+    /// Sets whether the ``SwissCard``s inside draw their hairline border. ``SwissCardChrome/borderless`` keeps the 3 pt top rule.
+    func swissCardChrome(_ chrome: SwissCardChrome) -> some View {
+        environment(\.swissCardChrome, chrome)
+    }
+}
+
+@available(macOS 14.0, iOS 17.0, visionOS 1.0, tvOS 17.0, watchOS 10.0, *)
+private struct CardBorder: ViewModifier {
+    let bordered: Bool
+    func body(content: Content) -> some View {
+        if bordered { content.swissContainer() } else { content }
     }
 }
 
@@ -126,27 +175,36 @@ public extension SwissCard where Chip == EmptyView, Footer == EmptyView {
     }
 }
 
-/// The card's footer row: a label in secondary ink and the names after it in bold ink ("Builds on" and the packages).
+/// The card's footer row: a label in secondary ink and the names after it in bold ink ("Builds on" and the packages), wrapping onto
+/// further lines when they do not fit. The names may be any views, so a name can be a button.
 @available(macOS 14.0, iOS 17.0, visionOS 1.0, tvOS 17.0, watchOS 10.0, *)
-public struct SwissCardFooter: View {
+public struct SwissCardFooter<Names: View>: View {
     private let label: String
-    private let names: String
+    private let names: Names
 
-    /// Creates a footer row.
-    public init(_ label: String, names: String) {
+    /// Creates a footer row whose names are views (each is placed in the flow; a button is a name that selects).
+    public init(_ label: String, @ViewBuilder names: () -> Names) {
         self.label = label
-        self.names = names
+        self.names = names()
     }
 
     /// The row.
     public var body: some View {
         ChartStyleReader { style in
-            HStack(alignment: .firstTextBaseline, spacing: SwissMetrics(theme: style.theme).step(2)) {
+            let metrics = SwissMetrics(theme: style.theme)
+            SwissFlowLayout(spacing: metrics.step(2), lineSpacing: metrics.step(1)) {
                 Text(label).uiText(.caption)
-                Text(names).uiText(.caption, ink: .ink).fontWeight(.bold)
+                names
             }
-            .accessibilityElement(children: .combine)
         }
+    }
+}
+
+@available(macOS 14.0, iOS 17.0, visionOS 1.0, tvOS 17.0, watchOS 10.0, *)
+public extension SwissCardFooter where Names == AnyView {
+    /// A footer row whose names are one string in bold ink.
+    init(_ label: String, names: String) {
+        self.init(label) { AnyView(Text(names).uiText(.caption, ink: .ink).fontWeight(.bold)) }
     }
 }
 

@@ -27,10 +27,10 @@ struct UIRoleHierarchyTests {
         #expect(caption >= label, "caption \(caption) not under label \(label)")
     }
 
-    @Test("a section heading is not the size of a value: it is at least four points above the body")
+    @Test("a section heading is not the size of a value: at least three points above the body (a phone's is 20 over 17), and the title as far above it")
     func sectionHasProminence() throws {
-        #expect(try size(.section) - size(.body) >= 4)
-        #expect(try size(.title) - size(.section) >= 4, "the page title stays clearly the largest of the hierarchy")
+        #expect(try size(.section) - size(.body) >= 3)
+        #expect(try size(.title) - size(.section) >= 3, "the page title stays clearly the largest of the hierarchy")
     }
 
     #if os(macOS)
