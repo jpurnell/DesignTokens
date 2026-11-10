@@ -101,7 +101,7 @@ writes `Generated/tokens.css` and `Generated/tokens.json` (the default look) and
 `Generated/themes/<id>.css` and `<id>.json`, plus Swiss's Tumblr block `themes/swiss.tumblr.css`. All are committed, and a test fails if any differs from a fresh emit or if
 `Generated/` holds a file that is not generated, so regenerate and commit after changing a value.
 
-A theme's CSS is scoped to `[data-theme-name="<id>"]`, so several themes can coexist on a page. A light-only theme has no
+Each theme also gets a terminal table and slide files (below). A theme's CSS is scoped to `[data-theme-name="<id>"]`, so several themes can coexist on a page. A light-only theme has no
 dark blocks; the dark selectors honour `data-theme` and `data-bs-theme` on the element or any ancestor.
 
 ## SwiftUI
@@ -124,6 +124,22 @@ owner has seen the contact sheets. macOS 14, iOS 17, visionOS 1.
 The CSS has `@media (prefers-contrast: more)` blocks (light, then `and (prefers-color-scheme: dark)`, then the
 explicit dark selectors), ordered so the dark scheme wins over the light contrast block and the dark contrast
 block wins over the standard dark values.
+
+## Terminal and slides (unreleased, 0.7.0 candidate)
+
+`themes/<id>.ansi.txt` is a terminal role table, one block per colour slot (`light`, `light-increased`, `dark`, `dark-increased`; a
+light-only theme has the first two, a fixed-dark theme the last two). Each row is `role kind hex truecolor c256 c16 glyph ascii note`,
+where the three colour columns are SGR parameter lists (`38;2;255;141;40`, `38;5;208`, `33`; `48;...` for the `background` and
+`surface` rows). The 256-colour column is the nearest xterm entry from indices 16 to 255 (cube, then greys; never the user's own
+0 to 15), the 16-colour column the nearest of xterm's default sixteen, both by squared RGB distance with ties to the lowest index.
+Status is never colour alone: `positive`, `negative` and `warning` rows carry `✓ ✗ !` and an ASCII fallback. It is a role
+table, not a terminal theme: it does not set the terminal's background.
+
+`themes/<id>.slides.txt` is the colour and font list for Keynote and PowerPoint templates (hex per slot, series, then the fifteen type
+roles with font chain SF Pro Text, SF Pro, Helvetica Neue, Helvetica, Arial). `themes/<id>.slides.colors.<slot>.xml` and
+`themes/<id>.slides.fonts.xml` are DrawingML `<a:clrScheme>` and `<a:fontScheme>` documents, the roots of PowerPoint's Theme Colors and
+Theme Fonts files; the mapping (dk1 to lt2, accent1 to 6, hlink) is in the `SlidesEmitter` documentation. They have been checked for
+well-formedness and mapping, not opened in Keynote or PowerPoint, and no `.thmx` / `.potx` package or Keynote theme is produced.
 
 ## The Tumblr block
 

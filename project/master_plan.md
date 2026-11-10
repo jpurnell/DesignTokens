@@ -54,6 +54,7 @@ Tests/DesignTokensSwiftUITests/ macOS: colour resolution (@MainActor), structure
 | `ThemeValidator`, `Finding`, `Conformance`, `ValidationThresholds`, `Theme.all` (0.5.0) | The dataviz method as Swift; a theme's measured findings against its ledger; the nine registered themes |
 | `ThemeCSSEmitter`, `ThemeJSONEmitter`, `Generator` (0.6.0) | One scoped CSS file and one canonical JSON file per theme in `Generated/themes/`; the CLI behind `design-tokens` |
 | `ChartStyle`, `ChartText`, `FontPlan`, `ChartStyleReader` (0.6.0, `DesignTokensSwiftUI`) | A theme resolved for an appearance and contrast into SwiftUI colours, fonts, weights and flags; `\.theme` / `\.chartStyle` environment |
+| `ThemeSlot`, `TerminalColour`, `ANSIEmitter`, `SlidesEmitter` (0.7.0 candidate) | The terminal role table (truecolor, 256 and 16-colour fallbacks) and the slide colour and font list with PowerPoint colour and font scheme XML, per colour slot |
 | `TumblrEmitter`, `BlogStamp`, `BlogChecker`, `BlogFetching`, `ChromeBlogFetcher`, `TumblrCommand` (0.6.0) | The Tumblr paste-in block with its stamp; the staleness check of the live blog behind a fetcher protocol |
 
 ### Data Flow
@@ -62,7 +63,9 @@ Tests/DesignTokensSwiftUITests/ macOS: colour resolution (@MainActor), structure
 Tokens (Swift) -> Emitter -> tokens.css / tokens.json  (committed, golden-tested, unchanged since 0.3.0)
 Theme (Swift) -> ThemeCSSEmitter / ThemeJSONEmitter -> themes/<id>.css, themes/<id>.json  (0.6.0)
 Theme (Swift) -> DesignTokensSwiftUI ChartStyle -> Color, Font, numbers  (0.6.0; system colours deferred to)
-Theme (Swift) -> SVG / Tumblr / ANSI / slides emitters  (0.7.0, 0.8.0, not yet)
+Theme (Swift) -> Tumblr block (0.6.0)
+Theme (Swift) -> ThemeSlot -> ANSIEmitter / SlidesEmitter -> themes/<id>.ansi.txt, .slides.txt, .slides.fonts.xml, .slides.colors.<slot>.xml  (0.7.0 candidate, unreleased)
+Theme (Swift) -> SVG emitter  (not yet)
 ```
 
 ---
@@ -119,7 +122,8 @@ Theme (Swift) -> SVG / Tumblr / ANSI / slides emitters  (0.7.0, 0.8.0, not yet)
 - [x] Tumblr paste-in block emitter and `check-blog` (branch `feature/tumblr-emitter` from tag 0.5.0, merged into the 0.6.0 line on `merge/tumblr-into-0.6.0`, shipped in 0.6.0): shipped ahead of the proposal's 0.7.0 row, which listed them with the SVG emitter. Version and stamp now come from `DesignTokens.version` (one source). Still Swiss-only: `Generated/themes/swiss.tumblr.css`. Not shipped from that row: the computed-value drift check (it needs a Tumblr preview, never the live blog), SVG, the site re-pin. Nothing pasted or rendered yet; the live blog is unstamped
 - [x] Chart alignment, DesignTokens side (branch `feature/chart-alignment-spec`, shipped in 0.6.0): structure fields, Swiss values, neutral `muted` grey and its ledger rows, blue sequential and dark diverging ramps, `ChartStyle` accessors. The renderer and view half is BusinessMath-UI's and is not started.
 - [ ] **0.6.0 BusinessMath-UI half (open):** the conversion on its own branch, in the phases of proposal section 6.1, then Visual checkpoint 1. Not started; nothing in BusinessMath-UI was changed.
-- [ ] 0.7.0 to 0.9.0 per the proposal's release table
+- [x] Terminal (ANSI) and slides emitters (branch `feature/terminal-slides-emitters` from 0.6.0, unreleased; proposal `project/plans/proposals/2026-11-09_TerminalAndSlidesEmitters.md`): `ANSIEmitter`, `SlidesEmitter`, `ThemeSlot`, `TerminalColour`; 53 generated files, 47 tests. Not opened in Keynote or PowerPoint; no `.thmx`/`.potx`, no Keynote theme, no SVG emitter, no `--format` filter
+- [ ] SVG emitter, then the rest of 0.7.0 to 0.9.0 per the proposal's release table
 
 ### Phase 2: the site
 ### Phase 3: the chart libraries
@@ -128,4 +132,4 @@ Theme (Swift) -> SVG / Tumblr / ANSI / slides emitters  (0.7.0, 0.8.0, not yet)
 
 ---
 
-**Last Updated:** 2026-11-09 (0.6.0 release: reconciled unreleased markers, CHANGELOG, README status; Princeton follows Swiss ramps)
+**Last Updated:** 2026-11-09 (terminal and slides emitters added on a branch from 0.6.0: Data Flow, type table, Current Status, CHANGELOG [Unreleased], README; the 0.6.0 reconciliation stands)

@@ -1,5 +1,31 @@
 # Changelog
 
+## [Unreleased]
+
+### Added: terminal (ANSI) and slides emitters (0.7.0 candidate, branch `feature/terminal-slides-emitters`)
+Proposal: `project/plans/proposals/2026-11-09_TerminalAndSlidesEmitters.md`. Pure functions from `Theme` to text, deterministic,
+committed under `Generated/themes/`, golden-tested by the existing "every generated file equals a fresh emit, nothing else is in
+`Generated`" test, and part of `Generator.files`, so `design-tokens emit` writes them. Every file carries the generated header
+(theme id, `DesignTokens.version`, system snapshot, content hash). Additive: `tokens.*`, the CSS, JSON and Tumblr files are unchanged.
+- **`ThemeSlot`**: the colour states a text emitter writes: `light`, `light-increased`, `dark`, `dark-increased` for a theme that
+  declares both appearances, the light pair for light-only, the dark pair for fixed-dark (whose single stored slot it reads).
+  A colour with alpha is composited over the slot's background.
+- **`TerminalColour`**: nearest xterm 256-colour index (16 to 255: the 6x6x6 cube, then the 24 greys; never the user's own 0 to 15) and nearest of
+  xterm's default sixteen, by squared RGB distance with ties to the lowest index. SGR codes 30-37 / 90-97 (40-47 / 100-107).
+- **`ANSIEmitter`** -> `themes/<id>.ansi.txt`: a role table per slot with `role kind hex truecolor c256 c16 glyph ascii note`. Truecolor,
+  256 and 16-colour are SGR parameter lists. Status is never colour alone: `positive`, `negative`, `warning` carry `✓ ✗ !` with ASCII
+  fallbacks `+ x !`. It is a role table, not a terminal theme: the terminal's own background is not set.
+- **`SlidesEmitter`** -> `themes/<id>.slides.txt` (hex per slot, series, extras, then the fifteen type roles with font chain, size, weight,
+  tracking, case, italic and line height), `themes/<id>.slides.colors.<slot>.xml` (a DrawingML `<a:clrScheme>`, the root of a PowerPoint
+  Theme Colors file) and `themes/<id>.slides.fonts.xml` (an `<a:fontScheme>`, the root of a Theme Fonts file). Font chains drop the
+  CSS-only names: SF Pro Text, SF Pro, Helvetica Neue, Helvetica, Arial for sans. Mapping documented in the type's DocC.
+- **Generated files:** 53 added (per theme: ansi, slides list, slides fonts, and one colour scheme per slot: 26 in all), so `Generator.files` returns 74 files, was 21.
+- Tests: 47 new (332 core, 42 SwiftUI). Expected values are hand-computed or enumerated (the xterm table built from its published
+  construction; every one of its 240 entries maps to itself; a tie case; Swiss orange is 208 and SGR 33 by hand), not read back from the emitter.
+- **Not built:** a `.thmx` / `.potx` package, a Keynote theme file, a slide-master colour map, an SVG emitter, ramps in the terminal table, a
+  `--format` CLI filter. Not verified: the XML and text have not been opened in Keynote or PowerPoint (checked for well-formedness and for the documented mapping only);
+  the 256 and 16-colour approximations are not contrast-measured; Foundation-only and expected to build on Linux, untested (the XML tests use `FoundationXML` where it exists).
+
 ## [0.6.0] - 2026-11-09
 
 ### Princeton follows Swiss's ramps

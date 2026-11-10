@@ -1,7 +1,7 @@
 # Design Proposal: terminal (ANSI) and slides emitters
 
 **Date:** 2026-11-09
-**Status:** Proposed; implemented on branch `feature/terminal-slides-emitters` (cut from 0.6.0, be033b8) as a 0.7.0 candidate. Unreleased.
+**Status:** Implemented (tests 332 core / 42 SwiftUI, gate 0/0); on branch `feature/terminal-slides-emitters` (cut from 0.6.0, be033b8) as a 0.7.0 candidate. Unreleased.
 **Related:** `2026-11-07_DesignSystemSingleSource.md` section 4 (the `ansi` and `slides` emitters) and `2026-11-09_ThemeModel.md` (5.3, the emitter list).
 
 ## 1. What and why
