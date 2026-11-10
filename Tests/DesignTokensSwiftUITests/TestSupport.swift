@@ -10,6 +10,7 @@ func near(_ a: some BinaryFloatingPoint, _ b: some BinaryFloatingPoint, toleranc
 #if canImport(SwiftUI) && os(macOS)
 import AppKit
 import SwiftUI
+@testable import DesignTokensSwiftUI
 
 /// Frames reported by views that call ``SwiftUI/View/probe(_:)``, in the coordinate space of the rendered root.
 struct ProbeKey: PreferenceKey {
@@ -57,3 +58,29 @@ private final class FrameBox {
     var frames: [String: CGRect] = [:]
 }
 #endif
+
+/// Renders a view with the table probe on and returns where each cell landed, in window coordinates.
+@MainActor
+func renderProbedTable(_ view: some View, width: CGFloat) -> [String: CGRect] {
+    let box = TableFrameBox()
+    let root = view
+        .environment(\.theme, .swiss)
+        .frame(width: width, alignment: .topLeading)
+        .fixedSize(horizontal: false, vertical: true)
+        .onPreferenceChange(SwissTableProbeKey.self) { frames in MainActor.assumeIsolated { box.frames = frames } }
+    let host = NSHostingView(rootView: root)
+    let size = host.fittingSize
+    let window = NSWindow(contentRect: NSRect(origin: .zero, size: size), styleMask: [.borderless], backing: .buffered, defer: false)
+    window.contentView = host
+    host.frame = NSRect(origin: .zero, size: size)
+    window.orderFrontRegardless()
+    RunLoop.main.run(until: Date().addingTimeInterval(0.3))
+    host.layoutSubtreeIfNeeded()
+    window.orderOut(nil)
+    return box.frames
+}
+
+@MainActor
+private final class TableFrameBox {
+    var frames: [String: CGRect] = [:]
+}
