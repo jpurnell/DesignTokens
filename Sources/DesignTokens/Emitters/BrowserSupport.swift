@@ -95,6 +95,8 @@ public enum BrowserSupport {
                 57, 79, 12.1, 41, [.components]),
         feature("padding-inline, padding-block", #"padding-(inline|block)\s*:"#, 87, 87, 14.1, 66, [.components]),
         feature("border-inline-start, padding-inline-start and -end", #"border-inline-start|padding-inline-(start|end)"#, 69, 79, 12.1, 41, [.components]),
+        feature("position: sticky", #"position: sticky"#, 56, 16, 13, 32, [.components], note: "added 0.13.0"),
+        feature("inset-inline-start, inset-block-start", #"inset-(inline|block)-start"#, 87, 87, 14.1, 63, [.components], note: "added 0.13.0"),
         feature("clip-path: inset()", #"clip-path"#, 55, 79, 10.1, 54, [.components]),
         feature("accent-color", #"accent-color"#, 93, 93, 15.4, 92, [.components],
                 note: "Safari 15.4 to 26.1 implements it without keeping a minimum contrast for the control (MDN lists that as partial); full from 26.2"),
@@ -129,6 +131,12 @@ public enum BrowserSupport {
         /// `components.css` stacks the table into labelled blocks, and collapses the grid helpers to one column, below this viewport
         /// width: `@media (max-width: 600px)`. It is `SwissMetrics.tableStackedBelow`'s 600 pt.
         public static let tableStackBelowPixels = 600
+        /// The media query every narrow-viewport rule in `components.css` uses, as written in the CSS: `(max-width: 600px)`.
+        ///
+        /// **It cannot be a custom property.** A custom property is not substituted inside a media query's condition (`var()` is
+        /// valid only in a property value), so the stylesheet writes the number out. An app that adds its own responsive rules writes `@media \(narrowMediaQuery)` with this exact value, so its layout
+        /// changes at the same width as the shell, table, list and grid helpers. A test holds this string to the emitted CSS.
+        public static let narrowMediaQuery = "(max-width: \(tableStackBelowPixels)px)"
         /// A key and value row stacks (label above value) when its container is narrower than this, in `rem`:
         /// `@container (max-width: 30rem)`.
         public static let keyValueStackBelowRem = 30

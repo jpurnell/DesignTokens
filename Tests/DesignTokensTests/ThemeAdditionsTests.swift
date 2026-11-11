@@ -6,7 +6,7 @@ import Testing
 struct ThemeAdditionsTests {
     @Test("the package version is 0.8.0")
     func versionConstant() {
-        #expect(DesignTokens.version == "0.12.0")
+        #expect(DesignTokens.version == "0.13.0")
     }
 
     @Test("TypeRole lists the nine chart roles and the six UI roles, and subscripts each field")

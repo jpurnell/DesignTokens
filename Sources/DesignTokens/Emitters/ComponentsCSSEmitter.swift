@@ -28,16 +28,33 @@ import Foundation
 /// | Table | `dt-table` (a real `<table>`; cells carry `data-label`), `dt-num`, `aria-sort`, `aria-selected` | `SwissTable` |
 /// | Card grid and card | `dt-cards`, `dt-card`, `dt-card__header`, `dt-card__name`, `dt-card__title`, `dt-card__footer` | `SwissEqualGrid`, `SwissCard` |
 /// | Stats | `dt-stats`, `dt-stat`, `dt-stat__label`, `dt-stat__figure`, `dt-stat__unit` | `KeyValueRow`, set compactly |
-/// | Plain list | `dt-list`, `dt-item`, `dt-item__title` | `KeyValueList` rows |
+/// | Plain list | `dt-list`, `dt-item`, `dt-item__title`; 0.13.0: `dt-item--meta` with `dt-item__main` and `dt-item__meta` (a trailing count), `dt-list--columns` (auto-fit columns, one under 600 px) | `KeyValueList` rows |
+/// | Page shell and navigation (0.13.0) | `dt-shell` (a sticky navigation column and a main column; one column and a wrapped nav row under 600 px), `dt-shell__nav`, `dt-shell__main`, `dt-nav`, `dt-nav__heading`, `dt-nav__item` (`aria-current` marks the page) | none |
+/// | Prose (0.13.0) | `dt-prose`: unclassed `h1` to `h6`, `p`, lists, `blockquote`, `code`, `pre`, `table`, `hr`, `a`, `mark`, `img` inside it | none |
+/// | Mark (0.13.0) | `mark` and `dt-mark`: a tint derived from `--accent`, since the palette has no highlight role | none |
+/// | Hidden (0.13.0) | `[hidden]` is `display: none !important`, so no component's `display` can show a hidden element | none |
 /// | Chip | `dt-chip` with `--success`, `--caution`, `--warning`, `--destructive`, `--neutral` | `OutlinedChip` |
-/// | Banner | `dt-banner` with the same five modifiers | `StatusBanner` |
+/// | Banner | `dt-banner` with the same five modifiers; holds text, paragraphs and links (0.13.0) | `StatusBanner` |
 /// | Segmented control | `dt-segmented`, `dt-segmented__option` (`aria-checked="true"` selects) | `SwissSegmentedControl` |
 /// | Buttons | `dt-button`, `dt-button--primary`, `dt-button--destructive` | none (the system's) |
 /// | Actions | `dt-actions`, `dt-checkline` | none |
 /// | Form | `dt-field`, `dt-field__label`, `dt-input`, `dt-select`, `dt-textarea`, `dt-check` | `SwissTextField`, `SwissToggleStyle` |
 /// | Grid | `dt-grid`, `dt-col-1` to `dt-col-12`, `dt-col-start-1` to `dt-col-start-12` | `SwissGrid` |
 ///
-/// The browser floor and the breakpoints are in ``BrowserSupport``, and in the generated header of the file.
+/// ### States (0.13.0)
+/// Hover (only where a pointer hovers: `@media (hover: hover)`), active, keyboard focus, invalid, disabled, increased contrast, forced
+/// colours and reduced motion were driven in headless Chrome and corrected in 0.13.0: a hover or press is an inner outline in the
+/// current colour (it keeps the words' contrast and survives forced colours), a focus ring inside a clipping parent is drawn inside the
+/// control, an invalid control has a heavier negative border, a disabled one is dimmed, forced colours mark selection with a glyph, a
+/// system-colour outline and an underline, and under increased contrast the primary button is the ink on the page colour.
+///
+/// The stylesheet is built in blocks of one component each, in the order page, type, rules, key and value, list, shell, prose, cards,
+/// stats, table, chip, banner, segmented, buttons, form, grid, then the cross-cutting hidden, hover, invalid, focus, contrast, forced
+/// colours and motion rules, so a new block (a dense chip list, a collapsing card section, a meter, a stale indicator, a toolbar) is
+/// added beside its siblings and picks up the shared state rules by selector.
+///
+/// The browser floor and the breakpoints are in ``BrowserSupport``, and in the generated header of the file. The 600 px breakpoint cannot
+/// be a custom property; an app that writes its own responsive rules uses ``BrowserSupport/Breakpoints/narrowMediaQuery``.
 ///
 /// Departures from the SwiftUI set, on purpose: a banner is a tinted surface with a heavy edge in the status colour and the words
 /// in ink (a stylesheet cannot measure which of two colours reads better on a fill, as `StatusBannerStyle` does, so the text is
@@ -60,7 +77,7 @@ public enum ComponentsCSSEmitter {
         /* Browser support: \(BrowserSupport.floorText(floor)), or newer. No fallbacks are provided; an older browser is not supported.
          * Source: MDN browser-compat-data 8.1.8, the first unprefixed, unflagged version of each feature.
          * Features used here: \(features).
-         * Breakpoints: the table stacks to labelled blocks, and the grid helpers to one column, below a viewport of \(breakpoints.tableStackBelowPixels)px;
+         * Breakpoints (a media query's width cannot be a custom property, so an app that writes its own uses this value, \(breakpoints.narrowMediaQuery)): the table stacks to labelled blocks, and the grid helpers to one column, below a viewport of \(breakpoints.tableStackBelowPixels)px;
          * a key and value row stacks when its container is under \(breakpoints.keyValueStackBelowRem)rem; a card in a cards theme is at least
          * \(breakpoints.cardMinimumWidthInBaseUnits) base units wide (the theme's --card-min). */
 
@@ -247,6 +264,170 @@ public enum ComponentsCSSEmitter {
           font-weight: var(--type-heading-weight);
           margin: 0 0 \#(unit(1));
           overflow-wrap: anywhere;
+        }
+
+        .dt-item--meta {
+          display: flex;
+          align-items: baseline;
+          justify-content: space-between;
+          gap: var(--gutter);
+        }
+        .dt-item__main {
+          flex: 1 1 auto;
+          min-inline-size: 0;
+        }
+        .dt-item__meta {
+        \#(role("caption"))
+          flex: none;
+          white-space: nowrap;
+          font-variant-numeric: tabular-nums;
+          color: var(--secondary-ink);
+        }
+        .dt-list--columns {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(min(\#(unit(80)), 100%), 1fr));
+          column-gap: calc(var(--gutter) * 2);
+        }
+        .dt-list--columns > .dt-item {
+          border-bottom: var(--rule-hairline) solid var(--rule);
+        }
+
+        /* ---- Page shell: a sticky navigation column beside the main column ---- */
+        .dt-shell {
+          display: grid;
+          grid-template-columns: minmax(0, \#(unit(56))) minmax(0, 1fr);
+          column-gap: calc(var(--gutter) * 2);
+          align-items: start;
+        }
+        .dt-shell__nav {
+          position: sticky;
+          top: var(--gutter);
+          align-self: start;
+          max-block-size: calc(100vh - var(--gutter) * 2);
+          overflow-y: auto;
+        }
+        .dt-shell__main {
+          min-inline-size: 0;
+        }
+        .dt-nav {
+          display: block;
+          margin: 0;
+          padding: 0;
+          list-style: none;
+        }
+        .dt-nav__heading {
+        \#(role("label"))
+          margin: 0 0 \#(unit(2));
+          color: var(--secondary-ink);
+        }
+        .dt-nav__item {
+        \#(role("body"))
+          display: block;
+          padding: \#(unit(1)) \#(unit(3));
+          border-inline-start: calc(var(--rule-section) * 2) solid transparent;
+          color: var(--ink);
+          text-decoration: none;
+          overflow-wrap: anywhere;
+        }
+        .dt-nav__item[aria-current] {
+          border-inline-start-color: var(--ink);
+          font-weight: var(--type-heading-weight);
+        }
+
+        /* ---- Prose: rendered Markdown with no classes on it ---- */
+        .dt-prose {
+          max-inline-size: \#(unit(180));
+          color: var(--ink);
+        \#(role("body"))
+          overflow-wrap: anywhere;
+        }
+        .dt-prose h1, .dt-prose h2, .dt-prose h3, .dt-prose h4, .dt-prose h5, .dt-prose h6 {
+          margin: \#(unit(6)) 0 \#(unit(2));
+          color: var(--ink);
+        }
+        .dt-prose h1 {
+        \#(role("title"))
+        }
+        .dt-prose h2 {
+        \#(role("heading"))
+        }
+        .dt-prose h3 {
+        \#(role("body"))
+          font-weight: var(--type-heading-weight);
+        }
+        .dt-prose h4, .dt-prose h5, .dt-prose h6 {
+        \#(role("label"))
+        }
+        .dt-prose > :first-child {
+          margin-top: 0;
+        }
+        .dt-prose p, .dt-prose ul, .dt-prose ol, .dt-prose blockquote, .dt-prose pre, .dt-prose table {
+          margin: 0 0 \#(unit(3));
+        }
+        .dt-prose ul, .dt-prose ol {
+          padding-inline-start: \#(unit(6));
+        }
+        .dt-prose li {
+          margin: 0 0 \#(unit(1));
+        }
+        .dt-prose blockquote {
+          padding-inline-start: \#(unit(4));
+          border-inline-start: var(--rule-section) solid var(--rule);
+          color: var(--secondary-ink);
+        }
+        .dt-prose code {
+          font-family: var(--font-mono);
+          font-size: 0.9em;
+        }
+        .dt-prose pre {
+          padding: \#(unit(3));
+          border: var(--rule-hairline) solid var(--rule);
+          border-radius: var(--radius-control);
+          background: color-mix(in srgb, var(--ink) 5%, transparent);
+          overflow-x: auto;
+        }
+        .dt-prose pre code {
+          font-size: inherit;
+        }
+        .dt-prose table {
+          inline-size: 100%;
+          border-collapse: collapse;
+          font-variant-numeric: tabular-nums;
+        }
+        .dt-prose th {
+        \#(role("label"))
+          text-align: start;
+          color: var(--secondary-ink);
+          padding: \#(unit(2)) \#(unit(3)) \#(unit(2)) 0;
+          border-bottom: var(--rule-hairline) solid var(--ink);
+        }
+        .dt-prose td {
+          padding: \#(unit(2)) \#(unit(3)) \#(unit(2)) 0;
+          border-top: var(--rule-hairline) solid var(--rule);
+          vertical-align: baseline;
+        }
+        .dt-prose hr {
+          border: 0;
+          border-top: var(--rule-hairline) solid var(--rule);
+          margin: \#(unit(6)) 0;
+        }
+        .dt-prose a {
+          color: var(--link);
+          text-decoration: underline;
+        }
+        .dt-prose img {
+          max-inline-size: 100%;
+          block-size: auto;
+        }
+        .dt-prose mark {
+          margin: 0;
+        }
+
+        /* ---- Mark: a highlight tinted from accent (the palette has no highlight role), the words stay in ink ---- */
+        mark, .dt-mark {
+          background: color-mix(in srgb, var(--accent) 32%, var(--background));
+          color: var(--ink);
+          padding-inline: \#(unit(0.5));
         }
 
         /* ---- Card grid and card: equal heights, the chrome is the theme's ---- */
@@ -459,12 +640,11 @@ public enum ComponentsCSSEmitter {
         }
 
         \#(chips)
-        /* ---- Banner ---- */
+        /* ---- Banner: a block that holds text, paragraphs and links; the glyph sits in the start padding, so nothing splits into flex items ---- */
         .dt-banner {
-          display: flex;
-          align-items: baseline;
-          gap: \#(unit(2));
-          padding: \#(unit(3)) var(--gutter);
+          position: relative;
+          padding-block: \#(unit(3));
+          padding-inline: calc(var(--gutter) + \#(unit(6))) var(--gutter);
           border: var(--rule-hairline) solid var(--rule);
           border-inline-start: calc(var(--rule-section) * 2) solid var(--secondary-ink);
           border-radius: var(--radius-control);
@@ -472,8 +652,22 @@ public enum ComponentsCSSEmitter {
         \#(role("body"))
         }
         .dt-banner::before {
+          position: absolute;
+          inset-block-start: \#(unit(3));
+          inset-inline-start: var(--gutter);
+          inline-size: \#(unit(4));
           font-style: normal;
-          flex: none;
+          text-align: center;
+        }
+        .dt-banner > p {
+          margin: 0;
+        }
+        .dt-banner > p + p {
+          margin-top: \#(unit(2));
+        }
+        .dt-banner a {
+          color: inherit;
+          text-decoration: underline;
         }
 
         \#(banners)
@@ -599,6 +793,38 @@ public enum ComponentsCSSEmitter {
             grid-column: 1 / -1;
           }
         }
+        @media (max-width: \#(BrowserSupport.Breakpoints.tableStackBelowPixels)px) {
+          .dt-shell {
+            grid-template-columns: minmax(0, 1fr);
+            row-gap: \#(unit(4));
+          }
+          .dt-shell__nav {
+            position: static;
+            max-block-size: none;
+            overflow-y: visible;
+          }
+          .dt-nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: \#(unit(1)) var(--gutter);
+          }
+          .dt-nav__item {
+            border-inline-start: 0;
+            border-block-end: calc(var(--rule-section) * 2) solid transparent;
+            padding: \#(unit(1)) 0;
+          }
+          .dt-nav__item[aria-current] {
+            border-block-end-color: var(--ink);
+          }
+          .dt-list--columns {
+            grid-template-columns: minmax(0, 1fr);
+          }
+        }
+
+        /* ---- Hidden: the attribute always wins, whatever display a component sets ---- */
+        [hidden] {
+          display: none !important;
+        }
 
         /* ---- Hover and active: an inner outline in the current colour, so the words keep their contrast and forced colours keep the shape ---- */
         @media (hover: hover) {
@@ -612,7 +838,7 @@ public enum ComponentsCSSEmitter {
           .dt-link:hover {
             text-decoration-thickness: calc(var(--rule-hairline) * 2);
           }
-          .dt-table th[aria-sort]:hover {
+          .dt-table th[aria-sort]:hover, .dt-nav__item:hover {
             text-decoration: underline;
           }
         }
@@ -633,11 +859,12 @@ public enum ComponentsCSSEmitter {
 
         /* ---- Focus: the ink, two rule weights wide, never colour alone ---- */
         .dt-button:focus-visible, .dt-segmented__option:focus-visible, .dt-input:focus-visible, .dt-select:focus-visible,
-        .dt-textarea:focus-visible, .dt-check:focus-visible, .dt-link:focus-visible, .dt-table th[aria-sort]:focus-visible {
+        .dt-textarea:focus-visible, .dt-check:focus-visible, .dt-link:focus-visible, .dt-table th[aria-sort]:focus-visible,
+        .dt-nav__item:focus-visible, .dt-prose a:focus-visible, .dt-banner a:focus-visible {
           outline: calc(var(--rule-hairline) * 2) solid var(--ink);
           outline-offset: calc(var(--rule-hairline) * 2);
         }
-        .dt-segmented__option:focus-visible, .dt-table th[aria-sort]:focus-visible {
+        .dt-segmented__option:focus-visible, .dt-table th[aria-sort]:focus-visible, .dt-nav__item:focus-visible {
           outline-offset: calc(var(--rule-hairline) * -3);
         }
 
@@ -663,6 +890,16 @@ public enum ComponentsCSSEmitter {
             border-color: var(--ink);
             color: var(--background);
           }
+          mark, .dt-mark {
+            background: color-mix(in srgb, var(--accent) 45%, var(--background));
+            outline: var(--rule-hairline) solid var(--ink);
+          }
+          .dt-prose blockquote, .dt-prose th, .dt-nav__heading, .dt-item__meta {
+            color: var(--ink);
+          }
+          .dt-prose blockquote, .dt-prose td, .dt-prose pre, .dt-prose hr {
+            border-color: var(--ink);
+          }
         }
 
         /* ---- Forced colours: the ink fill and the tint are overridden, so selection is carried by system colours and by shape ---- */
@@ -680,6 +917,16 @@ public enum ComponentsCSSEmitter {
           }
           .dt-button--primary {
             border-width: calc(var(--rule-hairline) * 2);
+          }
+          mark, .dt-mark {
+            outline: calc(var(--rule-hairline) * 2) solid Highlight;
+            text-decoration: underline;
+          }
+          .dt-nav__item {
+            border-color: Canvas;
+          }
+          .dt-nav__item[aria-current] {
+            border-color: Highlight;
           }
         }
 

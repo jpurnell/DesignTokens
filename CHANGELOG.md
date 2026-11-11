@@ -1,5 +1,39 @@
 # Changelog
 
+## [0.13.0] - 2026-11-11
+
+Branch `feature/components-0.13.0` from 0.12.0 (`1bfbdac`). `DesignTokens.version` is 0.13.0; every file in `Generated/` differs from 0.12.0 in that header version, and `components.css` in the rules below. Proposals: `project/plans/proposals/2026-11-10_WebComponentsAndThemeSwitch.md`, `2026-11-10_SwissComponents.md`. Evidence: the Vault adoption's gaps, and a pass that drove the 0.12.0 components in headless Chrome over the DevTools protocol (`prefers-contrast`, `forced-colors`, `prefers-reduced-motion`, `prefers-color-scheme` through `Emulation.setEmulatedMedia`; `:hover`, `:focus-visible`, `:active` through `CSS.forcePseudoState`; Tab through `Input.dispatchKeyEvent`), which until then had only static screenshots of the default state.
+
+### Fixed (defects found by driving 0.12.0 in a browser)
+- **Hover and press showed nothing** on buttons, segmented options, links, form controls and sortable headers. Hover is now `@media (hover: hover)` only (a touch screen keeps no hover state) and is an inner outline in the current colour (a button, a segmented option), a darker border (a field), a thicker underline (a link), an underline (a sortable header, a nav item). It never changes a fill under text, so the words keep their contrast, and being an outline it survives forced colours. `:active` is a heavier inner outline. A disabled button gets neither.
+- **The focus ring was cut off** inside the segmented control and on a sortable table header (`overflow: hidden` on the parent clipped a ring drawn outside the control); the ring is drawn inside the control there. Real Tab-key focus, measured: a 2 px solid ink ring in light and dark.
+- **An invalid control looked normal.** `aria-invalid="true"` on `dt-input`, `dt-select` and `dt-textarea` is a heavier border in `--negative` (a shape as well as a colour, so it survives forced colours). A disabled control is dimmed with `not-allowed`.
+- **Forced colours** (`forced-colors: active`): the selected segmented option and the selected table row were indistinguishable from the others (the ink fill and the tint are overridden, and a `box-shadow` is removed). A selected option now has a check glyph and a heavier underline, a selected row a `Highlight` outline, and the primary button a heavier border. (A `Highlight` fill on the option was tried first: Chrome drew a text backplate over it and hid the label, so it is not used; `forced-color-adjust` is not used either, since Safari does not implement it.)
+- **Increased contrast**: the primary button's `on-accent` text on the darker increased-contrast accent measured 4.12:1 in light (under 4.5). Under `prefers-contrast: more` the primary button is the ink on the page colour (17.96 light, 16.85 dark). The cause is in the theme (Swiss keeps `on-accent` while darkening `accent`), recorded here and not changed.
+- Motion: confirmed, not changed. Transitions are colour-only, inside `prefers-reduced-motion: no-preference`; measured `0s` under `reduce`. A test now holds every `transition` to that query and forbids animation.
+
+### Added
+- **Page shell**: `dt-shell` (grid: a navigation column of 56 base units and a main column; under 600 px one column and a wrapped navigation row), `dt-shell__nav` (sticky), `dt-shell__main`, `dt-nav`, `dt-nav__heading` (the label role), `dt-nav__item` (`aria-current` is a heavier edge and weight, not colour alone).
+- **Prose**: `dt-prose` styles unclassed rendered Markdown: `h1` to `h6`, `p`, `ul`/`ol`/`li`, `blockquote`, `code` (the theme's `--font-mono`), `pre` (scrolls horizontally), `table` (hairline header, tabular numerals), `hr`, `a`, `mark`, `img` (`max-inline-size: 100%`).
+- **Mark**: `mark` and `dt-mark`. The palette has no highlight role, so the tint is derived from `accent` with `color-mix()` (32% over the background; 45% with an ink outline under increased contrast; a `Highlight` outline and underline under forced colours). Measured text contrast: 13.87 light, 9.01 dark, 9.58 and 6.08 under increased contrast, 7.13 Console.
+- **Items**: `dt-item--meta` with `dt-item__main` and `dt-item__meta` (a trailing count or meta, one line, tabular numerals); `dt-list--columns` (auto-fit columns of 80 base units, one column under 600 px).
+- **Banner** holds text, paragraphs and links: the glyph is absolutely positioned in the start padding instead of the banner being a flex line (which made each text node and inline element its own flex item).
+- **`[hidden]`** is `display: none !important`.
+- `BrowserSupport.Breakpoints.narrowMediaQuery` (`(max-width: 600px)`), and the documentation that the breakpoint cannot be a custom property; a test holds it to the emitted CSS. The browser table gains `@media (forced-colors)` (Safari 16), `@media (hover: hover)`, `position: sticky`, `inset-inline-start`/`inset-block-start`, and `text-decoration-thickness` (now also listed for `tumblr`, which already used it). The page floor is unchanged: Chrome 111, Edge 111, Safari 16.2, Firefox 113. Numbers from `@mdn/browser-compat-data` 8.1.8.
+- `Theme.swiss` and the other nine registered themes were already `public` (they are declared in `public extension Theme`, so their members are public by default); a test file that imports `DesignTokens` without `@testable` now holds that, since the Vault adoption reported it as unavailable.
+
+### Not done (reported by the FleetWatch adoption, deliberately not built yet)
+Dense service-chip lists, a card with scrolling or collapsing long sections, meter and progress bars, stale indicators, a header and toolbar layout. The stylesheet is blocks of one component each, with the hover, focus, contrast and forced-colour rules selector-based, so each can be added beside its siblings.
+
+### Not verified
+Safari and Firefox (the compatibility data is the source, as in 0.12.0). `forced-colors` and `prefers-contrast` were emulated with Chrome's `Emulation.setEmulatedMedia`, not set in an operating system; Chrome's forced-colours palette in headless mode is the emulation's. Windows High Contrast themes other than the emulated one were not seen. `Emulation` screenshots with `captureBeyondViewport` did not apply forced colours, so those were taken at viewport size.
+
+### Tests
+451 core (was 431) and 133 SwiftUI (unchanged). New: `ComponentsInteractionTests` (hover only under `hover: hover` and contrast-neutral, active, disabled inert, focus rings inside clipping parents, invalid and disabled, forced-colour rules, increased-contrast primary, every transition inside `no-preference`), `ComponentsGapsTests` (shell, nav, prose, mark, item meta, columns, banner, `[hidden]`, one breakpoint value, the documented query string), `PublicSurfaceTests` (every theme public, without `@testable`). The Tumblr stamp content hash is unchanged (`fnv1a64:2ed110c5ede4c434`); only the version in its stamp lines moved.
+
+### Source-breaking
+- None in the API. `.dt-banner` is no longer `display: flex`; markup that relied on a banner's children being flex items (for example a trailing action pushed to the end) will lay out differently.
+
 ## [0.12.0] - 2026-11-10
 
 Branch `feature/console-theme-components-0.12.0` from 0.11.2. Proposal: `project/plans/proposals/2026-11-10_WebComponentsAndThemeSwitch.md`. `DesignTokens.version` is 0.12.0; every file in `Generated/` differs from 0.11.2 in that header version, and the new files are listed below.
@@ -527,6 +561,7 @@ Additive. `Generated/tokens.css` and `tokens.json` are byte-identical to 0.3.0 (
 - Palette tests: fixed order (validated for adjacency and colour-vision separation; fails the lightness band for the slots listed under 0.4.0), adjacent OKLab distance of at least 15, contrast of label on background.
 
 [Unreleased]: https://github.com/jpurnell/DesignTokens/compare/0.12.0...HEAD
+[0.13.0]: https://github.com/jpurnell/DesignTokens/compare/0.12.0...0.13.0
 [0.12.0]: https://github.com/jpurnell/DesignTokens/compare/0.11.2...0.12.0
 [0.11.2]: https://github.com/jpurnell/DesignTokens/compare/0.11.1...0.11.2
 [0.11.1]: https://github.com/jpurnell/DesignTokens/compare/0.11.0...0.11.1

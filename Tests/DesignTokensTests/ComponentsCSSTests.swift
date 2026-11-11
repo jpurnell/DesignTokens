@@ -65,7 +65,8 @@ struct ComponentsCSSTests {
             #expect(declaration.contains("var(--radius-") || declaration.contains("inherit") || declaration.contains(": 0;"), "\(declaration)")
         }
         for declaration in Self.matches(#"font-family\s*:[^;]*;"#, in: css) {
-            #expect(declaration.contains("var(--type-") || declaration.contains("inherit"), "\(declaration)")
+            // a type role, or the theme's monospace stack for code (a theme token, not a font named here)
+            #expect(declaration.contains("var(--type-") || declaration.contains("var(--font-mono)") || declaration.contains("inherit"), "\(declaration)")
         }
     }
 
