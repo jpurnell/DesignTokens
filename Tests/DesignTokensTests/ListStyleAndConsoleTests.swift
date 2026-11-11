@@ -59,12 +59,14 @@ struct ListStyleAndConsoleTests {
         #expect(swiss.contains("  --list-item-rule: var(--rule-hairline);"))
         #expect(swiss.contains("  --list-item-surface: transparent;"))
         #expect(swiss.contains("  --list-gap: 0px;"))
+        #expect(swiss.contains("  --card-top-rule: var(--rule-section);"))
         let console = try Self.css(try #require(Theme.named("console")))
         #expect(console.contains("  --list-style: cards;"))
         #expect(console.contains("  --list-item-min: 384px;"))
         #expect(console.contains("  --list-item-rule: 0px;"))
         #expect(console.contains("  --list-item-surface: var(--surface);"))
         #expect(console.contains("  --list-gap: var(--gutter);"))
+        #expect(console.contains("  --card-top-rule: 0px;"))
     }
 
     // MARK: Console

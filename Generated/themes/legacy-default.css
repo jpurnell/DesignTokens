@@ -108,6 +108,7 @@
   --list-item-rule: var(--rule-hairline);
   --list-item-surface: transparent;
   --list-gap: 0px;
+  --card-top-rule: var(--rule-section);
   --label-value-halo: 0px;
   --gridlines: platform-automatic;
   --shadow: 0px 2px 4px var(--extra-shadow);

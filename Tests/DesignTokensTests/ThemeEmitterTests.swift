@@ -56,7 +56,7 @@ struct ThemeEmitterTests {
     @Test("the file set is the two default files, then per theme: CSS, JSON, Swiss's Tumblr block, the ANSI table and the slide files")
     func fileSet() throws {
         let paths = try Generator.files().map(\.path)
-        var expected = ["tokens.css", "tokens.json"]
+        var expected = ["tokens.css", "tokens.json", "components.css"]
         var slotCount = 0
         for theme in Theme.all {
             expected += ["themes/\(theme.id).css", "themes/\(theme.id).json"]
@@ -72,7 +72,7 @@ struct ThemeEmitterTests {
             slotCount += slots.count
         }
         #expect(paths == expected)
-        #expect(paths.count == 2 + 10 * 5 + 2 + slotCount)
+        #expect(paths.count == 3 + 10 * 5 + 2 + slotCount)
     }
 
     @Test("theme JSON is the canonical codec output and decodes back to the theme")

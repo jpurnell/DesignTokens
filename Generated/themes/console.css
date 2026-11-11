@@ -82,6 +82,7 @@
   --list-item-rule: 0px;
   --list-item-surface: var(--surface);
   --list-gap: var(--gutter);
+  --card-top-rule: 0px;
   --label-value-halo: 3px;
   --gridlines: horizontal-faint;
   --shadow: none;

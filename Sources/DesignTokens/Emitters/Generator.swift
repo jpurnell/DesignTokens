@@ -26,6 +26,8 @@ public enum GeneratedFormat: String, Sendable, Hashable, CaseIterable {
     case ansi
     /// `themes/<id>.slides.txt`, `.slides.fonts.xml` and `.slides.colors.<appearance>.xml`.
     case slides
+    /// `components.css`, the web component stylesheet (``ComponentsCSSEmitter``).
+    case components
 }
 
 /// Why the generator refused its arguments.
@@ -34,7 +36,7 @@ public enum GeneratorError: Error, Sendable, Equatable {
     case unknownTheme(String)
     /// An argument the generator does not know.
     case unknownArgument(String)
-    /// `--format` names no format (the known ones are css, json, tumblr, ansi and slides).
+    /// `--format` names no format (the known ones are css, json, tumblr, ansi, slides and components).
     case unknownFormat(String)
     /// A flag that needs a value has none.
     case missingValue(String)
@@ -42,7 +44,7 @@ public enum GeneratorError: Error, Sendable, Equatable {
 
 /// The generator behind `design-tokens`: plans the files, writes them, and answers `list`.
 ///
-/// The set is `tokens.css` and `tokens.json` (the default look, unchanged since 0.3.0) and, for each theme in
+/// The set is `tokens.css` and `tokens.json` (the default look, unchanged since 0.3.0), `components.css` (0.12.0) and, for each theme in
 /// ``Theme/all``, `themes/<id>.css` and `themes/<id>.json`, plus `themes/swiss.tumblr.css` (the Tumblr paste-in block,
 /// for the one theme the blog uses; `design-tokens tumblr --theme <id>` can write any other on request, uncommitted).
 /// `themes/swiss.tumblr.html` is the complete Tumblr theme document, with placeholders for the blog's own values.
@@ -66,6 +68,7 @@ public enum Generator {
         if includeDefaults {
             files.append((.css, GeneratedFile(path: "tokens.css", contents: CSSEmitter.emit())))
             files.append((.json, GeneratedFile(path: "tokens.json", contents: JSONEmitter.emit())))
+            files.append((.components, GeneratedFile(path: "components.css", contents: ComponentsCSSEmitter.emit())))
         }
         for theme in themes {
             files.append((.css, GeneratedFile(path: "themes/\(theme.id).css", contents: try ThemeCSSEmitter.emit(theme))))
@@ -85,11 +88,13 @@ public enum Generator {
         return files.filter { formats?.contains($0.0) ?? true }.map(\.1)
     }
 
-    /// Runs the command line: `[emit] [--all | --theme <id>] [--format <name>[,<name>]]... [directory]`, or `list`.
+    /// Runs the command line: `[emit] [--all | --theme <id>] [--components] [--format <name>[,<name>]]... [directory]`, or `list`.
+    ///
+    /// `--components` keeps `components.css` (alone, or with the kinds `--format` names); `--all`, the default, includes it.
     ///
     /// With no arguments, or only a directory (the form `design-tokens Generated` has always had), every file is
     /// written. `--theme <id>` writes that theme's files only. `--format` (repeatable, or comma-separated) keeps only those kinds of file
-/// (css, json, tumblr, ansi, slides); with no `--theme` the two default files count as css and json. `list` returns the theme ids and writes nothing.
+/// (css, json, tumblr, ansi, slides, components); with no `--theme` the two default files count as css and json. `list` returns the theme ids and writes nothing.
     /// Arguments are checked before anything is written, so a refusal leaves the directory alone.
     ///
     /// - Returns: The paths written (relative to the directory), or the theme ids for `list`.
@@ -112,6 +117,8 @@ public enum Generator {
                 guard index + 1 < arguments.count else { throw GeneratorError.missingValue("--theme") }
                 index += 1
                 themeID = arguments[index]
+            case "--components":
+                formats = (formats ?? []).union([.components])
             case "--format":
                 guard index + 1 < arguments.count else { throw GeneratorError.missingValue("--format") }
                 index += 1

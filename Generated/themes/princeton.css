@@ -91,6 +91,7 @@
   --list-item-rule: var(--rule-hairline);
   --list-item-surface: transparent;
   --list-gap: 0px;
+  --card-top-rule: var(--rule-section);
   --label-value-halo: 3px;
   --gridlines: horizontal-faint;
   --shadow: none;

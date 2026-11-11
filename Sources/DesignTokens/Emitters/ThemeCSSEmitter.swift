@@ -180,7 +180,7 @@ public enum ThemeCSSEmitter {
         add("card-border", px(layout.cardBorder))
         add("card-padding", px(layout.cardPadding))
         // The list style, and what a stylesheet needs from it. A custom property cannot branch, so the theme resolves the
-        // choice here and components.css only reads the results: rows are one column, set off by a hairline, on no surface;
+        // choice here and components.css only reads the results: rows are one column, set off by a hairline, on no surface, and a card has the section rule across its top (the Swiss card);
         // cards fill the width in an auto-fit grid of surfaces a gutter apart. The cards' minimum width is 96 base units
         // (384 px at 4 px), the width of the page this was drawn from (380 px), kept on the grid.
         add("list-style", layout.listStyle.rawValue)
@@ -190,11 +190,13 @@ public enum ThemeCSSEmitter {
             add("list-item-rule", "var(--rule-hairline)")
             add("list-item-surface", "transparent")
             add("list-gap", "0px")
+            add("card-top-rule", "var(--rule-section)")
         case .cards:
             add("list-item-min", px(layout.baseUnit * Self.cardMinimumWidthInUnits))
             add("list-item-rule", "0px")
             add("list-item-surface", "var(--surface)")
             add("list-gap", "var(--gutter)")
+            add("card-top-rule", "0px")
         }
         add("label-value-halo", px(s.labels.valueHalo))
         add("gridlines", kebab(layout.gridlines.rawValue))
