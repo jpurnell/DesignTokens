@@ -1,6 +1,6 @@
 # Proposal: Swiss web components, a "console" theme, and a runtime theme switch
 
-Status: 0.13.0 (branch `feature/components-0.13.0`) drove the 0.12.0 components in headless Chrome, fixed the state defects it found, and added the Vault adoption's gaps (shell, prose, mark, item meta and columns, banner content, `[hidden]`); FleetWatch's further gaps are not built. Implemented in 0.12.0 on `feature/console-theme-components-0.12.0` (steps 1 and 2 of "Order of work"; steps 3 and 4 are other repositories'), with the owner's answers of 2026-11-10 recorded below. Original status: draft, 2026-11-10. Driven by the FleetWatch web migration (`Sources/FleetWatchServer/Page`).
+Status: 0.13.0 (branch `feature/components-0.13.0`) drove the 0.12.0 components in headless Chrome, fixed the state defects it found, and added the Vault adoption's gaps (shell, prose, mark, item meta and columns, banner content, `[hidden]`); FleetWatch's upstream gaps (meter, header, wrapping chips, disclosure, form helpers, plate, banner actions, long values) are in 0.13.0 too; stale indicators are not built. Implemented in 0.12.0 on `feature/console-theme-components-0.12.0` (steps 1 and 2 of "Order of work"; steps 3 and 4 are other repositories'), with the owner's answers of 2026-11-10 recorded below. Original status: draft, 2026-11-10. Driven by the FleetWatch web migration (`Sources/FleetWatchServer/Page`).
 
 ## Why
 

@@ -32,6 +32,14 @@ import Foundation
 /// | Page shell and navigation (0.13.0) | `dt-shell` (a sticky navigation column and a main column; one column and a wrapped nav row under 600 px), `dt-shell__nav`, `dt-shell__main`, `dt-nav`, `dt-nav__heading`, `dt-nav__item` (`aria-current` marks the page) | none |
 /// | Prose (0.13.0) | `dt-prose`: unclassed `h1` to `h6`, `p`, lists, `blockquote`, `code`, `pre`, `table`, `hr`, `a`, `mark`, `img` inside it | none |
 /// | Mark (0.13.0) | `mark` and `dt-mark`: a tint derived from `--accent`, since the palette has no highlight role | none |
+/// | Meter (0.13.0) | `dt-meter` (a row), `dt-meter__track` (give it `role="meter"` and `aria-valuenow`, `aria-valuemin`, `aria-valuemax`, `aria-label`), `dt-meter__fill` (width as an inline `inline-size` percentage), `dt-meter__figure` (the percentage); `dt-meter--success`, `--caution`, `--warning`, `--destructive`, `--neutral` | none |
+/// | Page header (0.13.0) | `dt-header` (the theme's grid), `dt-header__title` (title and `dt-header__nav` links, columns 1 to 8), `dt-header__aside` (columns 9 to 12, right aligned) with `dt-header__session`; one column when narrow | none |
+/// | Disclosure (0.13.0) | `dt-disclosure` on a `<details>`, `dt-disclosure__summary`, `dt-disclosure__count`, `dt-disclosure__body`, `dt-disclosure--scroll` (a body of at most 40 base units that scrolls; give the body `tabindex="0"`) | none |
+/// | Form helpers (0.13.0) | `dt-form` (a stack), `dt-form--inline` (a wrapping row, bottom aligned), `dt-input--auto`, `dt-select--auto`, `dt-textarea--auto` (auto width) | none |
+/// | Plate (0.13.0) | `dt-plate` (a light surface in any theme: `Canvas` in a light colour scheme, for a QR code), `dt-plate--pixelated` | none |
+/// | Banner body (0.13.0) | `dt-banner__head` (text and chips on a wrapping line), `dt-banner__actions` (a wrapping row of controls) | none |
+/// | Long values (0.13.0) | `dt-long` (wrap anywhere), `dt-long--truncate` (an ellipsis; put the full text in a `title`) | none |
+/// | Chip, check and stat (0.13.0) | a `dt-chip` and a `dt-checkline` wrap a long label (`dt-chip--nowrap` keeps a short one on a line); `dt-stat__figure` never wraps: a figure and unit is `13<span class="dt-stat__unit">d</span> 15<span class="dt-stat__unit">h</span>` | none |
 /// | Hidden (0.13.0) | `[hidden]` is `display: none !important`, so no component's `display` can show a hidden element | none |
 /// | Chip | `dt-chip` with `--success`, `--caution`, `--warning`, `--destructive`, `--neutral` | `OutlinedChip` |
 /// | Banner | `dt-banner` with the same five modifiers; holds text, paragraphs and links (0.13.0) | `StatusBanner` |
@@ -139,6 +147,21 @@ public enum ComponentsCSSEmitter {
             }
             .dt-banner--\(tone.name)::before {
               content: "\(tone.glyph)";
+              color: \(tone.colour);
+            }
+
+            """
+        }.joined(separator: "\n")
+    }
+
+    private static var meters: String {
+        tones.map { tone in
+            """
+            .dt-meter--\(tone.name) .dt-meter__fill {
+              background: \(tone.colour);
+            }
+            .dt-meter--\(tone.name) .dt-meter__figure::before {
+              content: "\(tone.glyph)\\A0";
               color: \(tone.colour);
             }
 
@@ -498,6 +521,7 @@ public enum ComponentsCSSEmitter {
           display: block;
           margin: 0;
           font-variant-numeric: tabular-nums;
+          white-space: nowrap;
           line-height: 1;
           color: var(--ink);
         }
@@ -624,14 +648,20 @@ public enum ComponentsCSSEmitter {
         /* ---- Chip: words in ink, an outline in the status colour, and a glyph, so the colour is never the only signal ---- */
         .dt-chip {
           display: inline-flex;
-          align-items: center;
+          align-items: baseline;
           gap: \#(unit(1));
+          min-inline-size: 0;
+          max-inline-size: 100%;
           padding: \#(unit(0.5)) \#(unit(2));
           border: calc(var(--rule-hairline) * 2) solid var(--secondary-ink);
           border-radius: var(--radius-control);
           color: var(--ink);
           background: transparent;
         \#(role("caption"))
+          white-space: normal;
+          overflow-wrap: anywhere;
+        }
+        .dt-chip--nowrap {
           white-space: nowrap;
         }
         .dt-chip::before {
@@ -740,9 +770,12 @@ public enum ComponentsCSSEmitter {
         }
         .dt-checkline {
           display: inline-flex;
-          align-items: center;
+          align-items: flex-start;
           gap: \#(unit(2));
-          white-space: nowrap;
+          min-inline-size: 0;
+          max-inline-size: 100%;
+          white-space: normal;
+          overflow-wrap: anywhere;
         }
 
         /* ---- Form controls ---- */
@@ -775,9 +808,163 @@ public enum ComponentsCSSEmitter {
         }
         .dt-check {
           accent-color: var(--accent);
+          flex: none;
           inline-size: \#(unit(5));
           block-size: \#(unit(5));
           margin: 0;
+        }
+
+        .dt-input--auto, .dt-select--auto, .dt-textarea--auto {
+          inline-size: auto;
+        }
+        .dt-form {
+          display: flex;
+          flex-direction: column;
+          gap: \#(unit(3));
+        }
+        .dt-form > .dt-button {
+          align-self: flex-start;
+        }
+        .dt-form--inline {
+          flex-direction: row;
+          flex-wrap: wrap;
+          align-items: flex-end;
+          gap: \#(unit(3)) var(--gutter);
+        }
+        .dt-form--inline > .dt-field {
+          flex: 1 1 \#(unit(50));
+        }
+        .dt-form--inline > .dt-button {
+          align-self: flex-end;
+        }
+
+        /* ---- Usage meter: a track, a fill in a status colour, and the figure beside it. Put the width on the fill as an inline-size percentage ---- */
+        .dt-meter {
+          display: inline-flex;
+          flex-wrap: wrap;
+          align-items: center;
+          gap: \#(unit(2));
+        }
+        .dt-meter__track {
+          display: inline-block;
+          inline-size: \#(unit(24));
+          block-size: \#(unit(2.5));
+          background: var(--rule);
+          border: var(--rule-hairline) solid var(--secondary-ink);
+          border-radius: var(--radius-control);
+          overflow: hidden;
+        }
+        .dt-meter__fill {
+          display: block;
+          block-size: 100%;
+          background: var(--secondary-ink);
+        }
+        .dt-meter__figure {
+        \#(role("caption"))
+          color: var(--ink);
+          font-variant-numeric: tabular-nums;
+          white-space: nowrap;
+        }
+        \#(meters)
+        /* ---- Page header: title and links at the start, the session and actions at the end, on the theme's grid ---- */
+        .dt-header {
+          display: grid;
+          grid-template-columns: repeat(var(--columns), minmax(0, 1fr));
+          column-gap: var(--gutter);
+          row-gap: \#(unit(3));
+          align-items: start;
+        }
+        .dt-header__title {
+          grid-column: 1 / span 8;
+          display: flex;
+          flex-direction: column;
+          gap: \#(unit(2));
+          min-inline-size: 0;
+        }
+        .dt-header__title > .dt-title {
+          margin: 0;
+        }
+        .dt-header__nav {
+          display: flex;
+          flex-wrap: wrap;
+          gap: \#(unit(1)) var(--gutter);
+        }
+        .dt-header__aside {
+          grid-column: 9 / -1;
+          display: flex;
+          flex-direction: column;
+          align-items: flex-end;
+          gap: \#(unit(2));
+          min-inline-size: 0;
+        }
+        .dt-header__session {
+          display: flex;
+          flex-wrap: wrap;
+          align-items: center;
+          justify-content: flex-end;
+          gap: \#(unit(2)) \#(unit(3));
+        }
+
+        /* ---- Disclosure: a details whose summary carries a count; add dt-disclosure--scroll (and tabindex="0" on the body) for a long list ---- */
+        .dt-disclosure {
+          min-inline-size: 0;
+        }
+        .dt-disclosure__summary {
+        \#(role("body"))
+          cursor: pointer;
+          padding-block: \#(unit(1));
+        }
+        .dt-disclosure__count {
+        \#(role("caption"))
+          margin-inline-start: \#(unit(1));
+          color: var(--secondary-ink);
+          font-variant-numeric: tabular-nums;
+        }
+        .dt-disclosure[open] > .dt-disclosure__summary {
+          margin-block-end: \#(unit(2));
+        }
+        .dt-disclosure--scroll .dt-disclosure__body {
+          max-block-size: calc(var(--space-unit) * 40);
+          overflow-y: auto;
+        }
+
+        /* ---- Plate: a light surface in any theme (a QR code needs one): the Canvas colour in a light colour scheme ---- */
+        .dt-plate {
+          color-scheme: light;
+          background: Canvas;
+          color: CanvasText;
+          padding: \#(unit(2));
+          border: var(--rule-hairline) solid var(--rule);
+          box-sizing: content-box;
+        }
+        .dt-plate--pixelated {
+          image-rendering: pixelated;
+        }
+
+        /* ---- Banner body: a head of text and chips, and a row of actions ---- */
+        .dt-banner__head {
+          display: flex;
+          flex-wrap: wrap;
+          align-items: center;
+          gap: \#(unit(2));
+        }
+        .dt-banner__actions {
+          display: flex;
+          flex-wrap: wrap;
+          align-items: center;
+          gap: \#(unit(2)) \#(unit(3));
+          margin-top: \#(unit(2));
+        }
+
+        /* ---- Long values: wrap anywhere, or cut with an ellipsis; give the element a title with the full text ---- */
+        .dt-long {
+          min-inline-size: 0;
+          overflow-wrap: anywhere;
+        }
+        .dt-long--truncate {
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
         }
 
         /* ---- Grid: the theme's columns and gutter ---- */
@@ -819,6 +1006,18 @@ public enum ComponentsCSSEmitter {
           .dt-list--columns {
             grid-template-columns: minmax(0, 1fr);
           }
+          .dt-header {
+            grid-template-columns: minmax(0, 1fr);
+          }
+          .dt-header__title, .dt-header__aside {
+            grid-column: 1 / -1;
+          }
+          .dt-header__aside {
+            align-items: flex-start;
+          }
+          .dt-header__session {
+            justify-content: flex-start;
+          }
         }
 
         /* ---- Hidden: the attribute always wins, whatever display a component sets ---- */
@@ -838,7 +1037,7 @@ public enum ComponentsCSSEmitter {
           .dt-link:hover {
             text-decoration-thickness: calc(var(--rule-hairline) * 2);
           }
-          .dt-table th[aria-sort]:hover, .dt-nav__item:hover {
+          .dt-table th[aria-sort]:hover, .dt-nav__item:hover, .dt-disclosure__summary:hover {
             text-decoration: underline;
           }
         }
@@ -860,7 +1059,8 @@ public enum ComponentsCSSEmitter {
         /* ---- Focus: the ink, two rule weights wide, never colour alone ---- */
         .dt-button:focus-visible, .dt-segmented__option:focus-visible, .dt-input:focus-visible, .dt-select:focus-visible,
         .dt-textarea:focus-visible, .dt-check:focus-visible, .dt-link:focus-visible, .dt-table th[aria-sort]:focus-visible,
-        .dt-nav__item:focus-visible, .dt-prose a:focus-visible, .dt-banner a:focus-visible {
+        .dt-nav__item:focus-visible, .dt-prose a:focus-visible, .dt-banner a:focus-visible, .dt-disclosure__summary:focus-visible,
+        .dt-disclosure__body:focus-visible {
           outline: calc(var(--rule-hairline) * 2) solid var(--ink);
           outline-offset: calc(var(--rule-hairline) * 2);
         }
@@ -900,6 +1100,12 @@ public enum ComponentsCSSEmitter {
           .dt-prose blockquote, .dt-prose td, .dt-prose pre, .dt-prose hr {
             border-color: var(--ink);
           }
+          .dt-meter__track, .dt-plate {
+            border-color: var(--ink);
+          }
+          .dt-disclosure__count, .dt-meter__figure {
+            color: var(--ink);
+          }
         }
 
         /* ---- Forced colours: the ink fill and the tint are overridden, so selection is carried by system colours and by shape ---- */
@@ -921,6 +1127,12 @@ public enum ComponentsCSSEmitter {
           mark, .dt-mark {
             outline: calc(var(--rule-hairline) * 2) solid Highlight;
             text-decoration: underline;
+          }
+          .dt-meter__track {
+            border-color: CanvasText;
+          }
+          .dt-meter .dt-meter__fill {
+            background: Highlight;
           }
           .dt-nav__item {
             border-color: Canvas;
