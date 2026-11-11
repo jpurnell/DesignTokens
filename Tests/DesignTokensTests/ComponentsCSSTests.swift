@@ -112,7 +112,7 @@ struct ComponentsCSSTests {
         let css = Self.css
         for name in [".dt-page", ".dt-section", ".dt-rule", ".dt-kv", ".dt-kv__row", ".dt-table", ".dt-chip", ".dt-banner",
                      ".dt-segmented", ".dt-button", ".dt-input", ".dt-select", ".dt-field", ".dt-card", ".dt-list", ".dt-item",
-                     ".dt-grid", ".dt-col-12", ".dt-label", ".dt-heading", ".dt-title"] {
+                     ".dt-grid", ".dt-col-12", ".dt-actions", ".dt-checkline", ".dt-label", ".dt-heading", ".dt-title"] {
             #expect(css.contains(name), "\(name)")
         }
         for tone in ["success", "caution", "warning", "destructive", "neutral"] {

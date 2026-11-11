@@ -192,7 +192,7 @@ public enum ThemeCSSEmitter {
             add("list-gap", "0px")
             add("card-top-rule", "var(--rule-section)")
         case .cards:
-            add("list-item-min", px(layout.baseUnit * Self.cardMinimumWidthInUnits))
+            add("list-item-min", px(layout.baseUnit * Double(BrowserSupport.Breakpoints.cardMinimumWidthInBaseUnits)))
             add("list-item-rule", "0px")
             add("list-item-surface", "var(--surface)")
             add("list-gap", "var(--gutter)")
@@ -246,9 +246,6 @@ public enum ThemeCSSEmitter {
         }
         return out
     }
-
-    /// The narrowest a card in an auto-fit grid is allowed to get, in base units.
-    private static let cardMinimumWidthInUnits = 96.0
 
     private static func family(_ ref: FontFamilyRef) -> String {
         switch ref {

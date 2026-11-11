@@ -144,6 +144,54 @@ views read, cross-checked by `validate()`), and `RGB.contrastRatio(with:)` / `me
 
 `Generated/components.css` is one stylesheet for any web page, written only in terms of a theme's custom properties (`var(--ink)`, `--rule`, `--radius-container`, `--card-border`, the `--type-*` roles, the `--list-*` tokens). Link a theme (`themes/swiss.css`, `themes/console.css`) and `components.css`, set `data-theme-name` on `<html>` (and `data-theme="light|dark"` to pin an appearance), and use the `dt-` classes (`dt-section`, `dt-kv`, `dt-table`, `dt-chip`, `dt-banner`, `dt-segmented`, `dt-button`, `dt-input`, `dt-card`, `dt-grid`...; the list is in `ComponentsCSSEmitter`'s documentation). A theme's `listStyle` decides how a `dt-list` of `dt-item`s looks: hairline rows under Swiss, bordered cards in an auto-fit grid under Console, with the same markup. The registered themes are now `swiss`, `house`, `princeton`, `ft`, `economist`, the four legacy themes and `console` (fixed-dark navy, monospaced, cards: the former FleetWatch page).
 
+## Browser support
+
+The CSS the package emits is written for current browsers and **no fallbacks are provided**: a browser older than the floor is not supported, and gets whatever its parser makes of rules it does not know.
+
+**The floor for a page that links `tokens.css` or a theme file and `components.css`: Chrome 111, Edge 111, Safari 16.2, Firefox 113.** `color-mix()` (in `components.css`) sets the floor in every engine; container queries come one release behind it. The theme files alone need Chrome 96, Edge 96, Safari 14.1, Firefox 101 (`prefers-contrast`). The Tumblr block (`themes/swiss.tumblr.css`) is separate and needs Chrome 105, Edge 105, Safari 15.4, Firefox 121, because it uses `:has()`.
+
+Sources: the first unprefixed, unflagged version of each feature in `@mdn/browser-compat-data` 8.1.8 (the data behind MDN's compatibility tables), read from the npm registry on 2026-11-10; MDN's pages for `color-mix()` and `@container` (both Baseline "widely available", May 2023 and February 2023) as a cross-check. Edge is Chromium-based from 79. Verified in a browser: Chrome only, headless (see `CHANGELOG.md`, 0.12.0); Safari and Firefox are not tested here, so those columns are the compatibility data's, not an observation.
+
+| Feature (note) | Chrome / Edge | Safari | Firefox | Used in |
+|---|---|---|---|---|
+| color-mix() (ThemeCSSEmitter writes it for a translucent shadow reference; no registered theme has one, so no themes file uses it today) | 111 / 111 | 16.2 | 113 | components |
+| @container size queries, container-type | 105 / 105 | 16 | 110 | components |
+| :focus-visible | 86 / 86 | 15.4 | 85 | components, tumblr |
+| @media (prefers-contrast) | 96 / 96 | 14.1 | 101 | themes, components, tumblr |
+| @media (prefers-reduced-motion) | 74 / 79 | 10.1 | 63 | components, tumblr |
+| @media (prefers-color-scheme) | 76 / 79 | 12.1 | 67 | themes, tumblr |
+| color-scheme property | 81 / 81 | 13 | 96 | themes, tumblr |
+| clamp() | 79 / 79 | 13.1 | 75 | themes, tumblr |
+| min() and max() | 79 / 79 | 11.1 | 75 | components, tumblr |
+| Custom properties and var() | 49 / 15 | 9.1 | 31 | themes, components, tumblr |
+| calc() | 26 / 12 | 7 | 16 | components, tumblr |
+| Grid with minmax() and repeat(auto-fit) (Firefox 76 is when repeat(auto-fit) takes more than one column in a repeated track) | 57 / 16 | 10.1 | 76 | components |
+| gap in flex layouts | 84 / 84 | 14.1 | 63 | components, tumblr |
+| Logical sizes (inline-size, block-size, min-inline-size, min-block-size) | 57 / 79 | 12.1 | 41 | components |
+| padding-inline, padding-block | 87 / 87 | 14.1 | 66 | components |
+| border-inline-start, padding-inline-start and -end | 69 / 79 | 12.1 | 41 | components |
+| clip-path: inset() | 55 / 79 | 10.1 | 54 | components |
+| accent-color (Safari 15.4 to 26.1 implements it without keeping a minimum contrast for the control (MDN lists that as partial); full from 26.2) | 93 / 93 | 15.4 | 92 | components |
+| appearance | 84 / 84 | 15.4 | 80 | components |
+| overflow-wrap: anywhere | 80 / 80 | 15.4 | 65 | components |
+| font-variant-numeric | 52 / 79 | 9.1 | 34 | components, tumblr |
+| attr() in content | 2 / 12 | 3.1 | 1 | components |
+| #RRGGBBAA hexadecimal colours | 62 / 79 | 10 | 49 | themes |
+| :has() | 105 / 105 | 15.4 | 121 | tumblr |
+| aspect-ratio | 88 / 88 | 15 | 89 | tumblr |
+| env() safe-area insets | 69 / 79 | 11.1 | 65 | tumblr |
+
+Older features the CSS also uses (attribute and structural selectors, `box-shadow`, `transition`, `justify-self`, `text-align: start`) are below every floor above. `ThemeCSSEmitter` can write `color-mix()` for a translucent shadow; no registered theme has one.
+
+### Breakpoints
+
+All from the emitted CSS, and a test fails if this section disagrees with it.
+
+- **600 px** (`@media (max-width: 600px)`, a viewport width, in `components.css`): the table stacks to labelled blocks (each cell carries `data-label`) and `dt-col-*` grid helpers go to one column. It is the width at which `SwissTable` stacks.
+- **30 rem** (`@container (max-width: 30rem)`, the width of the key and value list's container): a key and value row puts the label above the value.
+- **96 base units = 384 px** (`--list-item-min` in a theme whose list style is `cards`, at the 4 px base unit): the narrowest a card is in the auto-fit grid, so a viewport under 384 px plus the page padding gives one column, and a wide one gives as many as fit. A theme whose list style is `rows` has `--list-item-min: 100%`: always one column.
+- Tumblr block only: **960 px** and **720 px** (`@media (max-width: ...)`).
+
 ## Swiss components for SwiftUI (0.10.0, 0.11.0)
 
 `DesignTokensSwiftUI` has the pieces an app would otherwise write itself: UI type roles (`.uiText(.label)`, `.uiFigure()`), `SwissCard`,

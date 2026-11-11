@@ -11,6 +11,10 @@ files; the `design-tokens` executable writes those files into `Generated/`.
 System colours here are a snapshot (``Snapshot/systemRelease``). Apple platforms should defer to the
 system's own colours and use these values only where the system cannot reach.
 
+## Browser support
+
+The CSS the package emits needs Chrome 111, Edge 111, Safari 16.2 or Firefox 113, and provides no fallbacks; ``BrowserSupport`` lists each feature with its first versions and where it is used, and ``BrowserSupport/Breakpoints`` the size thresholds (a 600 px table stack, a 30 rem key and value stack, 96-base-unit cards).
+
 ## Topics
 
 ### Colour
@@ -69,6 +73,9 @@ system's own colours and use these values only where the system cannot reach.
 - ``JSONEmitter``
 - ``ThemeCSSEmitter``
 - ``ThemeJSONEmitter``
+- ``ComponentsCSSEmitter``
+- ``BrowserSupport``
+- ``ListStyle``
 - ``Generator``
 - ``GeneratedFile``
 - ``Snapshot``
