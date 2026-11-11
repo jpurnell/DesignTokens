@@ -28,8 +28,8 @@ import Foundation
 /// | Table | `dt-table` (a real `<table>`; cells carry `data-label`), `dt-num`, `aria-sort`, `aria-selected` | `SwissTable` |
 /// | Card grid and card | `dt-cards`, `dt-card`, `dt-card__header`, `dt-card__name`, `dt-card__title`, `dt-card__footer` | `SwissEqualGrid`, `SwissCard` |
 /// | Stats | `dt-stats`, `dt-stat`, `dt-stat__label`, `dt-stat__figure`, `dt-stat__unit` | `KeyValueRow`, set compactly |
-/// | Plain list | `dt-list`, `dt-item`, `dt-item__title`; 0.13.0: `dt-item--meta` with `dt-item__main` and `dt-item__meta` (a trailing count), `dt-list--columns` (auto-fit columns, one under 600 px) | `KeyValueList` rows |
-/// | Page shell and navigation (0.13.0) | `dt-shell` (a sticky navigation column and a main column; one column and a wrapped nav row under 600 px), `dt-shell__nav`, `dt-shell__main`, `dt-nav`, `dt-nav__heading`, `dt-nav__item` (`aria-current` marks the page) | none |
+/// | Plain list | `dt-list`, `dt-item`, `dt-item__title`; 0.13.0: `dt-item--meta` with `dt-item__main` and `dt-item__meta` (a trailing count), `dt-list--columns` (CSS columns of 80 base units that read down each column, one under 600 px; 0.14.0) | `KeyValueList` rows |
+/// | Page shell and navigation (0.13.0) | `dt-shell` (a sticky navigation column and a main column; one column and a wrapped nav row under 600 px), `dt-shell__nav`, `dt-shell__main`, `dt-nav`, `dt-nav__heading`, `dt-nav__item` (`aria-current` marks the page), 0.14.0: `dt-nav__count` (a trailing count inside an item; consecutive groups are spaced) | none |
 /// | Prose (0.13.0) | `dt-prose`: unclassed `h1` to `h6`, `p`, lists, `blockquote`, `code`, `pre`, `table`, `hr`, `a`, `mark`, `img` inside it | none |
 /// | Mark (0.13.0) | `mark` and `dt-mark`: a tint derived from `--accent`, since the palette has no highlight role | none |
 /// | Meter (0.13.0) | `dt-meter` (a row), `dt-meter__track` (give it `role="meter"` and `aria-valuenow`, `aria-valuemin`, `aria-valuemax`, `aria-label`), `dt-meter__fill` (width as an inline `inline-size` percentage), `dt-meter__figure` (the percentage); `dt-meter--success`, `--caution`, `--warning`, `--destructive`, `--neutral` | none |
@@ -307,11 +307,13 @@ public enum ComponentsCSSEmitter {
           color: var(--secondary-ink);
         }
         .dt-list--columns {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(min(\#(unit(80)), 100%), 1fr));
+          column-width: \#(unit(80));
           column-gap: calc(var(--gutter) * 2);
+          border-top: var(--rule-hairline) solid var(--rule);
         }
         .dt-list--columns > .dt-item {
+          break-inside: avoid;
+          border-top: 0;
           border-bottom: var(--rule-hairline) solid var(--rule);
         }
 
@@ -343,9 +345,15 @@ public enum ComponentsCSSEmitter {
           margin: 0 0 \#(unit(2));
           color: var(--secondary-ink);
         }
+        .dt-nav + .dt-nav, .dt-nav + .dt-nav__heading, .dt-nav__item + .dt-nav__heading {
+          margin-block-start: \#(unit(6));
+        }
         .dt-nav__item {
         \#(role("body"))
-          display: block;
+          display: flex;
+          align-items: baseline;
+          justify-content: space-between;
+          gap: \#(unit(2));
           padding: \#(unit(1)) \#(unit(3));
           border-inline-start: calc(var(--rule-section) * 2) solid transparent;
           color: var(--ink);
@@ -355,6 +363,17 @@ public enum ComponentsCSSEmitter {
         .dt-nav__item[aria-current] {
           border-inline-start-color: var(--ink);
           font-weight: var(--type-heading-weight);
+        }
+        .dt-nav__count {
+        \#(role("caption"))
+          flex: none;
+          margin-inline-start: auto;
+          white-space: nowrap;
+          font-variant-numeric: tabular-nums;
+          color: var(--secondary-ink);
+        }
+        .dt-nav__item[aria-current] .dt-nav__count {
+          font-weight: var(--type-caption-weight);
         }
 
         /* ---- Prose: rendered Markdown with no classes on it ---- */
@@ -995,6 +1014,9 @@ public enum ComponentsCSSEmitter {
             flex-wrap: wrap;
             gap: \#(unit(1)) var(--gutter);
           }
+          .dt-nav__count {
+            margin-inline-start: 0;
+          }
           .dt-nav__item {
             border-inline-start: 0;
             border-block-end: calc(var(--rule-section) * 2) solid transparent;
@@ -1004,7 +1026,7 @@ public enum ComponentsCSSEmitter {
             border-block-end-color: var(--ink);
           }
           .dt-list--columns {
-            grid-template-columns: minmax(0, 1fr);
+            column-width: auto;
           }
           .dt-header {
             grid-template-columns: minmax(0, 1fr);
@@ -1094,7 +1116,7 @@ public enum ComponentsCSSEmitter {
             background: color-mix(in srgb, var(--accent) 45%, var(--background));
             outline: var(--rule-hairline) solid var(--ink);
           }
-          .dt-prose blockquote, .dt-prose th, .dt-nav__heading, .dt-item__meta {
+          .dt-prose blockquote, .dt-prose th, .dt-nav__heading, .dt-item__meta, .dt-nav__count {
             color: var(--ink);
           }
           .dt-prose blockquote, .dt-prose td, .dt-prose pre, .dt-prose hr {

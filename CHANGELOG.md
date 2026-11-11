@@ -1,5 +1,34 @@
 # Changelog
 
+## [0.14.0] - 2026-11-11
+
+Branch `feature/components-0.14.0` from 0.13.0 (`cd0bc3e`). `DesignTokens.version` is 0.14.0; every file in `Generated/` differs from 0.13.0 in that header version, and `components.css` in the rules below. Evidence: the four gaps the Vault adoption of 0.13.0 reported (`Tools/VaultMCP/project/summaries/2026-11-11_web_ui_design_tokens.md`), each reproduced and checked in headless Chrome.
+
+**Version choice: 0.14.0, not 0.13.1.** Two changes are source-breaking for markup (below): the `dt-list--columns` layout model changes from a grid to CSS columns, and `.dt-nav__item` changes from `display: block` to `display: flex`. The package is `0.x`, where the convention in this CHANGELOG is that a breaking change moves the minor version; a patch release would hide it.
+
+### Fixed
+- **`dt-list--columns` showed a doubled rule between rows.** Each item carried a top and a bottom hairline, so adjacent rows drew two. The list now carries the top rule and each item only a bottom rule: one rule between rows, one above the first row and one below the last of each column.
+- **`dt-list--columns` flowed across rows** (left to right), so a count-sorted list read across, not down. It is now CSS multi-column layout (`column-width` of 80 base units, `column-gap` of twice the gutter) and `break-inside: avoid` on the item: the browser balances the columns and the order reads down each. CSS columns were chosen over `grid-auto-flow: column` because the grid needs the row count (a number the stylesheet cannot know, or a custom property the stylesheet may not declare), whereas columns balance by themselves. One column under 600 px (`column-width: auto`).
+- **No gap between consecutive `dt-nav` groups.** `.dt-nav + .dt-nav`, `.dt-nav + .dt-nav__heading` and `.dt-nav__item + .dt-nav__heading` get a top margin of 6 base units (24 px), so the group can be a sibling `dt-nav` or a second heading inside one.
+
+### Added
+- **`dt-nav__count`**: a trailing count inside a `dt-nav__item`, pushed to the end (`margin-inline-start: auto`), tabular figures, `--secondary-ink`, and set in the caption role, so it differs in size and weight as well as colour. The current item's weight does not bold it; under increased contrast it is ink. In the collapsed (under 600 px) navigation row it follows the name with a gap. `.dt-nav__item` is now a flex row with `gap` and `justify-content: space-between` to carry it.
+- `BrowserSupport` gains "Multi-column layout (column-width, column-gap, break-inside)": Chrome 50, Edge 12, Safari 10, Firefox 65 (`break-inside` is the latest; `column-width` is Chrome 50, Edge 12, Safari 9, Firefox 50; numbers from `@mdn/browser-compat-data` 8.1.8, read for this release). **The page floor is unchanged** (Chrome 111, Edge 111, Safari 16.2, Firefox 113).
+
+### Checked and not changed: two `dt-actions` buttons wrapping in Console (FleetWatch)
+Reproduced in Chrome at 1200 px with the theme's own 3-column card grid: a card is 373 px wide, 331 px inside its padding; the Console buttons ('Snooze machine', 'Request report') are 172 px each in the monospace stack, 16 px gap, 360 px needed, so the second wraps. In Swiss the same buttons are 161 and 150 px and fit in one row. This is the content and the theme's font, not a component defect: `dt-actions` is a wrapping row by design (it wraps instead of overflowing, with the row gap, and the wrapped layout is clean and has no horizontal overflow). Reducing the button padding or the font to make this one pair fit would change every button in every theme. The page can use shorter labels, make the cards wider (a larger `--card-min` or fewer columns), or accept the wrap. FleetWatch was not touched.
+
+### Not verified
+Safari and Firefox (the compatibility data is the source; CSS columns and `break-inside: avoid` on flex items are long-standing, but no run). Increased contrast, forced colours and keyboard focus on `dt-nav__item` with a count were not driven in a browser for this release; the rules are tested as text. The Swiss dark 390 px screenshot was produced and not looked at. A very long item name in a column list was not tried.
+
+### Tests
+471 core (was 463: +9 in `ComponentsListNavTests`, -1 replaced grid test in `ComponentsGapsTests`) and 133 SwiftUI (unchanged). Red first: 9 tests, 21 issues, before the CSS changed. The Tumblr stamp content hash is unchanged (`fnv1a64:2ed110c5ede4c434`); only the version in its stamp lines moved.
+
+### Source-breaking
+- `dt-list--columns` is no longer a grid: `grid-template-columns` and `grid-auto-flow` on it, or a child's `grid-column`, no longer apply; items must not rely on being grid items (rows are now balanced down columns).
+- `.dt-nav__item` is `display: flex`, not `block`: an item whose children were inline (a name and an inline element) now lays them out as flex items; wrap the name in one element when that matters.
+- A local margin between nav groups (for example Vault's `.dt-nav + .dt-nav__heading`) is now redundant and doubles the gap.
+
 ## [0.13.0] - 2026-11-11
 
 Branch `feature/components-0.13.0` from 0.12.0 (`1bfbdac`). `DesignTokens.version` is 0.13.0; every file in `Generated/` differs from 0.12.0 in that header version, and `components.css` in the rules below. Proposals: `project/plans/proposals/2026-11-10_WebComponentsAndThemeSwitch.md`, `2026-11-10_SwissComponents.md`. Evidence: the Vault adoption's gaps, and a pass that drove the 0.12.0 components in headless Chrome over the DevTools protocol (`prefers-contrast`, `forced-colors`, `prefers-reduced-motion`, `prefers-color-scheme` through `Emulation.setEmulatedMedia`; `:hover`, `:focus-visible`, `:active` through `CSS.forcePseudoState`; Tab through `Input.dispatchKeyEvent`), which until then had only static screenshots of the default state.
@@ -573,7 +602,8 @@ Additive. `Generated/tokens.css` and `tokens.json` are byte-identical to 0.3.0 (
   selectors honour Bootstrap's `data-bs-theme` as well as `data-theme`.
 - Palette tests: fixed order (validated for adjacency and colour-vision separation; fails the lightness band for the slots listed under 0.4.0), adjacent OKLab distance of at least 15, contrast of label on background.
 
-[Unreleased]: https://github.com/jpurnell/DesignTokens/compare/0.12.0...HEAD
+[Unreleased]: https://github.com/jpurnell/DesignTokens/compare/0.14.0...HEAD
+[0.14.0]: https://github.com/jpurnell/DesignTokens/compare/0.13.0...0.14.0
 [0.13.0]: https://github.com/jpurnell/DesignTokens/compare/0.12.0...0.13.0
 [0.12.0]: https://github.com/jpurnell/DesignTokens/compare/0.11.2...0.12.0
 [0.11.2]: https://github.com/jpurnell/DesignTokens/compare/0.11.1...0.11.2

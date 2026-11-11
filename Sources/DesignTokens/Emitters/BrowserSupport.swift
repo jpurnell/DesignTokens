@@ -84,6 +84,8 @@ public enum BrowserSupport {
         feature("@media (prefers-reduced-motion)", #"prefers-reduced-motion"#, 74, 79, 10.1, 63, [.components, .tumblr]),
         feature("@media (prefers-color-scheme)", #"prefers-color-scheme"#, 76, 79, 12.1, 67, [.themes, .tumblr]),
         feature("color-scheme property", #"color-scheme:"#, 81, 81, 13, 96, [.themes, .components, .tumblr]),
+        feature("Multi-column layout (column-width, column-gap, break-inside)", #"column-width:|break-inside:"#, 50, 12, 10, 65, [.components],
+                note: "added 0.14.0"),
         feature("image-rendering: pixelated", #"image-rendering:\s*pixelated"#, 41, 79, 10, 93, [.components], note: "added 0.13.0"),
         feature("clamp()", #"clamp\("#, 79, 79, 13.1, 75, [.themes, .tumblr]),
         feature("min() and max()", #"\b(min|max)\("#, 79, 79, 11.1, 75, [.components, .tumblr]),

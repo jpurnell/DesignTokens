@@ -15,6 +15,10 @@ system's own colours and use these values only where the system cannot reach.
 
 The CSS the package emits needs Chrome 111, Edge 111, Safari 16.2 or Firefox 113, and provides no fallbacks; ``BrowserSupport`` lists each feature with its first versions and where it is used, and ``BrowserSupport/Breakpoints`` the size thresholds (a 600 px table stack, a 30 rem key and value stack, 88-base-unit cards). The 600 px breakpoint cannot be a custom property, so an app writing its own responsive rules uses ``BrowserSupport/Breakpoints/narrowMediaQuery``. Since 0.13.0 `components.css` also has a page shell with a sticky navigation column, `dt-prose` for rendered Markdown, `mark`, item meta and columns, banners that hold paragraphs and links, and verified hover, focus, forced-colour and increased-contrast states; for the FleetWatch adoption a usage meter, a page header, a disclosure, form helpers, a light plate, banner actions and long-value modifiers (the class list is in ``ComponentsCSSEmitter``).
 
+## Web list and navigation (0.14.0)
+
+`dt-list--columns` is CSS multi-column layout, so a list reads down each column and shares one rule between rows; `dt-nav__count` puts a count at the end of a `dt-nav__item`; consecutive `dt-nav` groups are spaced from the spacing unit. Multi-column layout is in ``BrowserSupport`` and does not move the page floor.
+
 ## Topics
 
 ### Colour

@@ -96,14 +96,6 @@ struct ComponentsGapsTests {
         #expect(css.contains(".dt-item__main"))
     }
 
-    @Test("dt-list--columns is an auto-fit grid that is one column under the breakpoint")
-    func listColumns() {
-        let css = Self.css
-        let list = CSSReader.declarations(of: ".dt-list--columns ", in: css)
-        #expect(list.contains("display: grid") && list.contains("auto-fit"))
-        #expect(CSSReader.declarations(of: ".dt-list--columns ", in: Self.narrowBody()).contains("grid-template-columns: minmax(0, 1fr)"))
-    }
-
     // MARK: Banner
 
     @Test("a banner holds paragraphs and inline links: its glyph is positioned in the padding, so it is not a flex line that splits the content")
