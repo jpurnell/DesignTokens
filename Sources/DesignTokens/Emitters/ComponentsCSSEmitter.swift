@@ -4,15 +4,18 @@ import Foundation
 ///
 /// The stylesheet is written **only in terms of the theme's custom properties** (see ``ThemeCSSEmitter``): colours as
 /// `var(--ink)`, `var(--rule)`, `var(--surface)`; rule weights as `var(--rule-hairline)`; radii, card border and padding, gutter
-/// and base unit; the six UI type roles as `var(--type-body-size)` and the like; and the list tokens the theme derives from its
-/// ``ListStyle``. It names no theme, writes no colour, font or radius of its own, and declares no custom property of its own, so a
+/// and base unit; the six UI type roles as `var(--type-body-size)` and the like; and the card tokens the theme derives from its
+/// ``CardChrome``. It names no theme, writes no colour, font or radius of its own, and declares no custom property of its own, so a
 /// test can hold every `var(--x)` it reads against the properties a theme declares.
 ///
 /// ### One markup, two looks
-/// A `dt-list` of `dt-item`s is one column of hairline-separated rows under a theme whose ``LayoutSpec/listStyle`` is
-/// ``ListStyle/rows`` (Swiss), and an auto-fit grid of bordered, padded surfaces with the container radius under ``ListStyle/cards``
-/// (Console). Nothing in the markup changes: the theme swaps `data-theme-name` on an ancestor, and the properties change under the
-/// same rules. The table, banner and card read the same properties, so they follow.
+/// A `dt-cards` grid of `dt-card`s is an equal-height grid of entity summaries in every theme: as many columns as fit the card
+/// minimum width (three across a 1200 px page, one on a phone). What the theme changes is the card's chrome: under ``CardChrome/ruled``
+/// (Swiss) no border and no fill with the section rule in ink across the top, under ``CardChrome/bordered`` (Console) a hairline
+/// border, the surface fill and the container radius. Inside a card, a `dt-stats` row sets two or three facts as a small capital
+/// label over a large figure, the number as the hero. The markup does not change: the theme swaps `data-theme-name` on an ancestor.
+/// A `dt-list` of `dt-item`s is plain rows (a list of documents), the same in every theme, and the table stacks into cards below the
+/// breakpoint.
 ///
 /// ### Components
 /// Every class is prefixed `dt-` (BEM-style, `dt-block__element`, `dt-block--modifier`):
@@ -23,8 +26,9 @@ import Foundation
 /// | Section and rules | `dt-section`, `dt-section__heading`, `dt-rule`, `dt-rule--section`, `dt-rule--page` | `SwissSection`, `SwissRule` |
 /// | Key and value | `dt-kv`, `dt-kv__row`, `dt-kv__key`, `dt-kv__value` | `KeyValueList`, `KeyValueRow` |
 /// | Table | `dt-table` (a real `<table>`; cells carry `data-label`), `dt-num`, `aria-sort`, `aria-selected` | `SwissTable` |
-/// | List and item | `dt-list`, `dt-item`, `dt-item__header`, `dt-item__title` | none: the list style is the theme's |
-/// | Card | `dt-card`, `dt-card__header`, `dt-card__title`, `dt-card__footer` | `SwissCard` |
+/// | Card grid and card | `dt-cards`, `dt-card`, `dt-card__header`, `dt-card__name`, `dt-card__title`, `dt-card__footer` | `SwissEqualGrid`, `SwissCard` |
+/// | Stats | `dt-stats`, `dt-stat`, `dt-stat__label`, `dt-stat__figure`, `dt-stat__unit` | `KeyValueRow`, set compactly |
+/// | Plain list | `dt-list`, `dt-item`, `dt-item__title` | `KeyValueList` rows |
 /// | Chip | `dt-chip` with `--success`, `--caution`, `--warning`, `--destructive`, `--neutral` | `OutlinedChip` |
 /// | Banner | `dt-banner` with the same five modifiers | `StatusBanner` |
 /// | Segmented control | `dt-segmented`, `dt-segmented__option` (`aria-checked="true"` selects) | `SwissSegmentedControl` |
@@ -58,7 +62,7 @@ public enum ComponentsCSSEmitter {
          * Features used here: \(features).
          * Breakpoints: the table stacks to labelled blocks, and the grid helpers to one column, below a viewport of \(breakpoints.tableStackBelowPixels)px;
          * a key and value row stacks when its container is under \(breakpoints.keyValueStackBelowRem)rem; a card in a cards theme is at least
-         * \(breakpoints.cardMinimumWidthInBaseUnits) base units wide (the theme's --list-item-min). */
+         * \(breakpoints.cardMinimumWidthInBaseUnits) base units wide (the theme's --card-min). */
 
         """
     }
@@ -224,69 +228,102 @@ public enum ComponentsCSSEmitter {
           }
         }
 
-        /* ---- List and item: the list style of the theme decides rows or cards ---- */
+        /* ---- Plain list: rows, the same in every theme ---- */
         .dt-list {
-          display: grid;
-          grid-template-columns: repeat(auto-fit, minmax(min(var(--list-item-min), 100%), 1fr));
-          gap: var(--list-gap);
           margin: 0;
           padding: 0;
           list-style: none;
         }
         .dt-item {
           min-inline-size: 0;
-          background: var(--list-item-surface);
+          padding-block: \#(unit(3));
+          border-top: var(--rule-hairline) solid var(--rule);
+        }
+        .dt-list > .dt-item:last-child {
+          border-bottom: var(--rule-hairline) solid var(--rule);
+        }
+        .dt-item__title {
+        \#(role("body"))
+          font-weight: var(--type-heading-weight);
+          margin: 0 0 \#(unit(1));
+          overflow-wrap: anywhere;
+        }
+
+        /* ---- Card grid and card: equal heights, the chrome is the theme's ---- */
+        .dt-cards {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(min(var(--card-min), 100%), 1fr));
+          gap: var(--card-gap);
+          margin: 0;
+          padding: 0;
+          list-style: none;
+        }
+        .dt-card {
+          display: flex;
+          flex-direction: column;
+          gap: \#(unit(3));
+          min-inline-size: 0;
+          background: var(--card-surface);
           color: var(--ink);
           border: var(--card-border) solid var(--rule);
-          border-top-width: max(var(--card-border), var(--list-item-rule));
+          border-top: max(var(--card-top-rule), var(--card-border)) solid var(--card-top-color);
           border-radius: var(--radius-container);
           box-shadow: var(--shadow);
           padding-block: max(var(--card-padding), \#(unit(3)));
           padding-inline: var(--card-padding);
-        }
-        .dt-list > .dt-item:last-child {
-          border-bottom-width: max(var(--card-border), var(--list-item-rule));
-        }
-        .dt-item__header {
-          display: flex;
-          align-items: center;
-          justify-content: space-between;
-          gap: var(--gutter);
-          margin-bottom: \#(unit(2));
-          padding-bottom: \#(unit(2));
-          border-bottom: var(--rule-hairline) solid var(--rule);
-        }
-        .dt-item__title {
-        \#(role("heading"))
-          margin: 0;
-          overflow-wrap: anywhere;
-        }
-
-        /* ---- Card ---- */
-        .dt-card {
-          background: var(--list-item-surface);
-          color: var(--ink);
-          border: max(var(--card-border), var(--rule-hairline)) solid var(--rule);
-          border-top: max(var(--card-top-rule), var(--card-border), var(--rule-hairline)) solid var(--rule);
-          border-radius: var(--radius-container);
-          box-shadow: var(--shadow);
-          padding: max(var(--card-padding), var(--gutter));
         }
         .dt-card__header {
           display: flex;
           align-items: center;
           justify-content: space-between;
           gap: var(--gutter);
-          margin-bottom: \#(unit(2));
+        }
+        .dt-card__name {
+        \#(role("body"))
+          font-weight: var(--type-heading-weight);
+          margin: 0;
+          overflow-wrap: anywhere;
         }
         .dt-card__title {
         \#(role("title"))
-          margin: 0 0 \#(unit(1));
+          margin: 0;
         }
         .dt-card__footer {
-          margin-top: \#(unit(3));
+          margin-top: auto;
           padding-top: \#(unit(2));
-          border-top: var(--rule-hairline) solid var(--ink);
+          border-top: var(--rule-hairline) solid var(--rule);
+        }
+
+        /* ---- Stats: the number is the hero. A small capital label over a large figure; as many to a row as fit ---- */
+        .dt-stats {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(\#(unit(20)), 1fr));
+          gap: \#(unit(3)) var(--gutter);
+          margin: 0;
+          padding: 0;
+        }
+        .dt-stat {
+          min-inline-size: 0;
+          margin: 0;
+        }
+        .dt-stat__label {
+        \#(role("label"))
+          display: block;
+          margin: 0 0 \#(unit(1));
+          color: var(--secondary-ink);
+        }
+        .dt-stat__figure {
+        \#(role("heading"))
+          display: block;
+          margin: 0;
+          font-variant-numeric: tabular-nums;
+          line-height: 1;
+          color: var(--ink);
+        }
+        .dt-stat__unit {
+        \#(role("caption"))
+          margin-inline-start: \#(unit(1));
+          color: var(--secondary-ink);
         }
 
         /* ---- Table ---- */
@@ -294,7 +331,7 @@ public enum ComponentsCSSEmitter {
           inline-size: 100%;
           border-collapse: separate;
           border-spacing: 0;
-          background: var(--list-item-surface);
+          background: var(--card-surface);
           color: var(--ink);
           border: var(--card-border) solid var(--rule);
           border-radius: var(--radius-container);
@@ -362,18 +399,15 @@ public enum ComponentsCSSEmitter {
           }
           .dt-table tbody {
             display: grid;
-            gap: var(--list-gap);
+            gap: var(--card-gap);
           }
           .dt-table tr {
-            background: var(--list-item-surface);
+            background: var(--card-surface);
             border: var(--card-border) solid var(--rule);
-            border-top-width: max(var(--card-border), var(--list-item-rule));
+            border-top: max(var(--card-top-rule), var(--card-border)) solid var(--card-top-color);
             border-radius: var(--radius-container);
             padding-block: \#(unit(1.5));
             padding-inline: max(var(--card-padding), \#(unit(3)));
-          }
-          .dt-table tbody tr:last-child {
-            border-bottom-width: max(var(--card-border), var(--list-item-rule));
           }
           .dt-table td, .dt-table td:first-child, .dt-table td:last-child {
             display: grid;
@@ -397,7 +431,7 @@ public enum ComponentsCSSEmitter {
             justify-self: start;
           }
           .dt-table tr[aria-selected="true"] {
-            background: color-mix(in srgb, var(--accent) 14%, var(--list-item-surface));
+            background: color-mix(in srgb, var(--accent) 14%, var(--card-surface));
             box-shadow: inset calc(var(--rule-section) * 2) 0 0 var(--accent);
           }
           .dt-table tr[aria-selected="true"] td, .dt-table tr[aria-selected="true"] td:first-child {
@@ -584,7 +618,7 @@ public enum ComponentsCSSEmitter {
           .dt-item, .dt-card, .dt-table, .dt-table tr, .dt-banner {
             border-color: var(--ink);
           }
-          .dt-kv__row, .dt-table td, .dt-item__header, .dt-rule {
+          .dt-kv__row, .dt-table td, .dt-item, .dt-rule {
             border-top-color: var(--ink);
           }
           .dt-label, .dt-caption, .dt-kv__key, .dt-field__label, .dt-table th {

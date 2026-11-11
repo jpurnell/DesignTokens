@@ -128,9 +128,8 @@ public enum BrowserSupport {
         /// A key and value row stacks (label above value) when its container is narrower than this, in `rem`:
         /// `@container (max-width: 30rem)`.
         public static let keyValueStackBelowRem = 30
-        /// A card in an auto-fit grid (a theme whose ``ListStyle`` is `cards`) is at least this many base units wide: `--list-item-min`,
-        /// 384 px at the 4 px base unit.
-        public static let cardMinimumWidthInBaseUnits = 96
+        /// A card in an auto-fit grid is at least this many base units wide: `--card-min`, 352 px at the 4 px base unit.
+        public static let cardMinimumWidthInBaseUnits = 88
         /// The Tumblr block's own `max-width` media queries, in pixels, in the order they appear.
         public static let tumblrPixels = [960, 720]
     }

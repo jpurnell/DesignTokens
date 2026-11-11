@@ -247,6 +247,7 @@
       "annotationRadius" : 0,
       "baseUnit" : 4,
       "cardBorder" : 0,
+      "cardChrome" : "ruled",
       "cardPadding" : 0,
       "columns" : 12,
       "containerRadius" : 0,
@@ -260,7 +261,6 @@
       },
       "gridlines" : "horizontalFaint",
       "gutter" : 16,
-      "listStyle" : "rows",
       "margins" : {
         "bottom" : 12,
         "leading" : 8,

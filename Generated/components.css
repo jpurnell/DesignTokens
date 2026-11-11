@@ -4,7 +4,7 @@
  * Features used here: color-mix(); @container size queries, container-type; :focus-visible; @media (prefers-contrast); @media (prefers-reduced-motion); min() and max(); Custom properties and var(); calc(); Grid with minmax() and repeat(auto-fit); gap in flex layouts; Logical sizes (inline-size, block-size, min-inline-size, min-block-size); padding-inline, padding-block; border-inline-start, padding-inline-start and -end; clip-path: inset(); accent-color; appearance; overflow-wrap: anywhere; font-variant-numeric; attr() in content.
  * Breakpoints: the table stacks to labelled blocks, and the grid helpers to one column, below a viewport of 600px;
  * a key and value row stacks when its container is under 30rem; a card in a cards theme is at least
- * 96 base units wide (the theme's --list-item-min). */
+ * 88 base units wide (the theme's --card-min). */
 /* ---- Page and type roles ---- */
 .dt-page {
   background: var(--background);
@@ -185,66 +185,73 @@
   }
 }
 
-/* ---- List and item: the list style of the theme decides rows or cards ---- */
+/* ---- Plain list: rows, the same in every theme ---- */
 .dt-list {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(min(var(--list-item-min), 100%), 1fr));
-  gap: var(--list-gap);
   margin: 0;
   padding: 0;
   list-style: none;
 }
 .dt-item {
   min-inline-size: 0;
-  background: var(--list-item-surface);
+  padding-block: calc(var(--space-unit) * 3);
+  border-top: var(--rule-hairline) solid var(--rule);
+}
+.dt-list > .dt-item:last-child {
+  border-bottom: var(--rule-hairline) solid var(--rule);
+}
+.dt-item__title {
+  font-family: var(--type-body-family);
+  font-size: var(--type-body-size);
+  line-height: var(--type-body-line);
+  font-weight: var(--type-body-weight);
+  letter-spacing: var(--type-body-tracking);
+  text-transform: var(--type-body-transform);
+  font-style: var(--type-body-style);
+  font-weight: var(--type-heading-weight);
+  margin: 0 0 calc(var(--space-unit) * 1);
+  overflow-wrap: anywhere;
+}
+
+/* ---- Card grid and card: equal heights, the chrome is the theme's ---- */
+.dt-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(var(--card-min), 100%), 1fr));
+  gap: var(--card-gap);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.dt-card {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--space-unit) * 3);
+  min-inline-size: 0;
+  background: var(--card-surface);
   color: var(--ink);
   border: var(--card-border) solid var(--rule);
-  border-top-width: max(var(--card-border), var(--list-item-rule));
+  border-top: max(var(--card-top-rule), var(--card-border)) solid var(--card-top-color);
   border-radius: var(--radius-container);
   box-shadow: var(--shadow);
   padding-block: max(var(--card-padding), calc(var(--space-unit) * 3));
   padding-inline: var(--card-padding);
-}
-.dt-list > .dt-item:last-child {
-  border-bottom-width: max(var(--card-border), var(--list-item-rule));
-}
-.dt-item__header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--gutter);
-  margin-bottom: calc(var(--space-unit) * 2);
-  padding-bottom: calc(var(--space-unit) * 2);
-  border-bottom: var(--rule-hairline) solid var(--rule);
-}
-.dt-item__title {
-  font-family: var(--type-heading-family);
-  font-size: var(--type-heading-size);
-  line-height: var(--type-heading-line);
-  font-weight: var(--type-heading-weight);
-  letter-spacing: var(--type-heading-tracking);
-  text-transform: var(--type-heading-transform);
-  font-style: var(--type-heading-style);
-  margin: 0;
-  overflow-wrap: anywhere;
-}
-
-/* ---- Card ---- */
-.dt-card {
-  background: var(--list-item-surface);
-  color: var(--ink);
-  border: max(var(--card-border), var(--rule-hairline)) solid var(--rule);
-  border-top: max(var(--card-top-rule), var(--card-border), var(--rule-hairline)) solid var(--rule);
-  border-radius: var(--radius-container);
-  box-shadow: var(--shadow);
-  padding: max(var(--card-padding), var(--gutter));
 }
 .dt-card__header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--gutter);
-  margin-bottom: calc(var(--space-unit) * 2);
+}
+.dt-card__name {
+  font-family: var(--type-body-family);
+  font-size: var(--type-body-size);
+  line-height: var(--type-body-line);
+  font-weight: var(--type-body-weight);
+  letter-spacing: var(--type-body-tracking);
+  text-transform: var(--type-body-transform);
+  font-style: var(--type-body-style);
+  font-weight: var(--type-heading-weight);
+  margin: 0;
+  overflow-wrap: anywhere;
 }
 .dt-card__title {
   font-family: var(--type-title-family);
@@ -254,12 +261,62 @@
   letter-spacing: var(--type-title-tracking);
   text-transform: var(--type-title-transform);
   font-style: var(--type-title-style);
-  margin: 0 0 calc(var(--space-unit) * 1);
+  margin: 0;
 }
 .dt-card__footer {
-  margin-top: calc(var(--space-unit) * 3);
+  margin-top: auto;
   padding-top: calc(var(--space-unit) * 2);
-  border-top: var(--rule-hairline) solid var(--ink);
+  border-top: var(--rule-hairline) solid var(--rule);
+}
+
+/* ---- Stats: the number is the hero. A small capital label over a large figure; as many to a row as fit ---- */
+.dt-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(calc(var(--space-unit) * 20), 1fr));
+  gap: calc(var(--space-unit) * 3) var(--gutter);
+  margin: 0;
+  padding: 0;
+}
+.dt-stat {
+  min-inline-size: 0;
+  margin: 0;
+}
+.dt-stat__label {
+  font-family: var(--type-label-family);
+  font-size: var(--type-label-size);
+  line-height: var(--type-label-line);
+  font-weight: var(--type-label-weight);
+  letter-spacing: var(--type-label-tracking);
+  text-transform: var(--type-label-transform);
+  font-style: var(--type-label-style);
+  display: block;
+  margin: 0 0 calc(var(--space-unit) * 1);
+  color: var(--secondary-ink);
+}
+.dt-stat__figure {
+  font-family: var(--type-heading-family);
+  font-size: var(--type-heading-size);
+  line-height: var(--type-heading-line);
+  font-weight: var(--type-heading-weight);
+  letter-spacing: var(--type-heading-tracking);
+  text-transform: var(--type-heading-transform);
+  font-style: var(--type-heading-style);
+  display: block;
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  color: var(--ink);
+}
+.dt-stat__unit {
+  font-family: var(--type-caption-family);
+  font-size: var(--type-caption-size);
+  line-height: var(--type-caption-line);
+  font-weight: var(--type-caption-weight);
+  letter-spacing: var(--type-caption-tracking);
+  text-transform: var(--type-caption-transform);
+  font-style: var(--type-caption-style);
+  margin-inline-start: calc(var(--space-unit) * 1);
+  color: var(--secondary-ink);
 }
 
 /* ---- Table ---- */
@@ -267,7 +324,7 @@
   inline-size: 100%;
   border-collapse: separate;
   border-spacing: 0;
-  background: var(--list-item-surface);
+  background: var(--card-surface);
   color: var(--ink);
   border: var(--card-border) solid var(--rule);
   border-radius: var(--radius-container);
@@ -347,18 +404,15 @@
   }
   .dt-table tbody {
     display: grid;
-    gap: var(--list-gap);
+    gap: var(--card-gap);
   }
   .dt-table tr {
-    background: var(--list-item-surface);
+    background: var(--card-surface);
     border: var(--card-border) solid var(--rule);
-    border-top-width: max(var(--card-border), var(--list-item-rule));
+    border-top: max(var(--card-top-rule), var(--card-border)) solid var(--card-top-color);
     border-radius: var(--radius-container);
     padding-block: calc(var(--space-unit) * 1.5);
     padding-inline: max(var(--card-padding), calc(var(--space-unit) * 3));
-  }
-  .dt-table tbody tr:last-child {
-    border-bottom-width: max(var(--card-border), var(--list-item-rule));
   }
   .dt-table td, .dt-table td:first-child, .dt-table td:last-child {
     display: grid;
@@ -388,7 +442,7 @@
     justify-self: start;
   }
   .dt-table tr[aria-selected="true"] {
-    background: color-mix(in srgb, var(--accent) 14%, var(--list-item-surface));
+    background: color-mix(in srgb, var(--accent) 14%, var(--card-surface));
     box-shadow: inset calc(var(--rule-section) * 2) 0 0 var(--accent);
   }
   .dt-table tr[aria-selected="true"] td, .dt-table tr[aria-selected="true"] td:first-child {
@@ -717,7 +771,7 @@
   .dt-item, .dt-card, .dt-table, .dt-table tr, .dt-banner {
     border-color: var(--ink);
   }
-  .dt-kv__row, .dt-table td, .dt-item__header, .dt-rule {
+  .dt-kv__row, .dt-table td, .dt-item, .dt-rule {
     border-top-color: var(--ink);
   }
   .dt-label, .dt-caption, .dt-kv__key, .dt-field__label, .dt-table th {

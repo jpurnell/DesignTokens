@@ -79,8 +79,8 @@ struct BrowserSupportTests {
         #expect(!media.isEmpty && Set(media) == [BrowserSupport.Breakpoints.tableStackBelowPixels])
         #expect(Self.matches(#"@container \(max-width: (\d+)rem\)"#, in: components).compactMap(Int.init) == [BrowserSupport.Breakpoints.keyValueStackBelowRem])
         let console = try ThemeCSSEmitter.emit(try #require(Theme.named("console")))
-        let console384 = Self.matches(#"--list-item-min: (\d+)px;"#, in: console).compactMap(Int.init)
-        #expect(console384 == [BrowserSupport.Breakpoints.cardMinimumWidthInBaseUnits * 4])
+        let console352 = Self.matches(#"--card-min: (\d+)px;"#, in: console).compactMap(Int.init)
+        #expect(console352 == [BrowserSupport.Breakpoints.cardMinimumWidthInBaseUnits * 4])
         let tumblr = try TumblrEmitter.emit(.swiss)
         #expect(Self.matches(#"@media \(max-width: (\d+)px\)"#, in: tumblr).compactMap(Int.init) == BrowserSupport.Breakpoints.tumblrPixels)
         // and the two numbers the SwiftUI table uses are the same threshold

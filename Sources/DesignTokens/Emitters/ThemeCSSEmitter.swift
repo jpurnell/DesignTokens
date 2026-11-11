@@ -22,7 +22,7 @@ import Foundation
 /// Increased-contrast blocks carry only the colours that have a measured increased-contrast value: the
 /// others carry through, as ``Adaptive/value(in:increasedContrast:)`` does.
 ///
-/// The list style is emitted as `--list-style` and the `--list-item-*` and `--list-gap` properties derived from it.
+/// The card chrome is emitted as `--card-chrome` and the `--card-surface`, `--card-top-rule`, `--card-top-color`, `--card-min` and `--card-gap` properties derived from it.
 ///
 /// Not emitted as CSS: value-label and series-labelling flags, axis placement and number formats (the value halo, card
 /// border and padding, reference-label gap, mark default fill and emphasis are emitted). They are not
@@ -179,24 +179,22 @@ public enum ThemeCSSEmitter {
         add("gap-reference-label", px(layout.gaps.referenceLabel))
         add("card-border", px(layout.cardBorder))
         add("card-padding", px(layout.cardPadding))
-        // The list style, and what a stylesheet needs from it. A custom property cannot branch, so the theme resolves the
-        // choice here and components.css only reads the results: rows are one column, set off by a hairline, on no surface, and a card has the section rule across its top (the Swiss card);
-        // cards fill the width in an auto-fit grid of surfaces a gutter apart. The cards' minimum width is 96 base units
-        // (384 px at 4 px), the width of the page this was drawn from (380 px), kept on the grid.
-        add("list-style", layout.listStyle.rawValue)
-        switch layout.listStyle {
-        case .rows:
-            add("list-item-min", "100%")
-            add("list-item-rule", "var(--rule-hairline)")
-            add("list-item-surface", "transparent")
-            add("list-gap", "0px")
+        // The card chrome, and what a stylesheet needs from it. A custom property cannot branch, so the theme resolves the choice here
+        // and components.css only reads the results. Ruled (Swiss): no surface, the section rule in ink across the top. Bordered: the
+        // surface, no top rule (the border is --card-border, in the rule colour). The grid's column minimum is 88 base units (352 px at
+        // 4 px), so three cards fit a 1200 px page with its padding, and one fits a phone.
+        add("card-chrome", layout.cardChrome.rawValue)
+        add("card-min", px(layout.baseUnit * Double(BrowserSupport.Breakpoints.cardMinimumWidthInBaseUnits)))
+        add("card-gap", "var(--gutter)")
+        switch layout.cardChrome {
+        case .ruled:
+            add("card-surface", "transparent")
             add("card-top-rule", "var(--rule-section)")
-        case .cards:
-            add("list-item-min", px(layout.baseUnit * Double(BrowserSupport.Breakpoints.cardMinimumWidthInBaseUnits)))
-            add("list-item-rule", "0px")
-            add("list-item-surface", "var(--surface)")
-            add("list-gap", "var(--gutter)")
+            add("card-top-color", "var(--ink)")
+        case .bordered:
+            add("card-surface", "var(--surface)")
             add("card-top-rule", "0px")
+            add("card-top-color", "var(--rule)")
         }
         add("label-value-halo", px(s.labels.valueHalo))
         add("gridlines", kebab(layout.gridlines.rawValue))

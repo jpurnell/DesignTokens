@@ -3,7 +3,7 @@ import Foundation
 public extension Theme {
     /// Console: the look of the FleetWatch web page before it moved onto the design system (added in 0.12.0), as a theme of its own.
     ///
-    /// A fixed-dark navy theme, bordered cards in an auto-fit grid (``ListStyle/cards``), the status colours of a terminal
+    /// A fixed-dark navy theme, bordered cards in an auto-fit grid (``CardChrome/bordered``), the status colours of a terminal
     /// dashboard, and a monospaced face for every text role. The id is `console`; the palette is navy, not the green-on-black the
     /// name may suggest.
     ///
@@ -77,7 +77,7 @@ public extension Theme {
             gaps: Gaps(title: 4, subtitle: 12, plot: 8, source: 10, referenceLabel: 5),
             gutter: Double(Grid.gutter), columns: Grid.columns, baseUnit: Double(Grid.baseUnit),
             containerRadius: 8, controlRadius: 4, gridlines: .horizontalFaint,
-            annotationRadius: 8, cardBorder: 1, cardPadding: 20, listStyle: .cards)
+            annotationRadius: 8, cardBorder: 1, cardPadding: 20, cardChrome: .bordered)
         let labels = LabelSpec(values: .aboveOrEnd, series: .direct, axisSide: .leading,
                                axisLabelPlacement: .besideAxis, sourceLine: true, valueHalo: 3)
         let marks = MarkSpec(lineWidth: 2, pointSize: 24, bandOpacity: 0.14, selectedLineWidth: 3,

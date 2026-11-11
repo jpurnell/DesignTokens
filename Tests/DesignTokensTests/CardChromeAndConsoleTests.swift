@@ -2,71 +2,72 @@ import Foundation
 import Testing
 @testable import DesignTokens
 
-@Suite("ListStyle and the console theme (0.12.0)")
-struct ListStyleAndConsoleTests {
+@Suite("CardChrome and the console theme (0.12.0)")
+struct CardChromeAndConsoleTests {
     private static func css(_ theme: Theme) throws -> String { try ThemeCSSEmitter.emit(theme) }
 
-    // MARK: ListStyle
+    // MARK: CardChrome
 
-    @Test("ListStyle has rows and cards, spelled as in JSON")
-    func listStyleCases() throws {
-        #expect(ListStyle.allCases == [.rows, .cards])
-        #expect(ListStyle.rows.rawValue == "rows")
-        #expect(ListStyle.cards.rawValue == "cards")
+    @Test("CardChrome has ruled and bordered, spelled as in JSON")
+    func cardChromeCases() throws {
+        #expect(CardChrome.allCases == [.ruled, .bordered])
+        #expect(CardChrome.ruled.rawValue == "ruled")
+        #expect(CardChrome.bordered.rawValue == "bordered")
     }
 
-    @Test("every theme is rows except console, which is cards")
-    func themesListStyle() {
+    @Test("every theme is ruled except console, which is bordered")
+    func themesCardChrome() {
         for theme in Theme.all {
-            #expect(theme.structure.layout.listStyle == (theme.id == "console" ? .cards : .rows), "\(theme.id)")
+            #expect(theme.structure.layout.cardChrome == (theme.id == "console" ? .bordered : .ruled), Comment(rawValue: theme.id))
         }
     }
 
-    @Test("the JSON carries listStyle and decodes it")
-    func jsonCarriesListStyle() throws {
+    @Test("the JSON carries cardChrome and decodes it")
+    func jsonCarriesCardChrome() throws {
         for id in ["swiss", "console"] {
             let theme = try #require(Theme.named(id))
             let text = String(decoding: try ThemeCodec.encode(theme), as: UTF8.self)
-            #expect(text.contains("\"listStyle\" : \"\(theme.structure.layout.listStyle.rawValue)\""), Comment(rawValue: id))
-            #expect(try ThemeCodec.decode(try ThemeCodec.encode(theme)).structure.layout.listStyle == theme.structure.layout.listStyle)
+            #expect(text.contains("\"cardChrome\" : \"\(theme.structure.layout.cardChrome.rawValue)\""), Comment(rawValue: id))
+            #expect(try ThemeCodec.decode(try ThemeCodec.encode(theme)).structure.layout.cardChrome == theme.structure.layout.cardChrome)
         }
     }
 
-    @Test("JSON from before 0.12.0, with no listStyle, still loads and means rows")
-    func oldJSONDecodesAsRows() throws {
+    @Test("JSON from before 0.12.0, with no cardChrome, still loads and means ruled")
+    func oldJSONDecodesAsRuled() throws {
         var lines = String(decoding: try ThemeCodec.encode(Theme.swiss), as: UTF8.self)
             .split(omittingEmptySubsequences: false, whereSeparator: \.isNewline).map(String.init)
         let before = lines.count
-        lines.removeAll { $0.contains("\"listStyle\"") }
+        lines.removeAll { $0.contains("\"cardChrome\"") }
         #expect(lines.count == before - 1)
-        // the key sorts before `margins`, so the previous line ends in a comma that stays valid
         let decoded = try ThemeCodec.decode(Data(lines.joined(separator: "\n").utf8))
-        #expect(decoded.structure.layout.listStyle == .rows)
+        #expect(decoded.structure.layout.cardChrome == .ruled)
     }
 
-    @Test("an unknown listStyle value is refused")
-    func unknownListStyleRefused() throws {
+    @Test("an unknown cardChrome value is refused")
+    func unknownCardChromeRefused() throws {
         let text = String(decoding: try ThemeCodec.encode(Theme.swiss), as: UTF8.self)
-            .replacingOccurrences(of: "\"listStyle\" : \"rows\"", with: "\"listStyle\" : \"grid\"")
+            .replacingOccurrences(of: "\"cardChrome\" : \"ruled\"", with: "\"cardChrome\" : \"grid\"")
         #expect(throws: (any Error).self) { try ThemeCodec.decode(Data(text.utf8)) }
     }
 
-    @Test("CSS emits the list style and the tokens components key off: rows are one column with a hairline, cards an auto-fit grid of surfaces")
-    func cssListTokens() throws {
+    @Test("CSS emits the card chrome and the tokens components key off: ruled is a top rule on no surface, bordered a surface; both 352 px minimum")
+    func cssCardTokens() throws {
         let swiss = try Self.css(.swiss)
-        #expect(swiss.contains("  --list-style: rows;"))
-        #expect(swiss.contains("  --list-item-min: 100%;"))
-        #expect(swiss.contains("  --list-item-rule: var(--rule-hairline);"))
-        #expect(swiss.contains("  --list-item-surface: transparent;"))
-        #expect(swiss.contains("  --list-gap: 0px;"))
+        #expect(swiss.contains("  --card-chrome: ruled;"))
+        #expect(swiss.contains("  --card-surface: transparent;"))
         #expect(swiss.contains("  --card-top-rule: var(--rule-section);"))
+        #expect(swiss.contains("  --card-top-color: var(--ink);"))
+        #expect(swiss.contains("  --card-border: 0px;"))
+        #expect(swiss.contains("  --card-min: 352px;"))
+        #expect(swiss.contains("  --card-gap: var(--gutter);"))
         let console = try Self.css(try #require(Theme.named("console")))
-        #expect(console.contains("  --list-style: cards;"))
-        #expect(console.contains("  --list-item-min: 384px;"))
-        #expect(console.contains("  --list-item-rule: 0px;"))
-        #expect(console.contains("  --list-item-surface: var(--surface);"))
-        #expect(console.contains("  --list-gap: var(--gutter);"))
+        #expect(console.contains("  --card-chrome: bordered;"))
+        #expect(console.contains("  --card-surface: var(--surface);"))
         #expect(console.contains("  --card-top-rule: 0px;"))
+        #expect(console.contains("  --card-top-color: var(--rule);"))
+        #expect(console.contains("  --card-border: 1px;"))
+        #expect(console.contains("  --card-min: 352px;"))
+        #expect(!swiss.contains("--list-"), "the 0.12.0 list-style tokens are gone")
     }
 
     // MARK: Console

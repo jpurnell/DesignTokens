@@ -95,14 +95,26 @@ struct ComponentsCSSTests {
 
     // MARK: The key requirement
 
-    @Test("one markup, two looks: list and item read the list tokens, so rows and cards come from the theme alone")
-    func listIsDrivenByTokens() {
+    @Test("one markup, two looks: the card grid and the card read the card tokens, so ruled and bordered chrome come from the theme alone")
+    func cardsAreDrivenByTokens() {
         let css = Self.css
-        for token in ["--list-item-min", "--list-gap", "--list-item-surface", "--list-item-rule", "--card-border", "--card-padding",
-                      "--card-top-rule", "--radius-container"] {
-            #expect(css.contains("var(\(token)"), "\(token)")
+        for token in ["--card-min", "--card-gap", "--card-surface", "--card-top-rule", "--card-top-color", "--card-border", "--card-padding",
+                      "--radius-container"] {
+            #expect(css.contains("var(\(token)"), Comment(rawValue: token))
         }
         #expect(css.contains("auto-fit"))
+        #expect(!css.contains("--list-"), "the plain list reads no theme list tokens")
+    }
+
+    @Test("a card is a column that pins its footer, so cards in a row are equal height; a stat is a label over a figure")
+    func cardsAndStats() {
+        let css = Self.css
+        #expect(css.contains("flex-direction: column"))
+        #expect(css.contains("margin-top: auto"))
+        #expect(css.contains("font-variant-numeric: tabular-nums"))
+        for name in [".dt-cards", ".dt-card__name", ".dt-stats", ".dt-stat__label", ".dt-stat__figure", ".dt-stat__unit"] {
+            #expect(css.contains(name), Comment(rawValue: name))
+        }
     }
 
     // MARK: Components
@@ -111,7 +123,7 @@ struct ComponentsCSSTests {
     func components() {
         let css = Self.css
         for name in [".dt-page", ".dt-section", ".dt-rule", ".dt-kv", ".dt-kv__row", ".dt-table", ".dt-chip", ".dt-banner",
-                     ".dt-segmented", ".dt-button", ".dt-input", ".dt-select", ".dt-field", ".dt-card", ".dt-list", ".dt-item",
+                     ".dt-segmented", ".dt-button", ".dt-input", ".dt-select", ".dt-field", ".dt-card", ".dt-cards", ".dt-stat", ".dt-list", ".dt-item",
                      ".dt-grid", ".dt-col-12", ".dt-actions", ".dt-checkline", ".dt-label", ".dt-heading", ".dt-title"] {
             #expect(css.contains(name), "\(name)")
         }

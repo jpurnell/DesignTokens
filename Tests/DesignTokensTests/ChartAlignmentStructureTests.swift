@@ -134,7 +134,7 @@ struct ChartAlignmentStructureTests {
     /// (the canonical form puts one scalar key per line), and a comma left dangling before a closing brace repaired.
     private static func textRemovingNewKeys(of theme: Theme) throws -> String {
         let added: Set<String> = ["defaultFill", "defaultEmphasis", "emphasisFill", "baselineColour", "referenceColour",
-                                  "referenceLabelColour", "cardBorder", "cardPadding", "referenceLabel", "valueHalo", "listStyle"]
+                                  "referenceLabelColour", "cardBorder", "cardPadding", "referenceLabel", "valueHalo", "cardChrome"]
         var lines = String(decoding: try ThemeCodec.encode(theme), as: UTF8.self)
             .split(omittingEmptySubsequences: false, whereSeparator: \.isNewline).map(String.init)
         lines.removeAll { line in
