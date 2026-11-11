@@ -158,6 +158,9 @@ Sources: the first unprefixed, unflagged version of each feature in `@mdn/browse
 | @container size queries, container-type | 105 / 105 | 16 | 110 | components |
 | :focus-visible | 86 / 86 | 15.4 | 85 | components, tumblr |
 | @media (prefers-contrast) | 96 / 96 | 14.1 | 101 | themes, components, tumblr |
+| @media (forced-colors) (added 0.13.0; the system colours Highlight and HighlightText it uses are in every browser since 1.0) | 89 / 79 | 16 | 89 | components |
+| @media (hover: hover) (added 0.13.0) | 38 / 12 | 9 | 64 | components |
+| text-decoration-thickness | 89 / 89 | 12.1 | 70 | components, tumblr |
 | @media (prefers-reduced-motion) | 74 / 79 | 10.1 | 63 | components, tumblr |
 | @media (prefers-color-scheme) | 76 / 79 | 12.1 | 67 | themes, tumblr |
 | color-scheme property | 81 / 81 | 13 | 96 | themes, tumblr |

@@ -600,11 +600,45 @@ public enum ComponentsCSSEmitter {
           }
         }
 
+        /* ---- Hover and active: an inner outline in the current colour, so the words keep their contrast and forced colours keep the shape ---- */
+        @media (hover: hover) {
+          .dt-button:not([disabled]):not([aria-disabled="true"]):hover, .dt-segmented__option:hover {
+            outline: var(--rule-hairline) solid currentColor;
+            outline-offset: calc(var(--rule-hairline) * -3);
+          }
+          .dt-input:not(:disabled):hover, .dt-select:not(:disabled):hover, .dt-textarea:not(:disabled):hover {
+            border-color: var(--ink);
+          }
+          .dt-link:hover {
+            text-decoration-thickness: calc(var(--rule-hairline) * 2);
+          }
+          .dt-table th[aria-sort]:hover {
+            text-decoration: underline;
+          }
+        }
+        .dt-button:not([disabled]):not([aria-disabled="true"]):active, .dt-segmented__option:active {
+          outline: calc(var(--rule-hairline) * 2) solid currentColor;
+          outline-offset: calc(var(--rule-hairline) * -4);
+        }
+
+        /* ---- Invalid and disabled controls: a heavier negative border (a shape, not only a colour), and a dimmed, inert control ---- */
+        .dt-input[aria-invalid="true"], .dt-select[aria-invalid="true"], .dt-textarea[aria-invalid="true"] {
+          border-color: var(--negative);
+          border-width: calc(var(--rule-hairline) * 2);
+        }
+        .dt-input:disabled, .dt-select:disabled, .dt-textarea:disabled, .dt-check:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+
         /* ---- Focus: the ink, two rule weights wide, never colour alone ---- */
         .dt-button:focus-visible, .dt-segmented__option:focus-visible, .dt-input:focus-visible, .dt-select:focus-visible,
         .dt-textarea:focus-visible, .dt-check:focus-visible, .dt-link:focus-visible, .dt-table th[aria-sort]:focus-visible {
           outline: calc(var(--rule-hairline) * 2) solid var(--ink);
           outline-offset: calc(var(--rule-hairline) * 2);
+        }
+        .dt-segmented__option:focus-visible, .dt-table th[aria-sort]:focus-visible {
+          outline-offset: calc(var(--rule-hairline) * -3);
         }
 
         /* ---- Increased contrast: heavier edges, the ink on every boundary ---- */
@@ -623,6 +657,29 @@ public enum ComponentsCSSEmitter {
           }
           .dt-label, .dt-caption, .dt-kv__key, .dt-field__label, .dt-table th {
             color: var(--ink);
+          }
+          .dt-button--primary {
+            background: var(--ink);
+            border-color: var(--ink);
+            color: var(--background);
+          }
+        }
+
+        /* ---- Forced colours: the ink fill and the tint are overridden, so selection is carried by system colours and by shape ---- */
+        @media (forced-colors: active) {
+          .dt-segmented__option[aria-checked="true"]::before, .dt-segmented__option[aria-pressed="true"]::before {
+            content: "\2713\A0";
+          }
+          .dt-segmented__option[aria-checked="true"], .dt-segmented__option[aria-pressed="true"] {
+            text-decoration: underline;
+            text-decoration-thickness: calc(var(--rule-hairline) * 2);
+          }
+          .dt-table tr[aria-selected="true"] {
+            outline: calc(var(--rule-section) * 2) solid Highlight;
+            outline-offset: calc(var(--rule-section) * -2);
+          }
+          .dt-button--primary {
+            border-width: calc(var(--rule-hairline) * 2);
           }
         }
 
