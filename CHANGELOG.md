@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.12.0] - 2026-11-10
+
+Branch `feature/console-theme-components-0.12.0` from 0.11.2. Proposal: `project/plans/proposals/2026-11-10_WebComponentsAndThemeSwitch.md`. `DesignTokens.version` is 0.12.0; every file in `Generated/` differs from 0.11.2 in that header version, and the new files are listed below.
+
+### Added
+- **`ListStyle` (`rows` | `cards`) on `LayoutSpec`**, a property of the theme (owner decision 2026-11-10). Emitted to CSS as `--list-style` and the properties derived from it (`--list-item-min`, `--list-item-rule`, `--list-item-surface`, `--list-gap`, `--card-top-rule`), written to the theme JSON, and decoded as `rows` when the key is absent so older JSON still loads. Swiss and every earlier theme are `rows`.
+- **The `console` theme ("Console")**, registered last in `Theme.all`: the look of the FleetWatch web page as a theme of its own. Fixed dark, navy (`#1A1A2E` page, `#16213E` card, `#0F3460` rule, `#0A0A1A` inset), cards, 1 px card border, radii 8 and 4 (3 for bars), the stack `SF Mono, Menlo, Consolas, monospace` on every text role (expressed with the existing `FontFamilyRef.named`, no model change). The palette is the page's own values, not mapped onto Swiss; where the page has no value (the series beyond its four hues, the `alert` orange, both ramps) the choice is documented in `ThemeConsole.swift`. Its ledger is the validator's measurement, not hand-written: all eight series sit above the dark lightness band (they are the Tailwind 400 shades), and green and orange are 7.1 apart under colour-vision simulation against a floor of 8. The status roles, the link, the accent and both ramps pass. The palette is navy, not the green-on-black the name may suggest.
+- **`components.css`** (`ComponentsCSSEmitter`; `design-tokens emit --components`, also in `emit --all`; `Generated/components.css`): the portfolio-wide web counterpart of the SwiftUI Swiss components. Classes are prefixed `dt-`; the file reads only theme custom properties, names no theme and writes no colour, font or radius. One markup, two looks: a `dt-list` of `dt-item`s is hairline rows under Swiss and an auto-fit grid of bordered cards under Console. Components: page and type roles, section and rules, key and value, table (selectable rows, sort glyph, stacks to labelled blocks below 600 px), list and item, card, chip and banner (five tones, a glyph per tone), segmented control, buttons, form controls, 12-column grid. `prefers-contrast: more`, `:focus-visible` and `prefers-reduced-motion` are handled. Departures from the SwiftUI set are in `ComponentsCSSEmitter`'s documentation (a banner is a tinted surface, since CSS cannot measure which text colour reads better).
+- `GeneratedFormat.components`; `--components` on the CLI.
+
+### Tests
+423 core (was 400) and 133 SwiftUI (unchanged); quality gate 0 errors, 0 warnings. The Tumblr stamp's content hash is unchanged (`fnv1a64:2ed110c5ede4c434`); only the version in its stamp lines moved. Drift check (`design-token-drift`) on a fixture page using `components.css` and both themes: 3 CSS/HTML files read, 58 tokens loaded, 0 findings; the same run fails on a planted off-token hex.
+
+### Source-breaking
+- `LayoutSpec` gains `listStyle` (defaulted in the initialiser). `Theme.all` has ten themes; code that assumed nine will notice.
+
 ## [0.11.2] - 2026-11-10
 
 ### Changed
@@ -504,7 +520,8 @@ Additive. `Generated/tokens.css` and `tokens.json` are byte-identical to 0.3.0 (
   selectors honour Bootstrap's `data-bs-theme` as well as `data-theme`.
 - Palette tests: fixed order (validated for adjacency and colour-vision separation; fails the lightness band for the slots listed under 0.4.0), adjacent OKLab distance of at least 15, contrast of label on background.
 
-[Unreleased]: https://github.com/jpurnell/DesignTokens/compare/0.11.2...HEAD
+[Unreleased]: https://github.com/jpurnell/DesignTokens/compare/0.12.0...HEAD
+[0.12.0]: https://github.com/jpurnell/DesignTokens/compare/0.11.2...0.12.0
 [0.11.2]: https://github.com/jpurnell/DesignTokens/compare/0.11.1...0.11.2
 [0.11.1]: https://github.com/jpurnell/DesignTokens/compare/0.11.0...0.11.1
 [0.11.0]: https://github.com/jpurnell/DesignTokens/compare/0.10.0...0.11.0

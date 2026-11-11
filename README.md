@@ -2,7 +2,7 @@
 
 The design system's values, held once as typed Swift and generated for every surface that cannot import Swift.
 
-**Status:** pre-release (`0.x`, latest tag 0.11.2 (2026-11-10: the Tumblr stamp hashes the block's content, so a theme-model change the blog does not use no longer reads as stale), after 0.11.1 (`check-blog` treats a version-only difference as current) and 0.11.0 (the dashboard's gaps: type hierarchy, borderless equal-height cards, table selection and tree rows, dynamic colour, square chips, caution and warning, segmented fallback, flow), 0.10.0 (Swiss SwiftUI components, `AppPalette` window and surface, `swiss-gallery`), 0.9.0 (text roles, host surfaces, public contrast, Swiss as the environment default), 0.8.0 (app-palette adoption API and `AppPaletteSource`), 0.7.0 (terminal and slides emitters, the Tumblr full theme, `--format`) and 0.6.0 (the Tumblr block and `check-blog`); see `CHANGELOG.md`). Phase 1 and 1b of `project/master_plan.md`.
+**Status:** pre-release (`0.x`, 0.12.0 on `feature/console-theme-components-0.12.0`, untagged: `ListStyle` as a theme property, the `console` theme, and `components.css`, the web counterpart of the Swiss components; latest tag 0.11.2 (2026-11-10: the Tumblr stamp hashes the block's content, so a theme-model change the blog does not use no longer reads as stale), after 0.11.1 (`check-blog` treats a version-only difference as current) and 0.11.0 (the dashboard's gaps: type hierarchy, borderless equal-height cards, table selection and tree rows, dynamic colour, square chips, caution and warning, segmented fallback, flow), 0.10.0 (Swiss SwiftUI components, `AppPalette` window and surface, `swiss-gallery`), 0.9.0 (text roles, host surfaces, public contrast, Swiss as the environment default), 0.8.0 (app-palette adoption API and `AppPaletteSource`), 0.7.0 (terminal and slides emitters, the Tumblr full theme, `--format`) and 0.6.0 (the Tumblr block and `check-blog`); see `CHANGELOG.md`). Phase 1 and 1b of `project/master_plan.md`.
 
 ## What it holds
 
@@ -94,11 +94,12 @@ values here are a labelled snapshot (`Snapshot.systemRelease`) for web, SVG, sli
 ```
 swift run design-tokens emit --all Generated      # or just: swift run design-tokens Generated
 swift run design-tokens emit --theme ft Generated # one theme's pair only
-swift run design-tokens emit --format ansi,slides Generated  # only those kinds (css, json, tumblr, ansi, slides)
+swift run design-tokens emit --format ansi,slides Generated  # only those kinds (css, json, tumblr, ansi, slides, components)
+swift run design-tokens emit --components Generated          # only components.css
 swift run design-tokens list                      # the registered theme ids
 ```
 
-writes `Generated/tokens.css` and `Generated/tokens.json` (the default look) and, for every theme in `Theme.all`,
+writes `Generated/tokens.css` and `Generated/tokens.json` (the default look), `Generated/components.css` (0.12.0) and, for every theme in `Theme.all`,
 `Generated/themes/<id>.css` and `<id>.json`, plus Swiss's Tumblr block `themes/swiss.tumblr.css`. All are committed, and a test fails if any differs from a fresh emit or if
 `Generated/` holds a file that is not generated, so regenerate and commit after changing a value.
 
@@ -138,6 +139,10 @@ drift checker: `project/plans/proposals/2026-11-10_AppPaletteAdoption.md`.
 text is drawn on, so the guarantee holds on yours and not only on Swiss's), `AppTextRole` and `AppPaletteSource.text(_:)` (one typed source the
 views read, cross-checked by `validate()`), and `RGB.contrastRatio(with:)` / `meetsAA(on:)` so an app writes no WCAG of its own. The SwiftUI
 `\.theme` default is now Swiss. Proposal: `project/plans/proposals/2026-11-10_TextRolesAndPaletteSurfaces.md`.
+
+## Web components and the Console theme (0.12.0)
+
+`Generated/components.css` is one stylesheet for any web page, written only in terms of a theme's custom properties (`var(--ink)`, `--rule`, `--radius-container`, `--card-border`, the `--type-*` roles, the `--list-*` tokens). Link a theme (`themes/swiss.css`, `themes/console.css`) and `components.css`, set `data-theme-name` on `<html>` (and `data-theme="light|dark"` to pin an appearance), and use the `dt-` classes (`dt-section`, `dt-kv`, `dt-table`, `dt-chip`, `dt-banner`, `dt-segmented`, `dt-button`, `dt-input`, `dt-card`, `dt-grid`...; the list is in `ComponentsCSSEmitter`'s documentation). A theme's `listStyle` decides how a `dt-list` of `dt-item`s looks: hairline rows under Swiss, bordered cards in an auto-fit grid under Console, with the same markup. The registered themes are now `swiss`, `house`, `princeton`, `ft`, `economist`, the four legacy themes and `console` (fixed-dark navy, monospaced, cards: the former FleetWatch page).
 
 ## Swiss components for SwiftUI (0.10.0, 0.11.0)
 
