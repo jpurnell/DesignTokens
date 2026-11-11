@@ -517,6 +517,18 @@ public struct ShadowSpec: Sendable, Hashable, Codable {
     }
 }
 
+/// How a theme lays out a list of like items (the machines on a dashboard, the rows of a table): as
+/// hairline-separated rows or as bordered cards in a grid. Added in 0.12.0.
+///
+/// It is a property of the theme, not of the markup, so one piece of HTML (or one SwiftUI view tree) takes either look
+/// by swapping the theme. The CSS emitter turns it into the `--list-*` custom properties `components.css` reads.
+public enum ListStyle: String, Sendable, Hashable, Codable, CaseIterable {
+    /// One column, each item set off by a hairline above it, no surface (Swiss).
+    case rows
+    /// An auto-fitting grid of items, each a bordered, padded surface with the container radius (Console).
+    case cards
+}
+
 /// Margins, gaps, the page grid, radii and gridlines.
 public struct LayoutSpec: Sendable, Hashable, Codable {
     /// Margins around a chart.
@@ -545,13 +557,16 @@ public struct LayoutSpec: Sendable, Hashable, Codable {
     public var cardBorder: Double
     /// Padding inside the card border, in points. Added in 0.6.0 (Swiss: 8).
     public var cardPadding: Double
+    /// How a list of like items is laid out: hairline rows or bordered cards. Added in 0.12.0 (Swiss: ``ListStyle/rows``).
+    public var listStyle: ListStyle
 
     private enum CodingKeys: String, CodingKey {
         case margins, gaps, gutter, columns, baseUnit, containerRadius, controlRadius, gridlines, shadow
-        case annotationRadius, cardBorder, cardPadding
+        case annotationRadius, cardBorder, cardPadding, listStyle
     }
 
-    /// Decodes a layout; a missing `annotationRadius`, `cardBorder` or `cardPadding` (JSON before they were added) is 0.
+    /// Decodes a layout; a missing `annotationRadius`, `cardBorder` or `cardPadding` (JSON before they were added) is 0, and a
+    /// missing `listStyle` (JSON before 0.12.0) is ``ListStyle/rows``.
     public init(from decoder: any Decoder) throws {
         let c = try decoder.container(keyedBy: CodingKeys.self)
         margins = try c.decode(Insets.self, forKey: .margins)
@@ -566,13 +581,15 @@ public struct LayoutSpec: Sendable, Hashable, Codable {
         annotationRadius = try c.decodeIfPresent(Double.self, forKey: .annotationRadius) ?? 0
         cardBorder = try c.decodeIfPresent(Double.self, forKey: .cardBorder) ?? 0
         cardPadding = try c.decodeIfPresent(Double.self, forKey: .cardPadding) ?? 0
+        listStyle = try c.decodeIfPresent(ListStyle.self, forKey: .listStyle) ?? .rows
     }
 
     /// Creates a layout.
     public init(margins: Insets, gaps: Gaps, gutter: Double, columns: Int, baseUnit: Double,
                 containerRadius: Double, controlRadius: Double, gridlines: GridlineStyle,
                 shadow: ShadowSpec? = nil, annotationRadius: Double = 0, cardBorder: Double = 0,
-                cardPadding: Double = 0) {
+                cardPadding: Double = 0, listStyle: ListStyle = .rows) {
+        self.listStyle = listStyle
         self.cardBorder = cardBorder
         self.cardPadding = cardPadding
         self.annotationRadius = annotationRadius

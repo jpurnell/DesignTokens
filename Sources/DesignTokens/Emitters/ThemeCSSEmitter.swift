@@ -22,6 +22,8 @@ import Foundation
 /// Increased-contrast blocks carry only the colours that have a measured increased-contrast value: the
 /// others carry through, as ``Adaptive/value(in:increasedContrast:)`` does.
 ///
+/// The list style is emitted as `--list-style` and the `--list-item-*` and `--list-gap` properties derived from it.
+///
 /// Not emitted as CSS: value-label and series-labelling flags, axis placement and number formats (the value halo, card
 /// border and padding, reference-label gap, mark default fill and emphasis are emitted). They are not
 /// presentational properties a stylesheet can use; the theme's JSON carries them.
@@ -177,6 +179,23 @@ public enum ThemeCSSEmitter {
         add("gap-reference-label", px(layout.gaps.referenceLabel))
         add("card-border", px(layout.cardBorder))
         add("card-padding", px(layout.cardPadding))
+        // The list style, and what a stylesheet needs from it. A custom property cannot branch, so the theme resolves the
+        // choice here and components.css only reads the results: rows are one column, set off by a hairline, on no surface;
+        // cards fill the width in an auto-fit grid of surfaces a gutter apart. The cards' minimum width is 96 base units
+        // (384 px at 4 px), the width of the page this was drawn from (380 px), kept on the grid.
+        add("list-style", layout.listStyle.rawValue)
+        switch layout.listStyle {
+        case .rows:
+            add("list-item-min", "100%")
+            add("list-item-rule", "var(--rule-hairline)")
+            add("list-item-surface", "transparent")
+            add("list-gap", "0px")
+        case .cards:
+            add("list-item-min", px(layout.baseUnit * Self.cardMinimumWidthInUnits))
+            add("list-item-rule", "0px")
+            add("list-item-surface", "var(--surface)")
+            add("list-gap", "var(--gutter)")
+        }
         add("label-value-halo", px(s.labels.valueHalo))
         add("gridlines", kebab(layout.gridlines.rawValue))
         if let shadow = layout.shadow {
@@ -225,6 +244,9 @@ public enum ThemeCSSEmitter {
         }
         return out
     }
+
+    /// The narrowest a card in an auto-fit grid is allowed to get, in base units.
+    private static let cardMinimumWidthInUnits = 96.0
 
     private static func family(_ ref: FontFamilyRef) -> String {
         switch ref {

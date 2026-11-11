@@ -1,0 +1,681 @@
+{
+  "appearances" : "fixedDark",
+  "conformance" : {
+    "entries" : [
+      {
+        "appearance" : "dark",
+        "check" : "lightnessBand",
+        "measured" : 0.714,
+        "severity" : "fail",
+        "subject" : "blue",
+        "threshold" : 0.67
+      },
+      {
+        "appearance" : "dark",
+        "check" : "lightnessBand",
+        "measured" : 0.8,
+        "severity" : "fail",
+        "subject" : "green",
+        "threshold" : 0.67
+      },
+      {
+        "appearance" : "dark",
+        "check" : "lightnessBand",
+        "measured" : 0.758,
+        "severity" : "fail",
+        "subject" : "orange",
+        "threshold" : 0.67
+      },
+      {
+        "appearance" : "dark",
+        "check" : "lightnessBand",
+        "measured" : 0.722,
+        "severity" : "fail",
+        "subject" : "purple",
+        "threshold" : 0.67
+      },
+      {
+        "appearance" : "dark",
+        "check" : "lightnessBand",
+        "measured" : 0.711,
+        "severity" : "fail",
+        "subject" : "red",
+        "threshold" : 0.67
+      },
+      {
+        "appearance" : "dark",
+        "check" : "lightnessBand",
+        "measured" : 0.797,
+        "severity" : "fail",
+        "subject" : "cyan",
+        "threshold" : 0.67
+      },
+      {
+        "appearance" : "dark",
+        "check" : "lightnessBand",
+        "measured" : 0.861,
+        "severity" : "fail",
+        "subject" : "yellow",
+        "threshold" : 0.67
+      },
+      {
+        "appearance" : "dark",
+        "check" : "lightnessBand",
+        "measured" : 0.725,
+        "severity" : "fail",
+        "subject" : "pink",
+        "threshold" : 0.67
+      },
+      {
+        "appearance" : "dark",
+        "check" : "cvdSeparation",
+        "measured" : 7.1,
+        "severity" : "warn",
+        "subject" : "green / orange",
+        "threshold" : 8
+      }
+    ],
+    "kind" : "ledger"
+  },
+  "id" : "console",
+  "name" : "Console",
+  "palette" : {
+    "accent" : {
+      "light" : "#60A5FA"
+    },
+    "background" : {
+      "light" : "#1A1A2E"
+    },
+    "colourOverrides" : {
+
+    },
+    "diverging" : {
+      "light" : [
+        "#60A5FA",
+        "#4C4C66",
+        "#F87171"
+      ]
+    },
+    "extraRamps" : {
+
+    },
+    "extras" : {
+      "alert" : {
+        "light" : "#FB923C"
+      },
+      "inset" : {
+        "light" : "#0A0A1A"
+      }
+    },
+    "ink" : {
+      "light" : "#E0E0E0"
+    },
+    "link" : {
+      "light" : "#60A5FA"
+    },
+    "muted" : {
+      "light" : "#8888AA"
+    },
+    "negative" : {
+      "light" : "#F87171"
+    },
+    "onAccent" : {
+      "light" : "#0A0A1A"
+    },
+    "positive" : {
+      "light" : "#4ADE80"
+    },
+    "rampOverrides" : {
+
+    },
+    "rule" : {
+      "light" : "#0F3460"
+    },
+    "secondaryInk" : {
+      "light" : "#8888AA"
+    },
+    "sequential" : {
+      "light" : [
+        "#1D4ED8",
+        "#3B82F6",
+        "#60A5FA",
+        "#93C5FD",
+        "#BFDBFE"
+      ]
+    },
+    "series" : [
+      {
+        "color" : {
+          "light" : "#60A5FA"
+        },
+        "name" : "blue"
+      },
+      {
+        "color" : {
+          "light" : "#4ADE80"
+        },
+        "name" : "green"
+      },
+      {
+        "color" : {
+          "light" : "#FB923C"
+        },
+        "name" : "orange"
+      },
+      {
+        "color" : {
+          "light" : "#C084FC"
+        },
+        "name" : "purple"
+      },
+      {
+        "color" : {
+          "light" : "#F87171"
+        },
+        "name" : "red"
+      },
+      {
+        "color" : {
+          "light" : "#22D3EE"
+        },
+        "name" : "cyan"
+      },
+      {
+        "color" : {
+          "light" : "#FACC15"
+        },
+        "name" : "yellow"
+      },
+      {
+        "color" : {
+          "light" : "#F472B6"
+        },
+        "name" : "pink"
+      }
+    ],
+    "surface" : {
+      "light" : "#16213E"
+    },
+    "warning" : {
+      "light" : "#FACC15"
+    }
+  },
+  "structure" : {
+    "labels" : {
+      "axisLabelPlacement" : "besideAxis",
+      "axisSide" : "leading",
+      "series" : "direct",
+      "sourceLine" : true,
+      "valueHalo" : 3,
+      "values" : "aboveOrEnd"
+    },
+    "layout" : {
+      "annotationRadius" : 8,
+      "baseUnit" : 4,
+      "cardBorder" : 1,
+      "cardPadding" : 20,
+      "columns" : 12,
+      "containerRadius" : 8,
+      "controlRadius" : 4,
+      "gaps" : {
+        "plot" : 8,
+        "referenceLabel" : 5,
+        "source" : 10,
+        "subtitle" : 12,
+        "title" : 4
+      },
+      "gridlines" : "horizontalFaint",
+      "gutter" : 16,
+      "listStyle" : "cards",
+      "margins" : {
+        "bottom" : 12,
+        "leading" : 8,
+        "top" : 6,
+        "trailing" : 8
+      }
+    },
+    "marks" : {
+      "areaOpacity" : 0.22,
+      "bandOpacity" : 0.14,
+      "barCornerRadius" : 3,
+      "barFill" : "flat",
+      "barWidthRatio" : 0.7,
+      "defaultEmphasis" : "latest",
+      "defaultFill" : "muted",
+      "detailLineWidth" : 1.5,
+      "emphasisFill" : "accent",
+      "fillOpacity" : 0.35,
+      "lineEnd" : "none",
+      "lineWidth" : 2,
+      "pointSize" : 24,
+      "selectedLineWidth" : 3
+    },
+    "numbers" : {
+      "count" : {
+        "abbreviate" : true,
+        "decimals" : 0,
+        "percentScales" : true,
+        "prefix" : "",
+        "style" : "decimal",
+        "suffix" : ""
+      },
+      "currency" : {
+        "abbreviate" : true,
+        "percentScales" : true,
+        "prefix" : "$",
+        "style" : "currency",
+        "suffix" : ""
+      },
+      "index" : {
+        "abbreviate" : false,
+        "decimals" : 1,
+        "percentScales" : true,
+        "prefix" : "",
+        "style" : "decimal",
+        "suffix" : ""
+      },
+      "percent" : {
+        "abbreviate" : false,
+        "decimals" : 1,
+        "percentScales" : true,
+        "prefix" : "",
+        "style" : "percent",
+        "suffix" : ""
+      },
+      "plain" : {
+        "abbreviate" : false,
+        "decimals" : 2,
+        "percentScales" : true,
+        "prefix" : "",
+        "style" : "decimal",
+        "suffix" : ""
+      },
+      "ratio" : {
+        "abbreviate" : false,
+        "decimals" : 2,
+        "percentScales" : true,
+        "prefix" : "",
+        "style" : "decimal",
+        "suffix" : "×"
+      },
+      "temperature" : {
+        "abbreviate" : false,
+        "decimals" : 1,
+        "percentScales" : true,
+        "prefix" : "",
+        "style" : "decimal",
+        "suffix" : "°"
+      }
+    },
+    "rules" : {
+      "baseline" : 1,
+      "baselineColour" : "rule",
+      "gridline" : 1,
+      "hairline" : 1,
+      "page" : 8,
+      "plotBorder" : 0,
+      "reference" : {
+        "dash" : [
+
+        ],
+        "weight" : 1
+      },
+      "referenceColour" : "secondaryInk",
+      "referenceLabelColour" : "secondaryInk",
+      "section" : 3,
+      "title" : {
+        "colour" : "ink",
+        "inset" : 0,
+        "position" : "none",
+        "weight" : 0
+      }
+    },
+    "type" : {
+      "annotation" : {
+        "family" : {
+          "fallback" : {
+            "fallback" : {
+              "fallback" : {
+                "kind" : "mono"
+              },
+              "kind" : "named",
+              "name" : "Consolas"
+            },
+            "kind" : "named",
+            "name" : "Menlo"
+          },
+          "kind" : "named",
+          "name" : "SF Mono"
+        },
+        "italic" : false,
+        "lineHeight" : 1.3,
+        "size" : 11,
+        "tracking" : 0,
+        "uppercase" : false,
+        "weight" : 700
+      },
+      "axisLabel" : {
+        "family" : {
+          "fallback" : {
+            "fallback" : {
+              "fallback" : {
+                "kind" : "mono"
+              },
+              "kind" : "named",
+              "name" : "Consolas"
+            },
+            "kind" : "named",
+            "name" : "Menlo"
+          },
+          "kind" : "named",
+          "name" : "SF Mono"
+        },
+        "italic" : false,
+        "lineHeight" : 1.3,
+        "size" : 11,
+        "tracking" : 0,
+        "uppercase" : false,
+        "weight" : 400
+      },
+      "axisTitle" : {
+        "family" : {
+          "fallback" : {
+            "fallback" : {
+              "fallback" : {
+                "kind" : "mono"
+              },
+              "kind" : "named",
+              "name" : "Consolas"
+            },
+            "kind" : "named",
+            "name" : "Menlo"
+          },
+          "kind" : "named",
+          "name" : "SF Mono"
+        },
+        "italic" : false,
+        "lineHeight" : 1.3,
+        "size" : 11,
+        "tracking" : 0,
+        "uppercase" : false,
+        "weight" : 500
+      },
+      "body" : {
+        "family" : {
+          "fallback" : {
+            "fallback" : {
+              "fallback" : {
+                "kind" : "mono"
+              },
+              "kind" : "named",
+              "name" : "Consolas"
+            },
+            "kind" : "named",
+            "name" : "Menlo"
+          },
+          "kind" : "named",
+          "name" : "SF Mono"
+        },
+        "italic" : false,
+        "lineHeight" : 1.5,
+        "size" : 16,
+        "tracking" : 0,
+        "uppercase" : false,
+        "weight" : 400
+      },
+      "caption" : {
+        "family" : {
+          "fallback" : {
+            "fallback" : {
+              "fallback" : {
+                "kind" : "mono"
+              },
+              "kind" : "named",
+              "name" : "Consolas"
+            },
+            "kind" : "named",
+            "name" : "Menlo"
+          },
+          "kind" : "named",
+          "name" : "SF Mono"
+        },
+        "italic" : false,
+        "lineHeight" : 1.4,
+        "size" : 13,
+        "tracking" : 0,
+        "uppercase" : false,
+        "weight" : 400
+      },
+      "display" : {
+        "family" : {
+          "fallback" : {
+            "fallback" : {
+              "fallback" : {
+                "kind" : "mono"
+              },
+              "kind" : "named",
+              "name" : "Consolas"
+            },
+            "kind" : "named",
+            "name" : "Menlo"
+          },
+          "kind" : "named",
+          "name" : "SF Mono"
+        },
+        "italic" : false,
+        "lineHeight" : 0.86,
+        "size" : 168,
+        "tracking" : -0.05,
+        "uppercase" : false,
+        "weight" : 800
+      },
+      "heading" : {
+        "family" : {
+          "fallback" : {
+            "fallback" : {
+              "fallback" : {
+                "kind" : "mono"
+              },
+              "kind" : "named",
+              "name" : "Consolas"
+            },
+            "kind" : "named",
+            "name" : "Menlo"
+          },
+          "kind" : "named",
+          "name" : "SF Mono"
+        },
+        "italic" : false,
+        "lineHeight" : 1.2,
+        "size" : 28,
+        "tracking" : -0.02,
+        "uppercase" : false,
+        "weight" : 700
+      },
+      "label" : {
+        "family" : {
+          "fallback" : {
+            "fallback" : {
+              "fallback" : {
+                "kind" : "mono"
+              },
+              "kind" : "named",
+              "name" : "Consolas"
+            },
+            "kind" : "named",
+            "name" : "Menlo"
+          },
+          "kind" : "named",
+          "name" : "SF Mono"
+        },
+        "italic" : false,
+        "lineHeight" : 1.3,
+        "size" : 11,
+        "tracking" : 0.08,
+        "uppercase" : true,
+        "weight" : 600
+      },
+      "note" : {
+        "family" : {
+          "fallback" : {
+            "fallback" : {
+              "fallback" : {
+                "kind" : "mono"
+              },
+              "kind" : "named",
+              "name" : "Consolas"
+            },
+            "kind" : "named",
+            "name" : "Menlo"
+          },
+          "kind" : "named",
+          "name" : "SF Mono"
+        },
+        "italic" : false,
+        "lineHeight" : 1.3,
+        "size" : 11,
+        "tracking" : 0,
+        "uppercase" : false,
+        "weight" : 400
+      },
+      "seriesLabel" : {
+        "family" : {
+          "fallback" : {
+            "fallback" : {
+              "fallback" : {
+                "kind" : "mono"
+              },
+              "kind" : "named",
+              "name" : "Consolas"
+            },
+            "kind" : "named",
+            "name" : "Menlo"
+          },
+          "kind" : "named",
+          "name" : "SF Mono"
+        },
+        "italic" : false,
+        "lineHeight" : 1.3,
+        "size" : 12,
+        "tracking" : 0,
+        "uppercase" : false,
+        "weight" : 600
+      },
+      "source" : {
+        "family" : {
+          "fallback" : {
+            "fallback" : {
+              "fallback" : {
+                "kind" : "mono"
+              },
+              "kind" : "named",
+              "name" : "Consolas"
+            },
+            "kind" : "named",
+            "name" : "Menlo"
+          },
+          "kind" : "named",
+          "name" : "SF Mono"
+        },
+        "italic" : false,
+        "lineHeight" : 1.3,
+        "size" : 11,
+        "tracking" : 0,
+        "uppercase" : false,
+        "weight" : 400
+      },
+      "subtitle" : {
+        "family" : {
+          "fallback" : {
+            "fallback" : {
+              "fallback" : {
+                "kind" : "mono"
+              },
+              "kind" : "named",
+              "name" : "Consolas"
+            },
+            "kind" : "named",
+            "name" : "Menlo"
+          },
+          "kind" : "named",
+          "name" : "SF Mono"
+        },
+        "italic" : false,
+        "lineHeight" : 1.3,
+        "size" : 13,
+        "tracking" : 0,
+        "uppercase" : false,
+        "weight" : 400
+      },
+      "tag" : {
+        "family" : {
+          "fallback" : {
+            "fallback" : {
+              "fallback" : {
+                "kind" : "mono"
+              },
+              "kind" : "named",
+              "name" : "Consolas"
+            },
+            "kind" : "named",
+            "name" : "Menlo"
+          },
+          "kind" : "named",
+          "name" : "SF Mono"
+        },
+        "italic" : false,
+        "lineHeight" : 1.3,
+        "size" : 11,
+        "tracking" : 0,
+        "uppercase" : false,
+        "weight" : 700
+      },
+      "title" : {
+        "family" : {
+          "fallback" : {
+            "fallback" : {
+              "fallback" : {
+                "kind" : "mono"
+              },
+              "kind" : "named",
+              "name" : "Consolas"
+            },
+            "kind" : "named",
+            "name" : "Menlo"
+          },
+          "kind" : "named",
+          "name" : "SF Mono"
+        },
+        "italic" : false,
+        "lineHeight" : 1.3,
+        "size" : 17,
+        "tracking" : 0,
+        "uppercase" : false,
+        "weight" : 700
+      },
+      "uiTitle" : {
+        "family" : {
+          "fallback" : {
+            "fallback" : {
+              "fallback" : {
+                "kind" : "mono"
+              },
+              "kind" : "named",
+              "name" : "Consolas"
+            },
+            "kind" : "named",
+            "name" : "Menlo"
+          },
+          "kind" : "named",
+          "name" : "SF Mono"
+        },
+        "italic" : false,
+        "lineHeight" : 1.12,
+        "size" : 34,
+        "tracking" : -0.03,
+        "uppercase" : false,
+        "weight" : 800
+      }
+    }
+  }
+}

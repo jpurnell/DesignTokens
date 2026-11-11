@@ -255,4 +255,26 @@ extension Theme {
             ledgerFail(.rampSingleHue, .light, "extraRamps.volatility", 149.0, 40.0),
         ])
     }
+
+    /// Console's ledger: the findings the package's validator makes about the page's own colours on its own `#1A1A2E` background, in the
+    /// dark appearance (a fixed-dark theme is measured as dark only). Nothing tuned: these are the measured numbers, recorded as
+    /// they came out, not written to look clean.
+    ///
+    /// In words: all eight series sit above the dark band's 0.67 OKLCH lightness ceiling (they are the Tailwind 400 shades, which
+    /// are light), and green and orange are 7.1 apart under colour-vision simulation against the method's 8. The roles (ink, the
+    /// three status colours, the link and the accent against the page and card surfaces) and both ramps pass.
+    /// A chart in this theme labels series directly or prints values, as Swiss's does for its flagged slots.
+    static var consoleConformance: Conformance {
+        Conformance(kind: .ledger, entries: [
+            ledgerFail(.lightnessBand, .dark, "blue", 0.714, 0.67),
+            ledgerFail(.lightnessBand, .dark, "green", 0.8, 0.67),
+            ledgerFail(.lightnessBand, .dark, "orange", 0.758, 0.67),
+            ledgerFail(.lightnessBand, .dark, "purple", 0.722, 0.67),
+            ledgerFail(.lightnessBand, .dark, "red", 0.711, 0.67),
+            ledgerFail(.lightnessBand, .dark, "cyan", 0.797, 0.67),
+            ledgerFail(.lightnessBand, .dark, "yellow", 0.861, 0.67),
+            ledgerFail(.lightnessBand, .dark, "pink", 0.725, 0.67),
+            ledgerWarn(.cvdSeparation, .dark, "green / orange", 7.1, 8.0),
+        ])
+    }
 }

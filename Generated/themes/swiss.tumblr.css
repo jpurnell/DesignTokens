@@ -1,9 +1,9 @@
 /* >>> design-tokens block begin */
-/* theme: swiss | DesignTokens 0.11.2 | template 1 | hash fnv1a64:2ed110c5ede4c434 | snapshot macOS 27.2 | generated, do not edit */
+/* theme: swiss | DesignTokens 0.12.0 | template 1 | hash fnv1a64:2ed110c5ede4c434 | snapshot macOS 27.2 | generated, do not edit */
 /* contract: the theme HTML must keep these class names: .header .nav .post .post.newday .datetime .day .my .type .row .k .caption .video .short_quote .medium_quote .long_quote .pager, and Tumblr's div.npf-link-block, .tumblr_video_container */
 /* paste inside the theme's style element, replacing everything from the begin comment to the end comment */
 :root {
-  --theme-stamp: "swiss 0.11.2 t1 fnv1a64:2ed110c5ede4c434";
+  --theme-stamp: "swiss 0.12.0 t1 fnv1a64:2ed110c5ede4c434";
   color-scheme: light dark;
   --bg: #FAFAFA;
   --fg: #111214;

@@ -27,7 +27,7 @@ struct ChartAlignmentHelpersTests {
         for theme in Theme.all where theme.structure.marks.defaultEmphasis == .none {
             #expect(theme.structure.marks.defaultEmphasisIndex(count: 8, isVertical: true) == nil, "\(theme.id)")
         }
-        #expect(Theme.all.filter { $0.structure.marks.defaultEmphasis == .latest }.map(\.id) == ["swiss", "princeton"])
+        #expect(Theme.all.filter { $0.structure.marks.defaultEmphasis == .latest }.map(\.id) == ["swiss", "princeton", "console"])
     }
 
     // MARK: Number formats

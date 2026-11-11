@@ -360,6 +360,7 @@
       },
       "gridlines" : "platformAutomatic",
       "gutter" : 16,
+      "listStyle" : "rows",
       "margins" : {
         "bottom" : 14,
         "leading" : 16,

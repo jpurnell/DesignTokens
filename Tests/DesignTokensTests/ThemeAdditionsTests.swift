@@ -6,7 +6,7 @@ import Testing
 struct ThemeAdditionsTests {
     @Test("the package version is 0.8.0")
     func versionConstant() {
-        #expect(DesignTokens.version == "0.11.2")
+        #expect(DesignTokens.version == "0.12.0")
     }
 
     @Test("TypeRole lists the nine chart roles and the six UI roles, and subscripts each field")
@@ -93,7 +93,8 @@ struct ThemeAdditionsTests {
         let legacy = Theme.all.filter { $0.id.hasPrefix("legacy-") }
         #expect(legacy.count == 4)
         for theme in legacy { #expect(theme.structure.layout.annotationRadius == 8, "\(theme.id)") }
-        for theme in Theme.all where !theme.id.hasPrefix("legacy-") {
+        // Console (0.12.0) draws its annotation cards at its container radius, 8
+        for theme in Theme.all where !theme.id.hasPrefix("legacy-") && theme.id != "console" {
             #expect(theme.structure.layout.annotationRadius == 0, "\(theme.id)")
         }
     }

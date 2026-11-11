@@ -482,6 +482,7 @@
       },
       "gridlines" : "horizontalFaint",
       "gutter" : 16,
+      "listStyle" : "rows",
       "margins" : {
         "bottom" : 12,
         "leading" : 8,

@@ -7,7 +7,7 @@ struct ThemeRegistryTests {
     @Test("the registry has a stable order and unique ids")
     func registryOrderIsStable() {
         #expect(Theme.all.map(\.id) == ["swiss", "house", "princeton", "ft", "economist",
-                                        "legacy-default", "legacy-dark", "legacy-financial", "legacy-accessible"])
+                                        "legacy-default", "legacy-dark", "legacy-financial", "legacy-accessible", "console"])
         #expect(Set(Theme.all.map(\.id)).count == Theme.all.count)
         #expect(Theme.all.map(\.id) == Theme.all.map(\.id))
     }

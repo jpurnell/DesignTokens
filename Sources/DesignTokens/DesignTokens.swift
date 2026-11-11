@@ -12,5 +12,5 @@ public enum DesignTokens {}
 
 public extension DesignTokens {
     /// The package version, written into every generated file's header. It moves with the CHANGELOG.
-    static let version = "0.11.2"
+    static let version = "0.12.0"
 }

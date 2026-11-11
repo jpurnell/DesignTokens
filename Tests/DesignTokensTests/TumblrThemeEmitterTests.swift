@@ -62,8 +62,8 @@ struct TumblrThemeEmitterTests {
                 Issue.record("\(theme.id): expected stale"); continue
             }
         }
-        #expect(DesignTokens.version == "0.11.2")
-        #expect(try TumblrEmitter.stamp(for: .swiss).text.hasPrefix("swiss 0.11.2 t1 fnv1a64:"))
+        #expect(DesignTokens.version == "0.12.0")
+        #expect(try TumblrEmitter.stamp(for: .swiss).text.hasPrefix("swiss 0.12.0 t1 fnv1a64:"))
     }
 
     @Test("check-blog --html-file accepts the generated document: exit 0, current")
