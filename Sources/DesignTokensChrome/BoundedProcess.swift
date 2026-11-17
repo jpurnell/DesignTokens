@@ -1,3 +1,4 @@
+#if os(macOS) || os(Linux)
 import Foundation
 
 /// Runs a child process with a deadline, so a hung browser cannot hang the tool.
@@ -77,3 +78,4 @@ enum BoundedProcess {
         }
     }
 }
+#endif

@@ -45,9 +45,19 @@ let package = Package(
                 .enableUpcomingFeature("ApproachableConcurrency"),
             ],
         ),
+        // The one place this package starts a child process (`posix_spawn`, for the headless-Chrome blog fetch). tvOS and
+        // watchOS mark those calls unavailable, so they live here, outside the core, and the sources are empty where the
+        // calls do not exist: `DesignTokens` and `DesignTokensSwiftUI` build for every platform without them. Not a product.
+        .target(
+            name: "DesignTokensChrome",
+            dependencies: ["DesignTokens"],
+            swiftSettings: [
+                .enableUpcomingFeature("ApproachableConcurrency"),
+            ],
+        ),
         .executableTarget(
             name: "design-tokens",
-            dependencies: ["DesignTokens"],
+            dependencies: ["DesignTokens", "DesignTokensChrome"],
             swiftSettings: [
                 .enableUpcomingFeature("ApproachableConcurrency"),
             ],
@@ -74,6 +84,13 @@ let package = Package(
             dependencies: ["DesignTokens"],
             // A note, not a resource: see Vendored/README.md.
             exclude: ["Vendored"],
+            swiftSettings: [
+                .enableUpcomingFeature("ApproachableConcurrency"),
+            ],
+        ),
+        .testTarget(
+            name: "DesignTokensChromeTests",
+            dependencies: ["DesignTokensChrome", "DesignTokens"],
             swiftSettings: [
                 .enableUpcomingFeature("ApproachableConcurrency"),
             ],

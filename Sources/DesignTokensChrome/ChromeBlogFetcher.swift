@@ -1,4 +1,6 @@
+#if os(macOS) || os(Linux)
 import Foundation
+import DesignTokens
 
 /// Why Chrome could not produce a page.
 public enum ChromeFetchError: Error, Sendable, Equatable, CustomStringConvertible {
@@ -82,3 +84,4 @@ public struct ChromeBlogFetcher: BlogFetching {
         return html
     }
 }
+#endif

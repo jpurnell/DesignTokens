@@ -1,6 +1,7 @@
+#if os(macOS) || os(Linux)
 import Foundation
 import Testing
-@testable import DesignTokens
+@testable import DesignTokensChrome
 
 @Suite("Bounded process")
 struct BoundedProcessTests {
@@ -39,3 +40,4 @@ struct BoundedProcessTests {
         #expect(out.stdout.count == 400_000)
     }
 }
+#endif

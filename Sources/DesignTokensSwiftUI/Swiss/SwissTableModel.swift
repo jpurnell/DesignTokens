@@ -231,13 +231,23 @@ public enum SwissTableCopy {
         }.joined(separator: "\n")
     }
 
-    /// Puts text on the general pasteboard.
+    /// Whether this platform has a pasteboard to copy to. tvOS and watchOS have none (`UIPasteboard` is unavailable there), so a
+    /// table on them offers no Copy command and ``write(_:)`` does nothing; ``text(rows:columns:)`` still builds the text.
+    public static var isSupported: Bool {
+        #if os(tvOS) || os(watchOS)
+        false
+        #else
+        true
+        #endif
+    }
+
+    /// Puts text on the general pasteboard. Does nothing where ``isSupported`` is false.
     @MainActor
     static func write(_ text: String) {
         #if canImport(AppKit)
         NSPasteboard.general.clearContents()
         NSPasteboard.general.setString(text, forType: .string)
-        #elseif canImport(UIKit)
+        #elseif canImport(UIKit) && !os(tvOS) && !os(watchOS)
         UIPasteboard.general.string = text
         #endif
     }

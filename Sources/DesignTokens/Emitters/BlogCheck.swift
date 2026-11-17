@@ -47,7 +47,7 @@ public enum BlogStatus: Sendable, Equatable {
 /// Fetches the rendered HTML of a page.
 ///
 /// The real implementation needs a browser: the blog answers a plain HTTP request with 403 and a JavaScript
-/// challenge (``ChromeBlogFetcher``). Tests use a fake.
+/// challenge (`ChromeBlogFetcher`, in `DesignTokensChrome`). Tests use a fake.
 public protocol BlogFetching: Sendable {
     /// The rendered HTML of `url`.
     func fetch(_ url: URL) throws -> String

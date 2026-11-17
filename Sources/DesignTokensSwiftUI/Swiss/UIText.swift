@@ -157,7 +157,11 @@ public struct UITextSpec: Sendable, Hashable {
     #elseif canImport(UIKit)
     private static func platformStyle(_ style: Font.TextStyle) -> UIFont.TextStyle? {
         switch style {
+        #if os(tvOS)
+        case .largeTitle: .title1 // tvOS has no large-title text style; its title1 is the largest
+        #else
         case .largeTitle: .largeTitle
+        #endif
         case .title: .title1
         case .title2: .title2
         case .title3: .title3

@@ -131,6 +131,15 @@ struct SwissTableSelectionTests {
         #expect(SwissTableSelectionRule.moved(from: [1], by: 1, order: [Int]()) == nil)
     }
 
+    @Test("copy: a platform with a pasteboard says so, and tvOS and watchOS, which have none, say they do not")
+    func copyIsSupportedWhereAPasteboardExists() {
+        #if os(tvOS) || os(watchOS)
+        #expect(!SwissTableCopy.isSupported)
+        #else
+        #expect(SwissTableCopy.isSupported)
+        #endif
+    }
+
     @Test("copy: tab-separated cells, one row to a line, in the order given; tabs and breaks inside a cell become spaces")
     func copy() {
         let rows = [Item(id: 1, name: "alpha", count: 9), Item(id: 2, name: "multi\nline\tname", count: 5)]

@@ -1,4 +1,5 @@
 import DesignTokens
+import DesignTokensChrome
 import Foundation
 
 /// `tumblr` and `check-blog` are handled by ``TumblrCommand``; everything else goes to ``Generator``.

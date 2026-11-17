@@ -27,7 +27,7 @@ public struct CommandResult: Sendable, Equatable {
 /// `tumblr` writes `DIR/themes/ID.tumblr.css` (default `Generated`); with `--full` it also writes the complete theme document
 /// `DIR/themes/ID.tumblr.html` (``TumblrThemeEmitter``), filling the per-blog values from the options (none given: placeholders). `check-blog` prints one line and exits 0 (current),
 /// 1 (stale), 2 (unstamped), 3 (garbled stamp) or 4 (page could not be read); usage errors exit 64. The page comes
-/// from `--html-file` when given, otherwise from the fetcher, which the executable makes a ``ChromeBlogFetcher``.
+/// from `--html-file` when given, otherwise from the fetcher, which the executable makes a `ChromeBlogFetcher` (from `DesignTokensChrome`).
 public enum TumblrCommand {
     /// The subcommand names this type handles.
     public static let names: Set<String> = ["tumblr", "check-blog"]

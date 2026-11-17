@@ -1,5 +1,28 @@
 # Changelog
 
+## [Unreleased]
+
+Branch `feature/platform-isolation` from `main` (`7cc3266`). `DesignTokens.version` is unchanged, so nothing in `Generated/` changes.
+
+### Fixed
+- **`DesignTokens` did not build for tvOS** (and, expected, not for watchOS). `Emitters/BoundedProcess.swift` called `posix_spawn_file_actions_*`, which tvOS marks unavailable. Measured: `xcodebuild -scheme DesignTokensSwiftUI -destination 'generic/platform=tvOS Simulator'` failed with four `posix_spawn` errors in the core. The code moved to its own target (below).
+- **`DesignTokensSwiftUI` did not build for tvOS.** Four more sites, none of which showed until the core built: `scrollContentBackground` (no such modifier on tvOS; `swissTableStyle()` returns the view unchanged there), `UIPasteboard` (none on tvOS), and `UIFont.TextStyle.largeTitle` (tvOS has none; `.largeTitle` maps to `title1`).
+
+### Changed
+- **New target `DesignTokensChrome`** holds `BoundedProcess` and `ChromeBlogFetcher` (with `ChromeFetchError`), the package's only child-process code. Its sources are wrapped in `#if os(macOS) || os(Linux)`, so the target is empty where `posix_spawn` is unavailable. It is not a product; the `design-tokens` executable depends on it. `BlogFetching`, `BlogChecker` and `TumblrCommand` stay in `DesignTokens` and take the fetcher as a parameter, so the core still reads the blog only through the protocol.
+- **Source-breaking, no known caller:** `ChromeBlogFetcher` and `ChromeFetchError` are no longer in module `DesignTokens`; a caller adds `import DesignTokensChrome`. A search of every Swift package and the two sites under `Development/Swift` found none outside this repository.
+
+### Added
+- `SwissTableCopy.isSupported`: false on tvOS and watchOS, which have no pasteboard; the table's Copy command is not offered there and `write(_:)` does nothing.
+- `scripts/check-platforms.sh`: builds `DesignTokens` and `DesignTokensSwiftUI` for macOS, iOS, tvOS, visionOS and watchOS; a missing SDK is SKIPPED with exit 2, never a pass.
+
+### Not verified
+- **watchOS.** No watchOS SDK was installed; the 3.89 GB simulator runtime was being downloaded when this was written. `SwissTable` and the UI text roles may need the same kind of changes tvOS did.
+- tvOS was built, not run: no test ran on a tvOS simulator, and the tvOS appearance of the Swiss components was not looked at.
+
+### Tests
+463 core (471 before, minus 8 that moved), 8 in the new `DesignTokensChromeTests` (the 5 `BoundedProcessTests` and 3 Chrome-fetcher tests, unchanged), 134 SwiftUI (133 plus `copyIsSupportedWhereAPasteboardExists`). Red first: the tvOS build failed on `scripts/check-platforms.sh tvOS`; it passes for macOS, iOS, tvOS and visionOS.
+
 ## [0.14.0] - 2026-11-11
 
 Branch `feature/components-0.14.0` from 0.13.0 (`cd0bc3e`). `DesignTokens.version` is 0.14.0; every file in `Generated/` differs from 0.13.0 in that header version, and `components.css` in the rules below. Evidence: the four gaps the Vault adoption of 0.13.0 reported (`Tools/VaultMCP/project/summaries/2026-11-11_web_ui_design_tokens.md`), each reproduced and checked in headless Chrome.

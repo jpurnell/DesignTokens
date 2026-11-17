@@ -438,7 +438,7 @@ public struct SwissTable<Row: Identifiable>: View {
             .contentShape(Rectangle())
             .onTapGesture { tap(entry.id) }
             .contextMenu {
-                if selection != nil {
+                if selection != nil, SwissTableCopy.isSupported {
                     Button("Copy") { SwissTableCopy.write(selectedText(in: entries, including: entry.id)) }
                 }
             }
@@ -547,6 +547,8 @@ public extension View {
     func swissTableStyle() -> some View {
         #if os(macOS)
         tableStyle(.inset(alternatesRowBackgrounds: false)).scrollContentBackground(.hidden)
+        #elseif os(tvOS) || os(watchOS)
+        self // no scroll-view background modifier on these platforms; the page already shows through
         #else
         scrollContentBackground(.hidden)
         #endif
