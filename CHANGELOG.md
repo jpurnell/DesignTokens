@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+### Added (surface recipes, not yet wired into a theme)
+- `SurfaceRecipe`, `SurfaceLayer`, `Edges`/`EdgeStep`, `PatternSpec`, `GradientSpec`/`GradientStop`, `ShadowLayer`, `CornerRadius`, `SurfaceRole`, `ComponentState`, `SurfaceSet`: a toolkit-neutral description of how one control looks, built to express System 7, Mac OS 8 Platinum, OPENSTEP, Aqua and a Liquid Glass approximation (`project/plans/proposals/2026-11-17_SkinsSpike.md`). Edges are ordered per-side pixel stripes, so a Platinum bevel (`000000, DDDDDD, FFFFFF` top and leading; `000000, 777777, AAAAAA` bottom and trailing) and an OPENSTEP bevel (`FFFFFF`; `000000, 555555`) are expressible; gradients allow equal stop positions (Aqua's hard step); patterns are literal pixel cells (System 7's checkerboard).
+- `SurfaceCSS.declarations(for:resolve:)`: the CSS for a recipe (edge stripes as `inset` box-shadows). Tested by painting the emitted shadow list the way CSS defines it and comparing with the rows measured from period screenshots (`project/docs/technical/SkinMeasurements.md`); breaking the bottom-edge direction fails three tests.
+- Nothing emits these yet: no `Theme` field carries a `SurfaceSet`, so every generated file is unchanged.
+
 Branch `feature/platform-isolation` from `main` (`7cc3266`). `DesignTokens.version` is unchanged, so nothing in `Generated/` changes.
 
 ### Fixed
