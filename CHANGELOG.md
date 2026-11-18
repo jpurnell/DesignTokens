@@ -5,7 +5,7 @@
 Branch `feature/platform-isolation` from `main` (`7cc3266`). `DesignTokens.version` is unchanged, so nothing in `Generated/` changes.
 
 ### Fixed
-- **`DesignTokens` did not build for tvOS** (and, expected, not for watchOS). `Emitters/BoundedProcess.swift` called `posix_spawn_file_actions_*`, which tvOS marks unavailable. Measured: `xcodebuild -scheme DesignTokensSwiftUI -destination 'generic/platform=tvOS Simulator'` failed with four `posix_spawn` errors in the core. The code moved to its own target (below).
+- **`DesignTokens` did not build for tvOS** (and, as measured afterwards, not for watchOS). `Emitters/BoundedProcess.swift` called `posix_spawn_file_actions_*`, which tvOS marks unavailable. Measured: `xcodebuild -scheme DesignTokensSwiftUI -destination 'generic/platform=tvOS Simulator'` failed with four `posix_spawn` errors in the core. The code moved to its own target (below).
 - **`DesignTokensSwiftUI` did not build for tvOS.** Four more sites, none of which showed until the core built: `scrollContentBackground` (no such modifier on tvOS; `swissTableStyle()` returns the view unchanged there), `UIPasteboard` (none on tvOS), and `UIFont.TextStyle.largeTitle` (tvOS has none; `.largeTitle` maps to `title1`).
 
 ### Changed
@@ -17,7 +17,7 @@ Branch `feature/platform-isolation` from `main` (`7cc3266`). `DesignTokens.versi
 - `scripts/check-platforms.sh`: builds `DesignTokens` and `DesignTokensSwiftUI` for macOS, iOS, tvOS, visionOS and watchOS; a missing SDK is SKIPPED with exit 2, never a pass.
 
 ### Not verified
-- **watchOS.** No watchOS SDK was installed; the 3.89 GB simulator runtime was being downloaded when this was written. `SwissTable` and the UI text roles may need the same kind of changes tvOS did.
+- **watchOS: built, not run, and the Swiss table and menu control are degraded there.** With the runtime installed, `DesignTokensSwiftUI` failed on 17 sites: `Menu` (the segmented control's menu becomes a `Picker`; the table's sort menu becomes a stack of buttons), `onKeyPress` (the table's arrow-key and command-C behaviour is absent: no keyboard), and `UIColor(dynamicProvider:)` (`Adaptive.dynamicColor` resolves the dark slot, the one a watch draws). `DesignTokens` itself was clean after the `posix_spawn` move.
 - tvOS was built, not run: no test ran on a tvOS simulator, and the tvOS appearance of the Swiss components was not looked at.
 
 ### Tests

@@ -349,6 +349,32 @@ public struct SwissTable<Row: Identifiable>: View {
     @ViewBuilder
     private func sortMenu(style: ChartStyle, metrics: SwissMetrics) -> some View {
         let sortable = columns.filter(\.isSortable)
+        #if os(watchOS)
+        // watchOS has no `Menu`: the sortable columns are buttons in a stack, the current one marked with its direction.
+        if let sort, !sortable.isEmpty {
+            let current = sort.wrappedValue
+            VStack(alignment: .leading, spacing: metrics.step(1)) {
+                ForEach(sortable) { column in
+                    Button {
+                        sort.wrappedValue = SwissTableSort.toggled(sort.wrappedValue, on: column.id)
+                    } label: {
+                        HStack(spacing: metrics.step(1)) {
+                            Text(column.title).uiText(.label, ink: .ink)
+                            if current?.column == column.id {
+                                Image(systemName: current?.ascending == true ? "chevron.up" : "chevron.down")
+                                    .imageScale(.small).foregroundStyle(style.ink)
+                            }
+                        }
+                        .swissTouchTarget(metrics)
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+            .padding(.bottom, metrics.step(2))
+            .accessibilityLabel("Sort by")
+            .accessibilityValue(sortLabel(current))
+        }
+        #else
         if let sort, !sortable.isEmpty {
             let current = sort.wrappedValue
             Menu {
@@ -376,6 +402,7 @@ public struct SwissTable<Row: Identifiable>: View {
             .accessibilityLabel("Sort by")
             .accessibilityValue(sortLabel(current))
         }
+        #endif
     }
 
     private func sortLabel(_ current: SwissTableSort?) -> String {
@@ -508,6 +535,10 @@ private struct SelectionBehaviour: ViewModifier {
     let open: (Bool) -> Bool
 
     func body(content: Content) -> some View {
+        #if os(watchOS)
+        // There is no hardware keyboard on the watch: no arrow keys to answer and no command-C to copy with.
+        content
+        #else
         if isEnabled {
             content
                 .focusable()
@@ -525,6 +556,7 @@ private struct SelectionBehaviour: ViewModifier {
         } else {
             content
         }
+        #endif
     }
 }
 

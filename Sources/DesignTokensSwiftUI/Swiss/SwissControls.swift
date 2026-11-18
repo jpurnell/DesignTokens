@@ -162,6 +162,19 @@ public struct SwissSegmentedControl<Value: Hashable>: View {
         }
     }
 
+    #if os(watchOS)
+    /// watchOS has no `Menu`: the same choice is a `Picker`, which the watch presents as a pushed list.
+    private func menu(style: ChartStyle, metrics: SwissMetrics) -> some View {
+        Picker(selection: $selection) {
+            ForEach(options, id: \.self) { option in Text(name(option)).tag(option) }
+        } label: {
+            menuLabel(style: style, metrics: metrics, showsTitle: true)
+        }
+        .accessibilityLabel(title)
+        .accessibilityValue(name(selection))
+        .modifier(CellProbe(key: "segmented/menu"))
+    }
+    #else
     private func menu(style: ChartStyle, metrics: SwissMetrics) -> some View {
         Menu {
             ForEach(options, id: \.self) { option in
@@ -188,6 +201,7 @@ public struct SwissSegmentedControl<Value: Hashable>: View {
         .accessibilityValue(name(selection))
         .modifier(CellProbe(key: "segmented/menu"))
     }
+    #endif
 }
 
 /// A toggle as a square-cornered box with an ink border and a check, the label in the body role. `.toggleStyle(.swiss)`.

@@ -3,7 +3,7 @@ import DesignTokens
 import SwiftUI
 #if canImport(AppKit)
 import AppKit
-#elseif canImport(UIKit)
+#elseif canImport(UIKit) && !os(watchOS)
 import UIKit
 #endif
 
@@ -19,8 +19,11 @@ public extension Adaptive {
     var dynamicColor: Color {
         #if canImport(AppKit)
         Color(nsColor: platformColor)
-        #elseif canImport(UIKit)
+        #elseif canImport(UIKit) && !os(watchOS)
         Color(uiColor: platformColor)
+        #elseif os(watchOS)
+        // watchOS has no dynamic colour provider, and its display is always dark: the dark slot is the one that is drawn.
+        value(in: .dark, increasedContrast: false).color
         #else
         light.color
         #endif
@@ -48,7 +51,7 @@ extension Adaptive {
         return value(in: dark ? .dark : .light, increasedContrast: increased)
     }
 }
-#elseif canImport(UIKit)
+#elseif canImport(UIKit) && !os(watchOS)
 @available(iOS 17.0, visionOS 1.0, tvOS 17.0, *)
 extension Adaptive {
     /// The dynamic `UIColor` behind ``dynamicColor``: the trait collection says dark and Increase Contrast.
