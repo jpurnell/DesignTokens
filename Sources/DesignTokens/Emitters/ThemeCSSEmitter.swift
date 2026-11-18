@@ -232,6 +232,12 @@ public enum ThemeCSSEmitter {
         add("gap-plot", px(layout.gaps.plot))
         add("gap-source", px(layout.gaps.source))
         add("gap-reference-label", px(layout.gaps.referenceLabel))
+        if let controlHeight = layout.controlHeight {
+            add("control-height", px(controlHeight))
+            // Pads a label block-wise so a fixed-height control centres it: (height - line) / 2, never negative.
+            let line = s.type.body.size * s.type.body.lineHeight
+            add("control-pad-y", px(max(0, (controlHeight - line) / 2)))
+        }
         add("card-border", px(layout.cardBorder))
         add("card-padding", px(layout.cardPadding))
         // The card chrome, and what a stylesheet needs from it. A custom property cannot branch, so the theme resolves the choice here

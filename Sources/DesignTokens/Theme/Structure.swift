@@ -560,10 +560,13 @@ public struct LayoutSpec: Sendable, Hashable, Codable {
     public var cardPadding: Double
     /// How a card is dressed: ruled (flat, a rule across the top) or bordered (a surface). Added in 0.12.0 (Swiss: ``CardChrome/ruled``).
     public var cardChrome: CardChrome
+    /// The height of a control (button, field, select) in points, or `nil` for the stylesheet's default, the 44 pt touch-target floor.
+    /// A pointer-only skin sets its own authentic height (System 7: 20). Added in 0.13.0.
+    public var controlHeight: Double?
 
     private enum CodingKeys: String, CodingKey {
         case margins, gaps, gutter, columns, baseUnit, containerRadius, controlRadius, gridlines, shadow
-        case annotationRadius, cardBorder, cardPadding, cardChrome
+        case annotationRadius, cardBorder, cardPadding, cardChrome, controlHeight
     }
 
     /// Decodes a layout; a missing `annotationRadius`, `cardBorder` or `cardPadding` (JSON before they were added) is 0, and a
@@ -583,13 +586,15 @@ public struct LayoutSpec: Sendable, Hashable, Codable {
         cardBorder = try c.decodeIfPresent(Double.self, forKey: .cardBorder) ?? 0
         cardPadding = try c.decodeIfPresent(Double.self, forKey: .cardPadding) ?? 0
         cardChrome = try c.decodeIfPresent(CardChrome.self, forKey: .cardChrome) ?? .ruled
+        controlHeight = try c.decodeIfPresent(Double.self, forKey: .controlHeight)
     }
 
     /// Creates a layout.
     public init(margins: Insets, gaps: Gaps, gutter: Double, columns: Int, baseUnit: Double,
                 containerRadius: Double, controlRadius: Double, gridlines: GridlineStyle,
                 shadow: ShadowSpec? = nil, annotationRadius: Double = 0, cardBorder: Double = 0,
-                cardPadding: Double = 0, cardChrome: CardChrome = .ruled) {
+                cardPadding: Double = 0, cardChrome: CardChrome = .ruled, controlHeight: Double? = nil) {
+        self.controlHeight = controlHeight
         self.cardChrome = cardChrome
         self.cardBorder = cardBorder
         self.cardPadding = cardPadding

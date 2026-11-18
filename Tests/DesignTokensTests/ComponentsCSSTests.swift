@@ -20,6 +20,9 @@ struct ComponentsCSSTests {
         Set(matches(#"(?m)^\s*(--[a-z0-9-]+)\s*:"#, in: text).map { $0.trimmingCharacters(in: .whitespaces).replacingOccurrences(of: ":", with: "") })
     }
 
+    /// Properties a theme may leave undeclared because the stylesheet reads them with a fallback: `var(--control-height, 44px)`.
+    private static let optionalProperties: Set<String> = ["--control-height", "--control-pad-y"]
+
     /// The custom properties a stylesheet reads: `var(--name`.
     private static func read(in text: String) -> Set<String> {
         Set(matches(#"var\(--[a-z0-9-]+"#, in: text).map { String($0.dropFirst(4)) })
@@ -83,7 +86,7 @@ struct ComponentsCSSTests {
 
     @Test("every custom property components.css reads is declared by the Swiss theme and by Console")
     func everyReadPropertyIsDeclared() throws {
-        let read = Self.read(in: Self.css)
+        let read = Self.read(in: Self.css).subtracting(Self.optionalProperties)
         #expect(read.count > 30, "the stylesheet reads the theme's properties")
         for id in ["swiss", "console"] {
             let theme = try #require(Theme.named(id))

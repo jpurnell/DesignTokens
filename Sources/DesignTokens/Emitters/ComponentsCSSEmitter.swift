@@ -730,8 +730,8 @@ public enum ComponentsCSSEmitter {
         .dt-segmented__option {
           appearance: none;
           margin: 0;
-          min-block-size: \#(unit(11));
-          padding: \#(unit(1)) \#(unit(4));
+          min-block-size: var(--control-height, \#(unit(11)));
+          padding: var(--control-pad-y, \#(unit(1))) \#(unit(4));
           border: 0;
           border-inline-start: var(--rule-hairline) solid var(--ink);
           background: transparent;
@@ -755,8 +755,8 @@ public enum ComponentsCSSEmitter {
           align-items: center;
           justify-content: center;
           gap: \#(unit(2));
-          min-block-size: \#(unit(11));
-          padding: \#(unit(1)) \#(unit(4));
+          min-block-size: var(--control-height, \#(unit(11)));
+          padding: var(--control-pad-y, \#(unit(1))) \#(unit(4));
           border: var(--rule-hairline) solid var(--ink);
           border-radius: var(--radius-control);
           background: transparent;
@@ -811,8 +811,8 @@ public enum ComponentsCSSEmitter {
         }
         .dt-input, .dt-select, .dt-textarea {
           inline-size: 100%;
-          min-block-size: \#(unit(11));
-          padding: \#(unit(1)) \#(unit(3));
+          min-block-size: var(--control-height, \#(unit(11)));
+          padding: var(--control-pad-y, \#(unit(1))) \#(unit(3));
           border: var(--rule-hairline) solid var(--secondary-ink);
           border-radius: var(--radius-control);
           background: var(--background);

@@ -35,9 +35,14 @@ public extension Theme {
 
     private static var system7Structure: Structure {
         typealias B = ThemeBuilders
-        func role(_ style: TypeStyle) -> TextSpec {
+        // Chicago 12 is the system font (menus, buttons, dialog text); sizes are the Macintosh's, and the line is 1.25 so a
+        // 20 px control pads 2.5 px. Caption 10 is chosen, not measured: Geneva 9 is not legible in a fallback face.
+        func role(_ style: TypeStyle, size: Double) -> TextSpec {
             var spec = B.uiRole(style)
             spec.family = system7Family
+            spec.size = size
+            spec.lineHeight = 1.25
+            spec.weight = 400
             return spec
         }
         func chart(_ size: Double, _ weight: Int) -> TextSpec { B.text(system7Family, size, weight) }
@@ -45,14 +50,17 @@ public extension Theme {
             title: chart(17, B.bold), subtitle: chart(13, B.regular), axisTitle: chart(11, B.regular),
             axisLabel: chart(11, B.regular), seriesLabel: chart(12, B.regular), annotation: chart(11, B.regular),
             source: chart(11, B.regular), note: chart(11, B.regular), tag: chart(11, B.regular),
-            label: role(.label), caption: role(.caption), body: role(.body), heading: role(.heading),
-            uiTitle: role(.title), display: role(.display))
+            label: role(.label, size: 12), caption: role(.caption, size: 10), body: role(.body, size: 12),
+            heading: role(.heading, size: 12), uiTitle: role(.title, size: 12), display: role(.display, size: 24))
         let layout = LayoutSpec(
             margins: Insets(top: 6, leading: 8, bottom: 12, trailing: 8),
             gaps: Gaps(title: 4, subtitle: 12, plot: 8, source: 10, referenceLabel: 5),
             gutter: Double(Grid.gutter), columns: Grid.columns, baseUnit: Double(Grid.baseUnit),
             containerRadius: 0, controlRadius: 4, gridlines: .baselineOnly,
-            annotationRadius: 0, cardBorder: 1, cardPadding: 16, cardChrome: .bordered)
+            annotationRadius: 0, cardBorder: 1, cardPadding: 16, cardChrome: .bordered,
+            // Measured: System 7's push button is 20 px tall. That is under WCAG 2.2's 24 px minimum target size (2.5.8) and
+            // the 44 pt touch floor; the conformance ledger covers colour only, so the deviation is recorded here, not flagged.
+            controlHeight: 20)
         let labels = LabelSpec(values: .aboveOrEnd, series: .direct, axisSide: .leading,
                                axisLabelPlacement: .besideAxis, sourceLine: true, valueHalo: 0)
         let marks = MarkSpec(lineWidth: 1, pointSize: 16, bandOpacity: 0, selectedLineWidth: 2,

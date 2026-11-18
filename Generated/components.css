@@ -856,8 +856,8 @@ mark, .dt-mark {
 .dt-segmented__option {
   appearance: none;
   margin: 0;
-  min-block-size: calc(var(--space-unit) * 11);
-  padding: calc(var(--space-unit) * 1) calc(var(--space-unit) * 4);
+  min-block-size: var(--control-height, calc(var(--space-unit) * 11));
+  padding: var(--control-pad-y, calc(var(--space-unit) * 1)) calc(var(--space-unit) * 4);
   border: 0;
   border-inline-start: var(--rule-hairline) solid var(--ink);
   background: transparent;
@@ -887,8 +887,8 @@ mark, .dt-mark {
   align-items: center;
   justify-content: center;
   gap: calc(var(--space-unit) * 2);
-  min-block-size: calc(var(--space-unit) * 11);
-  padding: calc(var(--space-unit) * 1) calc(var(--space-unit) * 4);
+  min-block-size: var(--control-height, calc(var(--space-unit) * 11));
+  padding: var(--control-pad-y, calc(var(--space-unit) * 1)) calc(var(--space-unit) * 4);
   border: var(--rule-hairline) solid var(--ink);
   border-radius: var(--radius-control);
   background: transparent;
@@ -955,8 +955,8 @@ mark, .dt-mark {
 }
 .dt-input, .dt-select, .dt-textarea {
   inline-size: 100%;
-  min-block-size: calc(var(--space-unit) * 11);
-  padding: calc(var(--space-unit) * 1) calc(var(--space-unit) * 3);
+  min-block-size: var(--control-height, calc(var(--space-unit) * 11));
+  padding: var(--control-pad-y, calc(var(--space-unit) * 1)) calc(var(--space-unit) * 3);
   border: var(--rule-hairline) solid var(--secondary-ink);
   border-radius: var(--radius-control);
   background: var(--background);

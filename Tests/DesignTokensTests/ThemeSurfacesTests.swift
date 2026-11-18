@@ -122,3 +122,53 @@ struct System7OracleTests {
         #expect(edgeWidths(.buttonDefault) == [3, 1, 1])
     }
 }
+
+@Suite("Control height")
+struct ControlHeightTests {
+    @Test("a theme with no control height writes no --control-height and keeps the 44 px floor as the fallback")
+    func absentByDefault() throws {
+        let css = try ThemeCSSEmitter.emit(.swiss)
+        #expect(!css.contains("--control-height"))
+        #expect(ComponentsCSSEmitter.emit().contains("min-block-size: var(--control-height, calc(var(--space-unit) * 11));"))
+    }
+
+    @Test("System 7 declares the measured 20 px control height")
+    func system7Height() throws {
+        #expect(Theme.system7.structure.layout.controlHeight == 20)
+        #expect(try ThemeCSSEmitter.emit(.system7).contains("--control-height: 20px;"))
+    }
+
+    @Test("the control height survives the codec")
+    func roundTrip() throws {
+        let data = try ThemeCodec.encode(.system7)
+        #expect(try ThemeCodec.decode(data).structure.layout.controlHeight == 20)
+    }
+}
+
+@Suite("System 7 type and control padding")
+struct System7TypeTests {
+    private func value(_ name: String, in css: String) -> String? {
+        for line in css.split(whereSeparator: \.isNewline) {
+            let text = line.trimmingCharacters(in: .whitespaces)
+            if text.hasPrefix("\(name):") { return String(text.dropFirst(name.count + 1)).trimmingCharacters(in: CharacterSet(charactersIn: "; ")) }
+        }
+        return nil
+    }
+
+    @Test("UI text is 12 px, the size of Chicago on a Macintosh, with a 15 px line")
+    func uiSizes() throws {
+        let css = try ThemeCSSEmitter.emit(.system7)
+        #expect(value("--type-body-size", in: css) == "12px")
+        #expect(value("--type-body-line", in: css) == "1.25")
+        #expect(value("--type-label-size", in: css) == "12px")
+        #expect(value("--type-body-family", in: css)?.hasPrefix("\"Chicago\", \"Geneva\"") == true)
+    }
+
+    @Test("a fixed control height pads the label block-wise to (height - line) / 2: (20 - 15) / 2 = 2.5 px")
+    func controlPadding() throws {
+        let css = try ThemeCSSEmitter.emit(.system7)
+        #expect(value("--control-pad-y", in: css) == "2.5px")
+        #expect(try ThemeCSSEmitter.emit(.swiss).contains("--control-pad-y") == false)
+        #expect(ComponentsCSSEmitter.emit().contains("padding: var(--control-pad-y, calc(var(--space-unit) * 1)) calc(var(--space-unit) * 4);"))
+    }
+}
