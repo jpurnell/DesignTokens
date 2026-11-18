@@ -1,6 +1,6 @@
 # Skin measurements: System 7, Platinum, OPENSTEP, Aqua 10.0
 
-**Measured 2026-11-17.** Step 1 of `project/plans/proposals/2026-11-17_SkinsSpike.md`. Pixel values were read with Python Pillow from period screenshots; nothing here is from memory except where marked **(general knowledge)**. Liquid Glass is **not yet measured**: it needs a capture from a machine running it (see the end).
+**Measured 2026-11-17.** Step 1 of `project/plans/proposals/2026-11-17_SkinsSpike.md`. Pixel values were read with Python Pillow from period screenshots; nothing here is from memory except where marked **(general knowledge)**. Liquid Glass was captured from this machine, in dark appearance only (its own section).
 
 ## Sources
 
@@ -75,6 +75,30 @@ Blue scroll thumb (a default-button-coloured control), vertical: `ABABAB` outlin
 - Pill buttons: the Cancel and Add to Favorites buttons are capsule-shaped in the capture (radius equal to half the height).
 - Font **(general knowledge)**: Lucida Grande.
 
+## Liquid Glass (macOS 27.2, captured 2026-11-17)
+
+**Method.** A throwaway SwiftUI window (not in this repo; a 640 x 420 pt window, black left half and white right half) holding three glass shapes: a 420 x 120 pt `.glassEffect(.regular, in: .rect(cornerRadius: 24))` panel straddling the black/white edge, a `.buttonStyle(.glass)` button and a `.glassEffect(.clear, in: .capsule)` label. The probe captured **only its own window** through CoreGraphics at 2x, so none of the user's screen was captured. (`screencapture -l` failed with "could not create image from window", and `NSView.cacheDisplay` omits the glass, because it is composited by the window server: both were tried first.) Appearance was the system's, **dark**.
+
+| Measure | Result | How |
+|---|---|---|
+| Regular glass over `#000000` | `#141414` | one pixel, away from text |
+| Regular glass over `#FFFFFF` | `#808080` | same |
+| Clear glass over black / white | `#1A1A1A` / `#CECECE` | same |
+| Implied tint alpha, regular | **0.58**, tint about `#232323` | solving `out = (1-a)*bg + a*tint` from the two points |
+| Implied tint alpha, clear | **0.29**, tint about `#585858` | same |
+| Blur | 10 to 90% edge width of about **16 pt**, so a Gaussian sigma of about **6 pt** | the black/white edge under the panel, sampled every 4 px at 2x |
+| Rim | **none detectable**: over black the edge is `00, 0B, 14` and over white `FF, B7, 97, 80`, a 1 pt antialiased edge with no bright or dark line | edge pixels |
+| Radius | what the code specified (24 pt reads as about 48 px at 2x) | corner scan |
+| Outline, shadow | none detected on either background | |
+
+**Limits, stated so they are not mistaken for results.**
+- A two-point fit assumes the glass is linear in the background. It may not be (Liquid Glass adapts to what is behind it). A third, mid-grey background was added to test this, but **both later captures came back fully transparent**: the display had gone idle (`pmset` showed `UserIsActive 0`), so the window server did not composite. The linearity check and the **light appearance** are therefore **not measured**.
+- Flat black and white show tint and blur but cannot show a specular rim, lensing or the highlights that move with the device; a rim may exist over detailed or coloured content.
+- The first capture is dark appearance only, and the sampled text colour flipped to white with it; contrast guidance for glass over arbitrary content is unmeasured.
+- This is a moving target (the owner noted Liquid Glass is "still in flux"): these numbers are for **macOS 27.2 on 2026-11-17** and need re-measuring with the OS.
+
+**What it means for the model.** A web approximation is a backdrop blur of about 6 px with a tint layer of about 0.58 alpha in dark (0.29 for the clear variant), a 1 px antialiased edge and a large continuous radius. That is expressible as `SurfaceRecipe(blur: 6, layers: [.fill(tint with alpha)])`; **refraction and adaptive tint are not**, and the theme's ledger should say so.
+
 ## What the measurements change in the spike note
 
 1. **Bevel is per-side ordered pixel steps, not one light and one dark colour.** Platinum: top `[000, DDD, FFF]`, bottom `[AAA, 777, 000]`; NeXT: top `[FFF]` (1 px), bottom `[555, 000]` (2 px). `BevelSpec(width, light, dark)` in the spike note cannot say either. Replace it with `Edges` whose sides are **ordered lists of (colour, width)**, which also covers a plain 1 px outline.
@@ -87,5 +111,5 @@ Blue scroll thumb (a default-button-coloured control), vertical: `ABABAB` outlin
 ## Not measured yet
 
 - Corner radii of System 7, Platinum and Aqua buttons; Platinum and System 7 title bars (stripes); default-button rings and the Aqua default button's blue; menus; scrollbars. All present in the captured sets; deferred to Step 2.
-- **Liquid Glass.** No screenshots exist in the fetched sets. The measurements that matter (blur radius, tint alpha, rim highlight, how it changes over different backgrounds) need captures from this machine (macOS 27.2). Proposed: build a small SwiftUI window with glass controls over a patterned background and capture **only that window** with `screencapture -l <windowID>`, so nothing else on the screen is captured. I would not capture the user's own windows.
-- **NeXTSTEP 4.0** proper (see Gap above).
+- **Liquid Glass:** light appearance, a mid-grey background (linearity), the glass over detailed or coloured content (rim, lensing), and button states. Needs the display awake; rerun the probe.
+- **NeXTSTEP 4.0** proper: **not needed** (owner, 2026-11-17: 4.2 is fine).
