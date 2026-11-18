@@ -6,8 +6,9 @@ public extension Theme {
     ///
     /// **Source of record: pixels read from period screenshots** (`project/docs/technical/SkinMeasurements.md`, System 7.0 section).
     /// What was measured: the only two colours are `#000000` and `#FFFFFF`; a button is a 1 px black outline on white with no bevel; the
-    /// desktop is a 2 x 2 checkerboard. What was **not** measured and is chosen here: the button corner radius (4), the default-button ring
-    /// (outline, one pixel of white, one of black), the pressed state (inverted), and the typeface (Chicago for the system face is general
+    /// desktop is a 2 x 2 checkerboard. **Measured on a running System 7.0** (Infinite Mac, 2026-11-18): a button is 78 x 20 px with a 1 px
+    /// outline and a corner that steps in two pixels (radius 3), and the default button has a 3 px ring, 1 px of white, then the outline.
+    /// What was **not** measured and is chosen here: the pressed state (inverted), and the typeface (Chicago for the system face is general
     /// knowledge, named with the system sans as its fallback because the face is not installed on most machines).
     ///
     /// Every surface is `ScalePolicy.integer`: drawn at 1x, 2x or 3x and never in between, so the outlines stay one logical pixel wide.
@@ -67,6 +68,8 @@ public extension Theme {
         func step(_ name: String, _ width: Double) -> EdgeStep { EdgeStep(literal: ref(name), width) }
         func around(_ steps: [EdgeStep]) -> Edges { Edges(top: steps, leading: steps, bottom: steps, trailing: steps) }
         let outline = around([step("ink", 1)])
+        // Measured from the Open dialog of System 7.0 (see SkinMeasurements.md): a 3 px ring, 1 px of white, the 1 px outline.
+        let defaultRing = around([step("ink", 3), step("background", 1), step("ink", 1)])
         func recipe(fill: String, ink: String, edges: Edges?, radius: Double, layers: [SurfaceLayer]? = nil) -> SurfaceRecipe {
             SurfaceRecipe(layers: layers ?? [.fill(ref(fill))], edges: edges, radius: .uniform(radius), backdropBlur: nil,
                           ink: ref(ink), scale: .integer)
@@ -76,10 +79,10 @@ public extension Theme {
             .desktop: [.rest: recipe(fill: "background", ink: "ink", edges: nil, radius: 0, layers: [.fill(ref("background")), .pattern(checkerboard)])],
             .window: [.rest: recipe(fill: "background", ink: "ink", edges: outline, radius: 0)],
             .panel: [.rest: recipe(fill: "surface", ink: "ink", edges: outline, radius: 0)],
-            .button: [.rest: recipe(fill: "background", ink: "ink", edges: outline, radius: 4),
-                      .active: recipe(fill: "ink", ink: "background", edges: outline, radius: 4)],
-            .buttonDefault: [.rest: recipe(fill: "background", ink: "ink", edges: around([step("ink", 1), step("background", 1), step("ink", 1)]), radius: 4),
-                             .active: recipe(fill: "ink", ink: "background", edges: around([step("ink", 1), step("background", 1), step("ink", 1)]), radius: 4)],
+            .button: [.rest: recipe(fill: "background", ink: "ink", edges: outline, radius: 3),
+                      .active: recipe(fill: "ink", ink: "background", edges: outline, radius: 3)],
+            .buttonDefault: [.rest: recipe(fill: "background", ink: "ink", edges: defaultRing, radius: 7),
+                             .active: recipe(fill: "ink", ink: "background", edges: defaultRing, radius: 7)],
             .field: [.rest: recipe(fill: "background", ink: "ink", edges: outline, radius: 0)],
         ])
     }

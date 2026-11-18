@@ -118,3 +118,13 @@ Blue scroll thumb (a default-button-coloured control), vertical: `ABABAB` outlin
 - Corner radii of System 7, Platinum and Aqua buttons; Platinum and System 7 title bars (stripes); default-button rings and the Aqua default button's blue; menus; scrollbars. All present in the captured sets; deferred to Step 2.
 - **Liquid Glass:** lensing and highlights over detailed or coloured content, a fit for dark appearance with more backgrounds, and button states.
 - **NeXTSTEP 4.0** proper: **not needed** (owner, 2026-11-17: 4.2 is fine).
+
+## System 7.0 on a running oracle (Infinite Mac, 2026-11-18)
+
+**Method.** Infinite Mac (https://infinitemac.org, `System 7.0`) was opened in Chrome and its screen canvas (a 2D canvas, 832 x 624, one canvas pixel per CSS pixel) was read with `getImageData`: exact pixel values, no screenshot scaling. Light, read-only use of the public site; its terms say nothing about the system images or automated use (the repository is Apache 2.0), so nothing was downloaded. The numbers are about borders and sizes. Quoted from the **Open dialog** shown by SimpleText.
+
+- **This machine runs 8-bit colour, not 1-bit.** The canvas holds greys (`#EEEEEE`, `#CCCCCC`, `#777777`, `#333333`, `#888888`), and a window title bar has a shaded frame. The 1-bit GUIdebook shots above are a different depth. `Theme.system7` remains the 1-bit look; a colour System 7 would be its own theme.
+- **Desktop:** `000000 FFFFFF` alternating per pixel, each row offset by one from the last. Confirms the 2 x 2 checkerboard.
+- **Cancel button:** 78 x 20 px at x 493 to 570, y 235 to 254. 1 px black outline, white fill, no bevel, no shadow. The top line runs x 495 to 568; row 2 has two black pixels at each end and row 3 one: the corner steps in two pixels, **radius 3**.
+- **Default button (Open):** the same 78 x 20 button with a **3 px ring** outside it, **1 px of white**, then the 1 px black outline. In this 8-bit session the ring reads `#888888`; the 1-bit shots have it black. Its outer corner steps in about 6 px (radius about 7). The ring is **outside** the 78 x 20 box, so on the web a default button needs 4 px more room on each side or the ring overlaps its neighbours.
+- **Not measured:** the pressed state (needs a held mouse), the disabled state, scroll bars, the title bar of a 1-bit window.

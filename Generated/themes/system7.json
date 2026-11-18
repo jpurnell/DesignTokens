@@ -578,7 +578,7 @@
           ],
           "radius" : {
             "uniform" : {
-              "_0" : 4
+              "_0" : 3
             }
           },
           "scale" : "integer"
@@ -638,7 +638,7 @@
           ],
           "radius" : {
             "uniform" : {
-              "_0" : 4
+              "_0" : 3
             }
           },
           "scale" : "integer"
@@ -653,7 +653,7 @@
                   "opacity" : 1,
                   "source" : "ink"
                 },
-                "width" : 1
+                "width" : 3
               },
               {
                 "colour" : {
@@ -676,7 +676,7 @@
                   "opacity" : 1,
                   "source" : "ink"
                 },
-                "width" : 1
+                "width" : 3
               },
               {
                 "colour" : {
@@ -699,7 +699,7 @@
                   "opacity" : 1,
                   "source" : "ink"
                 },
-                "width" : 1
+                "width" : 3
               },
               {
                 "colour" : {
@@ -722,7 +722,7 @@
                   "opacity" : 1,
                   "source" : "ink"
                 },
-                "width" : 1
+                "width" : 3
               },
               {
                 "colour" : {
@@ -756,7 +756,7 @@
           ],
           "radius" : {
             "uniform" : {
-              "_0" : 4
+              "_0" : 7
             }
           },
           "scale" : "integer"
@@ -769,7 +769,7 @@
                   "opacity" : 1,
                   "source" : "ink"
                 },
-                "width" : 1
+                "width" : 3
               },
               {
                 "colour" : {
@@ -792,7 +792,7 @@
                   "opacity" : 1,
                   "source" : "ink"
                 },
-                "width" : 1
+                "width" : 3
               },
               {
                 "colour" : {
@@ -815,7 +815,7 @@
                   "opacity" : 1,
                   "source" : "ink"
                 },
-                "width" : 1
+                "width" : 3
               },
               {
                 "colour" : {
@@ -838,7 +838,7 @@
                   "opacity" : 1,
                   "source" : "ink"
                 },
-                "width" : 1
+                "width" : 3
               },
               {
                 "colour" : {
@@ -872,7 +872,7 @@
           ],
           "radius" : {
             "uniform" : {
-              "_0" : 4
+              "_0" : 7
             }
           },
           "scale" : "integer"

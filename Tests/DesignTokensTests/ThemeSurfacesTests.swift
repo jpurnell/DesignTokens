@@ -102,3 +102,23 @@ struct SurfaceSetEncodingTests {
         #expect(throws: DecodingError.self) { try JSONDecoder().decode(SurfaceSet.self, from: state) }
     }
 }
+
+/// Values read from a running System 7.0 (Infinite Mac, 2026-11-18); see `project/docs/technical/SkinMeasurements.md`.
+@Suite("System 7 oracle measurements")
+struct System7OracleTests {
+    /// Whole pixels, so the comparison is between integers.
+    private func edgeWidths(_ role: SurfaceRole) -> [Int]? {
+        Theme.system7.surfaces?.recipe(for: role, in: .rest)?.edges?.top.compactMap { Int(exactly: $0.width) }
+    }
+
+    @Test("a button has a one-pixel outline and a three-pixel corner")
+    func button() {
+        #expect(edgeWidths(.button) == [1])
+        #expect(Theme.system7.surfaces?.recipe(for: .button, in: .rest)?.radius == .uniform(3))
+    }
+
+    @Test("the default button has a three-pixel ring, one pixel of white, then the outline")
+    func defaultRing() {
+        #expect(edgeWidths(.buttonDefault) == [3, 1, 1])
+    }
+}
