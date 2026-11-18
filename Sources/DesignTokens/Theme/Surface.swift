@@ -6,7 +6,7 @@ import Foundation
 public enum SurfaceError: Error, Sendable, Hashable {
     /// An edge step's width is zero, negative or not a number.
     case width(Double)
-    /// A recipe that is pixel-snapped has an edge step whose width is not a whole number of device pixels.
+    /// A recipe with an integer scale policy has an edge step whose width is not a whole number of logical pixels.
     case fractionalWidth(Double)
     /// A pattern's cell count is not its width times its height.
     case cellCount(expected: Int, got: Int)
@@ -24,12 +24,13 @@ public enum SurfaceError: Error, Sendable, Hashable {
 
 // MARK: - Edges
 
-/// One stripe of an edge, drawn from the outside in. Widths are device pixels: a skin whose edges are one pixel wide stays one pixel at
-/// any scale, which is why this is not a multiple of the base unit.
+/// One stripe of an edge, drawn from the outside in. Widths are logical pixels (CSS pixels, points): a skin whose edges are one pixel
+/// wide stays one logical pixel at any scale, which is why this is not a multiple of the base unit. At an integer scale that is a whole
+/// number of device pixels; ``ScalePolicy`` says what happens at a fractional one.
 public struct EdgeStep: Sendable, Hashable, Codable {
     /// The stripe's colour, a role or an `extras` key.
     public var colour: ColourReference
-    /// The stripe's width in device pixels, greater than zero.
+    /// The stripe's width in logical pixels, greater than zero.
     public var width: Double
 
     /// Creates a step; throws ``SurfaceError/width(_:)`` when `width` is not greater than zero.
@@ -73,11 +74,11 @@ public struct Edges: Sendable, Hashable, Codable {
 
 // MARK: - Patterns and gradients
 
-/// A small repeating cell of device pixels, such as System 7's two-by-two checkerboard or Aqua's one-by-four pinstripe.
+/// A small repeating cell of logical pixels, such as System 7's two-by-two checkerboard or Aqua's one-by-four pinstripe.
 public struct PatternSpec: Sendable, Hashable, Codable {
-    /// Cell width in device pixels, 1 to 16.
+    /// Cell width in logical pixels, 1 to 16.
     public var width: Int
-    /// Cell height in device pixels, 1 to 16.
+    /// Cell height in logical pixels, 1 to 16.
     public var height: Int
     /// The cell's pixels, row by row; `width * height` colours.
     public var cells: [ColourReference]
@@ -197,6 +198,28 @@ public enum CornerRadius: Sendable, Hashable, Codable {
     case capsule
 }
 
+/// How a surface behaves when the display's scale is not a whole number.
+///
+/// A pixel skin (System 7's one-pixel outlines and two-by-two checkerboard) is drawn on a grid of logical pixels. At 1x, 2x or 3x that grid
+/// maps to whole device pixels and stays crisp. At 1.25x or 1.5x it would blur or beat against the display, so such a skin asks for the
+/// nearest whole scale instead and the renderer fits the result to the window.
+public enum ScalePolicy: String, Sendable, Hashable, Codable, CaseIterable {
+    /// Any scale: smooth skins (Aqua, glass) and ordinary themes.
+    case free
+    /// Only whole scales of at least 1, drawn with nearest-neighbour sampling: pixel skins.
+    case integer
+
+    /// The scale to draw at for a requested display scale: the request for ``free``, its nearest whole number (never below 1) for
+    /// ``integer``. A scale that is not a finite number is 1.
+    public func effectiveScale(for requested: Double) -> Double {
+        guard requested.isFinite else { return 1 }
+        switch self {
+        case .free: return requested
+        case .integer: return max(1, requested.rounded())
+        }
+    }
+}
+
 /// How one control looks in one state: layers, edges, corners, blur and the ink drawn on it. Toolkit-neutral; an emitter turns it into CSS
 /// (``SurfaceCSS``) or another target's syntax.
 public struct SurfaceRecipe: Sendable, Hashable, Codable {
@@ -210,22 +233,22 @@ public struct SurfaceRecipe: Sendable, Hashable, Codable {
     public var backdropBlur: Double?
     /// The colour of text drawn on this surface.
     public var ink: ColourReference
-    /// Whether every edge width must be a whole number of device pixels.
-    public var pixelSnapped: Bool
+    /// How the surface is drawn at a scale that is not a whole number; see ``ScalePolicy``.
+    public var scale: ScalePolicy
 
     /// Creates a recipe.
-    public init(layers: [SurfaceLayer], edges: Edges?, radius: CornerRadius, backdropBlur: Double?, ink: ColourReference, pixelSnapped: Bool) {
+    public init(layers: [SurfaceLayer], edges: Edges?, radius: CornerRadius, backdropBlur: Double?, ink: ColourReference, scale: ScalePolicy) {
         self.layers = layers
         self.edges = edges
         self.radius = radius
         self.backdropBlur = backdropBlur
         self.ink = ink
-        self.pixelSnapped = pixelSnapped
+        self.scale = scale
     }
 
     /// Throws ``SurfaceError/fractionalWidth(_:)`` when the recipe is pixel-snapped and an edge step is not a whole number of pixels.
     public func validate() throws {
-        guard pixelSnapped, let edges else { return }
+        guard scale == .integer, let edges else { return }
         for step in edges.top + edges.leading + edges.bottom + edges.trailing where step.width.rounded() != step.width {
             throw SurfaceError.fractionalWidth(step.width)
         }

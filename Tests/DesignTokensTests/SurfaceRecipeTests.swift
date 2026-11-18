@@ -13,7 +13,7 @@ struct SurfaceRecipeTests {
 
     // MARK: Validation
 
-    @Test("an edge step must be at least one device pixel wide")
+    @Test("an edge step must be at least one logical pixel wide")
     func edgeStepWidth() throws {
         #expect(throws: SurfaceError.self) { try EdgeStep(colour: ref("#000000"), width: 0) }
         #expect(throws: SurfaceError.self) { try EdgeStep(colour: ref("#000000"), width: -1) }
@@ -82,7 +82,7 @@ struct SurfaceRecipeTests {
         let light = try edge([("#000000", 1), ("#DDDDDD", 1), ("#FFFFFF", 1)])
         let dark = try edge([("#000000", 1), ("#777777", 1), ("#AAAAAA", 1)])
         return SurfaceRecipe(layers: [.fill(ref("#DDDDDD"))], edges: Edges(top: light, leading: light, bottom: dark, trailing: dark),
-                             radius: .uniform(0), backdropBlur: nil, ink: ref("#000000"), pixelSnapped: true)
+                             radius: .uniform(0), backdropBlur: nil, ink: ref("#000000"), scale: .integer)
     }
 
     @Test("a Platinum button's edges reproduce the measured pixel rows and columns")
@@ -99,7 +99,7 @@ struct SurfaceRecipeTests {
     func nextRows() throws {
         let light = try edge([("#FFFFFF", 1)]), dark = try edge([("#000000", 1), ("#555555", 1)])
         let recipe = SurfaceRecipe(layers: [.fill(ref("#AAAAAA"))], edges: Edges(top: light, leading: light, bottom: dark, trailing: dark),
-                                   radius: .uniform(0), backdropBlur: nil, ink: ref("#000000"), pixelSnapped: true)
+                                   radius: .uniform(0), backdropBlur: nil, ink: ref("#000000"), scale: .integer)
         let column = raster(recipe).map { $0[10] }
         // Measured: FFFFFF x1, body AAAAAA, 555555 x1, 000000 x1.
         #expect(column == ["#FFFFFF"] + Array(repeating: "#AAAAAA", count: 17) + ["#555555", "#000000"])
@@ -109,7 +109,7 @@ struct SurfaceRecipeTests {
     func systemSevenRows() throws {
         let outline = try edge([("#000000", 1)])
         let recipe = SurfaceRecipe(layers: [.fill(ref("#FFFFFF"))], edges: Edges(top: outline, leading: outline, bottom: outline, trailing: outline),
-                                   radius: .uniform(4), backdropBlur: nil, ink: ref("#000000"), pixelSnapped: true)
+                                   radius: .uniform(4), backdropBlur: nil, ink: ref("#000000"), scale: .integer)
         let column = raster(recipe).map { $0[10] }
         #expect(column == ["#000000"] + Array(repeating: "#FFFFFF", count: 18) + ["#000000"])
         #expect(Set(raster(recipe).flatMap { $0 }) == ["#000000", "#FFFFFF"], "1-bit: only black and white appear anywhere")
@@ -130,7 +130,7 @@ struct SurfaceRecipeTests {
     func layerOrder() throws {
         let gradient = try GradientSpec(angleDegrees: 90, stops: [GradientStop(colour: ref("#111111"), position: 0), GradientStop(colour: ref("#222222"), position: 1)])
         let recipe = SurfaceRecipe(layers: [.fill(ref("#EEEEEE")), .gradient(gradient)], edges: nil, radius: .capsule, backdropBlur: nil,
-                                   ink: ref("#000000"), pixelSnapped: false)
+                                   ink: ref("#000000"), scale: .free)
         let lines = SurfaceCSS.declarations(for: recipe, resolve: resolve)
         #expect(lines.contains("background-color: #EEEEEE"))
         #expect(lines.contains("background-image: linear-gradient(90deg, #111111 0%, #222222 100%)"))
@@ -147,30 +147,44 @@ struct SurfaceRecipeTests {
         #expect(css.components(separatedBy: "%3Crect").count - 1 == 4)
         #expect(css.contains("shape-rendering%3D'crispEdges'"))
         let lines = SurfaceCSS.declarations(for: SurfaceRecipe(layers: [.pattern(pattern)], edges: nil, radius: .uniform(0), backdropBlur: nil,
-                                                               ink: k, pixelSnapped: true), resolve: resolve)
+                                                               ink: k, scale: .integer), resolve: resolve)
         #expect(lines.contains("background-size: 2px 2px"))
         #expect(lines.contains("image-rendering: pixelated"))
     }
 
     @Test("backdrop blur is emitted with its prefixed twin; none when the recipe has no blur")
     func blurCSS() {
-        let glass = SurfaceRecipe(layers: [.fill(ref("#DEDEDE"))], edges: nil, radius: .uniform(24), backdropBlur: 7, ink: ref("#000000"), pixelSnapped: false)
+        let glass = SurfaceRecipe(layers: [.fill(ref("#DEDEDE"))], edges: nil, radius: .uniform(24), backdropBlur: 7, ink: ref("#000000"), scale: .free)
         let lines = SurfaceCSS.declarations(for: glass, resolve: resolve)
         #expect(lines.contains("backdrop-filter: blur(7px)"))
         #expect(lines.contains("-webkit-backdrop-filter: blur(7px)"))
-        let flat = SurfaceRecipe(layers: [.fill(ref("#DEDEDE"))], edges: nil, radius: .uniform(0), backdropBlur: nil, ink: ref("#000000"), pixelSnapped: false)
+        let flat = SurfaceRecipe(layers: [.fill(ref("#DEDEDE"))], edges: nil, radius: .uniform(0), backdropBlur: nil, ink: ref("#000000"), scale: .free)
         #expect(!SurfaceCSS.declarations(for: flat, resolve: resolve).contains { $0.contains("backdrop-filter") })
     }
 
-    @Test("a pixel-snapped recipe refuses a fractional edge width; one that is not snapped accepts it")
+    @Test("an integer-scale recipe refuses a fractional edge width; one that is not snapped accepts it")
     func pixelSnapping() throws {
         let half = try edge([("#000000", 0.5)])
         let edges = Edges(top: half, leading: half, bottom: half, trailing: half)
-        let snapped = SurfaceRecipe(layers: [], edges: edges, radius: .uniform(0), backdropBlur: nil, ink: ref("#000000"), pixelSnapped: true)
+        let snapped = SurfaceRecipe(layers: [], edges: edges, radius: .uniform(0), backdropBlur: nil, ink: ref("#000000"), scale: .integer)
         #expect(throws: SurfaceError.fractionalWidth(0.5)) { try snapped.validate() }
         var loose = snapped
-        loose.pixelSnapped = false
+        loose.scale = .free
         #expect(throws: Never.self) { try loose.validate() }
+    }
+
+    @Test("an integer scale policy snaps a requested scale to a whole number of at least 1; a free policy leaves it alone")
+    func scalePolicy() {
+        #expect(ScalePolicy.free.effectiveScale(for: 1.25).isEqual(to: 1.25))
+        #expect(ScalePolicy.integer.effectiveScale(for: 1).isEqual(to: 1))
+        #expect(ScalePolicy.integer.effectiveScale(for: 1.25).isEqual(to: 1))
+        #expect(ScalePolicy.integer.effectiveScale(for: 1.5).isEqual(to: 2))
+        #expect(ScalePolicy.integer.effectiveScale(for: 2.4).isEqual(to: 2))
+        #expect(ScalePolicy.integer.effectiveScale(for: 3).isEqual(to: 3))
+        #expect(ScalePolicy.integer.effectiveScale(for: 0.5).isEqual(to: 1), "never below 1: a pixel is not drawn smaller than itself")
+        #expect(ScalePolicy.integer.effectiveScale(for: .nan).isEqual(to: 1))
+        #expect(ScalePolicy.integer.effectiveScale(for: .infinity).isEqual(to: 1))
+        #expect(ScalePolicy.free.effectiveScale(for: .nan).isEqual(to: 1))
     }
 
     @Test("a decoded edge step is validated like a constructed one")

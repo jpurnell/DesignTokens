@@ -58,9 +58,9 @@ public struct EdgeStep: Sendable, Hashable, Codable { public var colour: ColourR
 /// a Platinum button is top/leading [000, DDD, FFF] and bottom/trailing [(inside-out) AAA, 777, 000].
 public struct Edges: Sendable, Hashable, Codable { public var top, leading, bottom, trailing: [EdgeStep] }
 
-/// A repeating cell of device pixels: System 7's 2 x 2 checkerboard, Aqua's 1 x 4 pinstripe.
+/// A repeating cell of logical pixels: System 7's 2 x 2 checkerboard, Aqua's 1 x 4 pinstripe.
 public struct PatternSpec: Sendable, Hashable, Codable {
-    public var width: Int, height: Int                  // cell size in device pixels, 1...16
+    public var width: Int, height: Int                  // cell size in logical pixels, 1...16
     public var cells: [ColourReference]                 // row-major, count == width * height
 }
 
@@ -87,7 +87,7 @@ public struct SurfaceRecipe: Sendable, Hashable, Codable {
     public var radius: CornerRadius
     public var backdropBlur: Double?                     // CSS px (Gaussian sigma); Liquid Glass about 7
     public var ink: ColourReference                      // text on this surface; contrast is measured against its layers
-    public var pixelSnapped: Bool                        // widths are CSS px, never rem, so edges stay one device pixel
+    public var scale: ScalePolicy                        // .free or .integer: pixel skins snap to whole scales (1x, 2x, 3x) and sample nearest-neighbour
 }
 
 public enum SurfaceRole: String, Sendable, Hashable, Codable, CaseIterable {
@@ -100,7 +100,7 @@ public struct SurfaceSet: Sendable, Hashable, Codable {
 
 Changes from the first draft: `BevelSpec` is gone (replaced by ordered per-side `EdgeStep`s, because Platinum is `[000, DDD, FFF]` / `[AAA, 777, 000]` and NeXT is `[FFF]` / `[555, 000]`, which one light and one dark colour cannot say); `PatternSpec` is a literal pixel cell (so System 7's 1-bit checkerboard is exact); `GradientStop` allows equal positions (Aqua's hard step); `HighlightSpec` is dropped (a gloss is a gradient layer with a hard step); `pixelSnapped` is explicit.
 
-**Validator rules (new):** every `EdgeStep.width` is a positive integer number of device pixels when `pixelSnapped`; `PatternSpec.cells.count == width * height`; gradient stops are non-decreasing and at least two; an `ink` colour must meet 4.5:1 against the **darkest and lightest** point of the layers beneath it (every stop of a gradient, every cell of a pattern, the tint over the measured Liquid Glass range), or the finding goes in the theme's ledger with its reason. System 7 passes at 21:1 by construction.
+**Validator rules (new):** every `EdgeStep.width` is a positive integer number of logical pixels when `pixelSnapped`; `PatternSpec.cells.count == width * height`; gradient stops are non-decreasing and at least two; an `ink` colour must meet 4.5:1 against the **darkest and lightest** point of the layers beneath it (every stop of a gradient, every cell of a pattern, the tint over the measured Liquid Glass range), or the finding goes in the theme's ledger with its reason. System 7 passes at 21:1 by construction.
 
 **Appearance.** System 7 is light-only. Liquid Glass **dark does not adapt linearly** (measured), so a theme gives each appearance its own measured recipe; it does not derive one from the other.
 
@@ -135,3 +135,12 @@ Each step is reviewable alone, and stopping after Step 3 still leaves a working 
 6. **Gradient rule.** Allow gradients on control fills and chart bars, and keep the ban for text, icons and strokes: agreed?
 7. **Scope of "handle".** Web and SwiftUI both, or web first? Recommend web first (Steps 1 to 3), SwiftUI after.
 8. **Reference captures.** Is there period software or screenshots to hand, or must references come from public emulators and archives? I should not download anything without asking.
+
+## 8. Decisions and direction (owner, 2026-11-17)
+
+- **System 7 is a look-and-feel re-implementation, drawn by us (not running the real 68k system), with a real System 7 as an oracle.** The oracle is a reference to compare pixels against, supplied by the owner; its captures are used to measure and are not shipped. This note does not verify the licensing of any ROM or system software, and none was downloaded.
+- **Pixel skins are a first-class case.** Patterns are logical-pixel cells with an integer scale policy (`ScalePolicy.integer`): crisp at 1x, 2x, 3x, snapped to the nearest whole scale otherwise. Implemented in `Surface.swift`.
+- **Gaps to close for System 7 as a superset** (not yet built): roles for title bar (striped), close, zoom and grow boxes, menu bar, scrollbar arrows; a bitmap-font role (Chicago and Geneva are fixed-size bitmaps; free recreations' licences are unchecked); 1-bit dithering of a colour theme; 1-bit cursors and icons.
+- **A native renderer.** The test rasteriser in `SurfaceRecipeTests` is the seed of a Foundation-only renderer that draws recipes to a bitmap or framebuffer, independent of any toolkit (the Raspberry Pi and embedded case). Not started.
+- **Toolkit targets** (GTK 3 and 4, libadwaita, Qt, terminals, compositors, LVGL) come after the surface model is wired into themes; the owner can set up a Linux machine to build and test on. Not started.
+- **A browser, modern and not a Mosaic clone.** Draft boundary, not yet agreed: we own the System 7 look and feel, the document-browser chrome, a defined *document web* (an HTML subset, Markdown, Gemini, Gopher, feeds), layout of that subset onto our tokens, and a modern network layer (HTTP/2 and 3, TLS, caching, no tracking). We do not own a general web engine (JavaScript, full CSS, arbitrary sites); a page outside the subset says so and offers the system's own engine as a clearly separate mode. This is a separate project that uses the design system, not a step of this one.
