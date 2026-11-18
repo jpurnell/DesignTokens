@@ -169,7 +169,7 @@ Sources: the first unprefixed, unflagged version of each feature in `@mdn/browse
 | @media (prefers-color-scheme) | 76 / 79 | 12.1 | 67 | themes, tumblr |
 | color-scheme property | 81 / 81 | 13 | 96 | themes, components, tumblr |
 | Multi-column layout (column-width, column-gap, break-inside) (added 0.14.0) | 50 / 12 | 10 | 65 | components |
-| image-rendering: pixelated (added 0.13.0) | 41 / 79 | 10 | 93 | components |
+| image-rendering: pixelated (added 0.13.0; themes with pattern surfaces, unreleased) | 41 / 79 | 10 | 93 | themes, components |
 | clamp() | 79 / 79 | 13.1 | 75 | themes, tumblr |
 | min() and max() | 79 / 79 | 11.1 | 75 | components, tumblr |
 | Custom properties and var() | 49 / 15 | 9.1 | 31 | themes, components, tumblr |

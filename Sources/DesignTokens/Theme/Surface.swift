@@ -40,6 +40,13 @@ public struct EdgeStep: Sendable, Hashable, Codable {
         self.width = width
     }
 
+    /// A step written as a literal in source, without the check: ``SurfaceRecipe/validate()`` repeats it, and every registered theme is
+    /// validated by the tests, so a bad literal fails there instead of trapping here.
+    init(literal colour: ColourReference, _ width: Double) {
+        self.colour = colour
+        self.width = width
+    }
+
     private enum CodingKeys: String, CodingKey { case colour, width }
 
     /// Decodes a step, applying the same check as the initialiser.
@@ -88,6 +95,13 @@ public struct PatternSpec: Sendable, Hashable, Codable {
         guard (1...16).contains(width) else { throw SurfaceError.cellSize(width) }
         guard (1...16).contains(height) else { throw SurfaceError.cellSize(height) }
         guard cells.count == width * height else { throw SurfaceError.cellCount(expected: width * height, got: cells.count) }
+        self.width = width
+        self.height = height
+        self.cells = cells
+    }
+
+    /// A pattern written as a literal in source, without the checks (see ``EdgeStep/init(literal:_:)``).
+    init(literal width: Int, _ height: Int, _ cells: [ColourReference]) {
         self.width = width
         self.height = height
         self.cells = cells
@@ -263,15 +277,24 @@ public struct SurfaceRecipe: Sendable, Hashable, Codable {
 
     /// Throws ``SurfaceError/fractionalWidth(_:)`` when the recipe is pixel-snapped and an edge step is not a whole number of pixels.
     public func validate() throws {
-        guard scale == .integer, let edges else { return }
-        for step in edges.top + edges.leading + edges.bottom + edges.trailing where step.width.rounded() != step.width {
-            throw SurfaceError.fractionalWidth(step.width)
+        for case .pattern(let spec) in layers {
+            guard (1...16).contains(spec.width), (1...16).contains(spec.height) else { throw SurfaceError.cellSize(spec.width) }
+            guard spec.cells.count == spec.width * spec.height else {
+                throw SurfaceError.cellCount(expected: spec.width * spec.height, got: spec.cells.count)
+            }
         }
+        guard let edges else { return }
+        let steps = edges.top + edges.leading + edges.bottom + edges.trailing
+        for step in steps where !(step.width.isFinite && step.width > 0) { throw SurfaceError.width(step.width) }
+        guard scale == .integer else { return }
+        for step in steps where step.width.rounded() != step.width { throw SurfaceError.fractionalWidth(step.width) }
     }
 }
 
 /// A part of the interface that a theme may give its own surface.
 public enum SurfaceRole: String, Sendable, Hashable, Codable, CaseIterable {
+    /// The surface behind every window: System 7's checkerboard. On the web, the themed element itself.
+    case desktop
     /// A window or page background.
     case window
     /// A panel or card.
@@ -327,6 +350,39 @@ public struct SurfaceSet: Sendable, Hashable, Codable {
     /// Creates a set.
     public init(recipes: [SurfaceRole: [ComponentState: SurfaceRecipe]]) {
         self.recipes = recipes
+    }
+
+    private enum CodingKeys: String, CodingKey { case recipes }
+
+    /// Decodes the set. On the wire the recipes are an object of objects keyed by the role's and the state's raw values, because a
+    /// dictionary with enum keys would encode as a flat array whose order is not stable and would break the canonical form.
+    ///
+    /// - Throws: `DecodingError.dataCorrupted` for a role or a state that does not exist.
+    public init(from decoder: any Decoder) throws {
+        let wire = try decoder.container(keyedBy: CodingKeys.self).decode([String: [String: SurfaceRecipe]].self, forKey: .recipes)
+        var recipes: [SurfaceRole: [ComponentState: SurfaceRecipe]] = [:]
+        for (roleName, states) in wire {
+            guard let role = SurfaceRole(rawValue: roleName) else {
+                throw DecodingError.dataCorrupted(.init(codingPath: decoder.codingPath, debugDescription: "unknown surface role \"\(roleName)\""))
+            }
+            for (stateName, recipe) in states {
+                guard let state = ComponentState(rawValue: stateName) else {
+                    throw DecodingError.dataCorrupted(.init(codingPath: decoder.codingPath, debugDescription: "unknown component state \"\(stateName)\" in surface role \"\(roleName)\""))
+                }
+                recipes[role, default: [:]][state] = recipe
+            }
+        }
+        self.recipes = recipes
+    }
+
+    /// Encodes the set as an object of objects with sorted keys; see ``init(from:)``.
+    public func encode(to encoder: any Encoder) throws {
+        var wire: [String: [String: SurfaceRecipe]] = [:]
+        for (role, states) in recipes {
+            for (state, recipe) in states { wire[role.rawValue, default: [:]][state.rawValue] = recipe }
+        }
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(wire, forKey: .recipes)
     }
 
     /// The recipe for a role in a state, falling back to its `rest` recipe; `nil` when the role has none.

@@ -1,0 +1,1119 @@
+{
+  "appearances" : "lightOnly",
+  "conformance" : {
+    "entries" : [
+      {
+        "appearance" : "light",
+        "check" : "lightnessBand",
+        "measured" : 0,
+        "severity" : "fail",
+        "subject" : "black",
+        "threshold" : 0.43
+      },
+      {
+        "appearance" : "light",
+        "check" : "chromaFloor",
+        "measured" : 0,
+        "severity" : "fail",
+        "subject" : "black",
+        "threshold" : 0.1
+      },
+      {
+        "appearance" : "light",
+        "check" : "rampLightEnd",
+        "measured" : 1,
+        "severity" : "fail",
+        "subject" : "sequential",
+        "threshold" : 2
+      }
+    ],
+    "kind" : "ledger"
+  },
+  "id" : "system7",
+  "name" : "System 7 (1-bit)",
+  "palette" : {
+    "accent" : {
+      "light" : "#000000"
+    },
+    "background" : {
+      "light" : "#FFFFFF"
+    },
+    "colourOverrides" : {
+
+    },
+    "diverging" : {
+      "light" : [
+        "#000000",
+        "#FFFFFF",
+        "#000000"
+      ]
+    },
+    "extraRamps" : {
+
+    },
+    "extras" : {
+
+    },
+    "ink" : {
+      "light" : "#000000"
+    },
+    "link" : {
+      "light" : "#000000"
+    },
+    "muted" : {
+      "light" : "#000000"
+    },
+    "negative" : {
+      "light" : "#000000"
+    },
+    "onAccent" : {
+      "light" : "#FFFFFF"
+    },
+    "positive" : {
+      "light" : "#000000"
+    },
+    "rampOverrides" : {
+
+    },
+    "rule" : {
+      "light" : "#000000"
+    },
+    "secondaryInk" : {
+      "light" : "#000000"
+    },
+    "sequential" : {
+      "light" : [
+        "#000000",
+        "#FFFFFF"
+      ]
+    },
+    "series" : [
+      {
+        "color" : {
+          "light" : "#000000"
+        },
+        "name" : "black"
+      }
+    ],
+    "surface" : {
+      "light" : "#FFFFFF"
+    },
+    "warning" : {
+      "light" : "#000000"
+    }
+  },
+  "structure" : {
+    "labels" : {
+      "axisLabelPlacement" : "besideAxis",
+      "axisSide" : "leading",
+      "series" : "direct",
+      "sourceLine" : true,
+      "valueHalo" : 0,
+      "values" : "aboveOrEnd"
+    },
+    "layout" : {
+      "annotationRadius" : 0,
+      "baseUnit" : 4,
+      "cardBorder" : 1,
+      "cardChrome" : "bordered",
+      "cardPadding" : 16,
+      "columns" : 12,
+      "containerRadius" : 0,
+      "controlRadius" : 4,
+      "gaps" : {
+        "plot" : 8,
+        "referenceLabel" : 5,
+        "source" : 10,
+        "subtitle" : 12,
+        "title" : 4
+      },
+      "gridlines" : "baselineOnly",
+      "gutter" : 16,
+      "margins" : {
+        "bottom" : 12,
+        "leading" : 8,
+        "top" : 6,
+        "trailing" : 8
+      }
+    },
+    "marks" : {
+      "areaOpacity" : 0.22,
+      "bandOpacity" : 0,
+      "barCornerRadius" : 0,
+      "barFill" : "flat",
+      "barWidthRatio" : 0.7,
+      "defaultEmphasis" : "latest",
+      "defaultFill" : "muted",
+      "detailLineWidth" : 1.5,
+      "emphasisFill" : "accent",
+      "fillOpacity" : 0.35,
+      "lineEnd" : "none",
+      "lineWidth" : 1,
+      "pointSize" : 16,
+      "selectedLineWidth" : 2
+    },
+    "numbers" : {
+      "count" : {
+        "abbreviate" : true,
+        "decimals" : 0,
+        "percentScales" : true,
+        "prefix" : "",
+        "style" : "decimal",
+        "suffix" : ""
+      },
+      "currency" : {
+        "abbreviate" : true,
+        "percentScales" : true,
+        "prefix" : "$",
+        "style" : "currency",
+        "suffix" : ""
+      },
+      "index" : {
+        "abbreviate" : false,
+        "decimals" : 1,
+        "percentScales" : true,
+        "prefix" : "",
+        "style" : "decimal",
+        "suffix" : ""
+      },
+      "percent" : {
+        "abbreviate" : false,
+        "decimals" : 1,
+        "percentScales" : true,
+        "prefix" : "",
+        "style" : "percent",
+        "suffix" : ""
+      },
+      "plain" : {
+        "abbreviate" : false,
+        "decimals" : 2,
+        "percentScales" : true,
+        "prefix" : "",
+        "style" : "decimal",
+        "suffix" : ""
+      },
+      "ratio" : {
+        "abbreviate" : false,
+        "decimals" : 2,
+        "percentScales" : true,
+        "prefix" : "",
+        "style" : "decimal",
+        "suffix" : "×"
+      },
+      "temperature" : {
+        "abbreviate" : false,
+        "decimals" : 1,
+        "percentScales" : true,
+        "prefix" : "",
+        "style" : "decimal",
+        "suffix" : "°"
+      }
+    },
+    "rules" : {
+      "baseline" : 1,
+      "baselineColour" : "rule",
+      "gridline" : 1,
+      "hairline" : 1,
+      "page" : 8,
+      "plotBorder" : 0,
+      "reference" : {
+        "dash" : [
+
+        ],
+        "weight" : 1
+      },
+      "referenceColour" : "secondaryInk",
+      "referenceLabelColour" : "secondaryInk",
+      "section" : 3,
+      "title" : {
+        "colour" : "ink",
+        "inset" : 0,
+        "position" : "none",
+        "weight" : 0
+      }
+    },
+    "type" : {
+      "annotation" : {
+        "family" : {
+          "fallback" : {
+            "fallback" : {
+              "kind" : "sans"
+            },
+            "kind" : "named",
+            "name" : "Geneva"
+          },
+          "kind" : "named",
+          "name" : "Chicago"
+        },
+        "italic" : false,
+        "lineHeight" : 1.3,
+        "size" : 11,
+        "tracking" : 0,
+        "uppercase" : false,
+        "weight" : 400
+      },
+      "axisLabel" : {
+        "family" : {
+          "fallback" : {
+            "fallback" : {
+              "kind" : "sans"
+            },
+            "kind" : "named",
+            "name" : "Geneva"
+          },
+          "kind" : "named",
+          "name" : "Chicago"
+        },
+        "italic" : false,
+        "lineHeight" : 1.3,
+        "size" : 11,
+        "tracking" : 0,
+        "uppercase" : false,
+        "weight" : 400
+      },
+      "axisTitle" : {
+        "family" : {
+          "fallback" : {
+            "fallback" : {
+              "kind" : "sans"
+            },
+            "kind" : "named",
+            "name" : "Geneva"
+          },
+          "kind" : "named",
+          "name" : "Chicago"
+        },
+        "italic" : false,
+        "lineHeight" : 1.3,
+        "size" : 11,
+        "tracking" : 0,
+        "uppercase" : false,
+        "weight" : 400
+      },
+      "body" : {
+        "family" : {
+          "fallback" : {
+            "fallback" : {
+              "kind" : "sans"
+            },
+            "kind" : "named",
+            "name" : "Geneva"
+          },
+          "kind" : "named",
+          "name" : "Chicago"
+        },
+        "italic" : false,
+        "lineHeight" : 1.5,
+        "size" : 16,
+        "tracking" : 0,
+        "uppercase" : false,
+        "weight" : 400
+      },
+      "caption" : {
+        "family" : {
+          "fallback" : {
+            "fallback" : {
+              "kind" : "sans"
+            },
+            "kind" : "named",
+            "name" : "Geneva"
+          },
+          "kind" : "named",
+          "name" : "Chicago"
+        },
+        "italic" : false,
+        "lineHeight" : 1.4,
+        "size" : 13,
+        "tracking" : 0,
+        "uppercase" : false,
+        "weight" : 400
+      },
+      "display" : {
+        "family" : {
+          "fallback" : {
+            "fallback" : {
+              "kind" : "sans"
+            },
+            "kind" : "named",
+            "name" : "Geneva"
+          },
+          "kind" : "named",
+          "name" : "Chicago"
+        },
+        "italic" : false,
+        "lineHeight" : 0.86,
+        "size" : 168,
+        "tracking" : -0.05,
+        "uppercase" : false,
+        "weight" : 800
+      },
+      "heading" : {
+        "family" : {
+          "fallback" : {
+            "fallback" : {
+              "kind" : "sans"
+            },
+            "kind" : "named",
+            "name" : "Geneva"
+          },
+          "kind" : "named",
+          "name" : "Chicago"
+        },
+        "italic" : false,
+        "lineHeight" : 1.2,
+        "size" : 28,
+        "tracking" : -0.02,
+        "uppercase" : false,
+        "weight" : 700
+      },
+      "label" : {
+        "family" : {
+          "fallback" : {
+            "fallback" : {
+              "kind" : "sans"
+            },
+            "kind" : "named",
+            "name" : "Geneva"
+          },
+          "kind" : "named",
+          "name" : "Chicago"
+        },
+        "italic" : false,
+        "lineHeight" : 1.3,
+        "size" : 11,
+        "tracking" : 0.08,
+        "uppercase" : true,
+        "weight" : 600
+      },
+      "note" : {
+        "family" : {
+          "fallback" : {
+            "fallback" : {
+              "kind" : "sans"
+            },
+            "kind" : "named",
+            "name" : "Geneva"
+          },
+          "kind" : "named",
+          "name" : "Chicago"
+        },
+        "italic" : false,
+        "lineHeight" : 1.3,
+        "size" : 11,
+        "tracking" : 0,
+        "uppercase" : false,
+        "weight" : 400
+      },
+      "seriesLabel" : {
+        "family" : {
+          "fallback" : {
+            "fallback" : {
+              "kind" : "sans"
+            },
+            "kind" : "named",
+            "name" : "Geneva"
+          },
+          "kind" : "named",
+          "name" : "Chicago"
+        },
+        "italic" : false,
+        "lineHeight" : 1.3,
+        "size" : 12,
+        "tracking" : 0,
+        "uppercase" : false,
+        "weight" : 400
+      },
+      "source" : {
+        "family" : {
+          "fallback" : {
+            "fallback" : {
+              "kind" : "sans"
+            },
+            "kind" : "named",
+            "name" : "Geneva"
+          },
+          "kind" : "named",
+          "name" : "Chicago"
+        },
+        "italic" : false,
+        "lineHeight" : 1.3,
+        "size" : 11,
+        "tracking" : 0,
+        "uppercase" : false,
+        "weight" : 400
+      },
+      "subtitle" : {
+        "family" : {
+          "fallback" : {
+            "fallback" : {
+              "kind" : "sans"
+            },
+            "kind" : "named",
+            "name" : "Geneva"
+          },
+          "kind" : "named",
+          "name" : "Chicago"
+        },
+        "italic" : false,
+        "lineHeight" : 1.3,
+        "size" : 13,
+        "tracking" : 0,
+        "uppercase" : false,
+        "weight" : 400
+      },
+      "tag" : {
+        "family" : {
+          "fallback" : {
+            "fallback" : {
+              "kind" : "sans"
+            },
+            "kind" : "named",
+            "name" : "Geneva"
+          },
+          "kind" : "named",
+          "name" : "Chicago"
+        },
+        "italic" : false,
+        "lineHeight" : 1.3,
+        "size" : 11,
+        "tracking" : 0,
+        "uppercase" : false,
+        "weight" : 400
+      },
+      "title" : {
+        "family" : {
+          "fallback" : {
+            "fallback" : {
+              "kind" : "sans"
+            },
+            "kind" : "named",
+            "name" : "Geneva"
+          },
+          "kind" : "named",
+          "name" : "Chicago"
+        },
+        "italic" : false,
+        "lineHeight" : 1.3,
+        "size" : 17,
+        "tracking" : 0,
+        "uppercase" : false,
+        "weight" : 700
+      },
+      "uiTitle" : {
+        "family" : {
+          "fallback" : {
+            "fallback" : {
+              "kind" : "sans"
+            },
+            "kind" : "named",
+            "name" : "Geneva"
+          },
+          "kind" : "named",
+          "name" : "Chicago"
+        },
+        "italic" : false,
+        "lineHeight" : 1.12,
+        "size" : 34,
+        "tracking" : -0.03,
+        "uppercase" : false,
+        "weight" : 800
+      }
+    }
+  },
+  "surfaces" : {
+    "recipes" : {
+      "button" : {
+        "active" : {
+          "edges" : {
+            "bottom" : [
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "ink"
+                },
+                "width" : 1
+              }
+            ],
+            "leading" : [
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "ink"
+                },
+                "width" : 1
+              }
+            ],
+            "top" : [
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "ink"
+                },
+                "width" : 1
+              }
+            ],
+            "trailing" : [
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "ink"
+                },
+                "width" : 1
+              }
+            ]
+          },
+          "ink" : {
+            "opacity" : 1,
+            "source" : "background"
+          },
+          "layers" : [
+            {
+              "fill" : {
+                "_0" : {
+                  "opacity" : 1,
+                  "source" : "ink"
+                }
+              }
+            }
+          ],
+          "radius" : {
+            "uniform" : {
+              "_0" : 4
+            }
+          },
+          "scale" : "integer"
+        },
+        "rest" : {
+          "edges" : {
+            "bottom" : [
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "ink"
+                },
+                "width" : 1
+              }
+            ],
+            "leading" : [
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "ink"
+                },
+                "width" : 1
+              }
+            ],
+            "top" : [
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "ink"
+                },
+                "width" : 1
+              }
+            ],
+            "trailing" : [
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "ink"
+                },
+                "width" : 1
+              }
+            ]
+          },
+          "ink" : {
+            "opacity" : 1,
+            "source" : "ink"
+          },
+          "layers" : [
+            {
+              "fill" : {
+                "_0" : {
+                  "opacity" : 1,
+                  "source" : "background"
+                }
+              }
+            }
+          ],
+          "radius" : {
+            "uniform" : {
+              "_0" : 4
+            }
+          },
+          "scale" : "integer"
+        }
+      },
+      "buttonDefault" : {
+        "active" : {
+          "edges" : {
+            "bottom" : [
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "ink"
+                },
+                "width" : 1
+              },
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "background"
+                },
+                "width" : 1
+              },
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "ink"
+                },
+                "width" : 1
+              }
+            ],
+            "leading" : [
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "ink"
+                },
+                "width" : 1
+              },
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "background"
+                },
+                "width" : 1
+              },
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "ink"
+                },
+                "width" : 1
+              }
+            ],
+            "top" : [
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "ink"
+                },
+                "width" : 1
+              },
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "background"
+                },
+                "width" : 1
+              },
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "ink"
+                },
+                "width" : 1
+              }
+            ],
+            "trailing" : [
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "ink"
+                },
+                "width" : 1
+              },
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "background"
+                },
+                "width" : 1
+              },
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "ink"
+                },
+                "width" : 1
+              }
+            ]
+          },
+          "ink" : {
+            "opacity" : 1,
+            "source" : "background"
+          },
+          "layers" : [
+            {
+              "fill" : {
+                "_0" : {
+                  "opacity" : 1,
+                  "source" : "ink"
+                }
+              }
+            }
+          ],
+          "radius" : {
+            "uniform" : {
+              "_0" : 4
+            }
+          },
+          "scale" : "integer"
+        },
+        "rest" : {
+          "edges" : {
+            "bottom" : [
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "ink"
+                },
+                "width" : 1
+              },
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "background"
+                },
+                "width" : 1
+              },
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "ink"
+                },
+                "width" : 1
+              }
+            ],
+            "leading" : [
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "ink"
+                },
+                "width" : 1
+              },
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "background"
+                },
+                "width" : 1
+              },
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "ink"
+                },
+                "width" : 1
+              }
+            ],
+            "top" : [
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "ink"
+                },
+                "width" : 1
+              },
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "background"
+                },
+                "width" : 1
+              },
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "ink"
+                },
+                "width" : 1
+              }
+            ],
+            "trailing" : [
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "ink"
+                },
+                "width" : 1
+              },
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "background"
+                },
+                "width" : 1
+              },
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "ink"
+                },
+                "width" : 1
+              }
+            ]
+          },
+          "ink" : {
+            "opacity" : 1,
+            "source" : "ink"
+          },
+          "layers" : [
+            {
+              "fill" : {
+                "_0" : {
+                  "opacity" : 1,
+                  "source" : "background"
+                }
+              }
+            }
+          ],
+          "radius" : {
+            "uniform" : {
+              "_0" : 4
+            }
+          },
+          "scale" : "integer"
+        }
+      },
+      "desktop" : {
+        "rest" : {
+          "ink" : {
+            "opacity" : 1,
+            "source" : "ink"
+          },
+          "layers" : [
+            {
+              "fill" : {
+                "_0" : {
+                  "opacity" : 1,
+                  "source" : "background"
+                }
+              }
+            },
+            {
+              "pattern" : {
+                "_0" : {
+                  "cells" : [
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "background"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "background"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    }
+                  ],
+                  "height" : 2,
+                  "width" : 2
+                }
+              }
+            }
+          ],
+          "radius" : {
+            "uniform" : {
+              "_0" : 0
+            }
+          },
+          "scale" : "integer"
+        }
+      },
+      "field" : {
+        "rest" : {
+          "edges" : {
+            "bottom" : [
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "ink"
+                },
+                "width" : 1
+              }
+            ],
+            "leading" : [
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "ink"
+                },
+                "width" : 1
+              }
+            ],
+            "top" : [
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "ink"
+                },
+                "width" : 1
+              }
+            ],
+            "trailing" : [
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "ink"
+                },
+                "width" : 1
+              }
+            ]
+          },
+          "ink" : {
+            "opacity" : 1,
+            "source" : "ink"
+          },
+          "layers" : [
+            {
+              "fill" : {
+                "_0" : {
+                  "opacity" : 1,
+                  "source" : "background"
+                }
+              }
+            }
+          ],
+          "radius" : {
+            "uniform" : {
+              "_0" : 0
+            }
+          },
+          "scale" : "integer"
+        }
+      },
+      "panel" : {
+        "rest" : {
+          "edges" : {
+            "bottom" : [
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "ink"
+                },
+                "width" : 1
+              }
+            ],
+            "leading" : [
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "ink"
+                },
+                "width" : 1
+              }
+            ],
+            "top" : [
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "ink"
+                },
+                "width" : 1
+              }
+            ],
+            "trailing" : [
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "ink"
+                },
+                "width" : 1
+              }
+            ]
+          },
+          "ink" : {
+            "opacity" : 1,
+            "source" : "ink"
+          },
+          "layers" : [
+            {
+              "fill" : {
+                "_0" : {
+                  "opacity" : 1,
+                  "source" : "surface"
+                }
+              }
+            }
+          ],
+          "radius" : {
+            "uniform" : {
+              "_0" : 0
+            }
+          },
+          "scale" : "integer"
+        }
+      },
+      "window" : {
+        "rest" : {
+          "edges" : {
+            "bottom" : [
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "ink"
+                },
+                "width" : 1
+              }
+            ],
+            "leading" : [
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "ink"
+                },
+                "width" : 1
+              }
+            ],
+            "top" : [
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "ink"
+                },
+                "width" : 1
+              }
+            ],
+            "trailing" : [
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "ink"
+                },
+                "width" : 1
+              }
+            ]
+          },
+          "ink" : {
+            "opacity" : 1,
+            "source" : "ink"
+          },
+          "layers" : [
+            {
+              "fill" : {
+                "_0" : {
+                  "opacity" : 1,
+                  "source" : "background"
+                }
+              }
+            }
+          ],
+          "radius" : {
+            "uniform" : {
+              "_0" : 0
+            }
+          },
+          "scale" : "integer"
+        }
+      }
+    }
+  }
+}

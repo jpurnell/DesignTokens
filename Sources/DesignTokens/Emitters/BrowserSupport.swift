@@ -86,7 +86,7 @@ public enum BrowserSupport {
         feature("color-scheme property", #"color-scheme:"#, 81, 81, 13, 96, [.themes, .components, .tumblr]),
         feature("Multi-column layout (column-width, column-gap, break-inside)", #"column-width:|break-inside:"#, 50, 12, 10, 65, [.components],
                 note: "added 0.14.0"),
-        feature("image-rendering: pixelated", #"image-rendering:\s*pixelated"#, 41, 79, 10, 93, [.components], note: "added 0.13.0"),
+        feature("image-rendering: pixelated", #"image-rendering:\s*pixelated"#, 41, 79, 10, 93, [.themes, .components], note: "added 0.13.0; themes with pattern surfaces, unreleased"),
         feature("clamp()", #"clamp\("#, 79, 79, 13.1, 75, [.themes, .tumblr]),
         feature("min() and max()", #"\b(min|max)\("#, 79, 79, 11.1, 75, [.components, .tumblr]),
         feature("Custom properties and var()", #"var\(--"#, 49, 15, 9.1, 31, [.themes, .components, .tumblr]),

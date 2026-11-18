@@ -81,3 +81,24 @@ struct ThemeSurfacesCSSTests {
         #expect(!image.contains("var(--"))
     }
 }
+
+@Suite("Surface set encoding")
+struct SurfaceSetEncodingTests {
+    @Test("the wire form is objects keyed by role and state, so it is stable and the strict decoder can compare keys")
+    func wireForm() throws {
+        let recipe = SurfaceRecipe(layers: [.fill(ColourReference(source: "ink"))], edges: nil, radius: .capsule, backdropBlur: nil,
+                                   ink: ColourReference(source: "background"), scale: .free)
+        let set = SurfaceSet(recipes: [.field: [.rest: recipe], .button: [.active: recipe, .rest: recipe]])
+        let json = try String(decoding: JSONEncoder().encode(set), as: UTF8.self)
+        #expect(json.hasPrefix("{\"recipes\":{\""))
+        #expect(try JSONDecoder().decode(SurfaceSet.self, from: Data(json.utf8)) == set)
+    }
+
+    @Test("an unknown role or state is an error, not a dropped entry")
+    func unknownNames() {
+        let role = Data(#"{"recipes":{"toolbar":{}}}"#.utf8)
+        let state = Data(#"{"recipes":{"button":{"pressed":{}}}}"#.utf8)
+        #expect(throws: DecodingError.self) { try JSONDecoder().decode(SurfaceSet.self, from: role) }
+        #expect(throws: DecodingError.self) { try JSONDecoder().decode(SurfaceSet.self, from: state) }
+    }
+}

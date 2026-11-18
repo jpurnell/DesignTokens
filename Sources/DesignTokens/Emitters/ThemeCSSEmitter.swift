@@ -90,6 +90,7 @@ public enum ThemeCSSEmitter {
     /// The component classes a surface role styles; a role with none (scroll bars, selection) has no web counterpart yet.
     private static func selectors(for role: SurfaceRole) -> [String] {
         switch role {
+        case .desktop: [""]
         case .window: [".dt-page"]
         case .panel: [".dt-card"]
         case .button: [".dt-button"]
@@ -127,7 +128,7 @@ public enum ThemeCSSEmitter {
             guard !classes.isEmpty, let states = surfaces.recipes[role] else { continue }
             for state in ComponentState.allCases {
                 guard let recipe = states[state], let tail = suffix(for: state) else { continue }
-                let selector = classes.map { "\(scope) \($0)\(tail)" }.joined(separator: ",\n")
+                let selector = classes.map { "\(scope)\($0.isEmpty ? "" : " " + $0)\(tail)" }.joined(separator: ",\n")
                 lines.append(selector + " {")
                 lines.append("  border: 0;")
                 lines.append(contentsOf: SurfaceCSS.declarations(for: recipe, resolve: reference, literal: literal).map { "  \($0);" })

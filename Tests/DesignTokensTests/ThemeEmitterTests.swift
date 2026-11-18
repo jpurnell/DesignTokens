@@ -72,7 +72,7 @@ struct ThemeEmitterTests {
             slotCount += slots.count
         }
         #expect(paths == expected)
-        #expect(paths.count == 3 + 10 * 5 + 2 + slotCount)
+        #expect(paths.count == 3 + 11 * 5 + 2 + slotCount)
     }
 
     @Test("theme JSON is the canonical codec output and decodes back to the theme")
@@ -307,7 +307,7 @@ struct ThemeEmitterTests {
             let found = pattern.matches(in: css, range: NSRange(css.startIndex..., in: css)).compactMap {
                 Range($0.range, in: css).map { String(css[$0]).uppercased() }
             }
-            #expect(found.count > 20, "\(theme.id)")
+            #expect(found.count > 10, "\(theme.id)")  // a floor that the pattern matched; a two-colour theme writes about 18
             for literal in found { #expect(allowed.contains(literal), "\(theme.id): \(literal) is not in the theme") }
         }
     }

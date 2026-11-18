@@ -15,10 +15,10 @@ struct CardChromeAndConsoleTests {
         #expect(CardChrome.bordered.rawValue == "bordered")
     }
 
-    @Test("every theme is ruled except console, which is bordered")
+    @Test("every theme is ruled except console and system7, which are bordered")
     func themesCardChrome() {
         for theme in Theme.all {
-            #expect(theme.structure.layout.cardChrome == (theme.id == "console" ? .bordered : .ruled), Comment(rawValue: theme.id))
+            #expect(theme.structure.layout.cardChrome == (["console", "system7"].contains(theme.id) ? .bordered : .ruled), Comment(rawValue: theme.id))
         }
     }
 
@@ -77,7 +77,7 @@ struct CardChromeAndConsoleTests {
         let console = try #require(Theme.named("console"))
         #expect(console.name == "Console")
         #expect(console.appearances == .fixedDark)
-        #expect(Theme.all.last?.id == "console")
+        #expect(Theme.all.map(\.id).suffix(2) == ["console", "system7"])
     }
 
     @Test("console's colours are the FleetWatch page's own values, in the light slot of a fixed-dark theme")
