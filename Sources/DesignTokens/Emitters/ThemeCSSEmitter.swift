@@ -131,6 +131,12 @@ public enum ThemeCSSEmitter {
                 let selector = classes.map { "\(scope)\($0.isEmpty ? "" : " " + $0)\(tail)" }.joined(separator: ",\n")
                 lines.append(selector + " {")
                 lines.append("  border: 0;")
+                if role == .buttonDefault, state == .rest, surfaces.defaultRingExtra > 0 {
+                    // the ring is outside the measured button, so the box grows by it on each side
+                    let extra = SurfaceCSS.px(surfaces.defaultRingExtra)
+                    lines.append("  min-block-size: calc(var(--control-height, calc(var(--space-unit) * 11)) + \(SurfaceCSS.px(surfaces.defaultRingExtra * 2)));")
+                    lines.append("  padding: var(--control-pad-y, calc(var(--space-unit) * 1)) calc(var(--space-unit) * 4 + \(extra));")
+                }
                 lines.append(contentsOf: SurfaceCSS.declarations(for: recipe, resolve: reference, literal: literal).map { "  \($0);" })
                 lines.append("}")
             }

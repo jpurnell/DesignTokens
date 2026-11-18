@@ -49,14 +49,14 @@ headerbar, .titlebar {
 
 window {
   background-color: #FFFFFF;
-  box-shadow: inset 0 1px 0 0 #000000, inset 1px 0 0 0 #000000, inset 0 -1px 0 0 #000000, inset -1px 0 0 0 #000000;
+  box-shadow: inset -1px 0 0 0 #000000, inset 0 -1px 0 0 #000000, inset 1px 0 0 0 #000000, inset 0 1px 0 0 #000000;
   border-radius: 0;
   color: #000000;
 }
 
 .card {
   background-color: #FFFFFF;
-  box-shadow: inset 0 1px 0 0 #000000, inset 1px 0 0 0 #000000, inset 0 -1px 0 0 #000000, inset -1px 0 0 0 #000000;
+  box-shadow: inset -1px 0 0 0 #000000, inset 0 -1px 0 0 #000000, inset 1px 0 0 0 #000000, inset 0 1px 0 0 #000000;
   border-radius: 0;
   color: #000000;
 }
@@ -70,28 +70,30 @@ button {
   min-height: 20px;
   padding: 0 16px;
   background-color: #FFFFFF;
-  box-shadow: inset 0 1px 0 0 #000000, inset 1px 0 0 0 #000000, inset 0 -1px 0 0 #000000, inset -1px 0 0 0 #000000;
+  box-shadow: inset -1px 0 0 0 #000000, inset 0 -1px 0 0 #000000, inset 1px 0 0 0 #000000, inset 0 1px 0 0 #000000;
   border-radius: 3px;
   color: #000000;
 }
 
 button:active {
   background-color: #000000;
-  box-shadow: inset 0 1px 0 0 #000000, inset 1px 0 0 0 #000000, inset 0 -1px 0 0 #000000, inset -1px 0 0 0 #000000;
+  box-shadow: inset -1px 0 0 0 #000000, inset 0 -1px 0 0 #000000, inset 1px 0 0 0 #000000, inset 0 1px 0 0 #000000;
   border-radius: 3px;
   color: #FFFFFF;
 }
 
 button.suggested-action, button.default {
+  min-height: 28px;
+  padding: 0 20px;
   background-color: #FFFFFF;
-  box-shadow: inset 0 3px 0 0 #000000, inset 3px 0 0 0 #000000, inset 0 -3px 0 0 #000000, inset -3px 0 0 0 #000000, inset 0 4px 0 0 #FFFFFF, inset 4px 0 0 0 #FFFFFF, inset 0 -4px 0 0 #FFFFFF, inset -4px 0 0 0 #FFFFFF, inset 0 5px 0 0 #000000, inset 5px 0 0 0 #000000, inset 0 -5px 0 0 #000000, inset -5px 0 0 0 #000000;
+  box-shadow: inset -5px 0 0 0 #000000, inset 0 -5px 0 0 #000000, inset 5px 0 0 0 #000000, inset 0 5px 0 0 #000000, inset -4px 0 0 0 #FFFFFF, inset 0 -4px 0 0 #FFFFFF, inset 4px 0 0 0 #FFFFFF, inset 0 4px 0 0 #FFFFFF, inset -3px 0 0 0 #000000, inset 0 -3px 0 0 #000000, inset 3px 0 0 0 #000000, inset 0 3px 0 0 #000000;
   border-radius: 7px;
   color: #000000;
 }
 
 button.suggested-action:active, button.default:active {
   background-color: #000000;
-  box-shadow: inset 0 3px 0 0 #000000, inset 3px 0 0 0 #000000, inset 0 -3px 0 0 #000000, inset -3px 0 0 0 #000000, inset 0 4px 0 0 #FFFFFF, inset 4px 0 0 0 #FFFFFF, inset 0 -4px 0 0 #FFFFFF, inset -4px 0 0 0 #FFFFFF, inset 0 5px 0 0 #000000, inset 5px 0 0 0 #000000, inset 0 -5px 0 0 #000000, inset -5px 0 0 0 #000000;
+  box-shadow: inset -5px 0 0 0 #000000, inset 0 -5px 0 0 #000000, inset 5px 0 0 0 #000000, inset 0 5px 0 0 #000000, inset -4px 0 0 0 #FFFFFF, inset 0 -4px 0 0 #FFFFFF, inset 4px 0 0 0 #FFFFFF, inset 0 4px 0 0 #FFFFFF, inset -3px 0 0 0 #000000, inset 0 -3px 0 0 #000000, inset 3px 0 0 0 #000000, inset 0 3px 0 0 #000000;
   border-radius: 7px;
   color: #FFFFFF;
 }
@@ -105,7 +107,7 @@ entry, spinbutton {
   min-height: 20px;
   padding: 0 6px;
   background-color: #FFFFFF;
-  box-shadow: inset 0 1px 0 0 #000000, inset 1px 0 0 0 #000000, inset 0 -1px 0 0 #000000, inset -1px 0 0 0 #000000;
+  box-shadow: inset -1px 0 0 0 #000000, inset 0 -1px 0 0 #000000, inset 1px 0 0 0 #000000, inset 0 1px 0 0 #000000;
   border-radius: 0;
   color: #000000;
 }

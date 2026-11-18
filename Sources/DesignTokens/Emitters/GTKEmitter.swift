@@ -102,6 +102,28 @@ public enum GTKEmitter {
         return true
     }
 
+    /// A `box-shadow` list written for GTK: GTK paints the first shadow underneath, the opposite of CSS, so the list is reversed and the
+    /// deepest stripe comes first. Any other declaration is returned as it is. Commas inside `rgba(...)` do not separate shadows.
+    static func stackedForGTK(_ declaration: String) -> String {
+        let prefix = "box-shadow: "
+        guard declaration.hasPrefix(prefix) else { return declaration }
+        var shadows: [String] = []
+        var current = ""
+        var depth = 0
+        for character in declaration.dropFirst(prefix.count) {
+            if character == "(" { depth += 1 }
+            if character == ")" { depth -= 1 }
+            if character == ",", depth == 0 {
+                shadows.append(current.trimmingCharacters(in: .whitespaces))
+                current = ""
+            } else {
+                current.append(character)
+            }
+        }
+        shadows.append(current.trimmingCharacters(in: .whitespaces))
+        return prefix + shadows.reversed().joined(separator: ", ")
+    }
+
     private static func surfaceRules(_ theme: Theme, slot: ThemeSlot) -> [String] {
         guard let surfaces = theme.surfaces else { return [] }
         func colour(_ reference: ColourReference) -> String {
@@ -128,8 +150,13 @@ public enum GTKEmitter {
                         lines.append("  padding: 0 \(role == .button ? "16px" : "6px");")
                     }
                 }
+                if role == .buttonDefault, state == .rest, surfaces.defaultRingExtra > 0, let controlHeight = theme.structure.layout.controlHeight {
+                    // the ring is outside the measured button, so the box grows by it on each side
+                    lines.append("  min-height: \(SurfaceCSS.px(controlHeight + surfaces.defaultRingExtra * 2));")
+                    lines.append("  padding: 0 \(SurfaceCSS.px(16 + surfaces.defaultRingExtra));")
+                }
                 for declaration in SurfaceCSS.declarations(for: recipe, resolve: colour, literal: colour) where readable(declaration) {
-                    lines.append("  \(declaration);")
+                    lines.append("  \(stackedForGTK(declaration));")
                 }
                 lines.append("}")
             }

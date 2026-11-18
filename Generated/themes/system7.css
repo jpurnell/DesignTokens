@@ -237,6 +237,8 @@
 }
 [data-theme-name="system7"] .dt-button--primary {
   border: 0;
+  min-block-size: calc(var(--control-height, calc(var(--space-unit) * 11)) + 8px);
+  padding: var(--control-pad-y, calc(var(--space-unit) * 1)) calc(var(--space-unit) * 4 + 4px);
   background-color: var(--background);
   box-shadow: inset 0 3px 0 0 var(--ink), inset 3px 0 0 0 var(--ink), inset 0 -3px 0 0 var(--ink), inset -3px 0 0 0 var(--ink), inset 0 4px 0 0 var(--background), inset 4px 0 0 0 var(--background), inset 0 -4px 0 0 var(--background), inset -4px 0 0 0 var(--background), inset 0 5px 0 0 var(--ink), inset 5px 0 0 0 var(--ink), inset 0 -5px 0 0 var(--ink), inset -5px 0 0 0 var(--ink);
   border-radius: 7px;

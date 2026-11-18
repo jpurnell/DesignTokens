@@ -260,6 +260,12 @@ public struct SurfaceRecipe: Sendable, Hashable, Codable {
         self.scale = scale
     }
 
+    /// How far the edge stripes reach in from the box, in pixels: the deepest side, 0 when there are none.
+    public var edgeDepth: Double {
+        guard let edges else { return 0 }
+        return [edges.top, edges.leading, edges.bottom, edges.trailing].map { $0.reduce(0) { $0 + $1.width } }.max() ?? 0
+    }
+
     /// Every colour the recipe names: layers, edge steps and ink.
     var colourReferences: [ColourReference] {
         var references: [ColourReference] = [ink]
@@ -388,6 +394,13 @@ public struct SurfaceSet: Sendable, Hashable, Codable {
     /// The recipe for a role in a state, falling back to its `rest` recipe; `nil` when the role has none.
     public func recipe(for role: SurfaceRole, in state: ComponentState) -> SurfaceRecipe? {
         recipes[role]?[state] ?? recipes[role]?[.rest]
+    }
+
+    /// How much deeper the default button's edges reach than an ordinary button's: the width of its ring. The ring sits outside the
+    /// measured button (System 7's is 78 x 20 inside a 3 px, 1 px, 1 px frame), so the default button's box grows by this on every side.
+    public var defaultRingExtra: Double {
+        guard let ring = recipes[.buttonDefault]?[.rest] else { return 0 }
+        return max(0, ring.edgeDepth - (recipes[.button]?[.rest]?.edgeDepth ?? 0))
     }
 }
 

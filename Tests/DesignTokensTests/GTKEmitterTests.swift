@@ -57,7 +57,7 @@ struct GTKEmitterTests {
     func system7Button() throws {
         let css = try emit(.system7)
         let rest = block("button", in: css)
-        #expect(rest.contains("box-shadow: inset 0 1px 0 0 #000000, inset 1px 0 0 0 #000000, inset 0 -1px 0 0 #000000, inset -1px 0 0 0 #000000;"))
+        #expect(rest.contains("box-shadow: inset -1px 0 0 0 #000000, inset 0 -1px 0 0 #000000, inset 1px 0 0 0 #000000, inset 0 1px 0 0 #000000;"))
         #expect(rest.contains("border-radius: 3px;"))
         #expect(rest.contains("background-image: none;"))
         #expect(rest.contains("min-height: 20px;"))
@@ -68,11 +68,20 @@ struct GTKEmitterTests {
     func system7DefaultAndPressed() throws {
         let css = try emit(.system7)
         let ring = block("button.suggested-action, button.default", in: css)
-        #expect(ring.contains { $0.hasPrefix("box-shadow: inset 0 3px 0 0 #000000, inset 3px 0 0 0 #000000, inset 0 -3px 0 0 #000000, inset -3px 0 0 0 #000000, inset 0 4px 0 0 #FFFFFF") })
+        #expect(ring.contains { $0.hasPrefix("box-shadow: inset -5px 0 0 0 #000000, inset 0 -5px 0 0 #000000, inset 5px 0 0 0 #000000, inset 0 5px 0 0 #000000, inset -4px 0 0 0 #FFFFFF") })
         #expect(ring.contains("border-radius: 7px;"))
         let active = block("button:active", in: css)
         #expect(active.contains("background-color: #000000;"))
         #expect(active.contains("color: #FFFFFF;"))
+    }
+
+    @Test("GTK stacks a shadow list the other way round, so stripes are listed deepest first and the outline comes last")
+    func shadowOrder() throws {
+        let slot = try #require(ThemeSlot.slots(for: .platinum).first)
+        let css = try GTKEmitter.emit(.platinum, slot: slot)
+        let shadow = try #require(block("button", in: css).first { $0.hasPrefix("box-shadow:") })
+        #expect(shadow.hasPrefix("box-shadow: inset -3px 0 0 0 #AAAAAA, inset 0 -3px 0 0 #AAAAAA, inset 3px 0 0 0 #FFFFFF, inset 0 3px 0 0 #FFFFFF, "))
+        #expect(shadow.hasSuffix("inset -1px 0 0 0 #000000, inset 0 -1px 0 0 #000000, inset 1px 0 0 0 #000000, inset 0 1px 0 0 #000000;"))
     }
 
     @Test("UI text takes the theme's family and size")

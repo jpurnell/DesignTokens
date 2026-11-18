@@ -15,7 +15,7 @@ public extension Theme {
     /// The ledger records what a two-colour palette cannot do (a chart's series are not distinguishable by colour; use direct labels and
     /// the pattern layers of ``SurfaceRecipe``).
     static var system7: Theme {
-        Theme(id: "system7", name: "System 7 (1-bit)", structure: system7Structure, palette: system7Palette,
+        Theme(id: "system7", name: "System 7 (1-bit)", structure: classicMacStructure(family: system7Family), palette: system7Palette,
               appearances: .lightOnly, conformance: system7Conformance, surfaces: system7Surfaces)
     }
 
@@ -33,7 +33,8 @@ public extension Theme {
             extras: [:])
     }
 
-    private static var system7Structure: Structure {
+    /// The structure shared by the classic Macintosh skins (System 7 and Platinum): their metrics are the same, only the face differs.
+    static func classicMacStructure(family system7Family: FontFamilyRef) -> Structure {
         typealias B = ThemeBuilders
         // Chicago 12 is the system font (menus, buttons, dialog text); sizes are the Macintosh's, and the line is 1.25 so a
         // 20 px control pads 2.5 px. Caption 10 is chosen, not measured: Geneva 9 is not legible in a fallback face.

@@ -48,6 +48,18 @@ Read from the outside in:
 - Square-ish: corner radius not sampled.
 - Fonts **(general knowledge)**: Charcoal for the system face in 8.x, Geneva for lists.
 
+### Platinum, further readings (Mac OS 8.0 captures, 2026-11-18)
+
+Read from `macos80/…openfile…png` (Cancel) and `…colourselector…png` (OK, the default button, and a text field).
+
+- **Button:** 80 x 20 px (outline rows 110 to 129, columns 361 to 440). The corner steps in 3 px: the top outline starts 3 px in, the left outline 3 px down, with one anti-aliased pixel at each end.
+- **Default button:** a second three-pixel frame around the 20 px button, so the whole is 26 px high. Outside in, top and left `#000000 #DDDDDD #AAAAAA`, bottom and right `#000000 #777777 #AAAAAA`; the ordinary bevel is inside it. The frame's corner steps in 4 to 5 px. The ring is **outside** the measured button, so the web and GTK emitters grow the default button's box by the ring (`SurfaceSet.defaultRingExtra`).
+- **Colours:** window body `#DDDDDD` (a list's body `#EEEEEE`, a pane `#FFFFFF`); the progress bar's rows are `#333399 #6666CC #9999FF #CCCCFF #FFFFFF #CCCCFF #9999FF #6666CC #333399 #000055` with a `#000000` base; a selected row is `#CCCCFF`; the empty desktop reads `#9C9CCE`.
+- **Text field (colour picker):** a 1 px black outline on white, no bevel. The Appearance Manager's sunken field was not sampled.
+- **Title bar:** stripes alternate `#FFFFFF #777777` on a `#CCCCCC` bar with a close box at the left and zoom and windowshade boxes at the right. Not wired into a recipe yet.
+- **Verification:** Chrome rendering of the generated `platinum.css` at 1x, button 80 px wide, column read with PIL: `000000 x1, DDDDDD x1, FFFFFF x1, DDDDDD x14, AAAAAA x1, 777777 x1, 000000 x1` (the capture's own run), the same horizontally with a 74 px body, and the default button's 26 rows `000 DDD AAA 000 DDD FFF, DDD x14, AAA 777 000 AAA 777 000`. Exact matches.
+- **Not measured:** pressed and disabled states (chosen: the bevel inverted over `#AAAAAA`), focus, scroll bars, menus, the typeface.
+
 ## OPENSTEP 4.2 (standing in for NeXTSTEP 4.0)
 
 Vertical through Cancel: `FFFFFF x1, AAAAAA x…, 000000 x6 (text), AAAAAA x8, 555555 x1, 000000 x1, AAAAAA x4`.

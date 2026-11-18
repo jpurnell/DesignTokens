@@ -172,3 +172,42 @@ struct System7TypeTests {
         #expect(ComponentsCSSEmitter.emit().contains("padding: var(--control-pad-y, calc(var(--space-unit) * 1)) calc(var(--space-unit) * 4);"))
     }
 }
+
+@Suite("Default button ring takes room")
+struct DefaultRingRoomTests {
+    private func rule(_ selector: String, in css: String) -> [String] {
+        var lines: [String] = []
+        var inside = false
+        for line in css.split(omittingEmptySubsequences: false, whereSeparator: \.isNewline) {
+            if line == "\(selector) {" { inside = true; continue }
+            if inside, line == "}" { return lines }
+            if inside { lines.append(line.trimmingCharacters(in: .whitespaces)) }
+        }
+        return lines
+    }
+
+    @Test("the ring is the default button's edge depth beyond the ordinary button's: System 7 3+1+1 over 1 is 4, Platinum 6 over 3 is 3")
+    func extraDepth() throws {
+        #expect(Theme.system7.surfaces?.defaultRingExtra == 4)
+        #expect(Theme.platinum.surfaces?.defaultRingExtra == 3)
+        #expect(Theme.swiss.surfaces == nil)
+    }
+
+    @Test("web: the default button grows by the ring on every side, so the label keeps its room")
+    func webGrows() throws {
+        let css = try ThemeCSSEmitter.emit(.system7)
+        let primary = rule("[data-theme-name=\"system7\"] .dt-button--primary", in: css)
+        #expect(primary.contains("min-block-size: calc(var(--control-height, calc(var(--space-unit) * 11)) + 8px);"))
+        #expect(primary.contains("padding: var(--control-pad-y, calc(var(--space-unit) * 1)) calc(var(--space-unit) * 4 + 4px);"))
+        #expect(rule("[data-theme-name=\"platinum\"] .dt-button--primary", in: try ThemeCSSEmitter.emit(.platinum)).contains("min-block-size: calc(var(--control-height, calc(var(--space-unit) * 11)) + 6px);"))
+    }
+
+    @Test("GTK: the default button is the control height plus the ring on each side, with the ring added to the side padding")
+    func gtkGrows() throws {
+        let slot = try #require(ThemeSlot.slots(for: .system7).first)
+        let css = try GTKEmitter.emit(.system7, slot: slot)
+        let lines = rule("button.suggested-action, button.default", in: css)
+        #expect(lines.contains("min-height: 28px;"))
+        #expect(lines.contains("padding: 0 20px;"))
+    }
+}
