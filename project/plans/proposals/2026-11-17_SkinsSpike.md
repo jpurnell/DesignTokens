@@ -2,6 +2,7 @@
 
 **Status:** Proposed, 2026-11-17. A reading of our code against four reference looks; no code written. Companion to `2026-11-17_BrandStandardsGuide.md` (the Standards Guide), whose steps B and C it would change.
 **Owner decision 2026-11-17:** "this is important, we should be able to handle these." So the model must be able to express them before the guide, specimen and MCP are built on it.
+**Answers 2026-11-17:** these are **shipped themes** (so the trademark and design-right question, Q4, is open work, not a stress-test footnote); **both System 7 and Platinum**; **web first, then SwiftUI**; reference downloads are allowed. Step 1 is done: see `project/docs/technical/SkinMeasurements.md`, which **changes section 4** (a bevel is per-side ordered pixel steps, not one light and one dark colour; System 7 needs a 1-bit pattern; Aqua needs a hard-stop gradient and a 4 px repeating pinstripe; skins need device-pixel widths).
 **Provenance:** what our model holds is **read from the code** (cited by file). What each reference look is made of is **from general knowledge of those interfaces, not measured here**: Step 1 below replaces it with measurements from reference screenshots before anything is built.
 
 ## 1. What our model can and cannot say (read from the code)
