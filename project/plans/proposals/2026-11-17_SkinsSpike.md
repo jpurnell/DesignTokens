@@ -46,54 +46,63 @@ From general knowledge, to be measured in Step 1.
 
 One conflict to resolve: the proposal says gradients are "fills only, never text, icon colour, stroke or a chart mark", and a validator enforces it. Aqua legitimately puts gradients on button fills and on bars (`BarFill.autoGradient` already exists for the legacy themes), so the rule stays but must say *what a gradient may be on*, not ban gradients from marks wholesale. Revisit with the owner.
 
-## 4. Proposed additions (to replace the separate gradient, effect and chrome fields in steps B and C)
+## 4. Types (revised 2026-11-17 after `SkinMeasurements.md`; replaces the first draft)
+
+Every type is `Sendable, Hashable, Codable`; every `Theme` field is optional with a default that reproduces today's output, so Swiss, House, FT, Economist, the legacy themes and Console emit byte-identical files until a theme opts in.
 
 ```swift
-/// One layer of a surface, painted bottom to top.
+/// One pixel-aligned stripe of an edge, from the outside in.
+public struct EdgeStep: Sendable, Hashable, Codable { public var colour: ColourReference; public var width: Double }   // device pixels, > 0
+
+/// What is drawn along each side of a surface, outside in. A plain 1 px outline is one step on every side;
+/// a Platinum button is top/leading [000, DDD, FFF] and bottom/trailing [(inside-out) AAA, 777, 000].
+public struct Edges: Sendable, Hashable, Codable { public var top, leading, bottom, trailing: [EdgeStep] }
+
+/// A repeating cell of device pixels: System 7's 2 x 2 checkerboard, Aqua's 1 x 4 pinstripe.
+public struct PatternSpec: Sendable, Hashable, Codable {
+    public var width: Int, height: Int                  // cell size in device pixels, 1...16
+    public var cells: [ColourReference]                 // row-major, count == width * height
+}
+
+public struct GradientStop: Sendable, Hashable, Codable { public var colour: ColourReference; public var position: Double }   // 0...1; equal positions are a hard step
+public struct GradientSpec: Sendable, Hashable, Codable {
+    public enum Kind: String, Sendable, Hashable, Codable { case linear, radial }
+    public var kind: Kind; public var angleDegrees: Double; public var stops: [GradientStop]   // >= 2, positions non-decreasing
+}
+
+public struct ShadowLayer: Sendable, Hashable, Codable { public var shadow: ShadowSpec; public var inset: Bool; public var spread: Double }
+
 public enum SurfaceLayer: Sendable, Hashable, Codable {
     case fill(ColourReference)
-    case gradient(GradientSpec)                       // linear / radial / conic; may repeat (pinstripe)
-    case pattern(PatternSpec)                         // a small repeating cell: dither, hatch; drawn from a bitmap-free description
-    case shadow(ShadowSpec, inset: Bool)              // generalises ShadowSpec; a list gives glow and bevel
-    case highlight(HighlightSpec)                     // a gloss band or specular rim, as a gradient mask on the top edge
+    case gradient(GradientSpec)                          // Aqua's gel: two bands with a hard step
+    case pattern(PatternSpec)                            // System 7 desktop, Aqua pinstripe
+    case shadow(ShadowLayer)                             // outer or inset
 }
 
-/// A bevel: the same edge drawn light on two sides and dark on the other two.
-public struct BevelSpec: Sendable, Hashable, Codable {
-    public var width: Double
-    public var light: ColourReference, dark: ColourReference
-    public var direction: BevelDirection              // .raised | .inset (pressed)
-}
-
-public struct Edges: Sendable, Hashable, Codable {   // per-side border, replaces "one weight, one colour"
-    public var top, leading, bottom, trailing: LineSpec?
-}
+public enum CornerRadius: Sendable, Hashable, Codable { case uniform(Double), capsule }   // per-corner deferred until a skin needs it
 
 public struct SurfaceRecipe: Sendable, Hashable, Codable {
-    public var layers: [SurfaceLayer]
+    public var layers: [SurfaceLayer]                    // bottom to top
     public var edges: Edges?
-    public var bevel: BevelSpec?
-    public var radius: Radius                          // uniform or per corner; includes .capsule
-    public var blur: Double?                           // backdrop blur, CSS px
-    public var saturation: Double?
-    public var ink: ColourReference                    // what text on this surface uses; contrast is checked against the layers
+    public var radius: CornerRadius
+    public var backdropBlur: Double?                     // CSS px (Gaussian sigma); Liquid Glass about 7
+    public var ink: ColourReference                      // text on this surface; contrast is measured against its layers
+    public var pixelSnapped: Bool                        // widths are CSS px, never rem, so edges stay one device pixel
 }
 
-/// Recipes per control role and state. A theme that gives none behaves as today.
 public enum SurfaceRole: String, Sendable, Hashable, Codable, CaseIterable {
-    case window, panel, card, button, buttonDefault, field, menu, tooltip, tab, scrollTrack, scrollThumb, selection, titleBar
+    case window, panel, button, buttonDefault, field, menu, scrollTrack, scrollThumb, selection
 }
 public struct SurfaceSet: Sendable, Hashable, Codable {
-    public var recipes: [SurfaceRole: [ComponentState: SurfaceRecipe]]
+    public var recipes: [SurfaceRole: [ComponentState: SurfaceRecipe]]   // missing state inherits rest; missing role inherits today's CSS
 }
 ```
 
-Rules that keep it honest:
-- **Defaults reproduce today.** A theme with no `SurfaceSet` emits byte-identical CSS (the 0.4.0 rule, and step A's golden test). Swiss and the others stay as they are.
-- **Contrast is measured on the recipe, not the nominal fill.** `ink` is checked against the darkest and lightest points of the layers under it (for a gradient, both ends and the middle). That keeps Aqua and Liquid Glass inside the same accessibility rules, and it means some authentic looks will fail, which is a ledger entry with a reason, not a suppression.
-- **Fonts stay named, not carried.** A skin names Chicago, Geneva, Lucida Grande or Helvetica with fallbacks; nothing is bundled.
-- **Motion** (Aqua's pulsing default button) is `MotionSpec` from the proposal, with reduced-motion handled the way it already is.
-- **Native.** On Apple platforms `DesignTokensSwiftUI` should be able to say "use the system material" for Liquid Glass rather than imitate it, and to draw a recipe for the others. How much of a recipe SwiftUI can draw (bevels and inset shadows are not built in) is the part least known to me, and Step 4 below is meant to find out.
+Changes from the first draft: `BevelSpec` is gone (replaced by ordered per-side `EdgeStep`s, because Platinum is `[000, DDD, FFF]` / `[AAA, 777, 000]` and NeXT is `[FFF]` / `[555, 000]`, which one light and one dark colour cannot say); `PatternSpec` is a literal pixel cell (so System 7's 1-bit checkerboard is exact); `GradientStop` allows equal positions (Aqua's hard step); `HighlightSpec` is dropped (a gloss is a gradient layer with a hard step); `pixelSnapped` is explicit.
+
+**Validator rules (new):** every `EdgeStep.width` is a positive integer number of device pixels when `pixelSnapped`; `PatternSpec.cells.count == width * height`; gradient stops are non-decreasing and at least two; an `ink` colour must meet 4.5:1 against the **darkest and lightest** point of the layers beneath it (every stop of a gradient, every cell of a pattern, the tint over the measured Liquid Glass range), or the finding goes in the theme's ledger with its reason. System 7 passes at 21:1 by construction.
+
+**Appearance.** System 7 is light-only. Liquid Glass **dark does not adapt linearly** (measured), so a theme gives each appearance its own measured recipe; it does not derive one from the other.
 
 ## 5. What "replicate" is allowed to mean
 
