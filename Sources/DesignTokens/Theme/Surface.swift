@@ -377,12 +377,14 @@ public enum SurfaceCSS {
         return "url(\"data:image/svg+xml,\(encoded)\")"
     }
 
-    /// The CSS declarations for a recipe, one `property: value` string each, without the trailing semicolon.
+    /// The CSS declarations for a recipe, one `property: value` string each, without the trailing semicolon. `literal`, when given,
+    /// resolves the colours of a pattern tile, which is an image and cannot read custom properties.
     ///
     /// Edge stripes become a list of `inset` box-shadows with no blur: step `k` of every side is listed before step `k + 1`, so outlines
     /// cover the corners and an inner highlight never overpaints an outline. A stripe at cumulative depth `d` is `inset 0 d 0 0` on the top
     /// edge, `inset d 0 0 0` on the leading edge, `inset 0 -d 0 0` on the bottom and `inset -d 0 0 0` on the trailing edge.
-    public static func declarations(for recipe: SurfaceRecipe, resolve: (ColourReference) -> String) -> [String] {
+    public static func declarations(for recipe: SurfaceRecipe, resolve: (ColourReference) -> String,
+                                    literal: ((ColourReference) -> String)? = nil) -> [String] {
         var lines: [String] = []
         var images: [String] = []
         var sizes: [String] = []
@@ -397,7 +399,7 @@ public enum SurfaceCSS {
             case .gradient(let spec):
                 images.append(gradient(spec, resolve: resolve)); sizes.append("auto")
             case .pattern(let spec):
-                images.append(pattern(spec, resolve: resolve)); sizes.append("\(spec.width)px \(spec.height)px"); hasPattern = true
+                images.append(pattern(spec, resolve: { literal?($0) ?? resolve($0) })); sizes.append("\(spec.width)px \(spec.height)px"); hasPattern = true
             case .shadow(let layer):
                 let spec = layer.shadow
                 shadows.append("\(layer.inset ? "inset " : "")\(px(spec.x)) \(px(spec.y)) \(px(spec.radius)) \(px(layer.spread)) \(resolve(spec.colour))")

@@ -53,6 +53,8 @@ public enum ThemeCSSEmitter {
             lines.append("}")
         }
 
+        lines.append(contentsOf: surfaceRules(theme, scope: scope))
+
         guard theme.appearances == .both else { return lines.joined(separator: "\n") + "\n" }
 
         let dark = ["  color-scheme: dark;"] + colourDeclarations(theme, appearance: .dark, increased: false, only: .darkOnly)
@@ -81,6 +83,58 @@ public enum ThemeCSSEmitter {
             lines.append("}")
         }
         return lines.joined(separator: "\n") + "\n"
+    }
+
+    // MARK: Surfaces
+
+    /// The component classes a surface role styles; a role with none (scroll bars, selection) has no web counterpart yet.
+    private static func selectors(for role: SurfaceRole) -> [String] {
+        switch role {
+        case .window: [".dt-page"]
+        case .panel: [".dt-card"]
+        case .button: [".dt-button"]
+        case .buttonDefault: [".dt-button--primary"]
+        case .field: [".dt-input", ".dt-select", ".dt-textarea"]
+        case .menu, .scrollTrack, .scrollThumb, .selection: []
+        }
+    }
+
+    /// The pseudo-class suffix that selects a state, or `nil` for one the web components do not distinguish.
+    private static func suffix(for state: ComponentState) -> String? {
+        switch state {
+        case .rest: ""
+        case .hover: ":not(:disabled):hover"
+        case .active: ":not(:disabled):active"
+        case .focus: ":focus-visible"
+        case .disabled: ":disabled"
+        case .invalid: "[aria-invalid=\"true\"]"
+        case .activeHover, .focusHover, .loading, .open, .closed: nil
+        }
+    }
+
+    /// Rules for the theme's surface recipes, scoped like the custom properties. A recipe owns its control's edges, so the component's own
+    /// border is removed. A theme with no surfaces emits nothing.
+    private static func surfaceRules(_ theme: Theme, scope: String) -> [String] {
+        guard let surfaces = theme.surfaces else { return [] }
+        func literal(_ reference: ColourReference) -> String {
+            let adaptive = ColorRole(rawValue: reference.source).map { theme.palette[$0] } ?? theme.palette.extras[reference.source]
+            guard let value = adaptive?.light else { return "transparent" }
+            return ColorValue(value.rgb, alpha: value.alpha * reference.opacity).hex
+        }
+        var lines: [String] = []
+        for role in SurfaceRole.allCases {
+            let classes = selectors(for: role)
+            guard !classes.isEmpty, let states = surfaces.recipes[role] else { continue }
+            for state in ComponentState.allCases {
+                guard let recipe = states[state], let tail = suffix(for: state) else { continue }
+                let selector = classes.map { "\(scope) \($0)\(tail)" }.joined(separator: ",\n")
+                lines.append(selector + " {")
+                lines.append("  border: 0;")
+                lines.append(contentsOf: SurfaceCSS.declarations(for: recipe, resolve: reference, literal: literal).map { "  \($0);" })
+                lines.append("}")
+            }
+        }
+        return lines
     }
 
     // MARK: Colours
