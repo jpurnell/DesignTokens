@@ -3,6 +3,7 @@
 ## [Unreleased]
 
 ### Added (skins: surface recipes, wired into themes)
+- `scripts/check-linux.sh [host]`: copies the tree to a Linux host over ssh and runs `swift build` and `swift test` there in a login shell; an unreachable host exits 2, never 0.
 - `Theme.surfaces: SurfaceSet?` (optional in JSON; absent means `nil` and writes no key, so every existing theme's JSON is byte-identical). A surface that names a colour the theme lacks, or has an invalid width, pattern or fractional edge on a pixel-snapped skin, is refused when the theme is encoded or decoded. `SurfaceSet` is written as objects keyed by role then state (a dictionary with enum keys would encode as an order-unstable array and break the canonical form).
 - `ThemeCSSEmitter` writes a theme's recipes as scoped rules (`[data-theme-name="x"] .dt-button`, `:not(:disabled):hover`, `:not(:disabled):active`, `:focus-visible`, `:disabled`, `[aria-invalid="true"]`), removes the component's own border, and draws pattern tiles in literal light-appearance colours (an image cannot read custom properties). New role `SurfaceRole.desktop` styles the themed element itself.
 - **`Theme.system7`** (`system7`, "System 7 (1-bit)"), registered: black on white, light only, 1 px outlines, a 2 x 2 checkerboard desktop, inverted pressed state, `ScalePolicy.integer`. Checked in headless Chrome at 1x: the checkerboard alternates every pixel, the window and button outlines are one pixel, the default button is outline, one white pixel, outline. Measured from screenshots: the colours, the outline, the checkerboard. **Chosen, not measured:** button radius 4, the default ring, the pressed state, the Chicago typeface. Its ledger records three findings of a one-series black palette. The earlier "Surface recipes" entries below are part of the same work.
@@ -17,6 +18,7 @@
 Branch `feature/platform-isolation` from `main` (`7cc3266`). `DesignTokens.version` is unchanged, so nothing in `Generated/` changes.
 
 ### Fixed
+- **`DesignTokensChrome` did not build on Linux.** glibc declares `posix_spawn_file_actions_t` as a struct to initialise in place, where Darwin's is a pointer; the code assumed the Darwin shape. Found by the first Linux build ever run (Ubuntu 26.04, Swift 6.4.2, `scripts/check-linux.sh`). `swift build` now passes there. **`swift test` does not build there yet:** three test files import `CryptoKit`, which Linux lacks.
 - **`DesignTokens` did not build for tvOS** (and, as measured afterwards, not for watchOS). `Emitters/BoundedProcess.swift` called `posix_spawn_file_actions_*`, which tvOS marks unavailable. Measured: `xcodebuild -scheme DesignTokensSwiftUI -destination 'generic/platform=tvOS Simulator'` failed with four `posix_spawn` errors in the core. The code moved to its own target (below).
 - **`DesignTokensSwiftUI` did not build for tvOS.** Four more sites, none of which showed until the core built: `scrollContentBackground` (no such modifier on tvOS; `swissTableStyle()` returns the view unchanged there), `UIPasteboard` (none on tvOS), and `UIFont.TextStyle.largeTitle` (tvOS has none; `.largeTitle` maps to `title1`).
 
