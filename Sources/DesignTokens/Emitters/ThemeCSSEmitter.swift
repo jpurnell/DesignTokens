@@ -306,7 +306,7 @@ public enum ThemeCSSEmitter {
         return out
     }
 
-    private static func family(_ ref: FontFamilyRef) -> String {
+    static func family(_ ref: FontFamilyRef) -> String {
         switch ref {
         case .sans: FontStack.sans
         case .mono: FontStack.mono

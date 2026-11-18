@@ -57,7 +57,7 @@ struct ThemeEmitterTests {
         #expect(onDisk.sorted() == files.map(\.path).sorted())
     }
 
-    @Test("the file set is the two default files, then per theme: CSS, JSON, Swiss's Tumblr block, the ANSI table and the slide files")
+    @Test("the file set is the two default files, then per theme: CSS, JSON, Swiss's Tumblr block, the ANSI table, the slide files and the GTK stylesheets")
     func fileSet() throws {
         let paths = try Generator.files().map(\.path)
         var expected = ["tokens.css", "tokens.json", "components.css"]
@@ -73,7 +73,9 @@ struct ThemeEmitterTests {
             case .fixedDark: ["dark"]
             }
             expected += slots.map { "themes/\(theme.id).slides.colors.\($0).xml" }
-            slotCount += slots.count
+            // the GTK stylesheet: the first appearance, plus a dark one where the theme has both
+            expected += ["themes/\(theme.id).gtk.css"] + (theme.appearances == .both ? ["themes/\(theme.id).gtk-dark.css"] : [])
+            slotCount += slots.count + (theme.appearances == .both ? 2 : 1)
         }
         #expect(paths == expected)
         #expect(paths.count == 3 + 11 * 5 + 2 + slotCount)
@@ -355,7 +357,7 @@ struct ThemeEmitterTests {
         defer { try? FileManager.default.removeItem(at: directory) }
         let one = try Generator.run(arguments: ["emit", "--theme", "ft", directory.path])
         #expect(one == ["themes/ft.css", "themes/ft.json", "themes/ft.ansi.txt", "themes/ft.slides.txt", "themes/ft.slides.fonts.xml",
-                        "themes/ft.slides.colors.light.xml", "themes/ft.slides.colors.dark.xml"])
+                        "themes/ft.slides.colors.light.xml", "themes/ft.slides.colors.dark.xml", "themes/ft.gtk.css", "themes/ft.gtk-dark.css"])
         #expect(try Generator.run(arguments: ["emit", "--all", directory.path]) == (try Generator.files()).map(\.path))
     }
 

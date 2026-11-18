@@ -28,6 +28,8 @@ public enum GeneratedFormat: String, Sendable, Hashable, CaseIterable {
     case slides
     /// `components.css`, the web component stylesheet (``ComponentsCSSEmitter``).
     case components
+    /// `themes/<id>.gtk.css` and, for a theme with a dark appearance, `themes/<id>.gtk-dark.css` (``GTKEmitter``).
+    case gtk
 }
 
 /// Why the generator refused its arguments.
@@ -36,7 +38,7 @@ public enum GeneratorError: Error, Sendable, Equatable {
     case unknownTheme(String)
     /// An argument the generator does not know.
     case unknownArgument(String)
-    /// `--format` names no format (the known ones are css, json, tumblr, ansi, slides and components).
+    /// `--format` names no format (the known ones are css, json, tumblr, ansi, slides, components and gtk).
     case unknownFormat(String)
     /// A flag that needs a value has none.
     case missingValue(String)
@@ -84,6 +86,13 @@ public enum Generator {
                 files.append((.slides, GeneratedFile(path: "themes/\(theme.id).slides.colors.\(slot.name).xml",
                                                      contents: try SlidesEmitter.emitColourScheme(theme, slot: slot))))
             }
+            let standard = ThemeSlot.slots(for: theme).filter { !$0.increasedContrast }
+            if let first = standard.first {
+                files.append((.gtk, GeneratedFile(path: "themes/\(theme.id).gtk.css", contents: try GTKEmitter.emit(theme, slot: first))))
+            }
+            if theme.appearances == .both, let dark = standard.first(where: { $0.appearance == .dark }) {
+                files.append((.gtk, GeneratedFile(path: "themes/\(theme.id).gtk-dark.css", contents: try GTKEmitter.emit(theme, slot: dark))))
+            }
         }
         return files.filter { formats?.contains($0.0) ?? true }.map(\.1)
     }
@@ -94,7 +103,7 @@ public enum Generator {
     ///
     /// With no arguments, or only a directory (the form `design-tokens Generated` has always had), every file is
     /// written. `--theme <id>` writes that theme's files only. `--format` (repeatable, or comma-separated) keeps only those kinds of file
-/// (css, json, tumblr, ansi, slides, components); with no `--theme` the two default files count as css and json. `list` returns the theme ids and writes nothing.
+/// (css, json, tumblr, ansi, slides, components, gtk); with no `--theme` the two default files count as css and json. `list` returns the theme ids and writes nothing.
     /// Arguments are checked before anything is written, so a refusal leaves the directory alone.
     ///
     /// - Returns: The paths written (relative to the directory), or the theme ids for `list`.
