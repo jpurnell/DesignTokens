@@ -46,19 +46,23 @@ public struct Theme: Sendable, Hashable, Codable, Identifiable {
     /// The theme's relationship to the validation method: strict, or a ledger of exact measurements.
     /// Added in 0.5.0 and required in JSON since then; a theme with no ledger says ``Conformance/strict``.
     public var conformance: Conformance
+    /// Per-control surface recipes (pixel edges, patterns, gradients), or `nil` for a theme that draws controls from
+    /// ``structure`` alone. Optional in JSON: absent means `nil`, and `nil` writes no key.
+    public var surfaces: SurfaceSet?
 
     /// Creates a theme.
     public init(id: String, name: String, structure: Structure, palette: ThemePalette,
-                appearances: AppearanceSupport, conformance: Conformance = .strict) {
+                appearances: AppearanceSupport, conformance: Conformance = .strict, surfaces: SurfaceSet? = nil) {
         self.id = id
         self.name = name
         self.structure = structure
         self.palette = palette
         self.appearances = appearances
         self.conformance = conformance
+        self.surfaces = surfaces
     }
 
-    private enum CodingKeys: String, CodingKey, CaseIterable { case id, name, structure, palette, appearances, conformance }
+    private enum CodingKeys: String, CodingKey, CaseIterable { case id, name, structure, palette, appearances, conformance, surfaces }
 
     /// Decodes a theme, and refuses one that is not a well-formed theme.
     ///
@@ -85,6 +89,7 @@ public struct Theme: Sendable, Hashable, Codable, Identifiable {
             self.palette = try container.decode(ThemePalette.self, forKey: .palette)
             self.appearances = try container.decode(AppearanceSupport.self, forKey: .appearances)
             self.conformance = try container.decode(Conformance.self, forKey: .conformance)
+            self.surfaces = try container.decodeIfPresent(SurfaceSet.self, forKey: .surfaces)
         } catch let error as DecodingError {
             // a required key that is missing is often a misspelt one: say which keys the input has instead
             if case .object(let given) = raw {
@@ -135,6 +140,7 @@ public struct Theme: Sendable, Hashable, Codable, Identifiable {
         try container.encode(palette, forKey: .palette)
         try container.encode(appearances, forKey: .appearances)
         try container.encode(conformance, forKey: .conformance)
+        try container.encodeIfPresent(surfaces, forKey: .surfaces)
     }
 
     private static func describe(_ error: DecodingError) -> String {

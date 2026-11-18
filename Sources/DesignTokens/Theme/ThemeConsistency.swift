@@ -86,6 +86,13 @@ extension Theme {
             if let reference = palette.colourOverrides[key] { check(reference, "palette.colourOverrides[\"\(key)\"]") }
         }
         if let shadow = structure.layout.shadow { check(shadow.colour, "structure.layout.shadow.colour") }
+        for (role, states) in (surfaces?.recipes ?? [:]).sorted(by: { $0.key.rawValue < $1.key.rawValue }) {
+            for (state, recipe) in states.sorted(by: { $0.key.rawValue < $1.key.rawValue }) {
+                let subject = "surfaces.\(role.rawValue).\(state.rawValue)"
+                for reference in recipe.colourReferences { check(reference, subject) }
+                if case .failure(let error) = Result(catching: { try recipe.validate() }) { problems.append("\(subject) is invalid: \(error)") }
+            }
+        }
         let rampNames = Set(["sequential", "diverging"]).union(palette.extraRamps.keys)
         for key in palette.rampOverrides.keys.sorted() {
             if let target = palette.rampOverrides[key], !rampNames.contains(target) {

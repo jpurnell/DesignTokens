@@ -246,6 +246,21 @@ public struct SurfaceRecipe: Sendable, Hashable, Codable {
         self.scale = scale
     }
 
+    /// Every colour the recipe names: layers, edge steps and ink.
+    var colourReferences: [ColourReference] {
+        var references: [ColourReference] = [ink]
+        for layer in layers {
+            switch layer {
+            case .fill(let colour): references.append(colour)
+            case .gradient(let spec): references += spec.stops.map(\.colour)
+            case .pattern(let spec): references += spec.cells
+            case .shadow(let layer): references.append(layer.shadow.colour)
+            }
+        }
+        if let edges { references += (edges.top + edges.leading + edges.bottom + edges.trailing).map(\.colour) }
+        return references
+    }
+
     /// Throws ``SurfaceError/fractionalWidth(_:)`` when the recipe is pixel-snapped and an edge step is not a whole number of pixels.
     public func validate() throws {
         guard scale == .integer, let edges else { return }
