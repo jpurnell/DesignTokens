@@ -1,6 +1,6 @@
 # Skin measurements: System 7, Platinum, OPENSTEP, Aqua 10.0
 
-**Measured 2026-11-17.** Step 1 of `project/plans/proposals/2026-11-17_SkinsSpike.md`. Pixel values were read with Python Pillow from period screenshots; nothing here is from memory except where marked **(general knowledge)**. Liquid Glass was captured from this machine, in dark appearance only (its own section).
+**Measured 2026-11-17.** Step 1 of `project/plans/proposals/2026-11-17_SkinsSpike.md`. Pixel values were read with Python Pillow from period screenshots; nothing here is from memory except where marked **(general knowledge)**. Liquid Glass was captured from this machine in both appearances (its own section).
 
 ## Sources
 
@@ -75,29 +75,34 @@ Blue scroll thumb (a default-button-coloured control), vertical: `ABABAB` outlin
 - Pill buttons: the Cancel and Add to Favorites buttons are capsule-shaped in the capture (radius equal to half the height).
 - Font **(general knowledge)**: Lucida Grande.
 
-## Liquid Glass (macOS 27.2, captured 2026-11-17)
+## Liquid Glass (macOS 27.2, captured 2026-11-17 on Lightspeed)
 
-**Method.** A throwaway SwiftUI window (not in this repo; a 640 x 420 pt window, black left half and white right half) holding three glass shapes: a 420 x 120 pt `.glassEffect(.regular, in: .rect(cornerRadius: 24))` panel straddling the black/white edge, a `.buttonStyle(.glass)` button and a `.glassEffect(.clear, in: .capsule)` label. The probe captured **only its own window** through CoreGraphics at 2x, so none of the user's screen was captured. (`screencapture -l` failed with "could not create image from window", and `NSView.cacheDisplay` omits the glass, because it is composited by the window server: both were tried first.) Appearance was the system's, **dark**.
+**Method.** A throwaway SwiftUI window (not in this repo): 640 x 420 pt, three vertical thirds of `#000000`, `#808080` and `#FFFFFF`, holding a 420 x 120 pt `.glassEffect(.regular, in: .rect(cornerRadius: 24))` panel across all three, a `.buttonStyle(.glass)` button and a `.glassEffect(.clear, in: .capsule)` label over the grey. The probe captured **only its own window** through CoreGraphics at 2x, so none of the user's screen was captured. (`screencapture -l` failed, and `NSView.cacheDisplay` omits the glass because the window server composites it.) Both appearances were set on the window explicitly. An earlier run happened while the display was idle and returned fully transparent images; `caffeinate -u` then `caffeinate -d` fixed that.
 
-| Measure | Result | How |
+**Regular glass, pixel at the panel's centre row (grey level, red channel):**
+
+| Background | Dark appearance | Light appearance |
 |---|---|---|
-| Regular glass over `#000000` | `#141414` | one pixel, away from text |
-| Regular glass over `#FFFFFF` | `#808080` | same |
-| Clear glass over black / white | `#1A1A1A` / `#CECECE` | same |
-| Implied tint alpha, regular | **0.58**, tint about `#232323` | solving `out = (1-a)*bg + a*tint` from the two points |
-| Implied tint alpha, clear | **0.29**, tint about `#585858` | same |
-| Blur | 10 to 90% edge width of about **16 pt**, so a Gaussian sigma of about **6 pt** | the black/white edge under the panel, sampled every 4 px at 2x |
-| Rim | **none detectable**: over black the edge is `00, 0B, 14` and over white `FF, B7, 97, 80`, a 1 pt antialiased edge with no bright or dark line | edge pixels |
-| Radius | what the code specified (24 pt reads as about 48 px at 2x) | corner scan |
-| Outline, shadow | none detected on either background | |
+| `#000000` | `#151515` | `#757575` |
+| `#808080` | `#727272` | `#B3B3B3` |
+| `#FFFFFF` | `#808080` | `#EEEEEE` |
+| Linear prediction for the grey from the black and white | 75 | 178 |
+| Measured grey | **114** | 179 |
 
-**Limits, stated so they are not mistaken for results.**
-- A two-point fit assumes the glass is linear in the background. It may not be (Liquid Glass adapts to what is behind it). A third, mid-grey background was added to test this, but **both later captures came back fully transparent**: the display had gone idle (`pmset` showed `UserIsActive 0`), so the window server did not composite. The linearity check and the **light appearance** are therefore **not measured**.
-- Flat black and white show tint and blur but cannot show a specular rim, lensing or the highlights that move with the device; a rim may exist over detailed or coloured content.
-- The first capture is dark appearance only, and the sampled text colour flipped to white with it; contrast guidance for glass over arbitrary content is unmeasured.
+- **Light appearance is linear** (prediction 178, measured 179), so it fits `out = (1-a)*bg + a*tint` with **a = 0.525 and tint about `#DEDEDE`**.
+- **Dark appearance is not linear**: over the grey the glass is 114, where the black and white ends predict 75; over white it is only `#808080`. So the dark material **adapts to what is behind it** (it compresses and lifts), and a single tint alpha is wrong. The two-point fit from black and white (alpha 0.58, tint `#242424`) holds only at those two points.
+- **Clear glass over the grey:** dark `#747474`, light `#9E9E9E` (regular over the same grey: `#727272` and `#B3B3B3`).
+- **Blur:** the edge between two backgrounds under the panel rises over about **16 to 20 pt** between 10% and 90% (a Gaussian sigma of about **6 to 8 pt**), in both appearances. Sampled every 4 px at 2x.
+- **An edge line exists**, one device pixel (0.5 pt) wide, darker than both sides where the background is mid-grey: top edge over the grey reads `80 80 80 80 80 | 58 | 72 …` in dark and `80 … | 60 | B3 …` in light. Over black and over white it is not distinguishable from antialiasing. Consistent with a thin low-alpha dark stroke; its alpha and colour cannot be separated from these samples.
+- The glass button over the grey reads `#7F7F7F` (dark, almost the background) and `#B3B3B3` (light, as the panel).
+- Radius is what the code specifies (24 pt reads as about 48 px at 2x). No outer shadow was detected on any background.
+
+**Limits.**
+- Flat black, grey and white cannot show lensing or a specular highlight; either may appear over detailed or coloured content. Not tested.
+- Dark appearance needs a fit with more than three backgrounds before it can be expressed as numbers; with three points the only safe statement is "non-linear".
 - This is a moving target (the owner noted Liquid Glass is "still in flux"): these numbers are for **macOS 27.2 on 2026-11-17** and need re-measuring with the OS.
 
-**What it means for the model.** A web approximation is a backdrop blur of about 6 px with a tint layer of about 0.58 alpha in dark (0.29 for the clear variant), a 1 px antialiased edge and a large continuous radius. That is expressible as `SurfaceRecipe(blur: 6, layers: [.fill(tint with alpha)])`; **refraction and adaptive tint are not**, and the theme's ledger should say so.
+**What it means for the model.** A web approximation in light appearance is a backdrop blur of about 7 px under a tint layer at about 0.5 alpha with a 0.5 px dark edge line. That is expressible as `SurfaceRecipe` (blur, a translucent fill, an `Edges` line). **Dark appearance cannot be a fixed alpha**: a theme may give the dark glass its own measured fill, and its ledger should say it does not adapt. Refraction is not expressible in CSS and stays recorded as a limit.
 
 ## What the measurements change in the spike note
 
@@ -111,5 +116,5 @@ Blue scroll thumb (a default-button-coloured control), vertical: `ABABAB` outlin
 ## Not measured yet
 
 - Corner radii of System 7, Platinum and Aqua buttons; Platinum and System 7 title bars (stripes); default-button rings and the Aqua default button's blue; menus; scrollbars. All present in the captured sets; deferred to Step 2.
-- **Liquid Glass:** light appearance, a mid-grey background (linearity), the glass over detailed or coloured content (rim, lensing), and button states. Needs the display awake; rerun the probe.
+- **Liquid Glass:** lensing and highlights over detailed or coloured content, a fit for dark appearance with more backgrounds, and button states.
 - **NeXTSTEP 4.0** proper: **not needed** (owner, 2026-11-17: 4.2 is fine).
