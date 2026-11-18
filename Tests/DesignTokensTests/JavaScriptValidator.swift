@@ -1,4 +1,8 @@
+#if canImport(CryptoKit)
 import CryptoKit
+#else
+import Crypto
+#endif
 import Foundation
 
 /// Test support: runs the dataviz skill's `validate_palette.js` under Node and parses its report.

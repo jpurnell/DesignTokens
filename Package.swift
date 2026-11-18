@@ -24,6 +24,8 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/swiftlang/swift-docc-plugin.git", from: "1.4.3"),
+        // Tests hash text with SHA-256; CryptoKit does that on Apple platforms, swift-crypto is its Linux counterpart.
+        .package(url: "https://github.com/apple/swift-crypto.git", from: "3.0.0"),
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
@@ -81,7 +83,10 @@ let package = Package(
         ),
         .testTarget(
             name: "DesignTokensTests",
-            dependencies: ["DesignTokens"],
+            dependencies: [
+                "DesignTokens",
+                .product(name: "Crypto", package: "swift-crypto", condition: .when(platforms: [.linux])),
+            ],
             // A note, not a resource: see Vendored/README.md.
             exclude: ["Vendored"],
             swiftSettings: [

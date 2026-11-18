@@ -23,7 +23,12 @@ enum ProcessRunner {
               let writer = try? FileHandle(forWritingTo: sink) else { return nil }
         defer { try? FileManager.default.removeItem(at: sink) }
 
+        // glibc declares the file-actions type as a struct to initialise in place; Darwin's is a pointer, so an optional
+        #if os(Linux)
+        var actions = posix_spawn_file_actions_t()
+        #else
         var actions: posix_spawn_file_actions_t?
+        #endif
         guard posix_spawn_file_actions_init(&actions) == 0 else {
             try? writer.close()
             return nil

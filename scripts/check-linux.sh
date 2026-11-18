@@ -16,8 +16,10 @@ fi
 echo "== $host: $(ssh "$host" 'bash -lc "swift --version 2>&1 | head -1"')"
 rsync -az --delete --exclude .build --exclude .git --exclude '.DS_Store' ./ "$host:$dest/" || { echo "rsync failed"; exit 1; }
 
+# libXCTest pulls in libFoundationXML, which asks for versioned libxml2 symbols (LIBXML2_2.4.30...); Ubuntu 26.04's libxml2
+# 2.15 exports none, so the test runner fails to link without this. Only tests are affected; `swift build` links neither.
 status=0
-for step in "swift build" "swift test"; do
+for step in "swift build" "swift test -Xlinker --allow-shlib-undefined"; do
     echo "== $step"
     ssh "$host" "bash -lc 'cd $dest && $step 2>&1'" || { echo "FAILED  $step on $host"; status=1; break; }
 done
