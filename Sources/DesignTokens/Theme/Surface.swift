@@ -323,8 +323,10 @@ public enum SurfaceRole: String, Sendable, Hashable, Codable, CaseIterable {
     case titleBar
     /// The stripes (or other texture) that fill a title bar between the controls and the title.
     case titleStripes
-    /// A window control: the close or zoom box, at rest.
+    /// A window control: the close box, at rest.
     case windowBox
+    /// The zoom box, at rest.
+    case windowBoxZoom
     /// The minimize (windowshade) box, at rest; it differs from the other boxes by what is drawn in it.
     case windowBoxMinimize
 }

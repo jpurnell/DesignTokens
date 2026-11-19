@@ -12,7 +12,7 @@ public extension Theme {
     /// a selected row is `#CCCCFF`; the empty desktop reads `#9C9CCE`; a text field in the colour picker is a 1 px black outline on white.
     ///
     /// **Not measured, chosen here:** the pressed state (the bevel inverted over an `#AAAAAA` body), the disabled state, the focus ring,
-    /// the window frame and title bar (a plain 1 px outline here; the real one is striped with close, zoom and windowshade boxes),
+    /// the window frame (a plain 1 px outline; the title bar is measured, see `platinumTitleBar`) and the pressed state of the title bar's boxes,
     /// scroll bars, and the type (Charcoal is the system face on 8.x, Geneva for lists: general knowledge, named with the system sans as
     /// the fallback because neither is installed on most machines). The status roles carry no colour (black); status is a glyph.
     static var platinum: Theme {
@@ -23,10 +23,10 @@ public extension Theme {
 
     /// Measured from the Appearance window of the Mac OS 8.0 capture: the bar is 22 rows (black and white above, #999999 and black below),
     /// its parts start 2 px inside the frame, the boxes are 13 px, the stripes 12 px and the gap between parts 4 px. The right frame is
-    /// three columns (`#000000 #000000 #999999`), so the right inset is one larger than the left. The gap between a zoom and a windowshade
-    /// box is not measured (the window sampled has one box at the right) and is taken as the same 4 px.
+    /// three columns (`#000000 #000000 #999999`), so the right inset is one larger than the left. Two controls on one side sit 3 px apart (the
+    /// About window of the capture: boxes at columns 445 and 461).
     private static var platinumTitleBar: TitleBarMetrics {
-        TitleBarMetrics(height: 22, inset: Insets(top: 4, leading: 4, bottom: 2, trailing: 5), boxSize: 13, gap: 4, stripeHeight: 12)
+        TitleBarMetrics(height: 22, inset: Insets(top: 4, leading: 4, bottom: 2, trailing: 5), boxSize: 13, gap: 4, stripeHeight: 12, boxGap: 3)
     }
 
     private static var platinumFamily: FontFamilyRef { .named("Charcoal", fallback: .named("Geneva", fallback: .sans)) }
@@ -90,7 +90,9 @@ public extension Theme {
             g88, g22, g22, g22, g22, g22, g22, g22, g22, g22, g22, g22, W,
             bar, W, W, W, W, W, W, W, W, W, W, W, W,
         ]
-        // the windowshade box: the same bevel with two lines across it (rows 5 and 7 of the 13)
+        // the zoom box: the same bevel with one line across it (row 5 of the 13); the windowshade box: two (rows 5 and 7)
+        var zoomCells = boxCells
+        for x in 1...11 { zoomCells[5 * 13 + x] = g22 }
         var shadeCells = boxCells
         for y in [5, 7] { for x in 1...11 { shadeCells[y * 13 + x] = g22 } }
         let barEdges = Edges(top: [step("ink"), step("surface")], leading: [step("ink"), step("surface")],
@@ -102,6 +104,7 @@ public extension Theme {
             .titleBar: [.rest: recipe(fill: "bar", edges: barEdges, radius: 0)],
             .titleStripes: [.rest: tile(PatternSpec(literal: 1, 2, [W, ref("muted")]))],
             .windowBox: [.rest: tile(PatternSpec(literal: 13, 13, boxCells))],
+            .windowBoxZoom: [.rest: tile(PatternSpec(literal: 13, 13, zoomCells))],
             .windowBoxMinimize: [.rest: tile(PatternSpec(literal: 13, 13, shadeCells))],
             .desktop: [.rest: recipe(fill: "desktop", edges: nil, radius: 0)],
             .window: [.rest: recipe(fill: "background", edges: outline, radius: 0)],

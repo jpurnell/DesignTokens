@@ -78,6 +78,23 @@ struct PlatinumTitleBarTests {
         for y in [0, 1, 2, 3, 4, 6, 8, 9, 10, 11, 12] { #expect(try row(tile, y) == row(close, y)) }
     }
 
+    @Test("the zoom box is the close box's bevel crossed by one #222222 line, row 5 (the About window's box at columns 445 to 457)")
+    func zoomBox() throws {
+        let tile = try pattern(.windowBoxZoom)
+        let close = try pattern(.windowBox)
+        func row(_ spec: PatternSpec, _ y: Int) throws -> [String] { try (0..<13).map { try hex(spec.cells[y * 13 + $0]) } }
+        #expect(try row(tile, 5) == ["#888888"] + Array(repeating: "#222222", count: 11) + ["#FFFFFF"])
+        for y in 0..<13 where y != 5 { #expect(try row(tile, y) == row(close, y)) }
+    }
+
+    @Test("two boxes at the right sit 3 px apart (a 16 px pitch), not the 4 px gap between other parts")
+    func boxSpacing() throws {
+        #expect(Theme.platinum.windowControls?.titleBar?.boxGap == 3)
+        let css = try ThemeCSSEmitter.emit(.platinum)
+        #expect(css.contains(".dt-titlebar__box--minimize {\n  order: 2;\n  margin-inline-start: -1px;"))
+        #expect(!css.contains(".dt-titlebar__box--zoom {\n  order: 1;\n  margin-inline-start"))
+    }
+
     @Test("the metrics: 22 px bar, 13 px boxes, a 4 px gap, boxes 2 px below the inner top edge")
     func metrics() throws {
         let bar = try #require(Theme.platinum.windowControls?.titleBar)

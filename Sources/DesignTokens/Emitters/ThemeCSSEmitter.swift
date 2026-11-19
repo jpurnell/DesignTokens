@@ -99,6 +99,7 @@ public enum ThemeCSSEmitter {
         case .titleBar: [".dt-titlebar"]
         case .titleStripes: [".dt-titlebar__stripes"]
         case .windowBox: [".dt-titlebar__box"]
+        case .windowBoxZoom: [".dt-titlebar__box--zoom"]
         case .windowBoxMinimize: [".dt-titlebar__box--minimize"]
         case .menu, .scrollTrack, .scrollThumb, .selection: []
         }
@@ -183,12 +184,15 @@ public enum ThemeCSSEmitter {
             "  white-space: nowrap;",
             "}",
         ]
-        for (index, control) in controls.leading.enumerated() {
-            lines += ["\(scope) .dt-titlebar__box--\(control.rawValue) {", "  order: \(index - controls.leading.count);", "}"]
+        // a control that follows another on its side is pulled to the controls' own spacing, which the bar's gap would otherwise set
+        let pull = bar.boxGap - bar.gap
+        func place(_ control: WindowControl, order: Int, follows: Bool) {
+            lines += ["\(scope) .dt-titlebar__box--\(control.rawValue) {", "  order: \(order);"]
+            if follows, pull != 0 { lines.append("  margin-inline-start: \(px(pull));") }
+            lines.append("}")
         }
-        for (index, control) in controls.trailing.enumerated() {
-            lines += ["\(scope) .dt-titlebar__box--\(control.rawValue) {", "  order: \(index + 1);", "}"]
-        }
+        for (index, control) in controls.leading.enumerated() { place(control, order: index - controls.leading.count, follows: index > 0) }
+        for (index, control) in controls.trailing.enumerated() { place(control, order: index + 1, follows: index > 0) }
         return lines
     }
 

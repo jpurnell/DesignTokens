@@ -51,13 +51,16 @@ public struct TitleBarMetrics: Sendable, Hashable, Codable {
     public var gap: Double
     /// The stripes' height.
     public var stripeHeight: Double
+    /// Space between two window controls on the same side, which can differ from ``gap``.
+    public var boxGap: Double
 
     /// Creates the metrics.
-    public init(height: Double, inset: Insets, boxSize: Double, gap: Double, stripeHeight: Double) {
+    public init(height: Double, inset: Insets, boxSize: Double, gap: Double, stripeHeight: Double, boxGap: Double? = nil) {
         self.height = height
         self.inset = inset
         self.boxSize = boxSize
         self.gap = gap
         self.stripeHeight = stripeHeight
+        self.boxGap = boxGap ?? gap
     }
 }
