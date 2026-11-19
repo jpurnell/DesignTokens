@@ -17,7 +17,14 @@ public extension Theme {
     static var openstep: Theme {
         Theme(id: "openstep", name: "OPENSTEP 4.2", structure: classicMacStructure(family: openstepFamily, controlHeight: 27, monospace: openstepMonospace),
               palette: openstepPalette, appearances: .lightOnly, conformance: openstepConformance, surfaces: openstepSurfaces,
-              windowControls: WindowControls(leading: [.minimize], trailing: [.close], titleBar: openstepTitleBar))
+              windowControls: WindowControls(leading: [.minimize], trailing: [.close], titleBar: openstepTitleBar),
+              scrollBar: openstepScrollBar)
+    }
+
+    /// Measured from the vertical scroller of the OPENSTEP 4.2 file viewer: 20 px wide (a black line, 1 px of grey, a 16 px column, 1 px of grey, a
+    /// black line), the two 16 x 16 arrow buttons together at the bottom with 1 px between them, and 2 px (line and grey) at each end.
+    private static var openstepScrollBar: ScrollBarMetrics {
+        ScrollBarMetrics(thickness: 20, arrowLength: 16, arrows: .together, inset: 2, gap: 1)
     }
 
     /// NeXT's fixed-pitch face is Ohlfs (the Terminal and Edit), with Courier as the PostScript standby: general knowledge, named first, not
@@ -106,7 +113,46 @@ public extension Theme {
         }
         let barEdges = Edges(top: [step("ink"), step("background")], leading: [step("ink"), step("background")],
                              bottom: [step("ink"), step("muted")], trailing: [step("ink"), step("muted")])
+        // Scroll bar (measured, see openstepScrollBar): the track is a one-pixel checkerboard of #AAAAAA and #555555 in the 16 px column (#555555 first on the track's first row), the thumb
+        // the button's raised bevel, and each arrow a 16 x 16 button with a triangle of black (its edge pixels #555555). Authored for a horizontal bar,
+        // so the measured vertical tiles are turned about the diagonal. The knob on the thumb's middle (8 x 6) is drawn whole.
+        let upGlyph = [
+            ".......m........", ".......K........", "......mKm.......", "......KKK.......", ".....mKKKm......",
+            ".....KKKKK......", "....mKKKKKm.....", "....KKKKKKK.....", "...mKKKKKKKm....",
+        ]
+        func arrow(glyph: [String]) -> PatternSpec {
+            var cells: [ColourReference] = []
+            for row in 0..<16 {
+                for col in 0..<16 {
+                    let g = (3..<12).contains(row) ? Array(glyph[row - 3])[col] : "."
+                    if g == "K" { cells.append(ink); continue }
+                    if g == "m" { cells.append(g55); continue }
+                    if row == 15 || col == 15 { cells.append(ink) }
+                    else if row == 14 { cells.append(col == 0 ? W : g55) }
+                    else if row == 0 || col == 0 { cells.append(W) }
+                    else if col == 14 { cells.append(g55) }
+                    else { cells.append(bg) }
+                }
+            }
+            return PatternSpec(literal: 16, 16, cells)
+        }
+        let down = arrow(glyph: Array(upGlyph.reversed()))
+        let up = arrow(glyph: upGlyph)
+        func wholeTile(_ spec: PatternSpec) -> SurfaceRecipe {
+            SurfaceRecipe(layers: [.pattern(spec)], edges: nil, radius: .uniform(0), backdropBlur: nil, ink: ink, scale: .integer)
+        }
+        let knobKey: [Character: ColourReference] = ["m": g55, "K": ink, "W": W, ".": bg]
+        let knobRows = [".mKKK...", "mKmmmm..", "Kmm.....", "Km..WW..", "Km.WWW..", ".m.WW..."]
+        let knob = PatternSpec(literal: 8, 6, knobRows.flatMap { $0.map { knobKey[$0] ?? bg } })
+        let dither = SurfaceRecipe(layers: [.fill(bg), .pattern(PatternSpec(literal: 2, 2, [g55, bg, bg, g55]))], edges: nil,
+                                   radius: .uniform(0), backdropBlur: nil, ink: ink, scale: .integer)
         return SurfaceSet(recipes: [
+            .scrollBar: [.rest: recipe(fill: "background", edges: outline)],
+            .scrollTrack: [.rest: dither],
+            .scrollGrip: [.rest: wholeTile(knob.transposed)],
+            .scrollThumb: [.rest: recipe(fill: "background", edges: raised)],
+            .scrollArrowStart: [.rest: wholeTile(up.transposed)],
+            .scrollArrowEnd: [.rest: wholeTile(down.transposed)],
             .desktop: [.rest: recipe(fill: "desktop", edges: nil)],
             .window: [.rest: recipe(fill: "background", edges: outline)],
             .panel: [.rest: recipe(fill: "surface", edges: outline)],

@@ -83,6 +83,40 @@ public struct Edges: Sendable, Hashable, Codable {
     }
 }
 
+extension Edges {
+    /// The edges of the same surface turned a quarter about its diagonal: the top becomes the leading side and the bottom the trailing side,
+    /// so a horizontal scroll bar's light top-left bevel is a vertical bar's light top-left bevel.
+    var transposed: Edges {
+        Edges(top: leading, leading: top, bottom: trailing, trailing: bottom, stacking: stacking)
+    }
+}
+
+extension PatternSpec {
+    /// The tile reflected about its diagonal (rows become columns).
+    var transposed: PatternSpec {
+        var out: [ColourReference] = []
+        out.reserveCapacity(cells.count)
+        for x in 0..<width { for y in 0..<height { out.append(cells[y * width + x]) } }
+        return PatternSpec(literal: height, width, out)
+    }
+}
+
+extension SurfaceRecipe {
+    /// This recipe reflected about its diagonal: edges and pattern tiles are transposed; a fill is unchanged.
+    var transposed: SurfaceRecipe {
+        let layers = layers.map { layer -> SurfaceLayer in
+            switch layer {
+            case .pattern(let tile): return .pattern(tile.transposed)
+            case .shadow(var shadow):
+                shadow.shadow = ShadowSpec(colour: shadow.shadow.colour, radius: shadow.shadow.radius, x: shadow.shadow.y, y: shadow.shadow.x)
+                return .shadow(shadow)
+            case .fill, .gradient: return layer
+            }
+        }
+        return SurfaceRecipe(layers: layers, edges: edges?.transposed, radius: radius, backdropBlur: backdropBlur, ink: ink, scale: scale)
+    }
+}
+
 /// Which sides of a recipe's edges are painted first, and so own the pixel where two sides meet in a corner.
 ///
 /// A stripe is a box shadow, and the first shadow listed is on top. Where a top stripe and a trailing stripe overlap at the top-right
@@ -329,10 +363,19 @@ public enum SurfaceRole: String, Sendable, Hashable, Codable, CaseIterable {
     case field
     /// A menu or popover.
     case menu
-    /// A scrollbar track.
+    /// A scroll bar as a whole: what lies behind the arrows and the track (NeXT's outlined grey strip). Authored for a horizontal bar; a
+    /// vertical one is its transpose, as are the other scroll roles.
+    case scrollBar
+    /// The scroll bar's track, the strip the thumb slides in.
     case scrollTrack
-    /// A scrollbar thumb.
+    /// A scrollbar thumb (authored for a horizontal bar).
     case scrollThumb
+    /// The mark on a thumb's middle, a small tile drawn whole (Platinum's grooves).
+    case scrollGrip
+    /// The arrow button at a scrollbar's start (left, or up when vertical): a whole tile, bevel and arrow together.
+    case scrollArrowStart
+    /// The arrow button at a scrollbar's end (right, or down when vertical).
+    case scrollArrowEnd
     /// A selected row or run of text.
     case selection
     /// A window's title bar: the bar behind the title and the window controls.

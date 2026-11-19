@@ -133,6 +133,17 @@ Blue scroll thumb (a default-button-coloured control), vertical: `ABABAB` outlin
 5. **Pixel-exact metrics.** Every edge above is 1 or 2 px with no anti-aliasing. Our spacing is on a 4 pt base unit and our hairline is a fraction of it. A skin needs **device-pixel-snapped** widths (CSS `1px`, not `rem`), which the current emitters do not promise.
 6. **Contrast needs care for System 7 and Platinum disabled states.** Not measured here (Eject was disabled in the captures: its colours were not sampled). It is a Step 2 item.
 
+## Scroll bars (2026-11-19)
+
+Platinum, from the live horizontal bar of the Mac OS 8.0 Appearance window (`pics_gui_desktop_full_macos80`, x 327 to 601, y 243 to 258): 16 px thick,
+a 16 x 16 arrow button at each end (black outline, white top and left, #BBBBBB bottom and right, #DDDDDD body, a black triangle 4 px wide and 8 tall
+whose base is on the outer side), a sunken track (rows #777777 #888888 ten of #AAAAAA #BBBBBB #CCCCCC between black lines) that starts again
+just past the thumb with its own #777777 #888888 left edge, and a 17 px thumb: 1 px bevel #CCCCFF over #6666CC on #9999FF, with an 8 x 8 grip of
+two-pixel grooves (#CCCCFF beside #333399). OPENSTEP 4.2, from the file viewer's vertical scroller (x 236 to 255 from y 394): 20 px wide, a black
+outline, 1 px of #AAAAAA, a 16 px column, 1 px, the outline; the thumb is the button's raised bevel; a one-pixel checkerboard of #AAAAAA and
+#555555 is the track; two 16 x 16 raised arrow buttons sit together at the bottom, 1 px apart. Assumed: Platinum's vertical bar is the horizontal one
+turned about its diagonal, and OPENSTEP's horizontal bar the vertical one turned.
+
 ## Not measured yet
 
 - **Fixed-pitch type** (all three skins): Monaco 9 on the Macintosh, Ohlfs then Courier on NeXT are general knowledge and chosen, not read from a capture. A terminal or code window in a capture would settle the size and line.

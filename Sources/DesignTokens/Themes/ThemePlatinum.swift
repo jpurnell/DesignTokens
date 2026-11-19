@@ -18,7 +18,8 @@ public extension Theme {
     static var platinum: Theme {
         Theme(id: "platinum", name: "Platinum (Mac OS 8)", structure: classicMacStructure(family: platinumFamily, monospace: macMonospace),
               palette: platinumPalette, appearances: .lightOnly, conformance: platinumConformance, surfaces: platinumSurfaces,
-              windowControls: WindowControls(leading: [.close], trailing: [.zoom, .minimize], titleBar: platinumTitleBar))
+              windowControls: WindowControls(leading: [.close], trailing: [.zoom, .minimize], titleBar: platinumTitleBar),
+              scrollBar: platinumScrollBar)
     }
 
     /// Measured from the Appearance window of the Mac OS 8.0 capture: the bar is 22 rows (black and white above, #999999 and black below),
@@ -27,6 +28,13 @@ public extension Theme {
     /// About window of the capture: boxes at columns 445 and 461).
     private static var platinumTitleBar: TitleBarMetrics {
         TitleBarMetrics(height: 22, inset: Insets(top: 4, leading: 4, bottom: 2, trailing: 5), boxSize: 13, gap: 4, stripeHeight: 12, boxGap: 3)
+    }
+
+    /// Measured from the live horizontal scroll bar of the Mac OS 8.0 Appearance window: 16 px thick (a black line, 14 rows, a black line), with a
+    /// 16 x 16 arrow button at each end and no gap. A vertical bar is the same drawing turned about its diagonal (assumed; no active vertical bar
+    /// is in the captures).
+    private static var platinumScrollBar: ScrollBarMetrics {
+        ScrollBarMetrics(thickness: 16, arrowLength: 16, arrows: .bothEnds)
     }
 
     private static var platinumFamily: FontFamilyRef { .named("Charcoal", fallback: .named("Geneva", fallback: .sans)) }
@@ -45,7 +53,9 @@ public extension Theme {
             extras: ["shade": B.adaptive(0xAAAAAA), "selection": B.adaptive(0xCCCCFF), "desktop": B.adaptive(0x9C9CCE),
                      // the title bar's greys, read off the Mac OS 8.0 capture
                      "bar": B.adaptive(0xCCCCCC), "gray22": B.adaptive(0x222222), "gray88": B.adaptive(0x888888),
-                     "gray99": B.adaptive(0x999999), "grayBB": B.adaptive(0xBBBBBB), "grayEE": B.adaptive(0xEEEEEE)])
+                     "gray99": B.adaptive(0x999999), "grayBB": B.adaptive(0xBBBBBB), "grayEE": B.adaptive(0xEEEEEE),
+                     // the scroll bar thumb's body, read off the live bar
+                     "lavender": B.adaptive(0x9999FF)])
     }
 
     /// The control surfaces, in logical pixels.
@@ -97,10 +107,59 @@ public extension Theme {
         for y in [5, 7] { for x in 1...11 { shadeCells[y * 13 + x] = g22 } }
         let barEdges = Edges(top: [step("ink"), step("surface")], leading: [step("ink"), step("surface")],
                              bottom: [step("ink"), step("gray99")], trailing: [step("ink"), step("ink"), step("gray99")])
+        func tileOnly(_ layer: PatternSpec) -> SurfaceRecipe {
+            SurfaceRecipe(layers: [.pattern(layer)], edges: nil, radius: .uniform(0), backdropBlur: nil, ink: ref("ink"), scale: .integer)
+        }
         func tile(_ layer: PatternSpec) -> SurfaceRecipe {
             SurfaceRecipe(layers: [.fill(bar), .pattern(layer)], edges: nil, radius: .uniform(0), backdropBlur: nil, ink: ref("ink"), scale: .integer)
         }
+        // Scroll bar (measured, see platinumScrollBar). The track's 14 rows, top to bottom: #777777 #888888 ten of #AAAAAA #BBBBBB #CCCCCC, between
+        // black lines. The thumb is a 1 px bevel (#CCCCFF over #6666CC) on #9999FF with an 8 x 8 grip of grooves; the arrows are the button bevel
+        // (white over #BBBBBB on #DDDDDD) with a 4 x 8 triangle, as whole 16 x 16 tiles. Corner pixels of the thumb differ by one pixel.
+        let (lav, light, link) = (ref("lavender"), ref("selection"), ref("link"))
+        let trackEdges = Edges(top: [step("ink"), step("muted"), step("gray88")], leading: [step("muted"), step("gray88")], bottom: [step("ink"), step("bar"), step("grayBB")], trailing: [])
+        let thumbEdges = Edges(top: [step("ink"), step("selection")], leading: [step("ink"), step("selection")],
+                               bottom: [step("ink"), step("accent")], trailing: [step("ink"), step("accent")])
+        let gripKey: [Character: ColourReference] = ["e": gEE, "q": lav, "p": light, "s": link]
+        let gripRows = ["eqeqeqeq", "pspspsps", "pspspsps", "pspspsps", "pspspsps", "pspspsps", "pspspsps", "qsqsqsqs"]
+        let gripCells = gripRows.flatMap { $0.map { gripKey[$0] ?? lav } }
+        // the track starts again just past the thumb: its sunken left edge (#777777 then #888888) is painted outside the thumb's right side, in the
+        // rows between the thumb's black lines (a shadow shrunk by 1 px and moved right)
+        let thumbBase = recipe(fill: "lavender", edges: thumbEdges, radius: 0)
+        let thumb = SurfaceRecipe(
+            layers: thumbBase.layers + [
+                .shadow(ShadowLayer(shadow: ShadowSpec(colour: ref("muted"), radius: 0, x: 2, y: 0), spread: -1)),
+                .shadow(ShadowLayer(shadow: ShadowSpec(colour: ref("gray88"), radius: 0, x: 3, y: 0), spread: -1)),
+            ], edges: thumbBase.edges, radius: thumbBase.radius, backdropBlur: nil, ink: thumbBase.ink, scale: .integer)
+        // an arrow button: the bevel, then the triangle; the base column of the glyph and which way it grows
+        func arrowCells(baseColumn: Int, growsRight: Bool) -> [ColourReference] {
+            var cells: [ColourReference] = []
+            let widths = [1, 2, 3, 4, 4, 3, 2, 1]
+            for row in 0..<16 {
+                for col in 0..<16 {
+                    let k = ref("ink")
+                    let glyphRow = row - 4
+                    if (0..<8).contains(glyphRow) {
+                        let w = widths[glyphRow]
+                        let inGlyph = growsRight ? (baseColumn..<baseColumn + w).contains(col) : (baseColumn - w + 1...baseColumn).contains(col)
+                        if inGlyph { cells.append(k); continue }
+                    }
+                    if row == 0 || row == 15 || col == 0 || col == 15 { cells.append(k) }
+                    else if row == 1 { cells.append(col == 14 ? bg : W) }
+                    else if row == 14 { cells.append(col == 1 ? bg : ref("grayBB")) }
+                    else if col == 1 { cells.append(W) }
+                    else if col == 14 { cells.append(ref("grayBB")) }
+                    else { cells.append(bg) }
+                }
+            }
+            return cells
+        }
         return SurfaceSet(recipes: [
+            .scrollTrack: [.rest: recipe(fill: "shade", edges: trackEdges, radius: 0)],
+            .scrollThumb: [.rest: thumb],
+            .scrollGrip: [.rest: tileOnly(PatternSpec(literal: 8, 8, gripCells))],
+            .scrollArrowStart: [.rest: tileOnly(PatternSpec(literal: 16, 16, arrowCells(baseColumn: 9, growsRight: false)))],
+            .scrollArrowEnd: [.rest: tileOnly(PatternSpec(literal: 16, 16, arrowCells(baseColumn: 6, growsRight: true)))],
             .titleBar: [.rest: recipe(fill: "bar", edges: barEdges, radius: 0)],
             .titleStripes: [.rest: tile(PatternSpec(literal: 1, 2, [W, ref("muted")]))],
             .windowBox: [.rest: tile(PatternSpec(literal: 13, 13, boxCells))],

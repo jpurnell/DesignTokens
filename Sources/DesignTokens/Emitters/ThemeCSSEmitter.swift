@@ -101,7 +101,9 @@ public enum ThemeCSSEmitter {
         case .windowBox: [".dt-titlebar__box"]
         case .windowBoxZoom: [".dt-titlebar__box--zoom"]
         case .windowBoxMinimize: [".dt-titlebar__box--minimize"]
-        case .menu, .scrollTrack, .scrollThumb, .selection: []
+        case .menu, .selection: []
+        // drawn by scrollBarRules, which lays a scroll bar out and turns a vertical one about its diagonal
+        case .scrollBar, .scrollTrack, .scrollThumb, .scrollGrip, .scrollArrowStart, .scrollArrowEnd: []
         }
     }
 
@@ -147,6 +149,70 @@ public enum ThemeCSSEmitter {
             }
         }
         lines.append(contentsOf: titleBarRules(theme, scope: scope))
+        lines.append(contentsOf: scrollBarRules(theme, scope: scope))
+        return lines
+    }
+
+    /// A scroll bar: `dt-scrollbar` (with `data-orientation="horizontal"` or `"vertical"`) holding a `dt-scrollbar__arrow--start`, a
+    /// `dt-scrollbar__track` with a `dt-scrollbar__thumb` (and its `dt-scrollbar__grip`) in it, and a `dt-scrollbar__arrow--end`, in that
+    /// markup order. The theme's ``ScrollBarMetrics`` sets where the arrows sit; the recipes are authored for a horizontal bar and a vertical
+    /// one is drawn from their transposes, so the markup does not change from one theme to another. The author sizes the thumb and puts it
+    /// along the track (`inline-size` and `margin-inline-start` when horizontal, `block-size` and `margin-block-start` when vertical).
+    private static func scrollBarRules(_ theme: Theme, scope: String) -> [String] {
+        guard let metrics = theme.scrollBar, let surfaces = theme.surfaces else { return [] }
+        func px(_ value: Double) -> String { SurfaceCSS.px(value) }
+        func literal(_ reference: ColourReference) -> String {
+            let adaptive = ColorRole(rawValue: reference.source).map { theme.palette[$0] } ?? theme.palette.extras[reference.source]
+            guard let value = adaptive?.light else { return "transparent" }
+            return ColorValue(value.rgb, alpha: value.alpha * reference.opacity).hex
+        }
+        let parts: [(SurfaceRole, String)] = [
+            (.scrollBar, ".dt-scrollbar"), (.scrollTrack, ".dt-scrollbar__track"), (.scrollThumb, ".dt-scrollbar__thumb"),
+            (.scrollGrip, ".dt-scrollbar__grip"), (.scrollArrowStart, ".dt-scrollbar__arrow--start"), (.scrollArrowEnd, ".dt-scrollbar__arrow--end"),
+        ]
+        let vertical = "[data-orientation=\"vertical\"]"
+        let thickness = px(metrics.thickness)
+        var lines = [
+            "\(scope) .dt-scrollbar {", "  display: flex;", "  box-sizing: border-box;", "  block-size: \(thickness);",
+            "  padding: \(px(metrics.inset));", "  gap: \(px(metrics.gap));", "}",
+            "\(scope) .dt-scrollbar\(vertical) {", "  flex-direction: column;", "  block-size: auto;", "  inline-size: \(thickness);", "}",
+            "\(scope) .dt-scrollbar__track {", "  flex: 1 1 0;", "  display: flex;", "  min-inline-size: 0;", "  min-block-size: 0;", "}",
+            "\(scope) .dt-scrollbar\(vertical) .dt-scrollbar__track {", "  flex-direction: column;", "}",
+            "\(scope) .dt-scrollbar__thumb {", "  flex: none;", "  display: flex;", "  align-items: center;", "  justify-content: center;",
+            "  box-sizing: border-box;", "  block-size: 100%;", "}",
+            "\(scope) .dt-scrollbar\(vertical) .dt-scrollbar__thumb {", "  block-size: auto;", "  inline-size: 100%;", "}",
+            "\(scope) .dt-scrollbar__arrow {", "  flex: none;", "  box-sizing: border-box;", "  padding: 0;", "  border: 0;", "}",
+        ]
+        // a drawing that is a whole tile takes the tile's size, turned with the bar
+        func size(_ role: SurfaceRole) -> (width: String, height: String, turned: (String, String))? {
+            if case .pattern(let tile)? = surfaces.recipes[role]?[.rest]?.layers.last {
+                return ("\(tile.width)px", "\(tile.height)px", ("\(tile.height)px", "\(tile.width)px"))
+            }
+            return nil
+        }
+        for (role, suffix) in [(SurfaceRole.scrollGrip, ".dt-scrollbar__grip"), (.scrollArrowStart, ".dt-scrollbar__arrow--start"),
+                               (.scrollArrowEnd, ".dt-scrollbar__arrow--end")] {
+            guard let box = size(role) else { continue }
+            lines += ["\(scope) \(suffix) {", "  inline-size: \(box.width);", "  block-size: \(box.height);", "}",
+                      "\(scope) .dt-scrollbar\(vertical) \(suffix) {", "  inline-size: \(box.turned.0);", "  block-size: \(box.turned.1);", "}"]
+        }
+        if surfaces.recipes[.scrollArrowStart] == nil {
+            lines += ["\(scope) .dt-scrollbar__arrow {", "  inline-size: \(px(metrics.arrowLength));", "  block-size: 100%;", "}"]
+        }
+        if metrics.arrows == .together {
+            lines += ["\(scope) .dt-scrollbar__track {", "  order: 1;", "}", "\(scope) .dt-scrollbar__arrow--start {", "  order: 2;", "}",
+                      "\(scope) .dt-scrollbar__arrow--end {", "  order: 3;", "}"]
+        }
+        for (role, suffix) in parts {
+            guard let recipe = surfaces.recipes[role]?[.rest] else { continue }
+            for turned in [false, true] {
+                let selector = turned ? "\(scope) .dt-scrollbar\(vertical)\(suffix == ".dt-scrollbar" ? "" : " " + suffix)" : "\(scope) \(suffix)"
+                lines.append(selector + " {")
+                lines.append(contentsOf: SurfaceCSS.declarations(for: turned ? recipe.transposed : recipe, resolve: reference, literal: literal)
+                    .map { "  \($0);" })
+                lines.append("}")
+            }
+        }
         return lines
     }
 
