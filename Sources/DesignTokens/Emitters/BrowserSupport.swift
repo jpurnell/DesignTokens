@@ -72,8 +72,8 @@ public enum BrowserSupport {
 
     /// Every feature, newest requirement first within no particular order; see ``floor(for:)`` for the result.
     public static let features: [Feature] = [
-        feature("color-mix()", #"color-mix\("#, 111, 111, 16.2, 113, [.components],
-                note: "ThemeCSSEmitter writes it for a translucent shadow reference; no registered theme has one, so no themes file uses it today"),
+        feature("color-mix()", #"color-mix\("#, 111, 111, 16.2, 113, [.themes, .components],
+                note: "ThemeCSSEmitter writes it for a translucent surface colour; OPENSTEP's dock tile shade is one, so its theme file uses it"),
         feature("@container size queries, container-type", #"container-type|@container"#, 105, 105, 16, 110, [.components]),
         feature(":focus-visible", #":focus-visible"#, 86, 86, 15.4, 85, [.components, .tumblr]),
         feature("@media (prefers-contrast)", #"prefers-contrast"#, 96, 96, 14.1, 101, [.themes, .components, .tumblr]),

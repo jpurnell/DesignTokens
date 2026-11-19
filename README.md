@@ -152,13 +152,13 @@ views read, cross-checked by `validate()`), and `RGB.contrastRatio(with:)` / `me
 
 The CSS the package emits is written for current browsers and **no fallbacks are provided**: a browser older than the floor is not supported, and gets whatever its parser makes of rules it does not know.
 
-**The floor for a page that links `tokens.css` or a theme file and `components.css`: Chrome 111, Edge 111, Safari 16.2, Firefox 113.** `color-mix()` (in `components.css`) sets the floor in every engine; container queries come one release behind it. The theme files alone need Chrome 96, Edge 96, Safari 14.1, Firefox 101 (`prefers-contrast`). The Tumblr block (`themes/swiss.tumblr.css`) is separate and needs Chrome 105, Edge 105, Safari 15.4, Firefox 121, because it uses `:has()`.
+**The floor for a page that links `tokens.css` or a theme file and `components.css`: Chrome 111, Edge 111, Safari 16.2, Firefox 113.** `color-mix()` (in `components.css`, and in `themes/openstep.css` for the dock tile's translucent shade) sets the floor in every engine; container queries come one release behind it. The theme files alone have the same floor. The Tumblr block (`themes/swiss.tumblr.css`) is separate and needs Chrome 105, Edge 105, Safari 15.4, Firefox 121, because it uses `:has()`.
 
 Sources: the first unprefixed, unflagged version of each feature in `@mdn/browser-compat-data` 8.1.8 (the data behind MDN's compatibility tables), read from the npm registry on 2026-11-10; MDN's pages for `color-mix()` and `@container` (both Baseline "widely available", May 2023 and February 2023) as a cross-check. Edge is Chromium-based from 79. Verified in a browser: Chrome only, headless (see `CHANGELOG.md`, 0.12.0); Safari and Firefox are not tested here, so those columns are the compatibility data's, not an observation.
 
 | Feature (note) | Chrome / Edge | Safari | Firefox | Used in |
 |---|---|---|---|---|
-| color-mix() (ThemeCSSEmitter writes it for a translucent shadow reference; no registered theme has one, so no themes file uses it today) | 111 / 111 | 16.2 | 113 | components |
+| color-mix() (ThemeCSSEmitter writes it for a translucent surface colour; OPENSTEP's dock tile shade is one, so its theme file uses it) | 111 / 111 | 16.2 | 113 | themes, components |
 | @container size queries, container-type | 105 / 105 | 16 | 110 | components |
 | :focus-visible | 86 / 86 | 15.4 | 85 | components, tumblr |
 | @media (prefers-contrast) | 96 / 96 | 14.1 | 101 | themes, components, tumblr |
@@ -192,7 +192,7 @@ Sources: the first unprefixed, unflagged version of each feature in `@mdn/browse
 | aspect-ratio | 88 / 88 | 15 | 89 | tumblr |
 | env() safe-area insets | 69 / 79 | 11.1 | 65 | tumblr |
 
-Older features the CSS also uses (attribute and structural selectors, `box-shadow`, `transition`, `justify-self`, `text-align: start`) are below every floor above. `ThemeCSSEmitter` can write `color-mix()` for a translucent shadow; no registered theme has one.
+Older features the CSS also uses (attribute and structural selectors, `box-shadow`, `transition`, `justify-self`, `text-align: start`) are below every floor above. `ThemeCSSEmitter` writes `color-mix()` for a translucent surface colour; OPENSTEP's dock shade is the one registered theme that has one.
 
 ### Breakpoints
 

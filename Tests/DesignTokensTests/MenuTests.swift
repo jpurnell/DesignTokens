@@ -125,16 +125,18 @@ struct MenuTests {
         #expect(button.contains("color: var(--muted);") && button.contains("background-color: var(--background);"))
     }
 
-    @Test("a dock tile is 64 px: two white rows on top and leading, a black line and a flat dark shade under and after, a slate diagonal gradient")
+    @Test("a dock tile is 64 px: two white rows on top and leading, a black line and a 40% black shade under and after, a slate diagonal gradient")
     func dockTile() throws {
         let theme = Theme.openstep
         #expect(theme.dock?.tileSize == 64)
         let recipe = try #require(theme.surfaces?.recipes[.dockTile]?[.rest])
         guard case .gradient(let gradient)? = recipe.layers.first else { throw SurfaceError.cellSize(0) }
-        #expect(gradient.angleDegrees == 135 && gradient.stops.map(\.colour.source) == ["dockLight", "dockDark"])
+        #expect(abs(gradient.angleDegrees - 135) < 1e-9 && gradient.stops.map(\.colour.source) == ["dockLight", "dockDark"])
         #expect(recipe.edges?.top.map(\.colour.source) == ["surface", "surface"])
         #expect(recipe.edges?.leading.map(\.colour.source) == ["surface", "surface"])
-        #expect(recipe.edges?.bottom.map(\.colour.source) == ["ink", "dockShade"])
+        #expect(recipe.edges?.bottom.map(\.colour.source) == ["ink", "ink"] )
+        let shade = try #require(recipe.edges?.bottom.last?.colour.opacity)
+        #expect(abs(shade - 0.4) < 1e-9)
         let css = try ThemeCSSEmitter.emit(theme)
         let tile = lines(try lastRule(css, "[data-theme-name=\"openstep\"] .dt-dock__tile"))
         #expect(tile.contains("inline-size: 64px;") && tile.contains("block-size: 64px;"))

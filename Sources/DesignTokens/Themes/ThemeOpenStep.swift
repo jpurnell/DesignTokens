@@ -25,7 +25,7 @@ public extension Theme {
     /// row is white all through. Text starts 6 px in. The arrow of a row that opens a submenu is a 7 x 7 triangle 6 px from the row's end and 6 down.
     /// A disabled button's text is `#555555` on the same bevel (the Revert button of the Application Inspector); a disabled menu row is assumed to
     /// match. The dock's tiles are 64 px with a two-row white highlight, a black line and a dark shade at the bottom and right, and a diagonal gradient
-    /// (fitted: `#ACACB9` to `#555565` corner to corner); the shade row is one flat `#47474F`, the middle of the capture's `#56575E` to `#3B3C44`, which vary with the ground (a translucent black would need `color-mix()` and raise the theme files' browser floor).
+    /// (fitted: `#ACACB9` to `#555565` corner to corner); the shade row is black at 40% over the ground, near the capture's `#56575E` to `#3B3C44` (which vary with the ground); that is the one `color-mix()` in the theme files, and it sets their browser floor at Chrome 111.
     /// The labels above a tile (a black strip with white text) are not drawn.
     private static var openstepMenus: MenuMetrics {
         MenuMetrics(itemHeight: 20, titleHeight: 22, itemPadding: 6, menuWidth: 93, arrowInset: 6)
@@ -65,7 +65,7 @@ public extension Theme {
             diverging: B.ramp([0x555577, 0xAAAAAA, 0x555555]),
             extras: ["desktop": B.adaptive(0x555577),
                      // the dock tile's slate ground, corner to corner, fitted to the empty tile of the 4.2 capture
-                     "dockLight": B.adaptive(0xACACB9), "dockDark": B.adaptive(0x555565), "dockShade": B.adaptive(0x47474F)])
+                     "dockLight": B.adaptive(0xACACB9), "dockDark": B.adaptive(0x555565)])
     }
 
     private static var openstepSurfaces: SurfaceSet {
@@ -164,7 +164,7 @@ public extension Theme {
             let cells = rows.flatMap { $0.map { c in arrowKey[c] ?? (c == "W" ? lit : ground) } }
             return wholeTile(PatternSpec(literal: 7, 7, cells))
         }
-        let shade = step("dockShade")
+        let shade = EdgeStep(literal: ColourReference(source: "ink", opacity: 0.4), 1)
         let dockEdges = Edges(top: [step("surface"), step("surface")], leading: [step("surface"), step("surface")], bottom: [step("ink"), shade],
                               trailing: [step("ink"), shade], stacking: .bottomTrailingFirst)
         let dockGround = GradientSpec(literalAngle: 135, [GradientStop(colour: ref("dockLight"), position: 0), GradientStop(colour: ref("dockDark"), position: 1)])

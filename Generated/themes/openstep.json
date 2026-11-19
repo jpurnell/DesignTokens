@@ -68,9 +68,6 @@
       },
       "dockLight" : {
         "light" : "#ACACB9"
-      },
-      "dockShade" : {
-        "light" : "#47474F"
       }
     },
     "ink" : {
@@ -1001,8 +998,8 @@
               },
               {
                 "colour" : {
-                  "opacity" : 1,
-                  "source" : "dockShade"
+                  "opacity" : 0.4,
+                  "source" : "ink"
                 },
                 "width" : 1
               }
@@ -1050,8 +1047,8 @@
               },
               {
                 "colour" : {
-                  "opacity" : 1,
-                  "source" : "dockShade"
+                  "opacity" : 0.4,
+                  "source" : "ink"
                 },
                 "width" : 1
               }

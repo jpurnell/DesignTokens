@@ -56,8 +56,8 @@ struct BrowserSupportTests {
         let floor = BrowserSupport.pageFloor
         #expect(floor == BrowserSupport.Versions(chrome: 111, edge: 111, safari: 16.2, firefox: 113))
         #expect(BrowserSupport.floorText(floor) == "Chrome 111, Edge 111, Safari 16.2, Firefox 113")
-        // the theme files alone ask for much less; the Tumblr block has its own floor, set by :has()
-        #expect(BrowserSupport.floor(for: [.themes]) == BrowserSupport.Versions(chrome: 96, edge: 96, safari: 14.1, firefox: 101))
+        // OPENSTEP's translucent dock shade puts color-mix() in a theme file, so the theme files have the same floor; the Tumblr block has its own, set by :has()
+        #expect(BrowserSupport.floor(for: [.themes]) == BrowserSupport.Versions(chrome: 111, edge: 111, safari: 16.2, firefox: 113))
         #expect(BrowserSupport.floor(for: [.tumblr]).firefox == 121)
     }
 
