@@ -74,6 +74,14 @@ Horizontal: `… FFFFFF x1, AAAAAA x15 …, AAAAAA x16, 555555 x1, 000000 x1, AA
 - Radius 0. The bevel widths are 1 light, 2 dark, which is not the same as Platinum's.
 - Font **(general knowledge)**: Helvetica.
 
+### OPENSTEP 4.2, further readings (captures of 2026-11-18)
+
+- **Button (Open panel's Cancel):** 72 x 27 px (columns 137 to 208, rows 297 to 323). Reading inward, the right edge is `#000000` then `#555555`, the bottom the same, the top and left one `#FFFFFF` pixel. At the top-right and bottom-left corners the dark edge owns the pixel (`EdgeStacking.bottomTrailingFirst`). Generated CSS in headless Chrome matches every pixel outside the label.
+- **Text field (Name):** 21 px high in the capture, `#555555` twice at the top and left, `#FFFFFF` then `#AAAAAA` at the bottom and right (outside in: white outermost). The theme draws fields at the control height (27 px), so the field's height is **not** yet authentic.
+- **Title bar (Font Panel, 299 px wide):** rows 0 to 22. Top `#000000 #AAAAAA`, left the same, right `#000000 #555555` (outermost black), bottom `#000000 #555555`; body `#000000`; title text white and bold. **Miniaturize** button at the left, 15 x 15 (columns 4 to 18, rows 4 to 18): a raised bevel (white top and left, `#555555` bottom and right, with one `#555555` pixel beyond each of two corners) around a black 10 px frame holding a smaller `#AAAAAA` window. **Close** button at the right, 14 x 14 (columns 280 to 293): the same bevel around a black X with `#555555` anti-aliasing. Both are pixel for pixel in their tiles; headless Chrome matches the capture's bar except the title text.
+- **Colours:** desktop `#555577`; body `#AAAAAA`; selection white; text black.
+- **Not measured:** pressed, disabled, focus, scroll bars, menus, the typeface.
+
 ## Aqua (Mac OS X 10.0)
 
 Pinstripe, vertical at x=20: `F1F1F1, FFFFFF, F1F1F1, EAEAEA` repeating, **period 4 px**. (Horizontally the stripe is flat away from the window edge: `F1F1F1 x4` at x=18 to 21.)

@@ -69,14 +69,30 @@ public struct Edges: Sendable, Hashable, Codable {
     public var bottom: [EdgeStep]
     /// The trailing edge's stripes, outside in.
     public var trailing: [EdgeStep]
+    /// Which pair of sides owns a corner pixel where a light side meets a dark one, or `nil` for the default, ``EdgeStacking/topLeadingFirst``.
+    /// Optional in JSON; absent means `nil`.
+    public var stacking: EdgeStacking?
 
     /// Creates edges.
-    public init(top: [EdgeStep], leading: [EdgeStep], bottom: [EdgeStep], trailing: [EdgeStep]) {
+    public init(top: [EdgeStep], leading: [EdgeStep], bottom: [EdgeStep], trailing: [EdgeStep], stacking: EdgeStacking? = nil) {
         self.top = top
         self.leading = leading
         self.bottom = bottom
         self.trailing = trailing
+        self.stacking = stacking
     }
+}
+
+/// Which sides of a recipe's edges are painted first, and so own the pixel where two sides meet in a corner.
+///
+/// A stripe is a box shadow, and the first shadow listed is on top. Where a top stripe and a trailing stripe overlap at the top-right
+/// corner, the side listed first shows. The Macintosh skins' corners are mitred by their own drawing and read the same either way, but
+/// OPENSTEP's dark bottom and right edges own the top-right and bottom-left corners of a button.
+public enum EdgeStacking: String, Sendable, Hashable, Codable {
+    /// Top, leading, bottom, trailing (the default).
+    case topLeadingFirst
+    /// Bottom, trailing, top, leading.
+    case bottomTrailingFirst
 }
 
 // MARK: - Patterns and gradients
@@ -489,8 +505,10 @@ public enum SurfaceCSS {
             let sides: [[EdgeStep]] = [edges.top, edges.leading, edges.bottom, edges.trailing]
             var depths = [Double](repeating: 0, count: 4)
             var edgeShadows: [String] = []
+            let order = edges.stacking == .bottomTrailingFirst ? [2, 3, 0, 1] : [0, 1, 2, 3]
             for step in 0..<(sides.map(\.count).max() ?? 0) {
-                for (side, steps) in sides.enumerated() where step < steps.count {
+                for side in order where step < sides[side].count {
+                    let steps = sides[side]
                     depths[side] += steps[step].width
                     let d = depths[side]
                     let offsets: [(Double, Double)] = [(0, d), (d, 0), (0, -d), (-d, 0)]

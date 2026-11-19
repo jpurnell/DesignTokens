@@ -34,8 +34,9 @@ public extension Theme {
             extras: [:])
     }
 
-    /// The structure shared by the classic Macintosh skins (System 7 and Platinum): their metrics are the same, only the face differs.
-    static func classicMacStructure(family system7Family: FontFamilyRef) -> Structure {
+    /// The structure shared by the fixed-metric skins (System 7, Platinum, OPENSTEP): the Macintosh skins have the same metrics and differ in
+    /// the face; OPENSTEP passes its own control height.
+    static func classicMacStructure(family system7Family: FontFamilyRef, controlHeight: Double = 20) -> Structure {
         typealias B = ThemeBuilders
         // Chicago 12 is the system font (menus, buttons, dialog text); sizes are the Macintosh's, and the line is 1.25 so a
         // 20 px control pads 2.5 px. Caption 10 is chosen, not measured: Geneva 9 is not legible in a fallback face.
@@ -62,7 +63,7 @@ public extension Theme {
             annotationRadius: 0, cardBorder: 1, cardPadding: 16, cardChrome: .bordered,
             // Measured: System 7's push button is 20 px tall. That is under WCAG 2.2's 24 px minimum target size (2.5.8) and
             // the 44 pt touch floor; the conformance ledger covers colour only, so the deviation is recorded here, not flagged.
-            controlHeight: 20)
+            controlHeight: controlHeight)
         let labels = LabelSpec(values: .aboveOrEnd, series: .direct, axisSide: .leading,
                                axisLabelPlacement: .besideAxis, sourceLine: true, valueHalo: 0)
         let marks = MarkSpec(lineWidth: 1, pointSize: 16, bandOpacity: 0, selectedLineWidth: 2,

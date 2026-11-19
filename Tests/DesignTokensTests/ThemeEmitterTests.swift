@@ -79,7 +79,7 @@ struct ThemeEmitterTests {
             slotCount += slots.count + (theme.appearances == .both ? 2 : 1)
         }
         #expect(paths == expected)
-        #expect(paths.count == 3 + 12 * 5 + 2 + slotCount + Theme.all.filter { $0.windowControls != nil }.count)
+        #expect(paths.count == 3 + 13 * 5 + 2 + slotCount + Theme.all.filter { $0.windowControls != nil }.count)
     }
 
     @Test("theme JSON is the canonical codec output and decodes back to the theme")

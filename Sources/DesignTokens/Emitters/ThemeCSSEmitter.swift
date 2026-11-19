@@ -180,10 +180,18 @@ public enum ThemeCSSEmitter {
             "\(scope) .dt-titlebar__title {",
             "  flex: none;",
             "  align-self: center;",
+            "  font-weight: 700;",
             "  line-height: 1;",
             "  white-space: nowrap;",
             "}",
         ]
+        // a control whose drawing is a tile takes the tile's size, so a 14 px and a 15 px button each show whole
+        let boxRoles: [(WindowControl, SurfaceRole)] = [(.close, .windowBox), (.zoom, .windowBoxZoom), (.minimize, .windowBoxMinimize)]
+        for (control, role) in boxRoles {
+            guard case .pattern(let tile)? = theme.surfaces?.recipes[role]?[.rest]?.layers.last,
+                  tile.width != Int(exactly: bar.boxSize) || tile.height != Int(exactly: bar.boxSize) else { continue }
+            lines += ["\(scope) .dt-titlebar__box--\(control.rawValue) {", "  inline-size: \(tile.width)px;", "  block-size: \(tile.height)px;", "}"]
+        }
         // a control that follows another on its side is pulled to the controls' own spacing, which the bar's gap would otherwise set
         let pull = bar.boxGap - bar.gap
         func place(_ control: WindowControl, order: Int, follows: Bool) {

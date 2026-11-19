@@ -7,8 +7,8 @@ import DesignTokens
 struct PublicSurfaceTests {
     @Test("every registered theme is a public static property, and the registry returns the same values")
     func themesArePublic() {
-        let direct = [Theme.swiss, .house, .princeton, .ft, .economist, .legacyDefault, .legacyDark, .legacyFinancial, .legacyAccessible, .console, .system7, .platinum]
-        #expect(direct.map(\.id) == ["swiss", "house", "princeton", "ft", "economist", "legacy-default", "legacy-dark", "legacy-financial", "legacy-accessible", "console", "system7", "platinum"])
+        let direct = [Theme.swiss, .house, .princeton, .ft, .economist, .legacyDefault, .legacyDark, .legacyFinancial, .legacyAccessible, .console, .system7, .platinum, .openstep]
+        #expect(direct.map(\.id) == ["swiss", "house", "princeton", "ft", "economist", "legacy-default", "legacy-dark", "legacy-financial", "legacy-accessible", "console", "system7", "platinum", "openstep"])
         #expect(Theme.all == direct)
         for theme in direct { #expect(Theme.named(theme.id) == theme) }
     }

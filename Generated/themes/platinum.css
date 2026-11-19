@@ -344,6 +344,7 @@
 [data-theme-name="platinum"] .dt-titlebar__title {
   flex: none;
   align-self: center;
+  font-weight: 700;
   line-height: 1;
   white-space: nowrap;
 }

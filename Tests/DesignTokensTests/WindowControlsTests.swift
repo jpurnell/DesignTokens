@@ -48,6 +48,6 @@ struct WindowControlsTests {
     @Test("the generator writes <id>.gtk-settings.ini only for themes that place the controls")
     func generatorFiles() throws {
         let files = try Generator.files(formats: [.gtk]).map(\.path).filter { $0.hasSuffix(".ini") }
-        #expect(files == ["themes/system7.gtk-settings.ini", "themes/platinum.gtk-settings.ini"])
+        #expect(files == ["themes/system7.gtk-settings.ini", "themes/platinum.gtk-settings.ini", "themes/openstep.gtk-settings.ini"])
     }
 }
