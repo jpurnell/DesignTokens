@@ -178,11 +178,15 @@ two outer rings (black, `#E7E7E7`, `#C0C0C0`) are unchanged. An open File menu: 
 `#B3B3B3` right edge, disabled rows grey; the highlighted row (16 px) is a `#8787DA` top row and left column over a `#5454B3` fill, and the highlighted
 menu-bar title is `#5454B3` with a `#8787DA` top row, white text and a `#0000A5` row under it.
 
-**The Platinum palette is the 8-bit capture's.** The live 24-bit values differ from every earlier Platinum number: the window is a dither of `#DADADA`,
-`#E7E7E7` and `#F3F3F3` (the captures read a flat `#DDDDDD`), the menu bar and menu fill are `#E7E7E7`, the shading greys are `#C0C0C0` and `#969696`,
-the highlight is `#5454B3`. The captures were 256-colour, so each live colour had been moved to the nearest multiple of `#111111` or `#333333`. The
-pressed recipe uses the nearest values of the existing 8-bit palette (`#666666`, `#777777`, `#888888`, `#999999`, `#AAAAAA`) so the skin stays one
-baseline; moving Platinum to the 24-bit values is a separate re-measurement.
+**Platinum was re-baselined to these live values (same day).** The earlier Platinum numbers were a 256-colour screenshot's nearest 8-bit colours. Read off
+the Appearance control panel of a live Mac OS 8.0 and aligned tile by tile with the theme's (the close box, the thumb and its grip, an arrow, the
+track, the title bar's rows, a button's bevel), the greys are a consistent ramp: `#3F3F3F` (was `#222222`), `#666666`, `#777777`, `#878787`, `#969696`
+(`#777777`), `#A5A5A5` (`#888888`), `#B3B3B3` (`#999999`), `#C0C0C0` (`#AAAAAA`), `#CDCDCD` (`#BBBBBB`), `#DADADA` (`#CCCCCC`), `#E7E7E7` (`#DDDDDD`),
+`#F3F3F3` (`#EEEEEE`). The lavender thumb: highlight `#DADAFF`, body `#B3B3FF`, shade `#8787DA`, grip dark `#5454B3`, grip light `#F3F3F3`. The title bar:
+outline, white row, `#DADADA` bar, stripes white and `#969696` (12 rows), `#DADADA` below, `#B3B3B3`, black. The desktop here is a flat `#B3B3DA`. A panel's
+content area is flat `#E7E7E7` with an etched separator (`#A5A5A5` over white); a window's frame area is a fine dither of `#DADADA`, `#E7E7E7`
+and `#F3F3F3` that the theme draws flat. Not re-measured live: the inactive scroll bar's greys and the disabled button (tone-mapped by the same ramp,
+`#A5A5A5` and `#F3F3F3`), the sequential chart ramp, and text colours.
 
 ## Not measured yet
 

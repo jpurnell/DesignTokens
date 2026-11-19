@@ -80,7 +80,7 @@ struct GTKEmitterTests {
         let slot = try #require(ThemeSlot.slots(for: .platinum).first)
         let css = try GTKEmitter.emit(.platinum, slot: slot)
         let shadow = try #require(block("button", in: css).first { $0.hasPrefix("box-shadow:") })
-        #expect(shadow.hasPrefix("box-shadow: inset -3px 0 0 0 #AAAAAA, inset 0 -3px 0 0 #AAAAAA, inset 3px 0 0 0 #FFFFFF, inset 0 3px 0 0 #FFFFFF, "))
+        #expect(shadow.hasPrefix("box-shadow: inset -3px 0 0 0 #C0C0C0, inset 0 -3px 0 0 #C0C0C0, inset 3px 0 0 0 #FFFFFF, inset 0 3px 0 0 #FFFFFF, "))
         #expect(shadow.hasSuffix("inset -1px 0 0 0 #000000, inset 0 -1px 0 0 #000000, inset 1px 0 0 0 #000000, inset 0 1px 0 0 #000000;"))
     }
 

@@ -113,11 +113,11 @@ struct ScrollBarTests {
         }
     }
 
-    @Test("Platinum's track starts again past the thumb: two outer shadows, #777777 then #888888, shrunk by a pixel")
+    @Test("Platinum's track starts again past the thumb: two outer shadows, #969696 then #A5A5A5, shrunk by a pixel")
     func platinumThumbShadow() throws {
         let recipe = try #require(Theme.platinum.surfaces?.recipes[.scrollThumb]?[.rest])
         let shadows = recipe.layers.compactMap { layer -> ShadowLayer? in if case .shadow(let s) = layer { return s } else { return nil } }
-        #expect(shadows.map(\.shadow.colour.source) == ["muted", "gray88"])
+        #expect(shadows.map(\.shadow.colour.source) == ["gray96", "gray88"])
         #expect(shadows.map(\.shadow.x) == [2, 3] && shadows.allSatisfy { $0.spread == -1 && !$0.inset })
         // turned for a vertical bar the offsets are vertical
         #expect(recipe.transposed.layers.compactMap { layer -> Double? in if case .shadow(let s) = layer { return s.shadow.y } else { return nil } } == [2, 3])

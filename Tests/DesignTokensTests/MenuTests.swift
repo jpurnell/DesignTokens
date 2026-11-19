@@ -39,7 +39,7 @@ struct MenuTests {
         #expect(item.contains("block-size: 20px;") && item.contains("padding: 0 6px;"))
     }
 
-    @Test("Platinum's menu bar is 20 px: white on top and leading, #999999 then black under it, #999999 at the trailing edge")
+    @Test("Platinum's menu bar is 20 px: white on top and leading, #B3B3B3 then black under it, #B3B3B3 at the trailing edge")
     func platinumBar() throws {
         let css = try ThemeCSSEmitter.emit(.platinum)
         let bar = lines(try lastRule(css, "[data-theme-name=\"platinum\"] .dt-menubar"))

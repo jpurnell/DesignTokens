@@ -25,65 +25,65 @@ struct PlatinumTitleBarTests {
         return spec
     }
 
-    @Test("the bar is #CCCCCC inside black then white at the top and left, black then black then #999999 at the right, #999999 then black at the bottom")
+    @Test("the bar is #DADADA inside black then white at the top and left, black then black then #B3B3B3 at the right, #B3B3B3 then black at the bottom")
     func bar() throws {
         let bar = try recipe(.titleBar)
         #expect(bar.layers == [.fill(ColourReference(source: "bar"))])
-        #expect(try hex(ColourReference(source: "bar")) == "#CCCCCC")
+        #expect(try hex(ColourReference(source: "bar")) == "#DADADA")
         let edges = try #require(bar.edges)
         #expect(try edges.top.map { try hex($0.colour) } == ["#000000", "#FFFFFF"])
         #expect(try edges.leading.map { try hex($0.colour) } == ["#000000", "#FFFFFF"])
-        #expect(try edges.bottom.map { try hex($0.colour) } == ["#000000", "#999999"])
-        #expect(try edges.trailing.map { try hex($0.colour) } == ["#000000", "#000000", "#999999"])
+        #expect(try edges.bottom.map { try hex($0.colour) } == ["#000000", "#B3B3B3"])
+        #expect(try edges.trailing.map { try hex($0.colour) } == ["#000000", "#000000", "#B3B3B3"])
     }
 
-    @Test("the stripes alternate #FFFFFF and #777777 down the bar, white first, 12 px high")
+    @Test("the stripes alternate #FFFFFF and #969696 down the bar, white first, 12 px high")
     func stripes() throws {
         let tile = try pattern(.titleStripes)
         #expect(tile.width == 1 && tile.height == 2)
-        #expect(try tile.cells.map { try hex($0) } == ["#FFFFFF", "#777777"])
+        #expect(try tile.cells.map { try hex($0) } == ["#FFFFFF", "#969696"])
         #expect(Theme.platinum.windowControls?.titleBar?.stripeHeight == 12)
     }
 
-    @Test("the close box is 13 x 13: #888888 top and left, #FFFFFF bottom and right, a #222222 frame, a diagonal bevel that darkens to the top left")
+    @Test("the close box is 13 x 13: #A5A5A5 top and left, #FFFFFF bottom and right, a #3F3F3F frame, a diagonal bevel that darkens to the top left")
     func box() throws {
         let tile = try pattern(.windowBox)
         #expect(tile.width == 13 && tile.height == 13)
         func cell(_ x: Int, _ y: Int) throws -> String { try hex(tile.cells[y * 13 + x]) }
-        // row 0 of the capture (y = 110): #888888 x12, then the bar's #CCCCCC
-        #expect(try (0..<12).map { try cell($0, 0) } == Array(repeating: "#888888", count: 12))
-        #expect(try cell(12, 0) == "#CCCCCC")
-        // column 0 (x = 233) is #888888 down to the last row, which is #CCCCCC then white
-        #expect(try (0..<12).map { try cell(0, $0) } == Array(repeating: "#888888", count: 12))
-        #expect(try cell(0, 12) == "#CCCCCC")
+        // row 0 of the capture (y = 110): #A5A5A5 x12, then the bar's #DADADA
+        #expect(try (0..<12).map { try cell($0, 0) } == Array(repeating: "#A5A5A5", count: 12))
+        #expect(try cell(12, 0) == "#DADADA")
+        // column 0 (x = 233) is #A5A5A5 down to the last row, which is #DADADA then white
+        #expect(try (0..<12).map { try cell(0, $0) } == Array(repeating: "#A5A5A5", count: 12))
+        #expect(try cell(0, 12) == "#DADADA")
         #expect(try (1..<13).map { try cell($0, 12) } == Array(repeating: "#FFFFFF", count: 12))
         #expect(try (1..<13).map { try cell(12, $0) } == Array(repeating: "#FFFFFF", count: 12))
         // the frame, the one highlight pixel inside it, and the bevel's first and last interior rows
-        #expect(try (1..<12).map { try cell($0, 1) } == Array(repeating: "#222222", count: 11))
+        #expect(try (1..<12).map { try cell($0, 1) } == Array(repeating: "#3F3F3F", count: 11))
         #expect(try cell(2, 2) == "#FFFFFF")
-        #expect(try (3..<10).map { try cell($0, 3) } == ["#999999", "#999999", "#AAAAAA", "#AAAAAA", "#BBBBBB", "#BBBBBB", "#CCCCCC"])
-        #expect(try (3..<10).map { try cell($0, 9) } == ["#CCCCCC", "#CCCCCC", "#DDDDDD", "#DDDDDD", "#EEEEEE", "#EEEEEE", "#FFFFFF"])
-        #expect(try (3..<11).map { try cell($0, 10) } == Array(repeating: "#888888", count: 8))
+        #expect(try (3..<10).map { try cell($0, 3) } == ["#B3B3B3", "#B3B3B3", "#C0C0C0", "#C0C0C0", "#CDCDCD", "#CDCDCD", "#DADADA"])
+        #expect(try (3..<10).map { try cell($0, 9) } == ["#DADADA", "#DADADA", "#E7E7E7", "#E7E7E7", "#F3F3F3", "#F3F3F3", "#FFFFFF"])
+        #expect(try (3..<11).map { try cell($0, 10) } == Array(repeating: "#A5A5A5", count: 8))
     }
 
-    @Test("the windowshade box is the close box's bevel crossed by two #222222 lines, rows 5 and 7, the full width of the frame")
+    @Test("the windowshade box is the close box's bevel crossed by two #3F3F3F lines, rows 5 and 7, the full width of the frame")
     func minimizeBox() throws {
         let tile = try pattern(.windowBoxMinimize)
         let close = try pattern(.windowBox)
         #expect(tile.width == 13 && tile.height == 13)
         func row(_ spec: PatternSpec, _ y: Int) throws -> [String] { try (0..<13).map { try hex(spec.cells[y * 13 + $0]) } }
-        let lines = ["#888888"] + Array(repeating: "#222222", count: 11) + ["#FFFFFF"]
+        let lines = ["#A5A5A5"] + Array(repeating: "#3F3F3F", count: 11) + ["#FFFFFF"]
         #expect(try row(tile, 5) == lines)
         #expect(try row(tile, 7) == lines)
         for y in [0, 1, 2, 3, 4, 6, 8, 9, 10, 11, 12] { #expect(try row(tile, y) == row(close, y)) }
     }
 
-    @Test("the zoom box is the close box's bevel crossed by one #222222 line, row 5 (the About window's box at columns 445 to 457)")
+    @Test("the zoom box is the close box's bevel crossed by one #3F3F3F line, row 5 (the About window's box at columns 445 to 457)")
     func zoomBox() throws {
         let tile = try pattern(.windowBoxZoom)
         let close = try pattern(.windowBox)
         func row(_ spec: PatternSpec, _ y: Int) throws -> [String] { try (0..<13).map { try hex(spec.cells[y * 13 + $0]) } }
-        #expect(try row(tile, 5) == ["#888888"] + Array(repeating: "#222222", count: 11) + ["#FFFFFF"])
+        #expect(try row(tile, 5) == ["#A5A5A5"] + Array(repeating: "#3F3F3F", count: 11) + ["#FFFFFF"])
         for y in 0..<13 where y != 5 { #expect(try row(tile, y) == row(close, y)) }
     }
 

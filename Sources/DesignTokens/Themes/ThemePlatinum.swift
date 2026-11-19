@@ -4,14 +4,17 @@ public extension Theme {
     /// Platinum, the Mac OS 8 and 9 look, as a theme (unreleased): a two-pixel-deep bevel on every control, flat greys, a lavender accent.
     /// Light only; the look has no dark appearance.
     ///
-    /// **Source of record: pixels read from period screenshots of Mac OS 8.0** (`project/docs/technical/SkinMeasurements.md`, Platinum
-    /// section). Measured: the button is 20 px high with a 1 px black outline and a corner that steps in 3 px; its bevel, outside in, is
-    /// `#000000 #DDDDDD #FFFFFF` on the top and left and `#000000 #777777 #AAAAAA` on the bottom and right, over a flat `#DDDDDD` body; the
-    /// default button has a second three-pixel frame (`#000000 #DDDDDD #AAAAAA` top and left, `#000000 #777777 #AAAAAA` bottom and right)
-    /// outside that, its corner stepping in 4 to 5 px; a window's body is `#DDDDDD`; the progress bar is `#6666CC` (outline `#333399`);
-    /// a selected row is `#CCCCFF`; the empty desktop reads `#9C9CCE`; a text field in the colour picker is a 1 px black outline on white.
+    /// **Source of record: a live Mac OS 8.0 at 24 bits** (Infinite Mac, 2026-11-19; `project/docs/technical/SkinMeasurements.md`), for every colour
+    /// of the controls, title bar, scroll bar and menus. The geometry (and, in the first rounds, the colours) came from period screenshots, which
+    /// were 256-colour: each colour there was the nearest 8-bit one, so the live values differ (`#E7E7E7` for the `#DDDDDD` the screenshots read).
+    /// Measured: the button is 20 px high with a 1 px black outline and a corner that steps in 3 px; its bevel, outside in, is
+    /// `#000000 #E7E7E7 #FFFFFF` on the top and left and `#000000 #969696 #C0C0C0` on the bottom and right, over a flat `#E7E7E7` body; the
+    /// default button has a second three-pixel frame (`#000000 #E7E7E7 #C0C0C0` top and left, `#000000 #969696 #C0C0C0` bottom and right)
+    /// outside that, its corner stepping in 4 to 5 px; a panel's body is `#E7E7E7`; the accent and highlight are the lavender `#5454B3`;
+    /// a text field is a 1 px black outline on white. A window's frame area carries a fine dither of `#DADADA`, `#E7E7E7` and `#F3F3F3` that the
+    /// theme draws flat.
     ///
-    /// **Not measured, chosen here:** the pressed state (the bevel inverted over an `#AAAAAA` body), the disabled state, the focus ring,
+    /// **Not measured, chosen here:** the focus ring, the disabled field and default button,
     /// the window frame (a plain 1 px outline; the title bar is measured, see `platinumTitleBar`) and the pressed state of the title bar's boxes,
     /// scroll bars, and the type (Charcoal is the system face on 8.x, Geneva for lists: general knowledge, named with the system sans as
     /// the fallback because neither is installed on most machines). The status roles carry no colour (black); status is a glyph.
@@ -50,39 +53,42 @@ public extension Theme {
         typealias B = ThemeBuilders
         let black: UInt32 = 0x000000
         return ThemePalette(
-            ink: B.adaptive(black), secondaryInk: B.adaptive(0x333333), background: B.adaptive(0xDDDDDD), surface: B.adaptive(0xFFFFFF),
-            rule: B.adaptive(black), accent: B.adaptive(0x6666CC), onAccent: B.adaptive(0xFFFFFF), link: B.adaptive(0x333399),
+            ink: B.adaptive(black), secondaryInk: B.adaptive(0x333333), background: B.adaptive(0xE7E7E7), surface: B.adaptive(0xFFFFFF),
+            rule: B.adaptive(black), accent: B.adaptive(0x5454B3), onAccent: B.adaptive(0xFFFFFF), link: B.adaptive(0x5454B3),
             positive: B.adaptive(black), negative: B.adaptive(black), warning: B.adaptive(black), muted: B.adaptive(0x777777),
             series: [B.series("lavender", 0x6666CC)],
             // the progress bar's own rows, light to dark: #CCCCFF #9999FF #6666CC #333399 #000055
             sequential: B.ramp([0xCCCCFF, 0x9999FF, 0x6666CC, 0x333399, 0x000055]),
-            diverging: B.ramp([0x333399, 0xDDDDDD, 0x333333]),
-            extras: ["shade": B.adaptive(0xAAAAAA), "selection": B.adaptive(0xCCCCFF), "desktop": B.adaptive(0x9C9CCE),
-                     // the title bar's greys, read off the Mac OS 8.0 capture
-                     "bar": B.adaptive(0xCCCCCC), "gray22": B.adaptive(0x222222), "gray88": B.adaptive(0x888888),
-                     "gray99": B.adaptive(0x999999), "grayBB": B.adaptive(0xBBBBBB), "grayEE": B.adaptive(0xEEEEEE), "gray55": B.adaptive(0x555555), "gray66": B.adaptive(0x666666),
-                     // the highlight of a menu title or row on a live Mac OS 8.0 (the default Lavender highlight colour); 24-bit, not an 8-bit palette colour
+            diverging: B.ramp([0x333399, 0xE7E7E7, 0x333333]),
+            // Every grey and lavender below is a 24-bit value read from a live Mac OS 8.0 (Infinite Mac, 2026-11-19). The names are the 8-bit
+            // levels the first captures read (gray88 was #888888 there); the live value of each is the one the name now carries.
+            extras: ["shade": B.adaptive(0xC0C0C0), "selection": B.adaptive(0xDADAFF), "desktop": B.adaptive(0xB3B3DA),
+                     "bar": B.adaptive(0xDADADA), "gray22": B.adaptive(0x3F3F3F), "gray88": B.adaptive(0xA5A5A5),
+                     "gray99": B.adaptive(0xB3B3B3), "grayBB": B.adaptive(0xCDCDCD), "grayEE": B.adaptive(0xF3F3F3), "gray96": B.adaptive(0x969696),
+                     // the pressed button's ramp (black, #666666, #777777, then the #878787 fill), and the estimate for an inactive arrow's inner row
+                     "gray66": B.adaptive(0x666666), "gray77": B.adaptive(0x777777), "gray87": B.adaptive(0x878787),
+                     // the highlight of a menu title or row: the default Lavender highlight colour
                      "highlight": B.adaptive(0x5454B3),
-                     // the scroll bar thumb's body, read off the live bar
-                     "lavender": B.adaptive(0x9999FF)])
+                     // the scroll bar thumb's body and its shaded edge
+                     "lavender": B.adaptive(0xB3B3FF), "lavenderShade": B.adaptive(0x8787DA)])
     }
 
     /// The control surfaces, in logical pixels.
     private static var platinumSurfaces: SurfaceSet {
         func ref(_ name: String) -> ColourReference { ColourReference(source: name) }
         func step(_ name: String, _ width: Double = 1) -> EdgeStep { EdgeStep(literal: ref(name), width) }
-        // Outside in. ink = #000000, background = #DDDDDD, surface = #FFFFFF, muted = #777777, shade = #AAAAAA.
+        // Outside in. ink = #000000, background = #E7E7E7, surface = #FFFFFF, gray96 = #969696, shade = #C0C0C0 (live Mac OS 8.0).
         let raisedTop = [step("ink"), step("background"), step("surface")]
-        let raisedBottom = [step("ink"), step("muted"), step("shade")]
+        let raisedBottom = [step("ink"), step("gray96"), step("shade")]
         let raised = Edges(top: raisedTop, leading: raisedTop, bottom: raisedBottom, trailing: raisedBottom)
-        // Pressed, measured on a live Mac OS 8.0 (24-bit; the values here are its nearest 8-bit palette colours, to sit with the rest of this
-        // palette): black, then #666666 and #777777 inside the top and left, #999999 and #AAAAAA inside the bottom and right, on a #888888 fill.
-        let sunkenTop = [step("ink"), step("gray66"), step("muted")]
-        let sunkenBottom = [step("ink"), step("gray99"), step("shade")]
+        // Pressed, measured on a live Mac OS 8.0: black, then #666666 and #777777 inside the top and left, #969696 and #A5A5A5 inside the bottom
+        // and right, on a #878787 fill.
+        let sunkenTop = [step("ink"), step("gray66"), step("gray77")]
+        let sunkenBottom = [step("ink"), step("gray96"), step("gray88")]
         let pressed = Edges(top: sunkenTop, leading: sunkenTop, bottom: sunkenBottom, trailing: sunkenBottom)
         // The default button's extra frame, then the ordinary bevel inside it.
         let ringTop = [step("ink"), step("background"), step("shade")]
-        let ringBottom = [step("ink"), step("muted"), step("shade")]
+        let ringBottom = [step("ink"), step("gray96"), step("shade")]
         let ringed = Edges(top: ringTop + raisedTop, leading: ringTop + raisedTop,
                            bottom: ringBottom + raisedBottom, trailing: ringBottom + raisedBottom)
         let ringedPressed = Edges(top: ringTop + sunkenTop, leading: ringTop + sunkenTop,
@@ -93,7 +99,7 @@ public extension Theme {
                           ink: ref(ink), scale: .integer)
         }
         // Title bar (measured, see platinumTitleBar): the bar, the stripes (a 1 x 2 tile, white first) and the 13 x 13 close box, whose pixels
-        // are listed row by row from the capture (W = white, bar = #CCCCCC, bg = #DDDDDD, shade = #AAAAAA).
+        // are listed row by row from the capture (W = white, bar = #DADADA, bg = #E7E7E7, shade = #C0C0C0).
         let (W, bar, bg, sh, g88, g22, g99, gBB, gEE) = (ref("surface"), ref("bar"), ref("background"), ref("shade"), ref("gray88"),
                                                           ref("gray22"), ref("gray99"), ref("grayBB"), ref("grayEE"))
         let boxCells: [ColourReference] = [
@@ -128,9 +134,9 @@ public extension Theme {
         // black lines. The thumb is a 1 px bevel (#CCCCFF over #6666CC) on #9999FF with an 8 x 8 grip of grooves; the arrows are the button bevel
         // (white over #BBBBBB on #DDDDDD) with a 4 x 8 triangle, as whole 16 x 16 tiles. Corner pixels of the thumb differ by one pixel.
         let (lav, light, link) = (ref("lavender"), ref("selection"), ref("link"))
-        let trackEdges = Edges(top: [step("ink"), step("muted"), step("gray88")], leading: [step("muted"), step("gray88")], bottom: [step("ink"), step("bar"), step("grayBB")], trailing: [])
+        let trackEdges = Edges(top: [step("ink"), step("gray96"), step("gray88")], leading: [step("gray96"), step("gray88")], bottom: [step("ink"), step("bar"), step("grayBB")], trailing: [])
         let thumbEdges = Edges(top: [step("ink"), step("selection")], leading: [step("ink"), step("selection")],
-                               bottom: [step("ink"), step("accent")], trailing: [step("ink"), step("accent")])
+                               bottom: [step("ink"), step("lavenderShade")], trailing: [step("ink"), step("lavenderShade")])
         let gripKey: [Character: ColourReference] = ["e": gEE, "q": lav, "p": light, "s": link]
         let gripRows = ["eqeqeqeq", "pspspsps", "pspspsps", "pspspsps", "pspspsps", "pspspsps", "pspspsps", "qsqsqsqs"]
         let gripCells = gripRows.flatMap { $0.map { gripKey[$0] ?? lav } }
@@ -139,7 +145,7 @@ public extension Theme {
         let thumbBase = recipe(fill: "lavender", edges: thumbEdges, radius: 0)
         let thumb = SurfaceRecipe(
             layers: thumbBase.layers + [
-                .shadow(ShadowLayer(shadow: ShadowSpec(colour: ref("muted"), radius: 0, x: 2, y: 0), spread: -1)),
+                .shadow(ShadowLayer(shadow: ShadowSpec(colour: ref("gray96"), radius: 0, x: 2, y: 0), spread: -1)),
                 .shadow(ShadowLayer(shadow: ShadowSpec(colour: ref("gray88"), radius: 0, x: 3, y: 0), spread: -1)),
             ], edges: thumbBase.edges, radius: thumbBase.radius, backdropBlur: nil, ink: thumbBase.ink, scale: .integer)
         // an arrow button: the bevel, then the triangle; the base column of the glyph and which way it grows
@@ -156,7 +162,7 @@ public extension Theme {
                         if inGlyph { cells.append(inactive ? ref("gray88") : k); continue }
                     }
                     // an inactive arrow's side toward the track is #555555 (the start arrow's right column, the end arrow's left), its two end pixels staying black
-                    if inactive, col == (growsRight ? 0 : 15), row != 0, row != 15 { cells.append(ref("gray55")); continue }
+                    if inactive, col == (growsRight ? 0 : 15), row != 0, row != 15 { cells.append(ref("gray77")); continue }
                     if row == 0 || row == 15 || col == 0 || col == 15 { cells.append(k) }
                     else if inactive { cells.append(ref("grayEE")) }
                     else if row == 1 { cells.append(col == 14 ? bg : W) }
@@ -196,15 +202,15 @@ public extension Theme {
             .scrollArrowEnd: [.rest: tileOnly(PatternSpec(literal: 16, 16, arrowCells(baseColumn: 6, growsRight: true))),
                               .disabled: tileOnly(PatternSpec(literal: 16, 16, arrowCells(baseColumn: 6, growsRight: true, inactive: true)))],
             .titleBar: [.rest: recipe(fill: "bar", edges: barEdges, radius: 0)],
-            .titleStripes: [.rest: tile(PatternSpec(literal: 1, 2, [W, ref("muted")]))],
+            .titleStripes: [.rest: tile(PatternSpec(literal: 1, 2, [W, ref("gray96")]))],
             .windowBox: [.rest: tile(PatternSpec(literal: 13, 13, boxCells))],
             .windowBoxZoom: [.rest: tile(PatternSpec(literal: 13, 13, zoomCells))],
             .windowBoxMinimize: [.rest: tile(PatternSpec(literal: 13, 13, shadeCells))],
             .desktop: [.rest: recipe(fill: "desktop", edges: nil, radius: 0)],
             .window: [.rest: recipe(fill: "background", edges: outline, radius: 0)],
             .panel: [.rest: recipe(fill: "surface", edges: outline, radius: 0)],
-            .button: [.rest: buttonRest, .active: recipe(fill: "gray88", ink: "surface", edges: pressed, radius: 3), .disabled: disabledButton, .focus: focused(buttonRest)],
-            .buttonDefault: [.rest: buttonDefaultRest, .active: recipe(fill: "gray88", ink: "surface", edges: ringedPressed, radius: 5), .disabled: disabledButton,
+            .button: [.rest: buttonRest, .active: recipe(fill: "gray87", ink: "surface", edges: pressed, radius: 3), .disabled: disabledButton, .focus: focused(buttonRest)],
+            .buttonDefault: [.rest: buttonDefaultRest, .active: recipe(fill: "gray87", ink: "surface", edges: ringedPressed, radius: 5), .disabled: disabledButton,
                              .focus: focused(buttonDefaultRest)],
             .field: [.rest: fieldRest, .disabled: recipe(fill: "surface", ink: "gray88", edges: outline, radius: 0), .focus: focused(fieldRest)],
             .selection: [.rest: recipe(fill: "selection", edges: nil, radius: 0)],
@@ -214,8 +220,8 @@ public extension Theme {
     /// What the validator finds in this palette, recorded exactly.
     static var platinumConformance: Conformance {
         Conformance(kind: .ledger, entries: [
-            // the progress bar's lightest row (#CCCCFF) against the #DDDDDD window body
-            ledgerFail(.rampLightEnd, .light, "sequential", 1.13, 2.0),
+            // the progress bar's lightest row (#CCCCFF) against the #E7E7E7 window body
+            ledgerFail(.rampLightEnd, .light, "sequential", 1.24, 2.0),
         ])
     }
 }

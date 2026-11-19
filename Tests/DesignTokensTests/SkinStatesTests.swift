@@ -14,7 +14,7 @@ struct SkinStatesTests {
             .map { $0.trimmingCharacters(in: .whitespaces) }
     }
 
-    @Test("Platinum's disabled button is flat #DDDDDD with a one-pixel #888888 outline and #888888 text, no bevel")
+    @Test("Platinum's disabled button is a flat face with a one-pixel dimmed outline (#A5A5A5 live) and dimmed text, no bevel")
     func platinumDisabledButton() throws {
         let rest = try #require(Theme.platinum.surfaces?.recipes[.button]?[.rest])
         let disabled = try #require(Theme.platinum.surfaces?.recipes[.button]?[.disabled])
@@ -51,7 +51,7 @@ struct SkinStatesTests {
         }
     }
 
-    @Test("Platinum's inactive scroll bar: flat #EEEEEE with black outlines, arrows without a bevel and with #888888 triangles")
+    @Test("Platinum's inactive scroll bar: flat #F3F3F3 with black outlines, arrows without a bevel and with #A5A5A5 triangles")
     func platinumInactiveScrollBar() throws {
         let surfaces = try #require(Theme.platinum.surfaces)
         let track = try #require(surfaces.recipes[.scrollTrack]?[.disabled])
@@ -61,12 +61,12 @@ struct SkinStatesTests {
             let recipe = try #require(surfaces.recipes[role]?[.disabled], Comment(rawValue: "\(role)"))
             guard case .pattern(let tile)? = recipe.layers.last else { throw SurfaceError.cellSize(0) }
             #expect(tile.width == 16 && tile.height == 16)
-            // the triangle is 1+2+3+4+4+3+2+1 = 20 pixels, and nothing else is #888888 or white
+            // the triangle is 1+2+3+4+4+3+2+1 = 20 pixels, and nothing else is the dimmed grey or white
             #expect(tile.cells.filter { $0 == ref("gray88") }.count == 20)
             #expect(!tile.cells.contains(ref("surface")))
             // the side facing the track (the right column of the start arrow, the left of the end arrow) is #555555, every other edge black, and the inner side's two end pixels too
             let towardTrack = role == .scrollArrowStart ? 15 : 0
-            let black = ref("ink"), dark = ref("gray55")
+            let black = ref("ink"), dark = ref("gray77")
             for i in 0..<16 {
                 #expect(tile.cells[i] == black && tile.cells[15 * 16 + i] == black, "\(role) horizontal edges at column \(i)")
                 #expect(tile.cells[i * 16 + towardTrack] == (i == 0 || i == 15 ? black : dark), "\(role) inner side at row \(i)")
@@ -139,13 +139,13 @@ struct SkinStatesTests {
 
     // MARK: pressed, measured on a live Mac OS 8.0 (Infinite Mac)
 
-    @Test("Platinum's pressed button, held on a live Mac OS 8.0: black, #666666 and #777777 inside the top and left, #888888 fill, #999999 and #AAAAAA inside the bottom and right, white text")
+    @Test("Platinum's pressed button, held on a live Mac OS 8.0: black, #666666 and #777777 inside the top and left, #878787 fill, #969696 and #A5A5A5 inside the bottom and right, white text")
     func platinumPressed() throws {
         let surfaces = try #require(Theme.platinum.surfaces)
         let step = { (name: String) in EdgeStep(literal: ColourReference(source: name), 1) }
-        let inner = (top: [step("ink"), step("gray66"), step("muted")], bottom: [step("ink"), step("gray99"), step("shade")])
+        let inner = (top: [step("ink"), step("gray66"), step("gray77")], bottom: [step("ink"), step("gray96"), step("gray88")])
         let button = try #require(surfaces.recipes[.button]?[.active])
-        #expect(button.layers == [.fill(ref("gray88"))])
+        #expect(button.layers == [.fill(ref("gray87"))])
         #expect(button.ink == ref("surface"))
         #expect(button.edges?.top == inner.top && button.edges?.leading == inner.top)
         #expect(button.edges?.bottom == inner.bottom && button.edges?.trailing == inner.bottom)
@@ -154,7 +154,7 @@ struct SkinStatesTests {
         let ringTop = Array(ring.top.prefix(3)), ringBottom = Array(ring.bottom.prefix(3))
         let ringed = try #require(surfaces.recipes[.buttonDefault]?[.active])
         #expect(ringed.edges?.top == ringTop + inner.top && ringed.edges?.bottom == ringBottom + inner.bottom)
-        #expect(ringed.layers == [.fill(ref("gray88"))] && ringed.ink == ref("surface"))
+        #expect(ringed.layers == [.fill(ref("gray87"))] && ringed.ink == ref("surface"))
     }
 
     @Test("Platinum's highlighted menu title is the lavender highlight with white text, as the live Mac OS 8.0 draws it, not black")
