@@ -66,6 +66,18 @@ struct PlatinumTitleBarTests {
         #expect(try (3..<11).map { try cell($0, 10) } == Array(repeating: "#888888", count: 8))
     }
 
+    @Test("the windowshade box is the close box's bevel crossed by two #222222 lines, rows 5 and 7, the full width of the frame")
+    func minimizeBox() throws {
+        let tile = try pattern(.windowBoxMinimize)
+        let close = try pattern(.windowBox)
+        #expect(tile.width == 13 && tile.height == 13)
+        func row(_ spec: PatternSpec, _ y: Int) throws -> [String] { try (0..<13).map { try hex(spec.cells[y * 13 + $0]) } }
+        let lines = ["#888888"] + Array(repeating: "#222222", count: 11) + ["#FFFFFF"]
+        #expect(try row(tile, 5) == lines)
+        #expect(try row(tile, 7) == lines)
+        for y in [0, 1, 2, 3, 4, 6, 8, 9, 10, 11, 12] { #expect(try row(tile, y) == row(close, y)) }
+    }
+
     @Test("the metrics: 22 px bar, 13 px boxes, a 4 px gap, boxes 2 px below the inner top edge")
     func metrics() throws {
         let bar = try #require(Theme.platinum.windowControls?.titleBar)
@@ -79,9 +91,9 @@ struct PlatinumTitleBarTests {
     func webPlacement() throws {
         let css = try ThemeCSSEmitter.emit(.platinum)
         func order(_ name: String) throws -> Int {
-            let block = try #require(css.range(of: ".dt-titlebar__box--\(name) {"))
+            let block = try #require(css.range(of: ".dt-titlebar__box--\(name) {\n  order:"))
             let tail = css[block.upperBound...]
-            let start = try #require(tail.range(of: "order:"))
+            let start = (tail.startIndex..<tail.startIndex)
             let end = try #require(tail.range(of: ";", range: start.upperBound..<tail.endIndex))
             return try #require(Int(tail[start.upperBound..<end.lowerBound].trimmingCharacters(in: .whitespaces)))
         }

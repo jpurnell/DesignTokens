@@ -99,6 +99,7 @@ public enum ThemeCSSEmitter {
         case .titleBar: [".dt-titlebar"]
         case .titleStripes: [".dt-titlebar__stripes"]
         case .windowBox: [".dt-titlebar__box"]
+        case .windowBoxMinimize: [".dt-titlebar__box--minimize"]
         case .menu, .scrollTrack, .scrollThumb, .selection: []
         }
     }

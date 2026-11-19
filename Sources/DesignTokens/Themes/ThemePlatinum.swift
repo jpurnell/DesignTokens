@@ -90,6 +90,9 @@ public extension Theme {
             g88, g22, g22, g22, g22, g22, g22, g22, g22, g22, g22, g22, W,
             bar, W, W, W, W, W, W, W, W, W, W, W, W,
         ]
+        // the windowshade box: the same bevel with two lines across it (rows 5 and 7 of the 13)
+        var shadeCells = boxCells
+        for y in [5, 7] { for x in 1...11 { shadeCells[y * 13 + x] = g22 } }
         let barEdges = Edges(top: [step("ink"), step("surface")], leading: [step("ink"), step("surface")],
                              bottom: [step("ink"), step("gray99")], trailing: [step("ink"), step("ink"), step("gray99")])
         func tile(_ layer: PatternSpec) -> SurfaceRecipe {
@@ -99,6 +102,7 @@ public extension Theme {
             .titleBar: [.rest: recipe(fill: "bar", edges: barEdges, radius: 0)],
             .titleStripes: [.rest: tile(PatternSpec(literal: 1, 2, [W, ref("muted")]))],
             .windowBox: [.rest: tile(PatternSpec(literal: 13, 13, boxCells))],
+            .windowBoxMinimize: [.rest: tile(PatternSpec(literal: 13, 13, shadeCells))],
             .desktop: [.rest: recipe(fill: "desktop", edges: nil, radius: 0)],
             .window: [.rest: recipe(fill: "background", edges: outline, radius: 0)],
             .panel: [.rest: recipe(fill: "surface", edges: outline, radius: 0)],
