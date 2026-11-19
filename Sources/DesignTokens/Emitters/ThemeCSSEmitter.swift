@@ -124,6 +124,12 @@ public enum ThemeCSSEmitter {
         }
     }
 
+    /// The selector tails of a state: a disabled control is `:disabled` or `aria-disabled="true"`, as the components stylesheet counts it.
+    private static func tails(for state: ComponentState) -> [String] {
+        guard state == .disabled else { return suffix(for: state).map { [$0] } ?? [] }
+        return ["[aria-disabled=\"true\"]", ":disabled"]
+    }
+
     /// Rules for the theme's surface recipes, scoped like the custom properties. A recipe owns its control's edges, so the component's own
     /// border is removed. A theme with no surfaces emits nothing.
     private static func surfaceRules(_ theme: Theme, scope: String) -> [String] {
@@ -137,11 +143,25 @@ public enum ThemeCSSEmitter {
         for role in SurfaceRole.allCases {
             let classes = selectors(for: role)
             guard !classes.isEmpty, let states = surfaces.recipes[role] else { continue }
+            // The components stylesheet outlines a hovered or pressed button; no classic platform did, and the recipes draw the states, so a skin
+            // takes the outline off (the selectors match its own, plus the class, so they win by specificity wherever the files are linked).
+            if role == .button || role == .buttonDefault {
+                let live = ":not([disabled]):not([aria-disabled=\"true\"])"
+                let hover = classes.map { "\(scope) \($0)\(live):hover" }
+                let active = classes.map { "\(scope) \($0)\(live):active" }
+                lines.append((hover + active).joined(separator: ",\n") + " {")
+                lines.append("  outline: 0;")
+                lines.append("}")
+            }
             for state in ComponentState.allCases {
-                guard let recipe = states[state], let tail = suffix(for: state) else { continue }
-                let selector = classes.map { "\(scope)\($0.isEmpty ? "" : " " + $0)\(tail)" }.joined(separator: ",\n")
+                let stateTails = tails(for: state)
+                guard let recipe = states[state], !stateTails.isEmpty else { continue }
+                let selector = classes.flatMap { cls in stateTails.map { "\(scope)\(cls.isEmpty ? "" : " " + cls)\($0)" } }.joined(separator: ",\n")
                 lines.append(selector + " {")
                 lines.append("  border: 0;")
+                // the recipe draws a disabled control whole, and a focus ring replaces the components stylesheet's outline
+                if state == .disabled { lines.append("  opacity: 1;") }
+                if state == .focus { lines.append("  outline: 0;") }
                 if role == .buttonDefault, state == .rest, surfaces.defaultRingExtra > 0 {
                     // the ring is outside the measured button, so the box grows by it on each side
                     let extra = SurfaceCSS.px(surfaces.defaultRingExtra)
@@ -291,6 +311,19 @@ public enum ThemeCSSEmitter {
             guard let recipe = surfaces.recipes[role]?[.rest] else { continue }
             for turned in [false, true] {
                 let selector = turned ? "\(scope) .dt-scrollbar\(vertical)\(suffix == ".dt-scrollbar" ? "" : " " + suffix)" : "\(scope) \(suffix)"
+                lines.append(selector + " {")
+                lines.append(contentsOf: SurfaceCSS.declarations(for: turned ? recipe.transposed : recipe, resolve: reference, literal: literal)
+                    .map { "  \($0);" })
+                lines.append("}")
+            }
+        }
+        // an inactive bar (nothing to scroll): `aria-disabled="true"` on the bar redraws the parts that have a disabled recipe
+        let inactive = "[aria-disabled=\"true\"]"
+        for (role, suffix) in parts {
+            guard let recipe = surfaces.recipes[role]?[.disabled] else { continue }
+            let tail = suffix == ".dt-scrollbar" ? "" : " " + suffix
+            for turned in [false, true] {
+                let selector = turned ? "\(scope) .dt-scrollbar\(vertical)\(inactive)\(tail)" : "\(scope) .dt-scrollbar\(inactive)\(tail)"
                 lines.append(selector + " {")
                 lines.append(contentsOf: SurfaceCSS.declarations(for: turned ? recipe.transposed : recipe, resolve: reference, literal: literal)
                     .map { "  \($0);" })

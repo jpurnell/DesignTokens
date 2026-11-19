@@ -44,7 +44,7 @@ public extension Theme {
             positive: B.adaptive(black), negative: B.adaptive(black), warning: B.adaptive(black), muted: B.adaptive(black),
             series: [B.series("black", black)],
             sequential: B.ramp([black, white]), diverging: B.ramp([black, white, black]),
-            extras: [:])
+            extras: ["dim": B.adaptive(0x808080)])
     }
 
     /// The structure shared by the fixed-metric skins (System 7, Platinum, OPENSTEP): the Macintosh skins have the same metrics and differ in
@@ -103,18 +103,29 @@ public extension Theme {
             SurfaceRecipe(layers: layers ?? [.fill(ref(fill))], edges: edges, radius: .uniform(radius), backdropBlur: nil,
                           ink: ref(ink), scale: .integer)
         }
+        // Disabled (measured from the Open dialog of the System 7.0 capture): the outline stays black and the label is #808080, the one grey the
+        // 1-bit screen shows for a dimmed label (it is a 50% pattern of black and white). Assumed: a disabled default button keeps its ring.
+        // The keyboard focus ring is chosen (System 7 draws none): two black pixels outside the control.
+        func focused(_ base: SurfaceRecipe) -> SurfaceRecipe {
+            SurfaceRecipe(layers: base.layers + [.shadow(ShadowLayer(shadow: ShadowSpec(colour: ref("ink"), radius: 0, x: 0, y: 0), spread: 2))],
+                          edges: base.edges, radius: base.radius, backdropBlur: nil, ink: base.ink, scale: .integer)
+        }
+        let buttonRest = recipe(fill: "background", ink: "ink", edges: outline, radius: 3)
+        let buttonDefaultRest = recipe(fill: "background", ink: "ink", edges: defaultRing, radius: 7)
+        let fieldRest = recipe(fill: "background", ink: "ink", edges: outline, radius: 0)
+        let menuDim = SurfaceRecipe(layers: [], edges: nil, radius: .uniform(0), backdropBlur: nil, ink: ref("dim"), scale: .integer)
         let checkerboard = PatternSpec(literal: 2, 2, [ref("ink"), ref("background"), ref("background"), ref("ink")])
         return SurfaceSet(recipes: [
             .desktop: [.rest: recipe(fill: "background", ink: "ink", edges: nil, radius: 0, layers: [.fill(ref("background")), .pattern(checkerboard)])],
             .window: [.rest: recipe(fill: "background", ink: "ink", edges: outline, radius: 0)],
             .panel: [.rest: recipe(fill: "surface", ink: "ink", edges: outline, radius: 0)],
-            .button: [.rest: recipe(fill: "background", ink: "ink", edges: outline, radius: 3),
-                      .active: recipe(fill: "ink", ink: "background", edges: outline, radius: 3)],
-            .buttonDefault: [.rest: recipe(fill: "background", ink: "ink", edges: defaultRing, radius: 7),
-                             .active: recipe(fill: "ink", ink: "background", edges: defaultRing, radius: 7)],
-            .field: [.rest: recipe(fill: "background", ink: "ink", edges: outline, radius: 0)],
+            .button: [.rest: buttonRest, .active: recipe(fill: "ink", ink: "background", edges: outline, radius: 3),
+                      .disabled: recipe(fill: "background", ink: "dim", edges: outline, radius: 3), .focus: focused(buttonRest)],
+            .buttonDefault: [.rest: buttonDefaultRest, .active: recipe(fill: "ink", ink: "background", edges: defaultRing, radius: 7),
+                             .disabled: recipe(fill: "background", ink: "dim", edges: defaultRing, radius: 7), .focus: focused(buttonDefaultRest)],
+            .field: [.rest: fieldRest, .disabled: recipe(fill: "background", ink: "dim", edges: outline, radius: 0), .focus: focused(fieldRest)],
             .menuBar: [.rest: recipe(fill: "background", ink: "ink", edges: Edges(top: [], leading: [], bottom: [step("ink", 1)], trailing: []), radius: 0)],
-            .menuItem: [.hover: recipe(fill: "ink", ink: "background", edges: nil, radius: 0)],
+            .menuItem: [.hover: recipe(fill: "ink", ink: "background", edges: nil, radius: 0), .disabled: menuDim],
         ])
     }
 

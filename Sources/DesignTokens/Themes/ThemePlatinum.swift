@@ -60,7 +60,7 @@ public extension Theme {
             extras: ["shade": B.adaptive(0xAAAAAA), "selection": B.adaptive(0xCCCCFF), "desktop": B.adaptive(0x9C9CCE),
                      // the title bar's greys, read off the Mac OS 8.0 capture
                      "bar": B.adaptive(0xCCCCCC), "gray22": B.adaptive(0x222222), "gray88": B.adaptive(0x888888),
-                     "gray99": B.adaptive(0x999999), "grayBB": B.adaptive(0xBBBBBB), "grayEE": B.adaptive(0xEEEEEE),
+                     "gray99": B.adaptive(0x999999), "grayBB": B.adaptive(0xBBBBBB), "grayEE": B.adaptive(0xEEEEEE), "gray55": B.adaptive(0x555555),
                      // the scroll bar thumb's body, read off the live bar
                      "lavender": B.adaptive(0x9999FF)])
     }
@@ -139,7 +139,7 @@ public extension Theme {
                 .shadow(ShadowLayer(shadow: ShadowSpec(colour: ref("gray88"), radius: 0, x: 3, y: 0), spread: -1)),
             ], edges: thumbBase.edges, radius: thumbBase.radius, backdropBlur: nil, ink: thumbBase.ink, scale: .integer)
         // an arrow button: the bevel, then the triangle; the base column of the glyph and which way it grows
-        func arrowCells(baseColumn: Int, growsRight: Bool) -> [ColourReference] {
+        func arrowCells(baseColumn: Int, growsRight: Bool, inactive: Bool = false) -> [ColourReference] {
             var cells: [ColourReference] = []
             let widths = [1, 2, 3, 4, 4, 3, 2, 1]
             for row in 0..<16 {
@@ -149,9 +149,12 @@ public extension Theme {
                     if (0..<8).contains(glyphRow) {
                         let w = widths[glyphRow]
                         let inGlyph = growsRight ? (baseColumn..<baseColumn + w).contains(col) : (baseColumn - w + 1...baseColumn).contains(col)
-                        if inGlyph { cells.append(k); continue }
+                        if inGlyph { cells.append(inactive ? ref("gray88") : k); continue }
                     }
+                    // an inactive arrow's side toward the track is #555555 (the start arrow's right column, the end arrow's left), its two end pixels staying black
+                    if inactive, col == (growsRight ? 0 : 15), row != 0, row != 15 { cells.append(ref("gray55")); continue }
                     if row == 0 || row == 15 || col == 0 || col == 15 { cells.append(k) }
+                    else if inactive { cells.append(ref("grayEE")) }
                     else if row == 1 { cells.append(col == 14 ? bg : W) }
                     else if row == 14 { cells.append(col == 1 ? bg : ref("grayBB")) }
                     else if col == 1 { cells.append(W) }
@@ -163,14 +166,31 @@ public extension Theme {
         }
         let menuBarEdges = Edges(top: [step("surface")], leading: [step("surface")], bottom: [step("ink"), step("gray99")], trailing: [step("gray99")],
                                  stacking: .bottomTrailingFirst)
+        // Disabled and inactive (measured from the Open dialogs of the Mac OS 8.0 capture): a button is flat #DDDDDD with a one-pixel #888888 outline
+        // and #888888 text; an inactive scroll bar is flat #EEEEEE inside its black outline, its arrows without a bevel and with #888888 triangles.
+        // Assumed: a disabled default button loses its ring, and a disabled field dims only its text.
+        let dimOutline = Edges(top: [step("gray88")], leading: [step("gray88")], bottom: [step("gray88")], trailing: [step("gray88")])
+        let disabledButton = recipe(fill: "background", ink: "gray88", edges: dimOutline, radius: 3)
+        let inactiveTrack = recipe(fill: "grayEE", edges: Edges(top: [step("ink")], leading: [], bottom: [step("ink")], trailing: []), radius: 0)
+        let menuDim = SurfaceRecipe(layers: [], edges: nil, radius: .uniform(0), backdropBlur: nil, ink: ref("gray88"), scale: .integer)
+        // The keyboard focus ring is chosen (the Mac OS draws none): two pixels of the accent outside the control.
+        func focused(_ base: SurfaceRecipe) -> SurfaceRecipe {
+            SurfaceRecipe(layers: base.layers + [.shadow(ShadowLayer(shadow: ShadowSpec(colour: ref("accent"), radius: 0, x: 0, y: 0), spread: 2))],
+                          edges: base.edges, radius: base.radius, backdropBlur: nil, ink: base.ink, scale: .integer)
+        }
+        let buttonRest = recipe(fill: "background", edges: raised, radius: 3)
+        let buttonDefaultRest = recipe(fill: "background", edges: ringed, radius: 5)
+        let fieldRest = recipe(fill: "surface", edges: outline, radius: 0)
         return SurfaceSet(recipes: [
             .menuBar: [.rest: recipe(fill: "background", edges: menuBarEdges, radius: 0)],
-            .menuItem: [.hover: recipe(fill: "ink", ink: "surface", edges: nil, radius: 0)],
-            .scrollTrack: [.rest: recipe(fill: "shade", edges: trackEdges, radius: 0)],
+            .menuItem: [.hover: recipe(fill: "ink", ink: "surface", edges: nil, radius: 0), .disabled: menuDim],
+            .scrollTrack: [.rest: recipe(fill: "shade", edges: trackEdges, radius: 0), .disabled: inactiveTrack],
             .scrollThumb: [.rest: thumb],
             .scrollGrip: [.rest: tileOnly(PatternSpec(literal: 8, 8, gripCells))],
-            .scrollArrowStart: [.rest: tileOnly(PatternSpec(literal: 16, 16, arrowCells(baseColumn: 9, growsRight: false)))],
-            .scrollArrowEnd: [.rest: tileOnly(PatternSpec(literal: 16, 16, arrowCells(baseColumn: 6, growsRight: true)))],
+            .scrollArrowStart: [.rest: tileOnly(PatternSpec(literal: 16, 16, arrowCells(baseColumn: 9, growsRight: false))),
+                                .disabled: tileOnly(PatternSpec(literal: 16, 16, arrowCells(baseColumn: 9, growsRight: false, inactive: true)))],
+            .scrollArrowEnd: [.rest: tileOnly(PatternSpec(literal: 16, 16, arrowCells(baseColumn: 6, growsRight: true))),
+                              .disabled: tileOnly(PatternSpec(literal: 16, 16, arrowCells(baseColumn: 6, growsRight: true, inactive: true)))],
             .titleBar: [.rest: recipe(fill: "bar", edges: barEdges, radius: 0)],
             .titleStripes: [.rest: tile(PatternSpec(literal: 1, 2, [W, ref("muted")]))],
             .windowBox: [.rest: tile(PatternSpec(literal: 13, 13, boxCells))],
@@ -179,11 +199,10 @@ public extension Theme {
             .desktop: [.rest: recipe(fill: "desktop", edges: nil, radius: 0)],
             .window: [.rest: recipe(fill: "background", edges: outline, radius: 0)],
             .panel: [.rest: recipe(fill: "surface", edges: outline, radius: 0)],
-            .button: [.rest: recipe(fill: "background", edges: raised, radius: 3),
-                      .active: recipe(fill: "shade", edges: pressed, radius: 3)],
-            .buttonDefault: [.rest: recipe(fill: "background", edges: ringed, radius: 5),
-                             .active: recipe(fill: "shade", edges: ringedPressed, radius: 5)],
-            .field: [.rest: recipe(fill: "surface", edges: outline, radius: 0)],
+            .button: [.rest: buttonRest, .active: recipe(fill: "shade", edges: pressed, radius: 3), .disabled: disabledButton, .focus: focused(buttonRest)],
+            .buttonDefault: [.rest: buttonDefaultRest, .active: recipe(fill: "shade", edges: ringedPressed, radius: 5), .disabled: disabledButton,
+                             .focus: focused(buttonDefaultRest)],
+            .field: [.rest: fieldRest, .disabled: recipe(fill: "surface", ink: "gray88", edges: outline, radius: 0), .focus: focused(fieldRest)],
             .selection: [.rest: recipe(fill: "selection", edges: nil, radius: 0)],
         ])
     }

@@ -158,6 +158,15 @@ row's end and 6 down. A disabled control (the Revert button, Application Inspect
 row (#56575E to #3B3C44 over the ground; drawn as black at 40%) and a black line. The label strip (Preferences tile, y 705 to 715): black, 11 rows, its first row black at about 76% over the ground, white text 7 rows tall; the
 labelled tile shows no white highlight under it. Icons are not measured: the set is original drawings in the dock's look, not traced.
 
+## Disabled and inactive states (2026-11-19)
+
+From the Open dialogs. Mac OS 8.0 (Eject and Create): a disabled button is flat #DDDDDD with a one-pixel #888888 outline (the same stepped corner as an
+enabled one) and #888888 text; no white highlight and no shade. An inactive vertical scroll bar (x 326 to 341, y 35 to 162): the black outline stays,
+the track and both arrows are flat #EEEEEE, an arrow's triangle is #888888 (the same 20 pixels as the live one), and the arrow's row facing the track is
+#555555 between two black end pixels. System 7.0 (Eject): the outline stays black and the label is #808080. Chosen, not measured: focus rings (two
+pixels outside the control: black on System 7 and OPENSTEP, the accent on Platinum), the disabled field and default button, the pressed states, and the
+inactive window. The captures are still frames, so pressed states need a live session.
+
 ## Not measured yet
 
 - **Fixed-pitch type** (all three skins): Monaco 9 on the Macintosh, Ohlfs then Courier on NeXT are general knowledge and chosen, not read from a capture. A terminal or code window in a capture would settle the size and line.

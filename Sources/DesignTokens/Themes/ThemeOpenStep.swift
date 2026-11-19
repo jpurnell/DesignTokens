@@ -173,6 +173,13 @@ public extension Theme {
         let labelGround = GradientSpec(literalAngle: 180, [GradientStop(colour: strip, position: 0), GradientStop(colour: strip, position: 1.0 / 11.0),
                                                            GradientStop(colour: ink, position: 1.0 / 11.0), GradientStop(colour: ink, position: 1)])
         let disabled = SurfaceRecipe(layers: [.fill(bg)], edges: raised, radius: .uniform(0), backdropBlur: nil, ink: g55, scale: .integer)
+        // The keyboard focus ring is chosen (OPENSTEP draws none): two black pixels outside the control.
+        func focused(_ base: SurfaceRecipe) -> SurfaceRecipe {
+            SurfaceRecipe(layers: base.layers + [.shadow(ShadowLayer(shadow: ShadowSpec(colour: ink, radius: 0, x: 0, y: 0), spread: 2))],
+                          edges: base.edges, radius: base.radius, backdropBlur: nil, ink: base.ink, scale: .integer)
+        }
+        let buttonRest = recipe(fill: "background", edges: raised)
+        let fieldRest = recipe(fill: "surface", edges: sunken)
         return SurfaceSet(recipes: [
             .menuArrow: [.rest: submenuArrow(ground: bg, lit: W), .hover: submenuArrow(ground: W, lit: bg)],
             .dockLabel: [.rest: SurfaceRecipe(layers: [.gradient(labelGround)], edges: nil, radius: .uniform(0), backdropBlur: nil, ink: W, scale: .integer)],
@@ -189,9 +196,9 @@ public extension Theme {
             .desktop: [.rest: recipe(fill: "desktop", edges: nil)],
             .window: [.rest: recipe(fill: "background", edges: outline)],
             .panel: [.rest: recipe(fill: "surface", edges: outline)],
-            .button: [.rest: recipe(fill: "background", edges: raised), .active: recipe(fill: "background", edges: pressed), .disabled: disabled],
-            .buttonDefault: [.rest: recipe(fill: "background", edges: raised), .active: recipe(fill: "background", edges: pressed), .disabled: disabled],
-            .field: [.rest: recipe(fill: "surface", edges: sunken)],
+            .button: [.rest: buttonRest, .active: recipe(fill: "background", edges: pressed), .disabled: disabled, .focus: focused(buttonRest)],
+            .buttonDefault: [.rest: buttonRest, .active: recipe(fill: "background", edges: pressed), .disabled: disabled, .focus: focused(buttonRest)],
+            .field: [.rest: fieldRest, .disabled: recipe(fill: "surface", ink: "muted", edges: sunken), .focus: focused(fieldRest)],
             .selection: [.rest: recipe(fill: "surface", edges: nil)],
             .titleBar: [.rest: recipe(fill: "ink", ink: "surface", edges: barEdges)],
             .windowBox: [.rest: tile(14, 14, closeX)],

@@ -75,7 +75,7 @@ public enum BrowserSupport {
         feature("color-mix()", #"color-mix\("#, 111, 111, 16.2, 113, [.themes, .components],
                 note: "ThemeCSSEmitter writes it for a translucent surface colour; OPENSTEP's dock tile shade is one, so its theme file uses it"),
         feature("@container size queries, container-type", #"container-type|@container"#, 105, 105, 16, 110, [.components]),
-        feature(":focus-visible", #":focus-visible"#, 86, 86, 15.4, 85, [.components, .tumblr]),
+        feature(":focus-visible", #":focus-visible"#, 86, 86, 15.4, 85, [.themes, .components, .tumblr], note: "the skins draw a keyboard focus ring in their theme files"),
         feature("@media (prefers-contrast)", #"prefers-contrast"#, 96, 96, 14.1, 101, [.themes, .components, .tumblr]),
         feature("@media (forced-colors)", #"forced-colors"#, 89, 79, 16, 89, [.components],
                 note: "added 0.13.0; the system colours Highlight and HighlightText it uses are in every browser since 1.0"),

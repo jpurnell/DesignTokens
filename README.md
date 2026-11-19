@@ -160,7 +160,7 @@ Sources: the first unprefixed, unflagged version of each feature in `@mdn/browse
 |---|---|---|---|---|
 | color-mix() (ThemeCSSEmitter writes it for a translucent surface colour; OPENSTEP's dock tile shade is one, so its theme file uses it) | 111 / 111 | 16.2 | 113 | themes, components |
 | @container size queries, container-type | 105 / 105 | 16 | 110 | components |
-| :focus-visible | 86 / 86 | 15.4 | 85 | components, tumblr |
+| :focus-visible (the skins draw a keyboard focus ring in their theme files) | 86 / 86 | 15.4 | 85 | themes, components, tumblr |
 | @media (prefers-contrast) | 96 / 96 | 14.1 | 101 | themes, components, tumblr |
 | @media (forced-colors) (added 0.13.0; the system colours Highlight and HighlightText it uses are in every browser since 1.0) | 89 / 79 | 16 | 89 | components |
 | @media (hover: hover) (added 0.13.0) | 38 / 12 | 9 | 64 | components |

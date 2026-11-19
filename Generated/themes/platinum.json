@@ -57,6 +57,9 @@
       "gray22" : {
         "light" : "#222222"
       },
+      "gray55" : {
+        "light" : "#555555"
+      },
       "gray88" : {
         "light" : "#888888"
       },
@@ -694,6 +697,199 @@
           },
           "scale" : "integer"
         },
+        "disabled" : {
+          "edges" : {
+            "bottom" : [
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "gray88"
+                },
+                "width" : 1
+              }
+            ],
+            "leading" : [
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "gray88"
+                },
+                "width" : 1
+              }
+            ],
+            "top" : [
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "gray88"
+                },
+                "width" : 1
+              }
+            ],
+            "trailing" : [
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "gray88"
+                },
+                "width" : 1
+              }
+            ]
+          },
+          "ink" : {
+            "opacity" : 1,
+            "source" : "gray88"
+          },
+          "layers" : [
+            {
+              "fill" : {
+                "_0" : {
+                  "opacity" : 1,
+                  "source" : "background"
+                }
+              }
+            }
+          ],
+          "radius" : {
+            "uniform" : {
+              "_0" : 3
+            }
+          },
+          "scale" : "integer"
+        },
+        "focus" : {
+          "edges" : {
+            "bottom" : [
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "ink"
+                },
+                "width" : 1
+              },
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "muted"
+                },
+                "width" : 1
+              },
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "shade"
+                },
+                "width" : 1
+              }
+            ],
+            "leading" : [
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "ink"
+                },
+                "width" : 1
+              },
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "background"
+                },
+                "width" : 1
+              },
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "surface"
+                },
+                "width" : 1
+              }
+            ],
+            "top" : [
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "ink"
+                },
+                "width" : 1
+              },
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "background"
+                },
+                "width" : 1
+              },
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "surface"
+                },
+                "width" : 1
+              }
+            ],
+            "trailing" : [
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "ink"
+                },
+                "width" : 1
+              },
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "muted"
+                },
+                "width" : 1
+              },
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "shade"
+                },
+                "width" : 1
+              }
+            ]
+          },
+          "ink" : {
+            "opacity" : 1,
+            "source" : "ink"
+          },
+          "layers" : [
+            {
+              "fill" : {
+                "_0" : {
+                  "opacity" : 1,
+                  "source" : "background"
+                }
+              }
+            },
+            {
+              "shadow" : {
+                "_0" : {
+                  "inset" : false,
+                  "shadow" : {
+                    "colour" : {
+                      "opacity" : 1,
+                      "source" : "accent"
+                    },
+                    "radius" : 0,
+                    "x" : 0,
+                    "y" : 0
+                  },
+                  "spread" : 2
+                }
+              }
+            }
+          ],
+          "radius" : {
+            "uniform" : {
+              "_0" : 3
+            }
+          },
+          "scale" : "integer"
+        },
         "rest" : {
           "edges" : {
             "bottom" : [
@@ -1012,6 +1208,283 @@
           },
           "scale" : "integer"
         },
+        "disabled" : {
+          "edges" : {
+            "bottom" : [
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "gray88"
+                },
+                "width" : 1
+              }
+            ],
+            "leading" : [
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "gray88"
+                },
+                "width" : 1
+              }
+            ],
+            "top" : [
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "gray88"
+                },
+                "width" : 1
+              }
+            ],
+            "trailing" : [
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "gray88"
+                },
+                "width" : 1
+              }
+            ]
+          },
+          "ink" : {
+            "opacity" : 1,
+            "source" : "gray88"
+          },
+          "layers" : [
+            {
+              "fill" : {
+                "_0" : {
+                  "opacity" : 1,
+                  "source" : "background"
+                }
+              }
+            }
+          ],
+          "radius" : {
+            "uniform" : {
+              "_0" : 3
+            }
+          },
+          "scale" : "integer"
+        },
+        "focus" : {
+          "edges" : {
+            "bottom" : [
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "ink"
+                },
+                "width" : 1
+              },
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "muted"
+                },
+                "width" : 1
+              },
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "shade"
+                },
+                "width" : 1
+              },
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "ink"
+                },
+                "width" : 1
+              },
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "muted"
+                },
+                "width" : 1
+              },
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "shade"
+                },
+                "width" : 1
+              }
+            ],
+            "leading" : [
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "ink"
+                },
+                "width" : 1
+              },
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "background"
+                },
+                "width" : 1
+              },
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "shade"
+                },
+                "width" : 1
+              },
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "ink"
+                },
+                "width" : 1
+              },
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "background"
+                },
+                "width" : 1
+              },
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "surface"
+                },
+                "width" : 1
+              }
+            ],
+            "top" : [
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "ink"
+                },
+                "width" : 1
+              },
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "background"
+                },
+                "width" : 1
+              },
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "shade"
+                },
+                "width" : 1
+              },
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "ink"
+                },
+                "width" : 1
+              },
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "background"
+                },
+                "width" : 1
+              },
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "surface"
+                },
+                "width" : 1
+              }
+            ],
+            "trailing" : [
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "ink"
+                },
+                "width" : 1
+              },
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "muted"
+                },
+                "width" : 1
+              },
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "shade"
+                },
+                "width" : 1
+              },
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "ink"
+                },
+                "width" : 1
+              },
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "muted"
+                },
+                "width" : 1
+              },
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "shade"
+                },
+                "width" : 1
+              }
+            ]
+          },
+          "ink" : {
+            "opacity" : 1,
+            "source" : "ink"
+          },
+          "layers" : [
+            {
+              "fill" : {
+                "_0" : {
+                  "opacity" : 1,
+                  "source" : "background"
+                }
+              }
+            },
+            {
+              "shadow" : {
+                "_0" : {
+                  "inset" : false,
+                  "shadow" : {
+                    "colour" : {
+                      "opacity" : 1,
+                      "source" : "accent"
+                    },
+                    "radius" : 0,
+                    "x" : 0,
+                    "y" : 0
+                  },
+                  "spread" : 2
+                }
+              }
+            }
+          ],
+          "radius" : {
+            "uniform" : {
+              "_0" : 5
+            }
+          },
+          "scale" : "integer"
+        },
         "rest" : {
           "edges" : {
             "bottom" : [
@@ -1238,6 +1711,143 @@
         }
       },
       "field" : {
+        "disabled" : {
+          "edges" : {
+            "bottom" : [
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "ink"
+                },
+                "width" : 1
+              }
+            ],
+            "leading" : [
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "ink"
+                },
+                "width" : 1
+              }
+            ],
+            "top" : [
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "ink"
+                },
+                "width" : 1
+              }
+            ],
+            "trailing" : [
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "ink"
+                },
+                "width" : 1
+              }
+            ]
+          },
+          "ink" : {
+            "opacity" : 1,
+            "source" : "gray88"
+          },
+          "layers" : [
+            {
+              "fill" : {
+                "_0" : {
+                  "opacity" : 1,
+                  "source" : "surface"
+                }
+              }
+            }
+          ],
+          "radius" : {
+            "uniform" : {
+              "_0" : 0
+            }
+          },
+          "scale" : "integer"
+        },
+        "focus" : {
+          "edges" : {
+            "bottom" : [
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "ink"
+                },
+                "width" : 1
+              }
+            ],
+            "leading" : [
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "ink"
+                },
+                "width" : 1
+              }
+            ],
+            "top" : [
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "ink"
+                },
+                "width" : 1
+              }
+            ],
+            "trailing" : [
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "ink"
+                },
+                "width" : 1
+              }
+            ]
+          },
+          "ink" : {
+            "opacity" : 1,
+            "source" : "ink"
+          },
+          "layers" : [
+            {
+              "fill" : {
+                "_0" : {
+                  "opacity" : 1,
+                  "source" : "surface"
+                }
+              }
+            },
+            {
+              "shadow" : {
+                "_0" : {
+                  "inset" : false,
+                  "shadow" : {
+                    "colour" : {
+                      "opacity" : 1,
+                      "source" : "accent"
+                    },
+                    "radius" : 0,
+                    "x" : 0,
+                    "y" : 0
+                  },
+                  "spread" : 2
+                }
+              }
+            }
+          ],
+          "radius" : {
+            "uniform" : {
+              "_0" : 0
+            }
+          },
+          "scale" : "integer"
+        },
         "rest" : {
           "edges" : {
             "bottom" : [
@@ -1370,6 +1980,21 @@
         }
       },
       "menuItem" : {
+        "disabled" : {
+          "ink" : {
+            "opacity" : 1,
+            "source" : "gray88"
+          },
+          "layers" : [
+
+          ],
+          "radius" : {
+            "uniform" : {
+              "_0" : 0
+            }
+          },
+          "scale" : "integer"
+        },
         "hover" : {
           "ink" : {
             "opacity" : 1,
@@ -1456,6 +2081,1054 @@
         }
       },
       "scrollArrowEnd" : {
+        "disabled" : {
+          "ink" : {
+            "opacity" : 1,
+            "source" : "ink"
+          },
+          "layers" : [
+            {
+              "pattern" : {
+                "_0" : {
+                  "cells" : [
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "gray55"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "gray55"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "gray55"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "gray55"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "gray88"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "gray55"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "gray88"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "gray88"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "gray55"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "gray88"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "gray88"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "gray88"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "gray55"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "gray88"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "gray88"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "gray88"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "gray88"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "gray55"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "gray88"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "gray88"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "gray88"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "gray88"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "gray55"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "gray88"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "gray88"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "gray88"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "gray55"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "gray88"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "gray88"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "gray55"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "gray88"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "gray55"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "gray55"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "gray55"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    }
+                  ],
+                  "height" : 16,
+                  "width" : 16
+                }
+              }
+            }
+          ],
+          "radius" : {
+            "uniform" : {
+              "_0" : 0
+            }
+          },
+          "scale" : "integer"
+        },
         "rest" : {
           "ink" : {
             "opacity" : 1,
@@ -2506,6 +4179,1054 @@
         }
       },
       "scrollArrowStart" : {
+        "disabled" : {
+          "ink" : {
+            "opacity" : 1,
+            "source" : "ink"
+          },
+          "layers" : [
+            {
+              "pattern" : {
+                "_0" : {
+                  "cells" : [
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "gray55"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "gray55"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "gray55"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "gray88"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "gray55"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "gray88"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "gray88"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "gray55"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "gray88"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "gray88"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "gray88"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "gray55"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "gray88"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "gray88"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "gray88"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "gray88"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "gray55"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "gray88"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "gray88"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "gray88"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "gray88"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "gray55"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "gray88"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "gray88"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "gray88"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "gray55"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "gray88"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "gray88"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "gray55"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "gray88"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "gray55"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "gray55"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "gray55"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "grayEE"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "gray55"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    }
+                  ],
+                  "height" : 16,
+                  "width" : 16
+                }
+              }
+            }
+          ],
+          "radius" : {
+            "uniform" : {
+              "_0" : 0
+            }
+          },
+          "scale" : "integer"
+        },
         "rest" : {
           "ink" : {
             "opacity" : 1,
@@ -3962,6 +6683,54 @@
         }
       },
       "scrollTrack" : {
+        "disabled" : {
+          "edges" : {
+            "bottom" : [
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "ink"
+                },
+                "width" : 1
+              }
+            ],
+            "leading" : [
+
+            ],
+            "top" : [
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "ink"
+                },
+                "width" : 1
+              }
+            ],
+            "trailing" : [
+
+            ]
+          },
+          "ink" : {
+            "opacity" : 1,
+            "source" : "ink"
+          },
+          "layers" : [
+            {
+              "fill" : {
+                "_0" : {
+                  "opacity" : 1,
+                  "source" : "grayEE"
+                }
+              }
+            }
+          ],
+          "radius" : {
+            "uniform" : {
+              "_0" : 0
+            }
+          },
+          "scale" : "integer"
+        },
         "rest" : {
           "edges" : {
             "bottom" : [
