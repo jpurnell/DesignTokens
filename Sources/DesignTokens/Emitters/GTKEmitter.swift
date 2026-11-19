@@ -83,6 +83,15 @@ public enum GTKEmitter {
             "  box-shadow: inset 0 -1px 0 0 @borders;",
             "}",
         ]
+        if let mono = theme.structure.monospace {
+            lines += [
+                "",
+                ".monospace {",
+                "  font-family: \(ThemeCSSEmitter.family(mono.family));",
+                "  font-size: \(SurfaceCSS.px(mono.size));",
+                "}",
+            ]
+        }
         lines += surfaceRules(theme, slot: slot)
         return lines.joined(separator: "\n") + "\n"
     }

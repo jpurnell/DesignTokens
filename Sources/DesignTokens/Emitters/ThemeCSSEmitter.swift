@@ -353,7 +353,7 @@ public enum ThemeCSSEmitter {
         }
 
         add("font-sans", FontStack.sans)
-        add("font-mono", FontStack.mono)
+        add("font-mono", s.monospace.map { family($0.family) } ?? FontStack.mono)
         add("font-serif-new-york", FontStack.serifNewYork)
         add("font-serif-garamond", FontStack.serifGaramond)
         for role in TypeRole.allCases {
@@ -368,6 +368,11 @@ public enum ThemeCSSEmitter {
             add("\(prefix)-tracking", spec.tracking == 0 ? "0" : "\(number(spec.tracking))em")
             add("\(prefix)-transform", spec.uppercase ? "uppercase" : "none")
             add("\(prefix)-style", spec.italic ? "italic" : "normal")
+        }
+        if let mono = s.monospace {
+            add("type-mono-size", px(mono.size))
+            add("type-mono-line", number(mono.lineHeight))
+            add("type-mono-weight", "\(mono.weight)")
         }
         return out
     }

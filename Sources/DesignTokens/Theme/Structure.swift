@@ -879,10 +879,14 @@ public struct Structure: Sendable, Hashable, Codable {
     public var marks: MarkSpec
     /// Number formats.
     public var numbers: NumberFormats
+    /// The monospace role (terminals, code, fixed-pitch text) when the theme sets its own face, size and line. `nil` otherwise, and then the
+    /// system monospace stack stands (``FontStack/mono``); nothing is written for it, so a theme without one encodes as it always did.
+    public var monospace: TextSpec?
 
     /// Creates a structure.
     public init(rules: RuleSpec, type: TypeRoles, labels: LabelSpec, layout: LayoutSpec, marks: MarkSpec,
-                numbers: NumberFormats) {
+                numbers: NumberFormats, monospace: TextSpec? = nil) {
+        self.monospace = monospace
         self.rules = rules
         self.type = type
         self.labels = labels

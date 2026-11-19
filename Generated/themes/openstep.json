@@ -149,6 +149,25 @@
       "pointSize" : 16,
       "selectedLineWidth" : 2
     },
+    "monospace" : {
+      "family" : {
+        "fallback" : {
+          "fallback" : {
+            "kind" : "mono"
+          },
+          "kind" : "named",
+          "name" : "Courier"
+        },
+        "kind" : "named",
+        "name" : "Ohlfs"
+      },
+      "italic" : false,
+      "lineHeight" : 1.2,
+      "size" : 12,
+      "tracking" : 0,
+      "uppercase" : false,
+      "weight" : 400
+    },
     "numbers" : {
       "count" : {
         "abbreviate" : true,

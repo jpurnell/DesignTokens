@@ -16,7 +16,7 @@ public extension Theme {
     /// scroll bars, and the type (Charcoal is the system face on 8.x, Geneva for lists: general knowledge, named with the system sans as
     /// the fallback because neither is installed on most machines). The status roles carry no colour (black); status is a glyph.
     static var platinum: Theme {
-        Theme(id: "platinum", name: "Platinum (Mac OS 8)", structure: classicMacStructure(family: platinumFamily),
+        Theme(id: "platinum", name: "Platinum (Mac OS 8)", structure: classicMacStructure(family: platinumFamily, monospace: macMonospace),
               palette: platinumPalette, appearances: .lightOnly, conformance: platinumConformance, surfaces: platinumSurfaces,
               windowControls: WindowControls(leading: [.close], trailing: [.zoom, .minimize], titleBar: platinumTitleBar))
     }

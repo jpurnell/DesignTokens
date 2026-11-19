@@ -135,6 +135,7 @@ Blue scroll thumb (a default-button-coloured control), vertical: `ABABAB` outlin
 
 ## Not measured yet
 
+- **Fixed-pitch type** (all three skins): Monaco 9 on the Macintosh, Ohlfs then Courier on NeXT are general knowledge and chosen, not read from a capture. A terminal or code window in a capture would settle the size and line.
 - Corner radii of System 7, Platinum and Aqua buttons; Platinum and System 7 title bars (stripes); default-button rings and the Aqua default button's blue; menus; scrollbars. All present in the captured sets; deferred to Step 2.
 - **Liquid Glass:** lensing and highlights over detailed or coloured content, a fit for dark appearance with more backgrounds, and button states.
 - **NeXTSTEP 4.0** proper: **not needed** (owner, 2026-11-17: 4.2 is fine).

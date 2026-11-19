@@ -15,9 +15,16 @@ public extension Theme {
     /// menu's own drawing is in the captures), and the type (Helvetica 12 is general knowledge for the NeXT system face, named with the
     /// system sans as the fallback). A default button has no ring in OPENSTEP (it carries a return arrow), so its recipe is the button's.
     static var openstep: Theme {
-        Theme(id: "openstep", name: "OPENSTEP 4.2", structure: classicMacStructure(family: openstepFamily, controlHeight: 27),
+        Theme(id: "openstep", name: "OPENSTEP 4.2", structure: classicMacStructure(family: openstepFamily, controlHeight: 27, monospace: openstepMonospace),
               palette: openstepPalette, appearances: .lightOnly, conformance: openstepConformance, surfaces: openstepSurfaces,
               windowControls: WindowControls(leading: [.minimize], trailing: [.close], titleBar: openstepTitleBar))
+    }
+
+    /// NeXT's fixed-pitch face is Ohlfs (the Terminal and Edit), with Courier as the PostScript standby: general knowledge, named first, not
+    /// measured from a capture; 12 px is chosen. Ohlfs is rarely installed, so Courier is what most machines show.
+    private static var openstepMonospace: TextSpec {
+        TextSpec(family: .named("Ohlfs", fallback: .named("Courier", fallback: .mono)), size: 12, weight: 400, tracking: 0,
+                 italic: false, uppercase: false, lineHeight: 1.2)
     }
 
     private static var openstepFamily: FontFamilyRef { .named("Helvetica", fallback: .sans) }

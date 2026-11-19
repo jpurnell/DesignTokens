@@ -15,9 +15,16 @@ public extension Theme {
     /// The ledger records what a two-colour palette cannot do (a chart's series are not distinguishable by colour; use direct labels and
     /// the pattern layers of ``SurfaceRecipe``).
     static var system7: Theme {
-        Theme(id: "system7", name: "System 7 (1-bit)", structure: classicMacStructure(family: system7Family), palette: system7Palette,
+        Theme(id: "system7", name: "System 7 (1-bit)", structure: classicMacStructure(family: system7Family, monospace: macMonospace), palette: system7Palette,
               appearances: .lightOnly, conformance: system7Conformance, surfaces: system7Surfaces,
               windowControls: WindowControls(leading: [.close], trailing: [.zoom]))
+    }
+
+    /// The Macintosh's fixed-pitch face is Monaco 9 (the Terminal, MPW and code windows): general knowledge, named first, then Menlo, which
+    /// ships with macOS, then the system monospace. Not measured from a capture. Shared with Platinum.
+    static var macMonospace: TextSpec {
+        TextSpec(family: .named("Monaco", fallback: .named("Menlo", fallback: .mono)), size: 9, weight: 400, tracking: 0,
+                 italic: false, uppercase: false, lineHeight: 1.25)
     }
 
     private static var system7Family: FontFamilyRef { .named("Chicago", fallback: .named("Geneva", fallback: .sans)) }
@@ -36,7 +43,8 @@ public extension Theme {
 
     /// The structure shared by the fixed-metric skins (System 7, Platinum, OPENSTEP): the Macintosh skins have the same metrics and differ in
     /// the face; OPENSTEP passes its own control height.
-    static func classicMacStructure(family system7Family: FontFamilyRef, controlHeight: Double = 20) -> Structure {
+    static func classicMacStructure(family system7Family: FontFamilyRef, controlHeight: Double = 20,
+                                    monospace: TextSpec? = nil) -> Structure {
         typealias B = ThemeBuilders
         // Chicago 12 is the system font (menus, buttons, dialog text); sizes are the Macintosh's, and the line is 1.25 so a
         // 20 px control pads 2.5 px. Caption 10 is chosen, not measured: Geneva 9 is not legible in a fallback face.
@@ -74,7 +82,7 @@ public extension Theme {
                              barFill: .flat, barWidthRatio: 0.7, barCornerRadius: 0,
                              lineEnd: .none, defaultFill: .muted, defaultEmphasis: .latest, emphasisFill: .accent)
         return Structure(rules: B.rules(reference: LineSpec(weight: 1, dash: [])), type: type,
-                         labels: labels, layout: layout, marks: marks, numbers: B.standardNumbers)
+                         labels: labels, layout: layout, marks: marks, numbers: B.standardNumbers, monospace: monospace)
     }
 
     /// The control surfaces, in logical pixels on the one-bit grid.

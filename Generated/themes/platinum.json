@@ -166,6 +166,25 @@
       "pointSize" : 16,
       "selectedLineWidth" : 2
     },
+    "monospace" : {
+      "family" : {
+        "fallback" : {
+          "fallback" : {
+            "kind" : "mono"
+          },
+          "kind" : "named",
+          "name" : "Menlo"
+        },
+        "kind" : "named",
+        "name" : "Monaco"
+      },
+      "italic" : false,
+      "lineHeight" : 1.25,
+      "size" : 9,
+      "tracking" : 0,
+      "uppercase" : false,
+      "weight" : 400
+    },
     "numbers" : {
       "count" : {
         "abbreviate" : true,
