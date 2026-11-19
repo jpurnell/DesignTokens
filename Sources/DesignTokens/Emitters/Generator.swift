@@ -28,7 +28,7 @@ public enum GeneratedFormat: String, Sendable, Hashable, CaseIterable {
     case slides
     /// `components.css`, the web component stylesheet (``ComponentsCSSEmitter``).
     case components
-    /// `themes/<id>.gtk.css` and, for a theme with a dark appearance, `themes/<id>.gtk-dark.css` (``GTKEmitter``).
+    /// `themes/<id>.gtk.css` and, for a theme with a dark appearance, `themes/<id>.gtk-dark.css`, and for a theme that places the window controls `themes/<id>.gtk-settings.ini` (``GTKEmitter``).
     case gtk
 }
 
@@ -92,6 +92,9 @@ public enum Generator {
             }
             if theme.appearances == .both, let dark = standard.first(where: { $0.appearance == .dark }) {
                 files.append((.gtk, GeneratedFile(path: "themes/\(theme.id).gtk-dark.css", contents: try GTKEmitter.emit(theme, slot: dark))))
+            }
+            if let settings = GTKEmitter.settings(theme) {
+                files.append((.gtk, GeneratedFile(path: "themes/\(theme.id).gtk-settings.ini", contents: settings)))
             }
         }
         return files.filter { formats?.contains($0.0) ?? true }.map(\.1)

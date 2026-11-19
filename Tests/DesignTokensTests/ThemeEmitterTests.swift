@@ -75,10 +75,11 @@ struct ThemeEmitterTests {
             expected += slots.map { "themes/\(theme.id).slides.colors.\($0).xml" }
             // the GTK stylesheet: the first appearance, plus a dark one where the theme has both
             expected += ["themes/\(theme.id).gtk.css"] + (theme.appearances == .both ? ["themes/\(theme.id).gtk-dark.css"] : [])
+            if theme.windowControls != nil { expected += ["themes/\(theme.id).gtk-settings.ini"] }
             slotCount += slots.count + (theme.appearances == .both ? 2 : 1)
         }
         #expect(paths == expected)
-        #expect(paths.count == 3 + 12 * 5 + 2 + slotCount)
+        #expect(paths.count == 3 + 12 * 5 + 2 + slotCount + Theme.all.filter { $0.windowControls != nil }.count)
     }
 
     @Test("theme JSON is the canonical codec output and decodes back to the theme")

@@ -49,10 +49,14 @@ public struct Theme: Sendable, Hashable, Codable, Identifiable {
     /// Per-control surface recipes (pixel edges, patterns, gradients), or `nil` for a theme that draws controls from
     /// ``structure`` alone. Optional in JSON: absent means `nil`, and `nil` writes no key.
     public var surfaces: SurfaceSet?
+    /// Where the title bar puts its close, minimize and zoom controls, or `nil` for the platform's own placement. Optional in JSON:
+    /// absent means `nil`, and `nil` writes no key.
+    public var windowControls: WindowControls?
 
     /// Creates a theme.
     public init(id: String, name: String, structure: Structure, palette: ThemePalette,
-                appearances: AppearanceSupport, conformance: Conformance = .strict, surfaces: SurfaceSet? = nil) {
+                appearances: AppearanceSupport, conformance: Conformance = .strict, surfaces: SurfaceSet? = nil,
+                windowControls: WindowControls? = nil) {
         self.id = id
         self.name = name
         self.structure = structure
@@ -60,9 +64,10 @@ public struct Theme: Sendable, Hashable, Codable, Identifiable {
         self.appearances = appearances
         self.conformance = conformance
         self.surfaces = surfaces
+        self.windowControls = windowControls
     }
 
-    private enum CodingKeys: String, CodingKey, CaseIterable { case id, name, structure, palette, appearances, conformance, surfaces }
+    private enum CodingKeys: String, CodingKey, CaseIterable { case id, name, structure, palette, appearances, conformance, surfaces, windowControls }
 
     /// Decodes a theme, and refuses one that is not a well-formed theme.
     ///
@@ -90,6 +95,7 @@ public struct Theme: Sendable, Hashable, Codable, Identifiable {
             self.appearances = try container.decode(AppearanceSupport.self, forKey: .appearances)
             self.conformance = try container.decode(Conformance.self, forKey: .conformance)
             self.surfaces = try container.decodeIfPresent(SurfaceSet.self, forKey: .surfaces)
+            self.windowControls = try container.decodeIfPresent(WindowControls.self, forKey: .windowControls)
         } catch let error as DecodingError {
             // a required key that is missing is often a misspelt one: say which keys the input has instead
             if case .object(let given) = raw {
@@ -141,6 +147,7 @@ public struct Theme: Sendable, Hashable, Codable, Identifiable {
         try container.encode(appearances, forKey: .appearances)
         try container.encode(conformance, forKey: .conformance)
         try container.encodeIfPresent(surfaces, forKey: .surfaces)
+        try container.encodeIfPresent(windowControls, forKey: .windowControls)
     }
 
     private static func describe(_ error: DecodingError) -> String {

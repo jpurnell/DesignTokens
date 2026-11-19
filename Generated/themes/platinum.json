@@ -1389,5 +1389,14 @@
         }
       }
     }
+  },
+  "windowControls" : {
+    "leading" : [
+      "close"
+    ],
+    "trailing" : [
+      "zoom",
+      "minimize"
+    ]
   }
 }

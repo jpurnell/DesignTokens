@@ -17,7 +17,8 @@ public extension Theme {
     /// the fallback because neither is installed on most machines). The status roles carry no colour (black); status is a glyph.
     static var platinum: Theme {
         Theme(id: "platinum", name: "Platinum (Mac OS 8)", structure: classicMacStructure(family: platinumFamily),
-              palette: platinumPalette, appearances: .lightOnly, conformance: platinumConformance, surfaces: platinumSurfaces)
+              palette: platinumPalette, appearances: .lightOnly, conformance: platinumConformance, surfaces: platinumSurfaces,
+              windowControls: WindowControls(leading: [.close], trailing: [.zoom, .minimize]))
     }
 
     private static var platinumFamily: FontFamilyRef { .named("Charcoal", fallback: .named("Geneva", fallback: .sans)) }

@@ -16,7 +16,8 @@ public extension Theme {
     /// the pattern layers of ``SurfaceRecipe``).
     static var system7: Theme {
         Theme(id: "system7", name: "System 7 (1-bit)", structure: classicMacStructure(family: system7Family), palette: system7Palette,
-              appearances: .lightOnly, conformance: system7Conformance, surfaces: system7Surfaces)
+              appearances: .lightOnly, conformance: system7Conformance, surfaces: system7Surfaces,
+              windowControls: WindowControls(leading: [.close], trailing: [.zoom]))
     }
 
     private static var system7Family: FontFamilyRef { .named("Chicago", fallback: .named("Geneva", fallback: .sans)) }
