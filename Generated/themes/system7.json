@@ -344,7 +344,7 @@
         "italic" : false,
         "lineHeight" : 1.25,
         "size" : 24,
-        "tracking" : -0.05,
+        "tracking" : 0,
         "uppercase" : false,
         "weight" : 400
       },
@@ -363,7 +363,7 @@
         "italic" : false,
         "lineHeight" : 1.25,
         "size" : 12,
-        "tracking" : -0.02,
+        "tracking" : 0,
         "uppercase" : false,
         "weight" : 400
       },
@@ -382,8 +382,8 @@
         "italic" : false,
         "lineHeight" : 1.25,
         "size" : 12,
-        "tracking" : 0.08,
-        "uppercase" : true,
+        "tracking" : 0,
+        "uppercase" : false,
         "weight" : 400
       },
       "note" : {
@@ -515,7 +515,7 @@
         "italic" : false,
         "lineHeight" : 1.25,
         "size" : 12,
-        "tracking" : -0.03,
+        "tracking" : 0,
         "uppercase" : false,
         "weight" : 400
       }

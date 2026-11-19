@@ -46,6 +46,10 @@ public extension Theme {
             spec.size = size
             spec.lineHeight = 1.25
             spec.weight = 400
+            // the original systems set interface text in sentence case with no added spacing; the modern label style's capitals and
+            // tracking would be an anachronism
+            spec.uppercase = false
+            spec.tracking = 0
             return spec
         }
         func chart(_ size: Double, _ weight: Int) -> TextSpec { B.text(system7Family, size, weight) }
