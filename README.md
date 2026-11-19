@@ -175,7 +175,7 @@ Sources: the first unprefixed, unflagged version of each feature in `@mdn/browse
 | Custom properties and var() | 49 / 15 | 9.1 | 31 | themes, components, tumblr |
 | calc() (in themes since a fixed control height and a default-button ring (unreleased)) | 26 / 12 | 7 | 16 | themes, components, tumblr |
 | Grid with minmax() and repeat(auto-fit) (Firefox 76 is when repeat(auto-fit) takes more than one column in a repeated track) | 57 / 16 | 10.1 | 76 | components |
-| gap in flex layouts | 84 / 84 | 14.1 | 63 | components, tumblr |
+| gap in flex layouts (in themes that draw a title bar (unreleased)) | 84 / 84 | 14.1 | 63 | themes, components, tumblr |
 | Logical sizes (inline-size, block-size, min-inline-size, min-block-size) (in themes with a default-button ring (unreleased)) | 57 / 79 | 12.1 | 41 | themes, components |
 | padding-inline, padding-block | 87 / 87 | 14.1 | 66 | components |
 | border-inline-start, padding-inline-start and -end | 69 / 79 | 12.1 | 41 | components |

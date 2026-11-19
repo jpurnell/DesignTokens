@@ -319,6 +319,12 @@ public enum SurfaceRole: String, Sendable, Hashable, Codable, CaseIterable {
     case scrollThumb
     /// A selected row or run of text.
     case selection
+    /// A window's title bar: the bar behind the title and the window controls.
+    case titleBar
+    /// The stripes (or other texture) that fill a title bar between the controls and the title.
+    case titleStripes
+    /// A window control: the close, zoom or minimize box, at rest.
+    case windowBox
 }
 
 /// A state a control can be in.

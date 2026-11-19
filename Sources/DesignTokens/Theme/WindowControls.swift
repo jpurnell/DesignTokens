@@ -21,10 +21,14 @@ public struct WindowControls: Sendable, Hashable, Codable {
     /// Controls on the trailing side, from the inside outward.
     public var trailing: [WindowControl]
 
+    /// The title bar's measurements, or `nil` when the theme places controls but draws no bar of its own.
+    public var titleBar: TitleBarMetrics?
+
     /// Creates a placement.
-    public init(leading: [WindowControl], trailing: [WindowControl]) {
+    public init(leading: [WindowControl], trailing: [WindowControl], titleBar: TitleBarMetrics? = nil) {
         self.leading = leading
         self.trailing = trailing
+        self.titleBar = titleBar
     }
 
     /// The value of GTK's `gtk-decoration-layout` setting: leading names, a colon, trailing names (`close:maximize,minimize`).
@@ -32,5 +36,28 @@ public struct WindowControls: Sendable, Hashable, Codable {
     public var gtkDecorationLayout: String {
         func name(_ control: WindowControl) -> String { control == .zoom ? "maximize" : control.rawValue }
         return leading.map(name).joined(separator: ",") + ":" + trailing.map(name).joined(separator: ",")
+    }
+}
+
+/// The measurements of a drawn title bar, in logical pixels: the bar's size, the room its frame takes, and how its parts sit.
+public struct TitleBarMetrics: Sendable, Hashable, Codable {
+    /// The bar's height, frame included.
+    public var height: Double
+    /// Room between the bar's outer edge and its parts: the frame stripes plus the space inside them.
+    public var inset: Insets
+    /// The side of a square window control.
+    public var boxSize: Double
+    /// Space between neighbouring parts (control, stripes, title).
+    public var gap: Double
+    /// The stripes' height.
+    public var stripeHeight: Double
+
+    /// Creates the metrics.
+    public init(height: Double, inset: Insets, boxSize: Double, gap: Double, stripeHeight: Double) {
+        self.height = height
+        self.inset = inset
+        self.boxSize = boxSize
+        self.gap = gap
+        self.stripeHeight = stripeHeight
     }
 }

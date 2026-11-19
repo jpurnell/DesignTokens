@@ -96,6 +96,9 @@ public enum ThemeCSSEmitter {
         case .button: [".dt-button"]
         case .buttonDefault: [".dt-button--primary"]
         case .field: [".dt-input", ".dt-select", ".dt-textarea"]
+        case .titleBar: [".dt-titlebar"]
+        case .titleStripes: [".dt-titlebar__stripes"]
+        case .windowBox: [".dt-titlebar__box"]
         case .menu, .scrollTrack, .scrollThumb, .selection: []
         }
     }
@@ -140,6 +143,50 @@ public enum ThemeCSSEmitter {
                 lines.append(contentsOf: SurfaceCSS.declarations(for: recipe, resolve: reference, literal: literal).map { "  \($0);" })
                 lines.append("}")
             }
+        }
+        lines.append(contentsOf: titleBarRules(theme, scope: scope))
+        return lines
+    }
+
+    /// The layout of a title bar: a row of `dt-titlebar__box--close|minimize|zoom` buttons, two `dt-titlebar__stripes` and a
+    /// `dt-titlebar__title` in a `dt-titlebar`, in that markup order. The controls' `order` puts each on the side the theme's
+    /// ``WindowControls`` names, so the markup does not change from one theme to another.
+    private static func titleBarRules(_ theme: Theme, scope: String) -> [String] {
+        guard let controls = theme.windowControls, let bar = controls.titleBar, theme.surfaces?.recipes[.titleBar] != nil else { return [] }
+        func px(_ value: Double) -> String { SurfaceCSS.px(value) }
+        var lines = [
+            "\(scope) .dt-titlebar {",
+            "  display: flex;",
+            "  align-items: flex-start;",
+            "  box-sizing: border-box;",
+            "  block-size: \(px(bar.height));",
+            "  padding: \(px(bar.inset.top)) \(px(bar.inset.trailing)) \(px(bar.inset.bottom)) \(px(bar.inset.leading));",
+            "  gap: \(px(bar.gap));",
+            "}",
+            "\(scope) .dt-titlebar__box {",
+            "  box-sizing: border-box;",
+            "  flex: none;",
+            "  inline-size: \(px(bar.boxSize));",
+            "  block-size: \(px(bar.boxSize));",
+            "  min-block-size: 0;",
+            "  padding: 0;",
+            "}",
+            "\(scope) .dt-titlebar__stripes {",
+            "  flex: 1 1 0;",
+            "  block-size: \(px(bar.stripeHeight));",
+            "}",
+            "\(scope) .dt-titlebar__title {",
+            "  flex: none;",
+            "  align-self: center;",
+            "  line-height: 1;",
+            "  white-space: nowrap;",
+            "}",
+        ]
+        for (index, control) in controls.leading.enumerated() {
+            lines += ["\(scope) .dt-titlebar__box--\(control.rawValue) {", "  order: \(index - controls.leading.count);", "}"]
+        }
+        for (index, control) in controls.trailing.enumerated() {
+            lines += ["\(scope) .dt-titlebar__box--\(control.rawValue) {", "  order: \(index + 1);", "}"]
         }
         return lines
     }

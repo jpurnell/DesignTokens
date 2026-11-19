@@ -18,7 +18,15 @@ public extension Theme {
     static var platinum: Theme {
         Theme(id: "platinum", name: "Platinum (Mac OS 8)", structure: classicMacStructure(family: platinumFamily),
               palette: platinumPalette, appearances: .lightOnly, conformance: platinumConformance, surfaces: platinumSurfaces,
-              windowControls: WindowControls(leading: [.close], trailing: [.zoom, .minimize]))
+              windowControls: WindowControls(leading: [.close], trailing: [.zoom, .minimize], titleBar: platinumTitleBar))
+    }
+
+    /// Measured from the Appearance window of the Mac OS 8.0 capture: the bar is 22 rows (black and white above, #999999 and black below),
+    /// its parts start 2 px inside the frame, the boxes are 13 px, the stripes 12 px and the gap between parts 4 px. The right frame is
+    /// three columns (`#000000 #000000 #999999`), so the right inset is one larger than the left. The gap between a zoom and a windowshade
+    /// box is not measured (the window sampled has one box at the right) and is taken as the same 4 px.
+    private static var platinumTitleBar: TitleBarMetrics {
+        TitleBarMetrics(height: 22, inset: Insets(top: 4, leading: 4, bottom: 2, trailing: 5), boxSize: 13, gap: 4, stripeHeight: 12)
     }
 
     private static var platinumFamily: FontFamilyRef { .named("Charcoal", fallback: .named("Geneva", fallback: .sans)) }
@@ -34,7 +42,10 @@ public extension Theme {
             // the progress bar's own rows, light to dark: #CCCCFF #9999FF #6666CC #333399 #000055
             sequential: B.ramp([0xCCCCFF, 0x9999FF, 0x6666CC, 0x333399, 0x000055]),
             diverging: B.ramp([0x333399, 0xDDDDDD, 0x333333]),
-            extras: ["shade": B.adaptive(0xAAAAAA), "selection": B.adaptive(0xCCCCFF), "desktop": B.adaptive(0x9C9CCE)])
+            extras: ["shade": B.adaptive(0xAAAAAA), "selection": B.adaptive(0xCCCCFF), "desktop": B.adaptive(0x9C9CCE),
+                     // the title bar's greys, read off the Mac OS 8.0 capture
+                     "bar": B.adaptive(0xCCCCCC), "gray22": B.adaptive(0x222222), "gray88": B.adaptive(0x888888),
+                     "gray99": B.adaptive(0x999999), "grayBB": B.adaptive(0xBBBBBB), "grayEE": B.adaptive(0xEEEEEE)])
     }
 
     /// The control surfaces, in logical pixels.
@@ -60,7 +71,34 @@ public extension Theme {
             SurfaceRecipe(layers: [.fill(ref(fill))], edges: edges, radius: .uniform(radius), backdropBlur: nil,
                           ink: ref(ink), scale: .integer)
         }
+        // Title bar (measured, see platinumTitleBar): the bar, the stripes (a 1 x 2 tile, white first) and the 13 x 13 close box, whose pixels
+        // are listed row by row from the capture (W = white, bar = #CCCCCC, bg = #DDDDDD, shade = #AAAAAA).
+        let (W, bar, bg, sh, g88, g22, g99, gBB, gEE) = (ref("surface"), ref("bar"), ref("background"), ref("shade"), ref("gray88"),
+                                                          ref("gray22"), ref("gray99"), ref("grayBB"), ref("grayEE"))
+        let boxCells: [ColourReference] = [
+            g88, g88, g88, g88, g88, g88, g88, g88, g88, g88, g88, g88, bar,
+            g88, g22, g22, g22, g22, g22, g22, g22, g22, g22, g22, g22, W,
+            g88, g22, W, bar, bar, bar, bar, bar, bar, bar, bar, g22, W,
+            g88, g22, bar, g99, g99, sh, sh, gBB, gBB, bar, g88, g22, W,
+            g88, g22, bar, g99, sh, sh, gBB, gBB, bar, bar, g88, g22, W,
+            g88, g22, bar, sh, sh, gBB, gBB, bar, bar, bg, g88, g22, W,
+            g88, g22, bar, sh, gBB, gBB, bar, bar, bg, bg, g88, g22, W,
+            g88, g22, bar, gBB, gBB, bar, bar, bg, bg, gEE, g88, g22, W,
+            g88, g22, bar, gBB, bar, bar, bg, bg, gEE, gEE, g88, g22, W,
+            g88, g22, bar, bar, bar, bg, bg, gEE, gEE, W, g88, g22, W,
+            g88, g22, bar, g88, g88, g88, g88, g88, g88, g88, g88, g22, W,
+            g88, g22, g22, g22, g22, g22, g22, g22, g22, g22, g22, g22, W,
+            bar, W, W, W, W, W, W, W, W, W, W, W, W,
+        ]
+        let barEdges = Edges(top: [step("ink"), step("surface")], leading: [step("ink"), step("surface")],
+                             bottom: [step("ink"), step("gray99")], trailing: [step("ink"), step("ink"), step("gray99")])
+        func tile(_ layer: PatternSpec) -> SurfaceRecipe {
+            SurfaceRecipe(layers: [.fill(bar), .pattern(layer)], edges: nil, radius: .uniform(0), backdropBlur: nil, ink: ref("ink"), scale: .integer)
+        }
         return SurfaceSet(recipes: [
+            .titleBar: [.rest: recipe(fill: "bar", edges: barEdges, radius: 0)],
+            .titleStripes: [.rest: tile(PatternSpec(literal: 1, 2, [W, ref("muted")]))],
+            .windowBox: [.rest: tile(PatternSpec(literal: 13, 13, boxCells))],
             .desktop: [.rest: recipe(fill: "desktop", edges: nil, radius: 0)],
             .window: [.rest: recipe(fill: "background", edges: outline, radius: 0)],
             .panel: [.rest: recipe(fill: "surface", edges: outline, radius: 0)],
