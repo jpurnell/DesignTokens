@@ -361,8 +361,14 @@ public enum SurfaceRole: String, Sendable, Hashable, Codable, CaseIterable {
     case buttonDefault
     /// A text field.
     case field
-    /// A menu or popover.
+    /// A menu or popover: the column that holds a menu's title and rows.
     case menu
+    /// The bar of menu titles across the top of the screen.
+    case menuBar
+    /// A menu's title row (OPENSTEP's black one). The highlighted state is `hover`.
+    case menuTitle
+    /// A row of a menu, or a title in the menu bar. The highlighted one (`aria-selected="true"`) is the `hover` state.
+    case menuItem
     /// A scroll bar as a whole: what lies behind the arrows and the track (NeXT's outlined grey strip). Authored for a horizontal bar; a
     /// vertical one is its transpose, as are the other scroll roles.
     case scrollBar

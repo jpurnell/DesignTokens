@@ -101,7 +101,9 @@ public enum ThemeCSSEmitter {
         case .windowBox: [".dt-titlebar__box"]
         case .windowBoxZoom: [".dt-titlebar__box--zoom"]
         case .windowBoxMinimize: [".dt-titlebar__box--minimize"]
-        case .menu, .selection: []
+        case .selection: []
+        // drawn by menuRules, which lays a menu bar and a menu out
+        case .menu, .menuBar, .menuTitle, .menuItem: []
         // drawn by scrollBarRules, which lays a scroll bar out and turns a vertical one about its diagonal
         case .scrollBar, .scrollTrack, .scrollThumb, .scrollGrip, .scrollArrowStart, .scrollArrowEnd: []
         }
@@ -150,6 +152,51 @@ public enum ThemeCSSEmitter {
         }
         lines.append(contentsOf: titleBarRules(theme, scope: scope))
         lines.append(contentsOf: scrollBarRules(theme, scope: scope))
+        lines.append(contentsOf: menuRules(theme, scope: scope))
+        return lines
+    }
+
+    /// Menus: `dt-menubar` (a row of `dt-menubar__item` titles) and `dt-menu` (a column of an optional `dt-menu__title` and
+    /// `dt-menu__item` rows). The highlighted title or row carries `aria-selected="true"`, and its drawing is the recipe's `hover` state, so a
+    /// pointer over an item and a keyboard choice look the same. The theme's ``MenuMetrics`` sizes each part; a part the theme has no recipe
+    /// for is not emitted.
+    private static func menuRules(_ theme: Theme, scope: String) -> [String] {
+        guard let metrics = theme.menus, let surfaces = theme.surfaces else { return [] }
+        func px(_ value: Double) -> String { SurfaceCSS.px(value) }
+        func literal(_ reference: ColourReference) -> String {
+            let adaptive = ColorRole(rawValue: reference.source).map { theme.palette[$0] } ?? theme.palette.extras[reference.source]
+            guard let value = adaptive?.light else { return "transparent" }
+            return ColorValue(value.rgb, alpha: value.alpha * reference.opacity).hex
+        }
+        let inset = metrics.barInset
+        let row = ["display: flex", "align-items: center", "box-sizing: border-box", "padding: 0 \(px(metrics.itemPadding))"]
+        // role, selector, layout declarations
+        var parts: [(SurfaceRole, String, [String])] = []
+        if let height = metrics.barHeight {
+            parts.append((.menuBar, ".dt-menubar", ["display: flex", "align-items: stretch", "box-sizing: border-box", "block-size: \(px(height))",
+                "padding: \(px(inset.top)) \(px(inset.trailing)) \(px(inset.bottom)) \(px(inset.leading))"]))
+            parts.append((.menuItem, ".dt-menubar__item", row))
+        }
+        var column = ["display: flex", "flex-direction: column", "box-sizing: border-box"]
+        if let width = metrics.menuWidth { column.append("inline-size: \(px(width))") }
+        parts.append((.menu, ".dt-menu", column))
+        if let height = metrics.titleHeight { parts.append((.menuTitle, ".dt-menu__title", row + ["block-size: \(px(height))"])) }
+        parts.append((.menuItem, ".dt-menu__item", row + ["block-size: \(px(metrics.itemHeight))"]))
+        var lines: [String] = []
+        for (role, selector, layout) in parts {
+            guard let states = surfaces.recipes[role] else { continue }
+            lines.append("\(scope) \(selector) {")
+            lines.append(contentsOf: (layout + ["border: 0"]).map { "  \($0);" })
+            if let rest = states[.rest] {
+                lines.append(contentsOf: SurfaceCSS.declarations(for: rest, resolve: reference, literal: literal).map { "  \($0);" })
+            }
+            lines.append("}")
+            if let lit = states[.hover] {
+                lines.append("\(scope) \(selector)[aria-selected=\"true\"] {")
+                lines.append(contentsOf: SurfaceCSS.declarations(for: lit, resolve: reference, literal: literal).map { "  \($0);" })
+                lines.append("}")
+            }
+        }
         return lines
     }
 

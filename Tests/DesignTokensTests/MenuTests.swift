@@ -1,0 +1,85 @@
+import Foundation
+import Testing
+@testable import DesignTokens
+
+/// Menus of System 7, Platinum and OPENSTEP: the menu bar of the first two (Mac OS 8.0 and System 7.0 captures) and OPENSTEP 4.2's vertical
+/// menu, whose title and rows are the button's raised bevel drawn at 22 and 20 px.
+@Suite("Menus")
+struct MenuTests {
+    private func lastRule(_ css: String, _ selector: String) throws -> String {
+        let start = try #require(css.range(of: selector + " {", options: .backwards), Comment(rawValue: selector))
+        return String(css[start.upperBound...].prefix(while: { $0 != "}" }))
+    }
+
+    private func lines(_ rule: String) -> [String] {
+        rule.split(whereSeparator: \.isNewline).map { $0.trimmingCharacters(in: .whitespaces) }
+    }
+
+    @Test("OPENSTEP's menu rows are 20 px raised buttons, the title 22 px black, the highlighted row white")
+    func openstepMenu() throws {
+        let css = try ThemeCSSEmitter.emit(.openstep)
+        let raised = "box-shadow: inset 0 -1px 0 0 var(--ink), inset -1px 0 0 0 var(--ink), inset 0 1px 0 0 var(--surface), inset 1px 0 0 0 var(--surface), inset 0 -2px 0 0 var(--muted), inset -2px 0 0 0 var(--muted);"
+        let item = lines(try lastRule(css, "[data-theme-name=\"openstep\"] .dt-menu__item"))
+        #expect(item.contains("background-color: var(--background);"))
+        #expect(item.contains(raised))
+        let title = lines(try lastRule(css, "[data-theme-name=\"openstep\"] .dt-menu__title"))
+        #expect(title.contains("background-color: var(--ink);") && title.contains("color: var(--surface);"))
+        let lit = lines(try lastRule(css, "[data-theme-name=\"openstep\"] .dt-menu__item[aria-selected=\"true\"]"))
+        #expect(lit.contains("background-color: var(--surface);"))
+    }
+
+    @Test("OPENSTEP's menu is laid out as a 93 px column of a 22 px title and 20 px rows")
+    func openstepLayout() throws {
+        let css = try ThemeCSSEmitter.emit(.openstep)
+        let column = lines(try lastRule(css, "[data-theme-name=\"openstep\"] .dt-menu"))
+        #expect(column.contains("display: flex;") && column.contains("flex-direction: column;") && column.contains("inline-size: 93px;"))
+        let title = lines(try lastRule(css, "[data-theme-name=\"openstep\"] .dt-menu__title"))
+        #expect(title.contains("block-size: 22px;"))
+        let item = lines(try lastRule(css, "[data-theme-name=\"openstep\"] .dt-menu__item"))
+        #expect(item.contains("block-size: 20px;") && item.contains("padding: 0 6px;"))
+    }
+
+    @Test("Platinum's menu bar is 20 px: white on top and leading, #999999 then black under it, #999999 at the trailing edge")
+    func platinumBar() throws {
+        let css = try ThemeCSSEmitter.emit(.platinum)
+        let bar = lines(try lastRule(css, "[data-theme-name=\"platinum\"] .dt-menubar"))
+        #expect(bar.contains("background-color: var(--background);"))
+        #expect(bar.contains("box-shadow: inset 0 -1px 0 0 var(--ink), inset -1px 0 0 0 var(--extra-gray99), inset 0 1px 0 0 var(--surface), inset 1px 0 0 0 var(--surface), inset 0 -2px 0 0 var(--extra-gray99);"))
+        let layout = lines(try lastRule(css, "[data-theme-name=\"platinum\"] .dt-menubar"))
+        #expect(layout.contains("block-size: 20px;"))
+        let lit = lines(try lastRule(css, "[data-theme-name=\"platinum\"] .dt-menubar__item[aria-selected=\"true\"]"))
+        #expect(lit.contains("background-color: var(--ink);") && lit.contains("color: var(--surface);"))
+    }
+
+    @Test("System 7's menu bar is white with a one-pixel black line under it, and a highlighted title is inverted")
+    func system7Bar() throws {
+        let css = try ThemeCSSEmitter.emit(.system7)
+        let bar = lines(try lastRule(css, "[data-theme-name=\"system7\"] .dt-menubar"))
+        #expect(bar.contains("block-size: 20px;"))
+        #expect(bar.contains("background-color: var(--background);"))
+        #expect(bar.contains("box-shadow: inset 0 -1px 0 0 var(--ink);"))
+        let lit = lines(try lastRule(css, "[data-theme-name=\"system7\"] .dt-menubar__item[aria-selected=\"true\"]"))
+        #expect(lit.contains("background-color: var(--ink);") && lit.contains("color: var(--background);"))
+    }
+
+    @Test("a theme without menus writes none, and the metrics survive the JSON round trip")
+    func absentAndRoundTrip() throws {
+        #expect(Theme.swiss.menus == nil)
+        let swiss = try ThemeCSSEmitter.emit(.swiss)
+        #expect(!swiss.contains("dt-menu"))
+        let heights: [(Theme, Double?, Double)] = [(.system7, 20, 20), (.platinum, 20, 20), (.openstep, nil, 20)]
+        for (theme, bar, row) in heights {
+            #expect(theme.menus?.barHeight == bar && theme.menus?.itemHeight == row, "\(theme.id)")
+            let decoded = try ThemeCodec.decode(try ThemeCodec.encode(theme))
+            #expect(decoded.menus == theme.menus, "\(theme.id)")
+            #expect(decoded.surfaces?.recipes[.menuItem] == theme.surfaces?.recipes[.menuItem], "\(theme.id)")
+        }
+    }
+
+    @Test("GTK leaves the menu roles to GTK's own menus")
+    func gtk() throws {
+        let slot = try #require(ThemeSlot.slots(for: .openstep).first)
+        let css = try GTKEmitter.emit(.openstep, slot: slot)
+        #expect(!css.contains("dt-menu"))
+    }
+}

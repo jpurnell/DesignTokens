@@ -19,7 +19,14 @@ public extension Theme {
         Theme(id: "platinum", name: "Platinum (Mac OS 8)", structure: classicMacStructure(family: platinumFamily, monospace: macMonospace),
               palette: platinumPalette, appearances: .lightOnly, conformance: platinumConformance, surfaces: platinumSurfaces,
               windowControls: WindowControls(leading: [.close], trailing: [.zoom, .minimize], titleBar: platinumTitleBar),
-              scrollBar: platinumScrollBar)
+              scrollBar: platinumScrollBar, menus: platinumMenus)
+    }
+
+    /// Measured from the menu bar of the Mac OS 8.0 desktop capture: 20 rows (a white row, 17 of `#DDDDDD`, a `#999999` row, a black row), a white
+    /// column at the left and a `#999999` one at the right; titles start 43 px in after the apple and are 15 px apart, so each carries 8 px.
+    /// The highlighted title (black, white text) is assumed: no open menu is in the captures.
+    private static var platinumMenus: MenuMetrics {
+        MenuMetrics(barHeight: 20, barInset: Insets(top: 1, leading: 1, bottom: 2, trailing: 1), itemHeight: 20, itemPadding: 8)
     }
 
     /// Measured from the Appearance window of the Mac OS 8.0 capture: the bar is 22 rows (black and white above, #999999 and black below),
@@ -154,7 +161,11 @@ public extension Theme {
             }
             return cells
         }
+        let menuBarEdges = Edges(top: [step("surface")], leading: [step("surface")], bottom: [step("ink"), step("gray99")], trailing: [step("gray99")],
+                                 stacking: .bottomTrailingFirst)
         return SurfaceSet(recipes: [
+            .menuBar: [.rest: recipe(fill: "background", edges: menuBarEdges, radius: 0)],
+            .menuItem: [.hover: recipe(fill: "ink", ink: "surface", edges: nil, radius: 0)],
             .scrollTrack: [.rest: recipe(fill: "shade", edges: trackEdges, radius: 0)],
             .scrollThumb: [.rest: thumb],
             .scrollGrip: [.rest: tileOnly(PatternSpec(literal: 8, 8, gripCells))],

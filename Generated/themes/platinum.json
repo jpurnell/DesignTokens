@@ -14,6 +14,17 @@
     "kind" : "ledger"
   },
   "id" : "platinum",
+  "menus" : {
+    "barHeight" : 20,
+    "barInset" : {
+      "bottom" : 2,
+      "leading" : 1,
+      "top" : 1,
+      "trailing" : 1
+    },
+    "itemHeight" : 20,
+    "itemPadding" : 8
+  },
   "name" : "Platinum (Mac OS 8)",
   "palette" : {
     "accent" : {
@@ -1275,6 +1286,100 @@
                 "_0" : {
                   "opacity" : 1,
                   "source" : "surface"
+                }
+              }
+            }
+          ],
+          "radius" : {
+            "uniform" : {
+              "_0" : 0
+            }
+          },
+          "scale" : "integer"
+        }
+      },
+      "menuBar" : {
+        "rest" : {
+          "edges" : {
+            "bottom" : [
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "ink"
+                },
+                "width" : 1
+              },
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "gray99"
+                },
+                "width" : 1
+              }
+            ],
+            "leading" : [
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "surface"
+                },
+                "width" : 1
+              }
+            ],
+            "stacking" : "bottomTrailingFirst",
+            "top" : [
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "surface"
+                },
+                "width" : 1
+              }
+            ],
+            "trailing" : [
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "gray99"
+                },
+                "width" : 1
+              }
+            ]
+          },
+          "ink" : {
+            "opacity" : 1,
+            "source" : "ink"
+          },
+          "layers" : [
+            {
+              "fill" : {
+                "_0" : {
+                  "opacity" : 1,
+                  "source" : "background"
+                }
+              }
+            }
+          ],
+          "radius" : {
+            "uniform" : {
+              "_0" : 0
+            }
+          },
+          "scale" : "integer"
+        }
+      },
+      "menuItem" : {
+        "hover" : {
+          "ink" : {
+            "opacity" : 1,
+            "source" : "surface"
+          },
+          "layers" : [
+            {
+              "fill" : {
+                "_0" : {
+                  "opacity" : 1,
+                  "source" : "ink"
                 }
               }
             }

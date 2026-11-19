@@ -144,6 +144,14 @@ outline, 1 px of #AAAAAA, a 16 px column, 1 px, the outline; the thumb is the bu
 #555555 is the track; two 16 x 16 raised arrow buttons sit together at the bottom, 1 px apart. Assumed: Platinum's vertical bar is the horizontal one
 turned about its diagonal, and OPENSTEP's horizontal bar the vertical one turned.
 
+## Menus (2026-11-19)
+
+Platinum menu bar (Mac OS 8.0 desktop capture): 20 rows (white, 17 of #DDDDDD, #999999, black), a white column at the left and a #999999 one at the
+right; titles at x 43, 78 and 115 (8 px of padding each side). System 7.0: 19 white rows and a black one, same title positions. OPENSTEP 4.2 (Workspace
+and Tools menus, x 0 to 92): 93 px wide; the title is 22 rows (white, 19 black, #555555, black), every row 20 (white, 17 of #AAAAAA, #555555, black) with
+white on the left and #555555 then black on the right, which is the button's raised bevel; the highlighted row is white throughout; text starts 6 px in.
+Assumed: the inverted highlight of the Macintosh titles (no open menu is in the captures). Not drawn: submenu arrows, the dock and clip tiles.
+
 ## Not measured yet
 
 - **Fixed-pitch type** (all three skins): Monaco 9 on the Macintosh, Ohlfs then Courier on NeXT are general knowledge and chosen, not read from a capture. A terminal or code window in a capture would settle the size and line.

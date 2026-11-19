@@ -11,14 +11,20 @@ public extension Theme {
     /// left and `#000000 #555555` right and bottom) with a 15 x 15 miniaturize button at the left and a 14 x 14 close button at the right,
     /// each pixel for pixel in its tile (the Font Panel); the `#555577` desktop; the white selection.
     ///
-    /// **Not measured, chosen here:** the pressed state (the bevel inverted), the disabled and focus states, scroll bars, menus (the
-    /// menu's own drawing is in the captures), and the type (Helvetica 12 is general knowledge for the NeXT system face, named with the
+    /// **Not measured, chosen here:** the pressed state (the bevel inverted), the disabled and focus states, scroll bars' pressed state, a menu's disabled rows and its submenu arrows, and the type (Helvetica 12 is general knowledge for the NeXT system face, named with the
     /// system sans as the fallback). A default button has no ring in OPENSTEP (it carries a return arrow), so its recipe is the button's.
     static var openstep: Theme {
         Theme(id: "openstep", name: "OPENSTEP 4.2", structure: classicMacStructure(family: openstepFamily, controlHeight: 27, monospace: openstepMonospace),
               palette: openstepPalette, appearances: .lightOnly, conformance: openstepConformance, surfaces: openstepSurfaces,
               windowControls: WindowControls(leading: [.minimize], trailing: [.close], titleBar: openstepTitleBar),
-              scrollBar: openstepScrollBar)
+              scrollBar: openstepScrollBar, menus: openstepMenus)
+    }
+
+    /// Measured from the Workspace and Tools menus of the OPENSTEP 4.2 desktop capture: a menu is 93 px wide; its title is 22 rows (a white row,
+    /// 19 of black, `#555555`, black) and each row 20 (a white row, 17 of `#AAAAAA`, `#555555`, black), the button's raised bevel; the highlighted
+    /// row is white all through. Text starts 6 px in. The arrow of a row that opens a submenu is not drawn.
+    private static var openstepMenus: MenuMetrics {
+        MenuMetrics(itemHeight: 20, titleHeight: 22, itemPadding: 6, menuWidth: 93)
     }
 
     /// Measured from the vertical scroller of the OPENSTEP 4.2 file viewer: 20 px wide (a black line, 1 px of grey, a 16 px column, 1 px of grey, a
@@ -153,6 +159,9 @@ public extension Theme {
             .scrollThumb: [.rest: recipe(fill: "background", edges: raised)],
             .scrollArrowStart: [.rest: wholeTile(up.transposed)],
             .scrollArrowEnd: [.rest: wholeTile(down.transposed)],
+            .menu: [.rest: recipe(fill: "desktop", edges: nil)],
+            .menuTitle: [.rest: recipe(fill: "ink", ink: "surface", edges: raised)],
+            .menuItem: [.rest: recipe(fill: "background", edges: raised), .hover: recipe(fill: "surface", edges: raised)],
             .desktop: [.rest: recipe(fill: "desktop", edges: nil)],
             .window: [.rest: recipe(fill: "background", edges: outline)],
             .panel: [.rest: recipe(fill: "surface", edges: outline)],

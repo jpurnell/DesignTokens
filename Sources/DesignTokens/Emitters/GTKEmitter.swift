@@ -105,7 +105,7 @@ public enum GTKEmitter {
         case .button: ["button"]
         case .buttonDefault: ["button.suggested-action", "button.default"]
         case .field: ["entry", "spinbutton"]
-        case .desktop, .menu, .scrollBar, .scrollTrack, .scrollThumb, .scrollGrip, .scrollArrowStart, .scrollArrowEnd, .selection, .titleBar, .titleStripes, .windowBox, .windowBoxZoom, .windowBoxMinimize: []
+        case .desktop, .menu, .menuBar, .menuTitle, .menuItem, .scrollBar, .scrollTrack, .scrollThumb, .scrollGrip, .scrollArrowStart, .scrollArrowEnd, .selection, .titleBar, .titleStripes, .windowBox, .windowBoxZoom, .windowBoxMinimize: []
         }
     }
 

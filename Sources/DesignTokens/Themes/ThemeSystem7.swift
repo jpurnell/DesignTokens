@@ -17,7 +17,13 @@ public extension Theme {
     static var system7: Theme {
         Theme(id: "system7", name: "System 7 (1-bit)", structure: classicMacStructure(family: system7Family, monospace: macMonospace), palette: system7Palette,
               appearances: .lightOnly, conformance: system7Conformance, surfaces: system7Surfaces,
-              windowControls: WindowControls(leading: [.close], trailing: [.zoom]))
+              windowControls: WindowControls(leading: [.close], trailing: [.zoom]), menus: system7Menus)
+    }
+
+    /// Measured from the menu bar of the System 7.0 desktop capture: 20 rows, 19 of white and a black one under them, titles 43 px in after the
+    /// apple and 15 px apart (8 px each side). The highlighted title (inverted) is assumed.
+    private static var system7Menus: MenuMetrics {
+        MenuMetrics(barHeight: 20, barInset: Insets(top: 0, leading: 0, bottom: 1, trailing: 0), itemHeight: 20, itemPadding: 8)
     }
 
     /// The Macintosh's fixed-pitch face is Monaco 9 (the Terminal, MPW and code windows): general knowledge, named first, then Menlo, which
@@ -107,6 +113,8 @@ public extension Theme {
             .buttonDefault: [.rest: recipe(fill: "background", ink: "ink", edges: defaultRing, radius: 7),
                              .active: recipe(fill: "ink", ink: "background", edges: defaultRing, radius: 7)],
             .field: [.rest: recipe(fill: "background", ink: "ink", edges: outline, radius: 0)],
+            .menuBar: [.rest: recipe(fill: "background", ink: "ink", edges: Edges(top: [], leading: [], bottom: [step("ink", 1)], trailing: []), radius: 0)],
+            .menuItem: [.hover: recipe(fill: "ink", ink: "background", edges: nil, radius: 0)],
         ])
     }
 

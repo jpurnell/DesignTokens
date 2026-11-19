@@ -30,6 +30,17 @@
     "kind" : "ledger"
   },
   "id" : "system7",
+  "menus" : {
+    "barHeight" : 20,
+    "barInset" : {
+      "bottom" : 1,
+      "leading" : 0,
+      "top" : 0,
+      "trailing" : 0
+    },
+    "itemHeight" : 20,
+    "itemPadding" : 8
+  },
   "name" : "System 7 (1-bit)",
   "palette" : {
     "accent" : {
@@ -998,6 +1009,74 @@
                 "_0" : {
                   "opacity" : 1,
                   "source" : "background"
+                }
+              }
+            }
+          ],
+          "radius" : {
+            "uniform" : {
+              "_0" : 0
+            }
+          },
+          "scale" : "integer"
+        }
+      },
+      "menuBar" : {
+        "rest" : {
+          "edges" : {
+            "bottom" : [
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "ink"
+                },
+                "width" : 1
+              }
+            ],
+            "leading" : [
+
+            ],
+            "top" : [
+
+            ],
+            "trailing" : [
+
+            ]
+          },
+          "ink" : {
+            "opacity" : 1,
+            "source" : "ink"
+          },
+          "layers" : [
+            {
+              "fill" : {
+                "_0" : {
+                  "opacity" : 1,
+                  "source" : "background"
+                }
+              }
+            }
+          ],
+          "radius" : {
+            "uniform" : {
+              "_0" : 0
+            }
+          },
+          "scale" : "integer"
+        }
+      },
+      "menuItem" : {
+        "hover" : {
+          "ink" : {
+            "opacity" : 1,
+            "source" : "background"
+          },
+          "layers" : [
+            {
+              "fill" : {
+                "_0" : {
+                  "opacity" : 1,
+                  "source" : "ink"
                 }
               }
             }
