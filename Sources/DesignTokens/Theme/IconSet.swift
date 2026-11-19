@@ -14,7 +14,7 @@ public enum IconError: Error, Sendable, Equatable {
 public struct Icon: Sendable, Hashable, Codable {
     /// The icon's name: lower-case letters, digits and hyphens. It names the file (`<name>.svg`).
     public var name: String
-    /// The SVG view box, four numbers: `0 0 48 48`.
+    /// The SVG view box, four numbers: `0 0 56 56`.
     public var viewBox: String
     /// The SVG elements inside the root: rectangles, paths and the like.
     public var body: String
@@ -23,7 +23,7 @@ public struct Icon: Sendable, Hashable, Codable {
     ///
     /// - Throws: ``IconError`` for a name that is not lower-case letters, digits and hyphens, a view box that is not four numbers, or an
     ///   empty body.
-    public init(name: String, viewBox: String = "0 0 48 48", body: String) throws {
+    public init(name: String, viewBox: String = "0 0 56 56", body: String) throws {
         guard !name.isEmpty, name.allSatisfy({ ($0 >= "a" && $0 <= "z") || ($0 >= "0" && $0 <= "9") || $0 == "-" }) else { throw IconError.name(name) }
         let numbers = viewBox.split(separator: " ").compactMap { Double($0) }
         guard numbers.count == 4, viewBox.split(separator: " ").count == 4 else { throw IconError.viewBox(viewBox) }
@@ -36,7 +36,7 @@ public struct Icon: Sendable, Hashable, Codable {
     /// An icon written as a literal in source, without the checks (see ``EdgeStep/init(literal:_:)``).
     init(literal name: String, _ body: String) {
         self.name = name
-        self.viewBox = "0 0 48 48"
+        self.viewBox = "0 0 56 56"
         self.body = body
     }
 

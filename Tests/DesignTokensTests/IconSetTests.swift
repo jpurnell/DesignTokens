@@ -2,7 +2,7 @@ import Foundation
 import Testing
 @testable import DesignTokens
 
-/// OPENSTEP's dock icons: original drawings in the look of the 4.2 icons, as vectors on a 48-unit grid so they scale to any screen.
+/// OPENSTEP's dock icons: original drawings in the look of the 4.2 icons, as vectors on a 56-unit grid so they scale to any screen.
 @Suite("Icon sets")
 struct IconSetTests {
     private static let names = ["application", "calendar", "clock", "console", "disk", "document", "edit", "folder", "home", "library",
@@ -13,23 +13,32 @@ struct IconSetTests {
         return parser.parse()
     }
 
-    @Test("OPENSTEP carries thirteen icons, each a 48 x 48 drawing with a unique kebab-case name")
+    @Test("OPENSTEP carries thirteen icons, each a 56 x 56 drawing with a unique kebab-case name")
     func theSet() throws {
         let set = try #require(Theme.openstep.icons)
         #expect(set.icons.map(\.name).sorted() == Self.names)
         #expect(Set(set.icons.map(\.name)).count == set.icons.count)
-        #expect(set.icons.allSatisfy { $0.viewBox == "0 0 48 48" })
+        #expect(set.icons.allSatisfy { $0.viewBox == "0 0 56 56" })
         #expect(Theme.swiss.icons == nil)
     }
 
-    @Test("every icon is well-formed SVG with the 48-unit view box, and uses only drawing elements")
+    @Test("every icon is well-formed SVG with the 56-unit view box, and uses only drawing elements")
     func wellFormed() throws {
         let set = try #require(Theme.openstep.icons)
         for icon in set.icons {
             let svg = IconEmitter.emit(icon)
-            #expect(svg.hasPrefix("<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 48 48\""), "\(icon.name)")
+            #expect(svg.hasPrefix("<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 56 56\""), "\(icon.name)")
             #expect(parses(svg), "\(icon.name) is not well-formed")
             for tag in ["script", "foreignObject", "image", "style", "a "] { #expect(!svg.contains("<" + tag), "\(icon.name) uses <\(tag)") }
+        }
+    }
+
+    @Test("every drawing is shaded and outlined: it defines a gradient and draws black")
+    func shaded() throws {
+        let set = try #require(Theme.openstep.icons)
+        for icon in set.icons {
+            #expect(icon.body.contains("Gradient id="), "\(icon.name) has no gradient")
+            #expect(icon.body.contains("#000"), "\(icon.name) has no black outline")
         }
     }
 
