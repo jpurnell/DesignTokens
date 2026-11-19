@@ -60,6 +60,9 @@
       "gray55" : {
         "light" : "#555555"
       },
+      "gray66" : {
+        "light" : "#666666"
+      },
       "gray88" : {
         "light" : "#888888"
       },
@@ -71,6 +74,9 @@
       },
       "grayEE" : {
         "light" : "#EEEEEE"
+      },
+      "highlight" : {
+        "light" : "#5454B3"
       },
       "lavender" : {
         "light" : "#9999FF"
@@ -594,14 +600,14 @@
               {
                 "colour" : {
                   "opacity" : 1,
-                  "source" : "background"
+                  "source" : "gray99"
                 },
                 "width" : 1
               },
               {
                 "colour" : {
                   "opacity" : 1,
-                  "source" : "surface"
+                  "source" : "shade"
                 },
                 "width" : 1
               }
@@ -617,14 +623,14 @@
               {
                 "colour" : {
                   "opacity" : 1,
-                  "source" : "muted"
+                  "source" : "gray66"
                 },
                 "width" : 1
               },
               {
                 "colour" : {
                   "opacity" : 1,
-                  "source" : "shade"
+                  "source" : "muted"
                 },
                 "width" : 1
               }
@@ -640,14 +646,14 @@
               {
                 "colour" : {
                   "opacity" : 1,
-                  "source" : "muted"
+                  "source" : "gray66"
                 },
                 "width" : 1
               },
               {
                 "colour" : {
                   "opacity" : 1,
-                  "source" : "shade"
+                  "source" : "muted"
                 },
                 "width" : 1
               }
@@ -663,14 +669,14 @@
               {
                 "colour" : {
                   "opacity" : 1,
-                  "source" : "background"
+                  "source" : "gray99"
                 },
                 "width" : 1
               },
               {
                 "colour" : {
                   "opacity" : 1,
-                  "source" : "surface"
+                  "source" : "shade"
                 },
                 "width" : 1
               }
@@ -678,14 +684,14 @@
           },
           "ink" : {
             "opacity" : 1,
-            "source" : "ink"
+            "source" : "surface"
           },
           "layers" : [
             {
               "fill" : {
                 "_0" : {
                   "opacity" : 1,
-                  "source" : "shade"
+                  "source" : "gray88"
                 }
               }
             }
@@ -1042,14 +1048,14 @@
               {
                 "colour" : {
                   "opacity" : 1,
-                  "source" : "background"
+                  "source" : "gray99"
                 },
                 "width" : 1
               },
               {
                 "colour" : {
                   "opacity" : 1,
-                  "source" : "surface"
+                  "source" : "shade"
                 },
                 "width" : 1
               }
@@ -1086,14 +1092,14 @@
               {
                 "colour" : {
                   "opacity" : 1,
-                  "source" : "muted"
+                  "source" : "gray66"
                 },
                 "width" : 1
               },
               {
                 "colour" : {
                   "opacity" : 1,
-                  "source" : "shade"
+                  "source" : "muted"
                 },
                 "width" : 1
               }
@@ -1130,14 +1136,14 @@
               {
                 "colour" : {
                   "opacity" : 1,
-                  "source" : "muted"
+                  "source" : "gray66"
                 },
                 "width" : 1
               },
               {
                 "colour" : {
                   "opacity" : 1,
-                  "source" : "shade"
+                  "source" : "muted"
                 },
                 "width" : 1
               }
@@ -1174,14 +1180,14 @@
               {
                 "colour" : {
                   "opacity" : 1,
-                  "source" : "background"
+                  "source" : "gray99"
                 },
                 "width" : 1
               },
               {
                 "colour" : {
                   "opacity" : 1,
-                  "source" : "surface"
+                  "source" : "shade"
                 },
                 "width" : 1
               }
@@ -1189,14 +1195,14 @@
           },
           "ink" : {
             "opacity" : 1,
-            "source" : "ink"
+            "source" : "surface"
           },
           "layers" : [
             {
               "fill" : {
                 "_0" : {
                   "opacity" : 1,
-                  "source" : "shade"
+                  "source" : "gray88"
                 }
               }
             }
@@ -2005,7 +2011,7 @@
               "fill" : {
                 "_0" : {
                   "opacity" : 1,
-                  "source" : "ink"
+                  "source" : "highlight"
                 }
               }
             }

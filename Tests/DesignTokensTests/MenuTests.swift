@@ -48,7 +48,8 @@ struct MenuTests {
         let layout = lines(try lastRule(css, "[data-theme-name=\"platinum\"] .dt-menubar"))
         #expect(layout.contains("block-size: 20px;"))
         let lit = lines(try lastRule(css, "[data-theme-name=\"platinum\"] .dt-menubar__item[aria-selected=\"true\"]"))
-        #expect(lit.contains("background-color: var(--ink);") && lit.contains("color: var(--surface);"))
+        // the lavender highlight of a live Mac OS 8.0 (see SkinStatesTests), not black
+        #expect(lit.contains("background-color: var(--extra-highlight);") && lit.contains("color: var(--surface);"))
     }
 
     @Test("System 7's menu bar is white with a one-pixel black line under it, and a highlighted title is inverted")

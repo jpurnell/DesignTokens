@@ -136,4 +136,32 @@ struct SkinStatesTests {
             #expect(rule.contains("outline: 0;"), "\(id)")
         }
     }
+
+    // MARK: pressed, measured on a live Mac OS 8.0 (Infinite Mac)
+
+    @Test("Platinum's pressed button, held on a live Mac OS 8.0: black, #666666 and #777777 inside the top and left, #888888 fill, #999999 and #AAAAAA inside the bottom and right, white text")
+    func platinumPressed() throws {
+        let surfaces = try #require(Theme.platinum.surfaces)
+        let step = { (name: String) in EdgeStep(literal: ColourReference(source: name), 1) }
+        let inner = (top: [step("ink"), step("gray66"), step("muted")], bottom: [step("ink"), step("gray99"), step("shade")])
+        let button = try #require(surfaces.recipes[.button]?[.active])
+        #expect(button.layers == [.fill(ref("gray88"))])
+        #expect(button.ink == ref("surface"))
+        #expect(button.edges?.top == inner.top && button.edges?.leading == inner.top)
+        #expect(button.edges?.bottom == inner.bottom && button.edges?.trailing == inner.bottom)
+        // the default button's ring is unchanged; only what is inside it is pressed
+        let ring = try #require(surfaces.recipes[.buttonDefault]?[.rest]?.edges)
+        let ringTop = Array(ring.top.prefix(3)), ringBottom = Array(ring.bottom.prefix(3))
+        let ringed = try #require(surfaces.recipes[.buttonDefault]?[.active])
+        #expect(ringed.edges?.top == ringTop + inner.top && ringed.edges?.bottom == ringBottom + inner.bottom)
+        #expect(ringed.layers == [.fill(ref("gray88"))] && ringed.ink == ref("surface"))
+    }
+
+    @Test("Platinum's highlighted menu title is the lavender highlight with white text, as the live Mac OS 8.0 draws it, not black")
+    func platinumMenuHighlight() throws {
+        let css = try ThemeCSSEmitter.emit(.platinum)
+        #expect(css.contains("--extra-highlight: #5454B3;"))
+        let rule = try lastRule(css, "[data-theme-name=\"platinum\"] .dt-menubar__item[aria-selected=\"true\"]")
+        #expect(rule.contains("background-color: var(--extra-highlight);") && rule.contains("color: var(--surface);"))
+    }
 }

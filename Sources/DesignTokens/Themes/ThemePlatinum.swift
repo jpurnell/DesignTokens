@@ -24,7 +24,7 @@ public extension Theme {
 
     /// Measured from the menu bar of the Mac OS 8.0 desktop capture: 20 rows (a white row, 17 of `#DDDDDD`, a `#999999` row, a black row), a white
     /// column at the left and a `#999999` one at the right; titles start 43 px in after the apple and are 15 px apart, so each carries 8 px.
-    /// The highlighted title (black, white text) is assumed: no open menu is in the captures.
+    /// The highlighted title is the lavender `#5454B3` with white text, measured on a live Mac OS 8.0 (the captures had the highlight set to black and white).
     private static var platinumMenus: MenuMetrics {
         MenuMetrics(barHeight: 20, barInset: Insets(top: 1, leading: 1, bottom: 2, trailing: 1), itemHeight: 20, itemPadding: 8)
     }
@@ -60,7 +60,9 @@ public extension Theme {
             extras: ["shade": B.adaptive(0xAAAAAA), "selection": B.adaptive(0xCCCCFF), "desktop": B.adaptive(0x9C9CCE),
                      // the title bar's greys, read off the Mac OS 8.0 capture
                      "bar": B.adaptive(0xCCCCCC), "gray22": B.adaptive(0x222222), "gray88": B.adaptive(0x888888),
-                     "gray99": B.adaptive(0x999999), "grayBB": B.adaptive(0xBBBBBB), "grayEE": B.adaptive(0xEEEEEE), "gray55": B.adaptive(0x555555),
+                     "gray99": B.adaptive(0x999999), "grayBB": B.adaptive(0xBBBBBB), "grayEE": B.adaptive(0xEEEEEE), "gray55": B.adaptive(0x555555), "gray66": B.adaptive(0x666666),
+                     // the highlight of a menu title or row on a live Mac OS 8.0 (the default Lavender highlight colour); 24-bit, not an 8-bit palette colour
+                     "highlight": B.adaptive(0x5454B3),
                      // the scroll bar thumb's body, read off the live bar
                      "lavender": B.adaptive(0x9999FF)])
     }
@@ -73,8 +75,10 @@ public extension Theme {
         let raisedTop = [step("ink"), step("background"), step("surface")]
         let raisedBottom = [step("ink"), step("muted"), step("shade")]
         let raised = Edges(top: raisedTop, leading: raisedTop, bottom: raisedBottom, trailing: raisedBottom)
-        let sunkenTop = [step("ink"), step("muted"), step("shade")]
-        let sunkenBottom = [step("ink"), step("background"), step("surface")]
+        // Pressed, measured on a live Mac OS 8.0 (24-bit; the values here are its nearest 8-bit palette colours, to sit with the rest of this
+        // palette): black, then #666666 and #777777 inside the top and left, #999999 and #AAAAAA inside the bottom and right, on a #888888 fill.
+        let sunkenTop = [step("ink"), step("gray66"), step("muted")]
+        let sunkenBottom = [step("ink"), step("gray99"), step("shade")]
         let pressed = Edges(top: sunkenTop, leading: sunkenTop, bottom: sunkenBottom, trailing: sunkenBottom)
         // The default button's extra frame, then the ordinary bevel inside it.
         let ringTop = [step("ink"), step("background"), step("shade")]
@@ -183,7 +187,7 @@ public extension Theme {
         let fieldRest = recipe(fill: "surface", edges: outline, radius: 0)
         return SurfaceSet(recipes: [
             .menuBar: [.rest: recipe(fill: "background", edges: menuBarEdges, radius: 0)],
-            .menuItem: [.hover: recipe(fill: "ink", ink: "surface", edges: nil, radius: 0), .disabled: menuDim],
+            .menuItem: [.hover: recipe(fill: "highlight", ink: "surface", edges: nil, radius: 0), .disabled: menuDim],
             .scrollTrack: [.rest: recipe(fill: "shade", edges: trackEdges, radius: 0), .disabled: inactiveTrack],
             .scrollThumb: [.rest: thumb],
             .scrollGrip: [.rest: tileOnly(PatternSpec(literal: 8, 8, gripCells))],
@@ -199,8 +203,8 @@ public extension Theme {
             .desktop: [.rest: recipe(fill: "desktop", edges: nil, radius: 0)],
             .window: [.rest: recipe(fill: "background", edges: outline, radius: 0)],
             .panel: [.rest: recipe(fill: "surface", edges: outline, radius: 0)],
-            .button: [.rest: buttonRest, .active: recipe(fill: "shade", edges: pressed, radius: 3), .disabled: disabledButton, .focus: focused(buttonRest)],
-            .buttonDefault: [.rest: buttonDefaultRest, .active: recipe(fill: "shade", edges: ringedPressed, radius: 5), .disabled: disabledButton,
+            .button: [.rest: buttonRest, .active: recipe(fill: "gray88", ink: "surface", edges: pressed, radius: 3), .disabled: disabledButton, .focus: focused(buttonRest)],
+            .buttonDefault: [.rest: buttonDefaultRest, .active: recipe(fill: "gray88", ink: "surface", edges: ringedPressed, radius: 5), .disabled: disabledButton,
                              .focus: focused(buttonDefaultRest)],
             .field: [.rest: fieldRest, .disabled: recipe(fill: "surface", ink: "gray88", edges: outline, radius: 0), .focus: focused(fieldRest)],
             .selection: [.rest: recipe(fill: "selection", edges: nil, radius: 0)],

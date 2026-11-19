@@ -167,6 +167,23 @@ the track and both arrows are flat #EEEEEE, an arrow's triangle is #888888 (the 
 pixels outside the control: black on System 7 and OPENSTEP, the accent on Platinum), the disabled field and default button, the pressed states, and the
 inactive window. The captures are still frames, so pressed states need a live session.
 
+## Live measurements (Infinite Mac, 2026-11-19)
+
+A button held down on a running System 7.0 and Mac OS 8.0 (synthetic pointer events on the emulator's canvas, pixels read with `getImageData`).
+**System 7.0:** the pressed button is solid black inside the unchanged outline and stepped corner, with a white label; the default button keeps its
+3 px black ring and the white gap, and fills black inside. **Mac OS 8.0 (24-bit):** at rest a button is a black outline, then `#E7E7E7`, a white
+highlight row and column, an `#E7E7E7` fill, and `#C0C0C0`, `#969696` and black at the bottom and right; pressed, the same box is a black outline, `#666666`
+and `#777777` inside the top and left, a `#878787` fill, `#969696` and `#A5A5A5` inside the bottom and right, and white text. The default button's
+two outer rings (black, `#E7E7E7`, `#C0C0C0`) are unchanged. An open File menu: a black outline, a white top and left highlight, an `#E7E7E7` fill, a
+`#B3B3B3` right edge, disabled rows grey; the highlighted row (16 px) is a `#8787DA` top row and left column over a `#5454B3` fill, and the highlighted
+menu-bar title is `#5454B3` with a `#8787DA` top row, white text and a `#0000A5` row under it.
+
+**The Platinum palette is the 8-bit capture's.** The live 24-bit values differ from every earlier Platinum number: the window is a dither of `#DADADA`,
+`#E7E7E7` and `#F3F3F3` (the captures read a flat `#DDDDDD`), the menu bar and menu fill are `#E7E7E7`, the shading greys are `#C0C0C0` and `#969696`,
+the highlight is `#5454B3`. The captures were 256-colour, so each live colour had been moved to the nearest multiple of `#111111` or `#333333`. The
+pressed recipe uses the nearest values of the existing 8-bit palette (`#666666`, `#777777`, `#888888`, `#999999`, `#AAAAAA`) so the skin stays one
+baseline; moving Platinum to the 24-bit values is a separate re-measurement.
+
 ## Not measured yet
 
 - **Fixed-pitch type** (all three skins): Monaco 9 on the Macintosh, Ohlfs then Courier on NeXT are general knowledge and chosen, not read from a capture. A terminal or code window in a capture would settle the size and line.
