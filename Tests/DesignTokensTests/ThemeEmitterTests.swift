@@ -76,10 +76,12 @@ struct ThemeEmitterTests {
             // the GTK stylesheet: the first appearance, plus a dark one where the theme has both
             expected += ["themes/\(theme.id).gtk.css"] + (theme.appearances == .both ? ["themes/\(theme.id).gtk-dark.css"] : [])
             if theme.windowControls != nil { expected += ["themes/\(theme.id).gtk-settings.ini"] }
+            expected += (theme.icons?.icons ?? []).map { "themes/\(theme.id).icons/\($0.name).svg" }
             slotCount += slots.count + (theme.appearances == .both ? 2 : 1)
         }
         #expect(paths == expected)
-        #expect(paths.count == 3 + 13 * 5 + 2 + slotCount + Theme.all.filter { $0.windowControls != nil }.count)
+        #expect(paths.count == 3 + 13 * 5 + 2 + slotCount + Theme.all.filter { $0.windowControls != nil }.count
+                + Theme.all.reduce(0) { $0 + ($1.icons?.icons.count ?? 0) })
     }
 
     @Test("theme JSON is the canonical codec output and decodes back to the theme")

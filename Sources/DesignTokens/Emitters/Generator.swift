@@ -30,6 +30,8 @@ public enum GeneratedFormat: String, Sendable, Hashable, CaseIterable {
     case components
     /// `themes/<id>.gtk.css` and, for a theme with a dark appearance, `themes/<id>.gtk-dark.css`, and for a theme that places the window controls `themes/<id>.gtk-settings.ini` (``GTKEmitter``).
     case gtk
+    /// `themes/<id>.icons/<name>.svg`, one file per icon of a theme that has an icon set (``IconEmitter``).
+    case icons
 }
 
 /// Why the generator refused its arguments.
@@ -38,7 +40,7 @@ public enum GeneratorError: Error, Sendable, Equatable {
     case unknownTheme(String)
     /// An argument the generator does not know.
     case unknownArgument(String)
-    /// `--format` names no format (the known ones are css, json, tumblr, ansi, slides, components and gtk).
+    /// `--format` names no format (the known ones are css, json, tumblr, ansi, slides, components, gtk and icons).
     case unknownFormat(String)
     /// A flag that needs a value has none.
     case missingValue(String)
@@ -96,6 +98,9 @@ public enum Generator {
             if let settings = GTKEmitter.settings(theme) {
                 files.append((.gtk, GeneratedFile(path: "themes/\(theme.id).gtk-settings.ini", contents: settings)))
             }
+            for icon in theme.icons?.icons ?? [] {
+                files.append((.icons, GeneratedFile(path: "themes/\(theme.id).icons/\(icon.name).svg", contents: IconEmitter.emit(icon))))
+            }
         }
         return files.filter { formats?.contains($0.0) ?? true }.map(\.1)
     }
@@ -106,7 +111,7 @@ public enum Generator {
     ///
     /// With no arguments, or only a directory (the form `design-tokens Generated` has always had), every file is
     /// written. `--theme <id>` writes that theme's files only. `--format` (repeatable, or comma-separated) keeps only those kinds of file
-/// (css, json, tumblr, ansi, slides, components, gtk); with no `--theme` the two default files count as css and json. `list` returns the theme ids and writes nothing.
+/// (css, json, tumblr, ansi, slides, components, gtk, icons); with no `--theme` the two default files count as css and json. `list` returns the theme ids and writes nothing.
     /// Arguments are checked before anything is written, so a refusal leaves the directory alone.
     ///
     /// - Returns: The paths written (relative to the directory), or the theme ids for `list`.

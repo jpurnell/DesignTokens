@@ -155,7 +155,8 @@ Assumed: the inverted highlight of the Macintosh titles (no open menu is in the 
 row's end and 6 down. A disabled control (the Revert button, Application Inspector) keeps the raised bevel and draws its text in #555555. A dock tile is
 64 x 64 and the tiles are contiguous: two white rows (top) and columns (leading), then the icon on a diagonal slate ground that fits
 172 - 0.695 (x + y) in red and green and 185 - 0.669 (x + y) in blue (about #ACACB9 to #555565 corner to corner), and at the bottom and right a dark shade
-row (#56575E to #3B3C44 over the ground; drawn as black at 40%) and a black line. Not drawn: the label strip above a tile and the clip tiles' icons.
+row (#56575E to #3B3C44 over the ground; drawn as black at 40%) and a black line. The label strip (Preferences tile, y 705 to 715): black, 11 rows, its first row black at about 76% over the ground, white text 7 rows tall; the
+labelled tile shows no white highlight under it. Icons are not measured: the set is original drawings in the dock's look, not traced.
 
 ## Not measured yet
 

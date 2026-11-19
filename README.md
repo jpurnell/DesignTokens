@@ -180,7 +180,7 @@ Sources: the first unprefixed, unflagged version of each feature in `@mdn/browse
 | padding-inline, padding-block | 87 / 87 | 14.1 | 66 | components |
 | border-inline-start, padding-inline-start and -end | 69 / 79 | 12.1 | 41 | components |
 | position: sticky (added 0.13.0) | 56 / 16 | 13 | 32 | components |
-| inset-inline-start, inset-block-start (added 0.13.0) | 87 / 87 | 14.1 | 63 | components |
+| inset-inline-start, inset-block-start (added 0.13.0; OPENSTEP's dock label uses them in its theme file) | 87 / 87 | 14.1 | 63 | themes, components |
 | clip-path: inset() | 55 / 79 | 10.1 | 54 | components |
 | accent-color (Safari 15.4 to 26.1 implements it without keeping a minimum contrast for the control (MDN lists that as partial); full from 26.2) | 93 / 93 | 15.4 | 92 | components |
 | appearance | 84 / 84 | 15.4 | 80 | components |

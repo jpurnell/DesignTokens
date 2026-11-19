@@ -100,7 +100,7 @@ public enum BrowserSupport {
         feature("padding-inline, padding-block", #"padding-(inline|block)\s*:"#, 87, 87, 14.1, 66, [.components]),
         feature("border-inline-start, padding-inline-start and -end", #"border-inline-start|padding-inline-(start|end)"#, 69, 79, 12.1, 41, [.components]),
         feature("position: sticky", #"position: sticky"#, 56, 16, 13, 32, [.components], note: "added 0.13.0"),
-        feature("inset-inline-start, inset-block-start", #"inset-(inline|block)-start"#, 87, 87, 14.1, 63, [.components], note: "added 0.13.0"),
+        feature("inset-inline-start, inset-block-start", #"inset-(inline|block)-start"#, 87, 87, 14.1, 63, [.themes, .components], note: "added 0.13.0; OPENSTEP's dock label uses them in its theme file"),
         feature("clip-path: inset()", #"clip-path"#, 55, 79, 10.1, 54, [.components]),
         feature("accent-color", #"accent-color"#, 93, 93, 15.4, 92, [.components],
                 note: "Safari 15.4 to 26.1 implements it without keeping a minimum contrast for the control (MDN lists that as partial); full from 26.2"),

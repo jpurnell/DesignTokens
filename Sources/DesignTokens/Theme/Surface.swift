@@ -380,6 +380,8 @@ public enum SurfaceRole: String, Sendable, Hashable, Codable, CaseIterable {
     case menuArrow
     /// A tile of the dock (NeXT's application icons and the trash): the frame and the ground behind an icon.
     case dockTile
+    /// The strip across the top of a dock tile that names it (NeXT's black one with white text).
+    case dockLabel
     /// A scroll bar as a whole: what lies behind the arrows and the track (NeXT's outlined grey strip). Authored for a horizontal bar; a
     /// vertical one is its transpose, as are the other scroll roles.
     case scrollBar

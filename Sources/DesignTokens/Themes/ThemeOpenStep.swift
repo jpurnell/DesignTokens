@@ -17,7 +17,7 @@ public extension Theme {
         Theme(id: "openstep", name: "OPENSTEP 4.2", structure: classicMacStructure(family: openstepFamily, controlHeight: 27, monospace: openstepMonospace),
               palette: openstepPalette, appearances: .lightOnly, conformance: openstepConformance, surfaces: openstepSurfaces,
               windowControls: WindowControls(leading: [.minimize], trailing: [.close], titleBar: openstepTitleBar),
-              scrollBar: openstepScrollBar, menus: openstepMenus, dock: DockMetrics(tileSize: 64))
+              scrollBar: openstepScrollBar, menus: openstepMenus, dock: DockMetrics(tileSize: 64, labelHeight: 11, labelInset: 1), icons: openstepIcons)
     }
 
     /// Measured from the Workspace and Tools menus of the OPENSTEP 4.2 desktop capture: a menu is 93 px wide; its title is 22 rows (a white row,
@@ -26,7 +26,7 @@ public extension Theme {
     /// A disabled button's text is `#555555` on the same bevel (the Revert button of the Application Inspector); a disabled menu row is assumed to
     /// match. The dock's tiles are 64 px with a two-row white highlight, a black line and a dark shade at the bottom and right, and a diagonal gradient
     /// (fitted: `#ACACB9` to `#555565` corner to corner); the shade row is black at 40% over the ground, near the capture's `#56575E` to `#3B3C44` (which vary with the ground); that is the one `color-mix()` in the theme files, and it sets their browser floor at Chrome 111.
-    /// The labels above a tile (a black strip with white text) are not drawn.
+    /// The label strip above a tile is black, 11 rows, one row below the tile's top, its first row black at 76% over the ground; its text is white (the capture's face is a 9 px sans, set here as `font-size: 9px` in the theme's own family).
     private static var openstepMenus: MenuMetrics {
         MenuMetrics(itemHeight: 20, titleHeight: 22, itemPadding: 6, menuWidth: 93, arrowInset: 6)
     }
@@ -168,9 +168,14 @@ public extension Theme {
         let dockEdges = Edges(top: [step("surface"), step("surface")], leading: [step("surface"), step("surface")], bottom: [step("ink"), shade],
                               trailing: [step("ink"), shade], stacking: .bottomTrailingFirst)
         let dockGround = GradientSpec(literalAngle: 135, [GradientStop(colour: ref("dockLight"), position: 0), GradientStop(colour: ref("dockDark"), position: 1)])
+        // the label strip: black, 11 rows, its first row a 76% black over the tile's ground (a hard step at the first row)
+        let strip = ColourReference(source: "ink", opacity: 0.76)
+        let labelGround = GradientSpec(literalAngle: 180, [GradientStop(colour: strip, position: 0), GradientStop(colour: strip, position: 1.0 / 11.0),
+                                                           GradientStop(colour: ink, position: 1.0 / 11.0), GradientStop(colour: ink, position: 1)])
         let disabled = SurfaceRecipe(layers: [.fill(bg)], edges: raised, radius: .uniform(0), backdropBlur: nil, ink: g55, scale: .integer)
         return SurfaceSet(recipes: [
             .menuArrow: [.rest: submenuArrow(ground: bg, lit: W), .hover: submenuArrow(ground: W, lit: bg)],
+            .dockLabel: [.rest: SurfaceRecipe(layers: [.gradient(labelGround)], edges: nil, radius: .uniform(0), backdropBlur: nil, ink: W, scale: .integer)],
             .dockTile: [.rest: SurfaceRecipe(layers: [.gradient(dockGround)], edges: dockEdges, radius: .uniform(0), backdropBlur: nil, ink: ink, scale: .integer)],
             .scrollBar: [.rest: recipe(fill: "background", edges: outline)],
             .scrollTrack: [.rest: dither],

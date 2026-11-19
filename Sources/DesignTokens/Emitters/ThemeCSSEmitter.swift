@@ -105,7 +105,7 @@ public enum ThemeCSSEmitter {
         // drawn by menuRules, which lays a menu bar and a menu out
         case .menu, .menuBar, .menuTitle, .menuItem, .menuArrow: []
         // drawn by dockRules
-        case .dockTile: []
+        case .dockTile, .dockLabel: []
         // drawn by scrollBarRules, which lays a scroll bar out and turns a vertical one about its diagonal
         case .scrollBar, .scrollTrack, .scrollThumb, .scrollGrip, .scrollArrowStart, .scrollArrowEnd: []
         }
@@ -224,9 +224,16 @@ public enum ThemeCSSEmitter {
             return ColorValue(value.rgb, alpha: value.alpha * reference.opacity).hex
         }
         let side = SurfaceCSS.px(metrics.tileSize)
-        var lines = ["\(scope) .dt-dock__tile {", "  box-sizing: border-box;", "  flex: none;", "  inline-size: \(side);", "  block-size: \(side);", "  padding: 0;", "  border: 0;"]
+        var lines = ["\(scope) .dt-dock__tile {", "  position: relative;", "  box-sizing: border-box;", "  flex: none;", "  inline-size: \(side);", "  block-size: \(side);", "  padding: 0;", "  border: 0;"]
         lines.append(contentsOf: SurfaceCSS.declarations(for: recipe, resolve: reference, literal: literal).map { "  \($0);" })
         lines.append("}")
+        if let height = metrics.labelHeight, let label = theme.surfaces?.recipes[.dockLabel]?[.rest] {
+            lines += ["\(scope) .dt-dock__label {", "  position: absolute;", "  inset-block-start: \(SurfaceCSS.px(metrics.labelInset));", "  inset-inline: 0;",
+                      "  box-sizing: border-box;", "  block-size: \(SurfaceCSS.px(height));", "  overflow: hidden;", "  white-space: nowrap;", "  text-align: center;",
+                      "  font-size: 9px;", "  line-height: \(SurfaceCSS.px(height));"]
+            lines.append(contentsOf: SurfaceCSS.declarations(for: label, resolve: reference, literal: literal).map { "  \($0);" })
+            lines.append("}")
+        }
         return lines
     }
 

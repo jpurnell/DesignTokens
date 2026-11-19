@@ -143,4 +143,25 @@ struct MenuTests {
         #expect(tile.contains { $0.hasPrefix("background-image: linear-gradient(135deg") })
         #expect(Theme.swiss.dock == nil)
     }
+
+    @Test("a dock label is a black strip 11 px tall across the tile, 1 px down, its first row a 76% black over the ground, with white 9 px text")
+    func dockLabel() throws {
+        let theme = Theme.openstep
+        #expect(theme.dock?.labelHeight == 11 && theme.dock?.labelInset == 1)
+        let recipe = try #require(theme.surfaces?.recipes[.dockLabel]?[.rest])
+        guard case .gradient(let strip)? = recipe.layers.first else { throw SurfaceError.cellSize(0) }
+        #expect(strip.stops.map(\.colour.source) == ["ink", "ink", "ink", "ink"])
+        let first = try #require(strip.stops.first?.colour.opacity)
+        #expect(abs(first - 0.76) < 1e-9)
+        let last = try #require(strip.stops.last?.colour.opacity)
+        #expect(abs(last - 1) < 1e-9)
+        #expect(abs((strip.stops[1].position - 1.0 / 11.0)) < 1e-9 && abs((strip.stops[2].position - 1.0 / 11.0)) < 1e-9)
+        let css = try ThemeCSSEmitter.emit(theme)
+        let label = lines(try lastRule(css, "[data-theme-name=\"openstep\"] .dt-dock__label"))
+        #expect(label.contains("position: absolute;") && label.contains("inset-block-start: 1px;") && label.contains("inset-inline: 0;"))
+        #expect(label.contains("block-size: 11px;") && label.contains("color: var(--surface);") && label.contains("font-size: 9px;"))
+        #expect(label.contains { $0.hasPrefix("background-image: linear-gradient(180deg") })
+        let tile = lines(try lastRule(css, "[data-theme-name=\"openstep\"] .dt-dock__tile"))
+        #expect(tile.contains("position: relative;"))
+    }
 }
