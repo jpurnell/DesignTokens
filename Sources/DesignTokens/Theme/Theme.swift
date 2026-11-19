@@ -56,12 +56,14 @@ public struct Theme: Sendable, Hashable, Codable, Identifiable {
     public var scrollBar: ScrollBarMetrics?
     /// The geometry of this theme's menus, or `nil`. Absent writes no key.
     public var menus: MenuMetrics?
+    /// The geometry of this theme's dock, or `nil`. Absent writes no key.
+    public var dock: DockMetrics?
 
     /// Creates a theme.
     public init(id: String, name: String, structure: Structure, palette: ThemePalette,
                 appearances: AppearanceSupport, conformance: Conformance = .strict, surfaces: SurfaceSet? = nil,
                 windowControls: WindowControls? = nil, scrollBar: ScrollBarMetrics? = nil,
-                menus: MenuMetrics? = nil) {
+                menus: MenuMetrics? = nil, dock: DockMetrics? = nil) {
         self.id = id
         self.name = name
         self.structure = structure
@@ -72,9 +74,10 @@ public struct Theme: Sendable, Hashable, Codable, Identifiable {
         self.windowControls = windowControls
         self.scrollBar = scrollBar
         self.menus = menus
+        self.dock = dock
     }
 
-    private enum CodingKeys: String, CodingKey, CaseIterable { case id, name, structure, palette, appearances, conformance, surfaces, windowControls, scrollBar, menus }
+    private enum CodingKeys: String, CodingKey, CaseIterable { case id, name, structure, palette, appearances, conformance, surfaces, windowControls, scrollBar, menus, dock }
 
     /// Decodes a theme, and refuses one that is not a well-formed theme.
     ///
@@ -105,6 +108,7 @@ public struct Theme: Sendable, Hashable, Codable, Identifiable {
             self.windowControls = try container.decodeIfPresent(WindowControls.self, forKey: .windowControls)
             self.scrollBar = try container.decodeIfPresent(ScrollBarMetrics.self, forKey: .scrollBar)
             self.menus = try container.decodeIfPresent(MenuMetrics.self, forKey: .menus)
+            self.dock = try container.decodeIfPresent(DockMetrics.self, forKey: .dock)
         } catch let error as DecodingError {
             // a required key that is missing is often a misspelt one: say which keys the input has instead
             if case .object(let given) = raw {
@@ -159,6 +163,7 @@ public struct Theme: Sendable, Hashable, Codable, Identifiable {
         try container.encodeIfPresent(windowControls, forKey: .windowControls)
         try container.encodeIfPresent(scrollBar, forKey: .scrollBar)
         try container.encodeIfPresent(menus, forKey: .menus)
+        try container.encodeIfPresent(dock, forKey: .dock)
     }
 
     private static func describe(_ error: DecodingError) -> String {

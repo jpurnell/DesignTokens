@@ -82,4 +82,63 @@ struct MenuTests {
         let css = try GTKEmitter.emit(.openstep, slot: slot)
         #expect(!css.contains("dt-menu"))
     }
+
+    // MARK: OPENSTEP's submenu arrow, disabled rows and dock tile
+
+    private func cells(_ theme: Theme, _ role: SurfaceRole, _ state: ComponentState) throws -> PatternSpec {
+        let recipe = try #require(theme.surfaces?.recipes[role]?[state], Comment(rawValue: "\(role) \(state)"))
+        guard case .pattern(let spec)? = recipe.layers.last else { throw SurfaceError.cellSize(0) }
+        return spec
+    }
+
+    @Test("the submenu arrow is a 7 x 7 triangle: black down the left, #555555 above, white below; on the lit row white and grey swap")
+    func submenuArrow() throws {
+        let (K, m, bg, W) = (ColourReference(source: "ink"), ColourReference(source: "muted"), ColourReference(source: "background"),
+                             ColourReference(source: "surface"))
+        let key: [Character: ColourReference] = ["K": K, "m": m, ".": bg, "W": W]
+        let rows = ["Km.....", "K.mm...", "K...mm.", "K.....W", "K...WW.", "K.WW...", "KW....."]
+        let expected = rows.flatMap { $0.map { key[$0] ?? bg } }
+        let rest = try cells(.openstep, .menuArrow, .rest)
+        #expect(rest.width == 7 && rest.height == 7)
+        #expect(rest.cells == expected)
+        // on a white row the interior is white and the lower edge takes the grey the row has elsewhere
+        let swap: [Character: ColourReference] = ["K": K, "m": m, ".": W, "W": bg]
+        #expect(try cells(.openstep, .menuArrow, .hover).cells == rows.flatMap { $0.map { swap[$0] ?? W } })
+    }
+
+    @Test("the arrow sits at the end of its row, 6 px from the edge and 6 px down, and takes the lit tile on the lit row")
+    func arrowCSS() throws {
+        let css = try ThemeCSSEmitter.emit(.openstep)
+        let arrow = lines(try lastRule(css, "[data-theme-name=\"openstep\"] .dt-menu__arrow"))
+        #expect(arrow.contains("inline-size: 7px;") && arrow.contains("block-size: 7px;"))
+        #expect(arrow.contains("margin-inline-start: auto;") && arrow.contains("margin-block-start: 6px;") && arrow.contains("align-self: flex-start;"))
+        let lit = try lastRule(css, "[data-theme-name=\"openstep\"] .dt-menu__item[aria-selected=\"true\"] .dt-menu__arrow")
+        #expect(lit.contains("background-image"))
+    }
+
+    @Test("a disabled row or button has #555555 text on the same raised bevel")
+    func disabled() throws {
+        let css = try ThemeCSSEmitter.emit(.openstep)
+        let row = lines(try lastRule(css, "[data-theme-name=\"openstep\"] .dt-menu__item[aria-disabled=\"true\"]"))
+        #expect(row.contains("color: var(--muted);") && row.contains("background-color: var(--background);"))
+        let button = lines(try lastRule(css, "[data-theme-name=\"openstep\"] .dt-button:disabled"))
+        #expect(button.contains("color: var(--muted);") && button.contains("background-color: var(--background);"))
+    }
+
+    @Test("a dock tile is 64 px: two white rows on top and leading, a black line and a flat dark shade under and after, a slate diagonal gradient")
+    func dockTile() throws {
+        let theme = Theme.openstep
+        #expect(theme.dock?.tileSize == 64)
+        let recipe = try #require(theme.surfaces?.recipes[.dockTile]?[.rest])
+        guard case .gradient(let gradient)? = recipe.layers.first else { throw SurfaceError.cellSize(0) }
+        #expect(gradient.angleDegrees == 135 && gradient.stops.map(\.colour.source) == ["dockLight", "dockDark"])
+        #expect(recipe.edges?.top.map(\.colour.source) == ["surface", "surface"])
+        #expect(recipe.edges?.leading.map(\.colour.source) == ["surface", "surface"])
+        #expect(recipe.edges?.bottom.map(\.colour.source) == ["ink", "dockShade"])
+        let css = try ThemeCSSEmitter.emit(theme)
+        let tile = lines(try lastRule(css, "[data-theme-name=\"openstep\"] .dt-dock__tile"))
+        #expect(tile.contains("inline-size: 64px;") && tile.contains("block-size: 64px;"))
+        #expect(tile.contains { $0.hasPrefix("background-image: linear-gradient(135deg") })
+        #expect(Theme.swiss.dock == nil)
+    }
 }

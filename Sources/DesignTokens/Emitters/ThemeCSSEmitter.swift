@@ -103,7 +103,9 @@ public enum ThemeCSSEmitter {
         case .windowBoxMinimize: [".dt-titlebar__box--minimize"]
         case .selection: []
         // drawn by menuRules, which lays a menu bar and a menu out
-        case .menu, .menuBar, .menuTitle, .menuItem: []
+        case .menu, .menuBar, .menuTitle, .menuItem, .menuArrow: []
+        // drawn by dockRules
+        case .dockTile: []
         // drawn by scrollBarRules, which lays a scroll bar out and turns a vertical one about its diagonal
         case .scrollBar, .scrollTrack, .scrollThumb, .scrollGrip, .scrollArrowStart, .scrollArrowEnd: []
         }
@@ -153,6 +155,7 @@ public enum ThemeCSSEmitter {
         lines.append(contentsOf: titleBarRules(theme, scope: scope))
         lines.append(contentsOf: scrollBarRules(theme, scope: scope))
         lines.append(contentsOf: menuRules(theme, scope: scope))
+        lines.append(contentsOf: dockRules(theme, scope: scope))
         return lines
     }
 
@@ -182,6 +185,10 @@ public enum ThemeCSSEmitter {
         parts.append((.menu, ".dt-menu", column))
         if let height = metrics.titleHeight { parts.append((.menuTitle, ".dt-menu__title", row + ["block-size: \(px(height))"])) }
         parts.append((.menuItem, ".dt-menu__item", row + ["block-size: \(px(metrics.itemHeight))"]))
+        if case .pattern(let tile)? = surfaces.recipes[.menuArrow]?[.rest]?.layers.last {
+            parts.append((.menuArrow, ".dt-menu__arrow", ["flex: none", "align-self: flex-start", "inline-size: \(tile.width)px", "block-size: \(tile.height)px",
+                "margin-inline-start: auto", "margin-block-start: \(px(metrics.arrowInset))"]))
+        }
         var lines: [String] = []
         for (role, selector, layout) in parts {
             guard let states = surfaces.recipes[role] else { continue }
@@ -191,12 +198,35 @@ public enum ThemeCSSEmitter {
                 lines.append(contentsOf: SurfaceCSS.declarations(for: rest, resolve: reference, literal: literal).map { "  \($0);" })
             }
             lines.append("}")
-            if let lit = states[.hover] {
-                lines.append("\(scope) \(selector)[aria-selected=\"true\"] {")
-                lines.append(contentsOf: SurfaceCSS.declarations(for: lit, resolve: reference, literal: literal).map { "  \($0);" })
+            // the lit row's arrow is the child of the lit row, so it is selected through the row
+            let lit = role == .menuArrow ? "\(scope) .dt-menu__item[aria-selected=\"true\"] \(selector)" : "\(scope) \(selector)[aria-selected=\"true\"]"
+            if let recipe = states[.hover] {
+                lines.append(lit + " {")
+                lines.append(contentsOf: SurfaceCSS.declarations(for: recipe, resolve: reference, literal: literal).map { "  \($0);" })
+                lines.append("}")
+            }
+            if let recipe = states[.disabled] {
+                lines.append("\(scope) \(selector)[aria-disabled=\"true\"] {")
+                lines.append(contentsOf: SurfaceCSS.declarations(for: recipe, resolve: reference, literal: literal).map { "  \($0);" })
                 lines.append("}")
             }
         }
+        return lines
+    }
+
+    /// A dock: `dt-dock__tile`, a square of the theme's ``DockMetrics/tileSize`` drawn by the ``SurfaceRole/dockTile`` recipe. The icon goes in
+    /// the tile; the theme draws the frame and the ground.
+    private static func dockRules(_ theme: Theme, scope: String) -> [String] {
+        guard let metrics = theme.dock, let recipe = theme.surfaces?.recipes[.dockTile]?[.rest] else { return [] }
+        func literal(_ reference: ColourReference) -> String {
+            let adaptive = ColorRole(rawValue: reference.source).map { theme.palette[$0] } ?? theme.palette.extras[reference.source]
+            guard let value = adaptive?.light else { return "transparent" }
+            return ColorValue(value.rgb, alpha: value.alpha * reference.opacity).hex
+        }
+        let side = SurfaceCSS.px(metrics.tileSize)
+        var lines = ["\(scope) .dt-dock__tile {", "  box-sizing: border-box;", "  flex: none;", "  inline-size: \(side);", "  block-size: \(side);", "  padding: 0;", "  border: 0;"]
+        lines.append(contentsOf: SurfaceCSS.declarations(for: recipe, resolve: reference, literal: literal).map { "  \($0);" })
+        lines.append("}")
         return lines
     }
 

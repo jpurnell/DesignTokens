@@ -150,7 +150,12 @@ Platinum menu bar (Mac OS 8.0 desktop capture): 20 rows (white, 17 of #DDDDDD, #
 right; titles at x 43, 78 and 115 (8 px of padding each side). System 7.0: 19 white rows and a black one, same title positions. OPENSTEP 4.2 (Workspace
 and Tools menus, x 0 to 92): 93 px wide; the title is 22 rows (white, 19 black, #555555, black), every row 20 (white, 17 of #AAAAAA, #555555, black) with
 white on the left and #555555 then black on the right, which is the button's raised bevel; the highlighted row is white throughout; text starts 6 px in.
-Assumed: the inverted highlight of the Macintosh titles (no open menu is in the captures). Not drawn: submenu arrows, the dock and clip tiles.
+Assumed: the inverted highlight of the Macintosh titles (no open menu is in the captures). OPENSTEP's submenu arrow is a 7 x 7 triangle at x 80 to 86
+(black down the left, #555555 on the upper diagonal, white on the lower; on the lit row the lower diagonal is #AAAAAA and the inside white), 6 px from the
+row's end and 6 down. A disabled control (the Revert button, Application Inspector) keeps the raised bevel and draws its text in #555555. A dock tile is
+64 x 64 and the tiles are contiguous: two white rows (top) and columns (leading), then the icon on a diagonal slate ground that fits
+172 - 0.695 (x + y) in red and green and 185 - 0.669 (x + y) in blue (about #ACACB9 to #555565 corner to corner), and at the bottom and right a dark shade
+row (#56575E to #3B3C44 over the ground; drawn as one flat #47474F, because translucency would need color-mix()) and a black line. Not drawn: the label strip above a tile and the clip tiles' icons.
 
 ## Not measured yet
 

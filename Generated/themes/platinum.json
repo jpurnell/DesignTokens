@@ -15,6 +15,7 @@
   },
   "id" : "platinum",
   "menus" : {
+    "arrowInset" : 0,
     "barHeight" : 20,
     "barInset" : {
       "bottom" : 2,

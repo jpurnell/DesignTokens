@@ -15,15 +15,18 @@ public struct MenuMetrics: Sendable, Hashable, Codable {
     public var itemPadding: Double
     /// The width of a menu, or `nil` to fit its widest row.
     public var menuWidth: Double?
+    /// Space above a submenu arrow inside its row, frame included.
+    public var arrowInset: Double
 
     /// Creates menu metrics.
     public init(barHeight: Double? = nil, barInset: Insets = Insets(top: 0, leading: 0, bottom: 0, trailing: 0), itemHeight: Double,
-                titleHeight: Double? = nil, itemPadding: Double, menuWidth: Double? = nil) {
+                titleHeight: Double? = nil, itemPadding: Double, menuWidth: Double? = nil, arrowInset: Double = 0) {
         self.barHeight = barHeight
         self.barInset = barInset
         self.itemHeight = itemHeight
         self.titleHeight = titleHeight
         self.itemPadding = itemPadding
         self.menuWidth = menuWidth
+        self.arrowInset = arrowInset
     }
 }

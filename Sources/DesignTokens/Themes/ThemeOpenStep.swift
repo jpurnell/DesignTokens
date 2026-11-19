@@ -17,14 +17,18 @@ public extension Theme {
         Theme(id: "openstep", name: "OPENSTEP 4.2", structure: classicMacStructure(family: openstepFamily, controlHeight: 27, monospace: openstepMonospace),
               palette: openstepPalette, appearances: .lightOnly, conformance: openstepConformance, surfaces: openstepSurfaces,
               windowControls: WindowControls(leading: [.minimize], trailing: [.close], titleBar: openstepTitleBar),
-              scrollBar: openstepScrollBar, menus: openstepMenus)
+              scrollBar: openstepScrollBar, menus: openstepMenus, dock: DockMetrics(tileSize: 64))
     }
 
     /// Measured from the Workspace and Tools menus of the OPENSTEP 4.2 desktop capture: a menu is 93 px wide; its title is 22 rows (a white row,
     /// 19 of black, `#555555`, black) and each row 20 (a white row, 17 of `#AAAAAA`, `#555555`, black), the button's raised bevel; the highlighted
-    /// row is white all through. Text starts 6 px in. The arrow of a row that opens a submenu is not drawn.
+    /// row is white all through. Text starts 6 px in. The arrow of a row that opens a submenu is a 7 x 7 triangle 6 px from the row's end and 6 down.
+    /// A disabled button's text is `#555555` on the same bevel (the Revert button of the Application Inspector); a disabled menu row is assumed to
+    /// match. The dock's tiles are 64 px with a two-row white highlight, a black line and a dark shade at the bottom and right, and a diagonal gradient
+    /// (fitted: `#ACACB9` to `#555565` corner to corner); the shade row is one flat `#47474F`, the middle of the capture's `#56575E` to `#3B3C44`, which vary with the ground (a translucent black would need `color-mix()` and raise the theme files' browser floor).
+    /// The labels above a tile (a black strip with white text) are not drawn.
     private static var openstepMenus: MenuMetrics {
-        MenuMetrics(itemHeight: 20, titleHeight: 22, itemPadding: 6, menuWidth: 93)
+        MenuMetrics(itemHeight: 20, titleHeight: 22, itemPadding: 6, menuWidth: 93, arrowInset: 6)
     }
 
     /// Measured from the vertical scroller of the OPENSTEP 4.2 file viewer: 20 px wide (a black line, 1 px of grey, a 16 px column, 1 px of grey, a
@@ -59,7 +63,9 @@ public extension Theme {
             series: [B.series("slate", 0x555577)],
             sequential: B.ramp([0xFFFFFF, 0xAAAAAA, 0x555555, black]),
             diverging: B.ramp([0x555577, 0xAAAAAA, 0x555555]),
-            extras: ["desktop": B.adaptive(0x555577)])
+            extras: ["desktop": B.adaptive(0x555577),
+                     // the dock tile's slate ground, corner to corner, fitted to the empty tile of the 4.2 capture
+                     "dockLight": B.adaptive(0xACACB9), "dockDark": B.adaptive(0x555565), "dockShade": B.adaptive(0x47474F)])
     }
 
     private static var openstepSurfaces: SurfaceSet {
@@ -152,7 +158,20 @@ public extension Theme {
         let knob = PatternSpec(literal: 8, 6, knobRows.flatMap { $0.map { knobKey[$0] ?? bg } })
         let dither = SurfaceRecipe(layers: [.fill(bg), .pattern(PatternSpec(literal: 2, 2, [g55, bg, bg, g55]))], edges: nil,
                                    radius: .uniform(0), backdropBlur: nil, ink: ink, scale: .integer)
+        let arrowKey: [Character: ColourReference] = ["K": ink, "m": g55]
+        func submenuArrow(ground: ColourReference, lit: ColourReference) -> SurfaceRecipe {
+            let rows = ["Km.....", "K.mm...", "K...mm.", "K.....W", "K...WW.", "K.WW...", "KW....."]
+            let cells = rows.flatMap { $0.map { c in arrowKey[c] ?? (c == "W" ? lit : ground) } }
+            return wholeTile(PatternSpec(literal: 7, 7, cells))
+        }
+        let shade = step("dockShade")
+        let dockEdges = Edges(top: [step("surface"), step("surface")], leading: [step("surface"), step("surface")], bottom: [step("ink"), shade],
+                              trailing: [step("ink"), shade], stacking: .bottomTrailingFirst)
+        let dockGround = GradientSpec(literalAngle: 135, [GradientStop(colour: ref("dockLight"), position: 0), GradientStop(colour: ref("dockDark"), position: 1)])
+        let disabled = SurfaceRecipe(layers: [.fill(bg)], edges: raised, radius: .uniform(0), backdropBlur: nil, ink: g55, scale: .integer)
         return SurfaceSet(recipes: [
+            .menuArrow: [.rest: submenuArrow(ground: bg, lit: W), .hover: submenuArrow(ground: W, lit: bg)],
+            .dockTile: [.rest: SurfaceRecipe(layers: [.gradient(dockGround)], edges: dockEdges, radius: .uniform(0), backdropBlur: nil, ink: ink, scale: .integer)],
             .scrollBar: [.rest: recipe(fill: "background", edges: outline)],
             .scrollTrack: [.rest: dither],
             .scrollGrip: [.rest: wholeTile(knob.transposed)],
@@ -161,12 +180,12 @@ public extension Theme {
             .scrollArrowEnd: [.rest: wholeTile(down.transposed)],
             .menu: [.rest: recipe(fill: "desktop", edges: nil)],
             .menuTitle: [.rest: recipe(fill: "ink", ink: "surface", edges: raised)],
-            .menuItem: [.rest: recipe(fill: "background", edges: raised), .hover: recipe(fill: "surface", edges: raised)],
+            .menuItem: [.rest: recipe(fill: "background", edges: raised), .hover: recipe(fill: "surface", edges: raised), .disabled: disabled],
             .desktop: [.rest: recipe(fill: "desktop", edges: nil)],
             .window: [.rest: recipe(fill: "background", edges: outline)],
             .panel: [.rest: recipe(fill: "surface", edges: outline)],
-            .button: [.rest: recipe(fill: "background", edges: raised), .active: recipe(fill: "background", edges: pressed)],
-            .buttonDefault: [.rest: recipe(fill: "background", edges: raised), .active: recipe(fill: "background", edges: pressed)],
+            .button: [.rest: recipe(fill: "background", edges: raised), .active: recipe(fill: "background", edges: pressed), .disabled: disabled],
+            .buttonDefault: [.rest: recipe(fill: "background", edges: raised), .active: recipe(fill: "background", edges: pressed), .disabled: disabled],
             .field: [.rest: recipe(fill: "surface", edges: sunken)],
             .selection: [.rest: recipe(fill: "surface", edges: nil)],
             .titleBar: [.rest: recipe(fill: "ink", ink: "surface", edges: barEdges)],

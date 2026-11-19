@@ -213,6 +213,13 @@ public struct GradientSpec: Sendable, Hashable, Codable {
         self.stops = stops
     }
 
+    /// A linear gradient written as a literal in source, without the checks (see ``EdgeStep/init(literal:_:)``).
+    init(literalAngle angleDegrees: Double, _ stops: [GradientStop]) {
+        self.kind = .linear
+        self.angleDegrees = angleDegrees
+        self.stops = stops
+    }
+
     private enum CodingKeys: String, CodingKey { case kind, angleDegrees, stops }
 
     /// Decodes a gradient, applying the same checks as the initialiser.
@@ -369,6 +376,10 @@ public enum SurfaceRole: String, Sendable, Hashable, Codable, CaseIterable {
     case menuTitle
     /// A row of a menu, or a title in the menu bar. The highlighted one (`aria-selected="true"`) is the `hover` state.
     case menuItem
+    /// The arrow on a menu row that opens a submenu, a small tile drawn whole (`rest` on a row at rest, `hover` on the lit row).
+    case menuArrow
+    /// A tile of the dock (NeXT's application icons and the trash): the frame and the ground behind an icon.
+    case dockTile
     /// A scroll bar as a whole: what lies behind the arrows and the track (NeXT's outlined grey strip). Authored for a horizontal bar; a
     /// vertical one is its transpose, as are the other scroll roles.
     case scrollBar
