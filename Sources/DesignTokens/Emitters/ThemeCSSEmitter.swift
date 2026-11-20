@@ -103,7 +103,7 @@ public enum ThemeCSSEmitter {
         case .windowBoxMinimize: [".dt-titlebar__box--minimize"]
         case .selection: []
         // drawn by menuRules, which lays a menu bar and a menu out
-        case .menu, .menuBar, .menuTitle, .menuItem, .menuArrow: []
+        case .menu, .menuBar, .menuTitle, .menuItem, .menuBarItem, .menuSeparator, .menuArrow: []
         // drawn by dockRules
         case .dockTile, .dockLabel: []
         // drawn by scrollBarRules, which lays a scroll bar out and turns a vertical one about its diagonal
@@ -196,19 +196,26 @@ public enum ThemeCSSEmitter {
             return ColorValue(value.rgb, alpha: value.alpha * reference.opacity).hex
         }
         let inset = metrics.barInset
-        let row = ["display: flex", "align-items: center", "box-sizing: border-box", "padding: 0 \(px(metrics.itemPadding))"]
+        var rowPadding = "0 \(px(metrics.itemPadding))"
+        if let own = metrics.itemInset { rowPadding = "\(px(own.top)) \(px(own.trailing)) \(px(own.bottom)) \(px(own.leading))" }
+        let row = ["display: flex", "align-items: center", "box-sizing: border-box", "padding: \(rowPadding)"]
         // role, selector, layout declarations
         var parts: [(SurfaceRole, String, [String])] = []
         if let height = metrics.barHeight {
             parts.append((.menuBar, ".dt-menubar", ["display: flex", "align-items: stretch", "box-sizing: border-box", "block-size: \(px(height))",
                 "padding: \(px(inset.top)) \(px(inset.trailing)) \(px(inset.bottom)) \(px(inset.leading))"]))
-            parts.append((.menuItem, ".dt-menubar__item", row))
+            // a bar's title has its own drawing where a theme gives one, and is a row of the menu otherwise
+            parts.append((surfaces.recipes[.menuBarItem] != nil ? .menuBarItem : .menuItem, ".dt-menubar__item", row))
         }
         var column = ["display: flex", "flex-direction: column", "box-sizing: border-box"]
         if let width = metrics.menuWidth { column.append("inline-size: \(px(width))") }
+        if let pad = metrics.menuInset { column.append("padding: \(px(pad.top)) \(px(pad.trailing)) \(px(pad.bottom)) \(px(pad.leading))") }
         parts.append((.menu, ".dt-menu", column))
         if let height = metrics.titleHeight { parts.append((.menuTitle, ".dt-menu__title", row + ["block-size: \(px(height))"])) }
         parts.append((.menuItem, ".dt-menu__item", row + ["block-size: \(px(metrics.itemHeight))"]))
+        if let height = metrics.separatorHeight {
+            parts.append((.menuSeparator, ".dt-menu__separator", ["flex: none", "box-sizing: border-box", "block-size: \(px(height))"]))
+        }
         if case .pattern(let tile)? = surfaces.recipes[.menuArrow]?[.rest]?.layers.last {
             parts.append((.menuArrow, ".dt-menu__arrow", ["flex: none", "align-self: flex-start", "inline-size: \(tile.width)px", "block-size: \(tile.height)px",
                 "margin-inline-start: auto", "margin-block-start: \(px(metrics.arrowInset))"]))

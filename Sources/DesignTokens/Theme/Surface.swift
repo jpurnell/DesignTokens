@@ -376,6 +376,11 @@ public enum SurfaceRole: String, Sendable, Hashable, Codable, CaseIterable {
     case menuTitle
     /// A row of a menu, or a title in the menu bar. The highlighted one (`aria-selected="true"`) is the `hover` state.
     case menuItem
+    /// A title across a menu bar, when it is drawn differently from a row of a menu (Platinum's lit title has a row above and below it); a theme
+    /// that leaves it out draws the bar's titles with ``menuItem``.
+    case menuBarItem
+    /// The rule between two groups of rows in a menu.
+    case menuSeparator
     /// The arrow on a menu row that opens a submenu, a small tile drawn whole (`rest` on a row at rest, `hover` on the lit row).
     case menuArrow
     /// A tile of the dock (NeXT's application icons and the trash): the frame and the ground behind an icon.

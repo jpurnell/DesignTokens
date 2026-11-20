@@ -68,7 +68,7 @@ struct MenuTests {
         #expect(Theme.swiss.menus == nil)
         let swiss = try ThemeCSSEmitter.emit(.swiss)
         #expect(!swiss.contains("dt-menu"))
-        let heights: [(Theme, Double?, Double)] = [(.system7, 20, 20), (.platinum, 20, 20), (.openstep, nil, 20)]
+        let heights: [(Theme, Double?, Double)] = [(.system7, 20, 20), (.platinum, 20, 16), (.openstep, nil, 20)]
         for (theme, bar, row) in heights {
             #expect(theme.menus?.barHeight == bar && theme.menus?.itemHeight == row, "\(theme.id)")
             let decoded = try ThemeCodec.decode(try ThemeCodec.encode(theme))
@@ -164,5 +164,80 @@ struct MenuTests {
         #expect(label.contains { $0.hasPrefix("background-image: linear-gradient(180deg") })
         let tile = lines(try lastRule(css, "[data-theme-name=\"openstep\"] .dt-dock__tile"))
         #expect(tile.contains("position: relative;"))
+    }
+
+    // MARK: Platinum's dropdown menu, held open on a live Mac OS 8.0 (Infinite Mac)
+
+    @Test("Platinum's menu is 150 px wide: black outside white on top and leading, black outside #B3B3B3 at the bottom and trailing, a 1 px #3F3F3F shadow")
+    func platinumMenuBox() throws {
+        let surfaces = try #require(Theme.platinum.surfaces)
+        let menu = try #require(surfaces.recipes[.menu]?[.rest])
+        let step = { (name: String) in EdgeStep(literal: ColourReference(source: name), 1) }
+        #expect(menu.layers.first == .fill(ColourReference(source: "background")))
+        #expect(menu.edges?.top == [step("ink"), step("surface")] && menu.edges?.leading == [step("ink"), step("surface")])
+        #expect(menu.edges?.bottom == [step("ink"), step("gray99")] && menu.edges?.trailing == [step("ink"), step("gray99")])
+        let shadow = ShadowLayer(shadow: ShadowSpec(colour: ColourReference(source: "gray22"), radius: 0, x: 1, y: 1), spread: 0)
+        #expect(menu.layers.contains(.shadow(shadow)))
+        let css = try ThemeCSSEmitter.emit(.platinum)
+        let box = lines(try lastRule(css, "[data-theme-name=\"platinum\"] .dt-menu"))
+        #expect(box.contains("inline-size: 150px;") && box.contains("padding: 1px 1px 1px 1px;"))
+        let row = lines(try lastRule(css, "[data-theme-name=\"platinum\"] .dt-menu__item"))
+        #expect(row.contains("block-size: 16px;") && row.contains("padding: 0 13px 0 19px;"))
+    }
+
+    @Test("a lit row is #5454B3 with a #8787DA top row and leading column, a #0000A5 trailing column and white text; a disabled row is #A5A5A5")
+    func platinumLitRow() throws {
+        let surfaces = try #require(Theme.platinum.surfaces)
+        let lit = try #require(surfaces.recipes[.menuItem]?[.hover])
+        let step = { (name: String) in EdgeStep(literal: ColourReference(source: name), 1) }
+        #expect(lit.layers == [.fill(ColourReference(source: "highlight"))] && lit.ink == ColourReference(source: "surface"))
+        #expect(lit.edges?.top == [step("lavenderShade")] && lit.edges?.leading == [step("lavenderShade")])
+        #expect(lit.edges?.trailing == [step("indigo")] && lit.edges?.bottom == [])
+        #expect(Theme.platinum.palette.extras["indigo"]?.light.hex == "#0000A5")
+        #expect(surfaces.recipes[.menuItem]?[.disabled]?.ink == ColourReference(source: "gray88"))
+    }
+
+    @Test("a lit menu-bar title is the same lavender with a #8787DA row above it and a #0000A5 row below, drawn outside its box")
+    func platinumLitTitle() throws {
+        let surfaces = try #require(Theme.platinum.surfaces)
+        let lit = try #require(surfaces.recipes[.menuBarItem]?[.hover])
+        let above = ShadowLayer(shadow: ShadowSpec(colour: ColourReference(source: "lavenderShade"), radius: 0, x: 0, y: -1), spread: 0)
+        let below = ShadowLayer(shadow: ShadowSpec(colour: ColourReference(source: "indigo"), radius: 0, x: 0, y: 1), spread: 0)
+        #expect(lit.layers == [.fill(ColourReference(source: "highlight")), .shadow(above), .shadow(below)])
+        let css = try ThemeCSSEmitter.emit(.platinum)
+        let rule = lines(try lastRule(css, "[data-theme-name=\"platinum\"] .dt-menubar__item[aria-selected=\"true\"]"))
+        #expect(rule.contains("box-shadow: 0 -1px 0 0 var(--extra-lavender-shade), 0 1px 0 0 var(--extra-indigo);"))
+        // a row of a menu keeps its own drawing: no shadows spill onto its neighbours
+        let row = lines(try lastRule(css, "[data-theme-name=\"platinum\"] .dt-menu__item[aria-selected=\"true\"]"))
+        #expect(!row.contains { $0.contains("0 -1px 0 0") })
+    }
+
+    @Test("a separator is 6 px with a #A5A5A5 line and a white line in rows 3 and 4, drawn across the edge columns, the rest left clear")
+    func platinumSeparator() throws {
+        let surfaces = try #require(Theme.platinum.surfaces)
+        let separator = try #require(surfaces.recipes[.menuSeparator]?[.rest])
+        let clear = ColourReference(source: "background", opacity: 0)
+        let (dark, white) = (ColourReference(source: "gray88"), ColourReference(source: "surface"))
+        let thirds: [Double] = [0, 2.0 / 6, 2.0 / 6, 3.0 / 6, 3.0 / 6, 4.0 / 6, 4.0 / 6, 1]
+        let colours: [ColourReference] = [clear, clear, dark, dark, white, white, clear, clear]
+        var stops: [GradientStop] = []
+        for (colour, position) in zip(colours, thirds) { stops.append(GradientStop(colour: colour, position: position)) }
+        guard case .gradient(let ground)? = separator.layers.first else { throw SurfaceError.cellSize(0) }
+        #expect(ground.stops == stops && abs(ground.angleDegrees - 180) < 1e-9)
+        let css = try ThemeCSSEmitter.emit(.platinum)
+        let rule = lines(try lastRule(css, "[data-theme-name=\"platinum\"] .dt-menu__separator"))
+        #expect(rule.contains("block-size: 6px;") && rule.contains { $0.hasPrefix("background-image: linear-gradient(180deg") })
+        #expect(!(try ThemeCSSEmitter.emit(.openstep)).contains("dt-menu__separator"))
+    }
+
+    @Test("the menu's padding, a row's own padding and the separator's height survive the JSON round trip, and other skins write none")
+    func menuLayoutRoundTrip() throws {
+        let decoded = try ThemeCodec.decode(try ThemeCodec.encode(.platinum))
+        #expect(decoded.menus == Theme.platinum.menus)
+        #expect(decoded.menus?.menuInset == Insets(top: 1, leading: 1, bottom: 1, trailing: 1))
+        #expect(decoded.menus?.itemInset == Insets(top: 0, leading: 19, bottom: 0, trailing: 13))
+        let sep = try #require(decoded.menus?.separatorHeight)
+        #expect(abs(sep - 6) < 1e-9)
+        #expect(Theme.openstep.menus?.menuInset == nil && Theme.openstep.menus?.itemInset == nil && Theme.openstep.menus?.separatorHeight == nil)
     }
 }

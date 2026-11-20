@@ -23,8 +23,22 @@
       "top" : 1,
       "trailing" : 1
     },
-    "itemHeight" : 20,
-    "itemPadding" : 8
+    "itemHeight" : 16,
+    "itemInset" : {
+      "bottom" : 0,
+      "leading" : 19,
+      "top" : 0,
+      "trailing" : 13
+    },
+    "itemPadding" : 8,
+    "menuInset" : {
+      "bottom" : 1,
+      "leading" : 1,
+      "top" : 1,
+      "trailing" : 1
+    },
+    "menuWidth" : 150,
+    "separatorHeight" : 6
   },
   "name" : "Platinum (Mac OS 8)",
   "palette" : {
@@ -83,6 +97,9 @@
       },
       "highlight" : {
         "light" : "#5454B3"
+      },
+      "indigo" : {
+        "light" : "#0000A5"
       },
       "lavender" : {
         "light" : "#B3B3FF"
@@ -1927,6 +1944,113 @@
           "scale" : "integer"
         }
       },
+      "menu" : {
+        "rest" : {
+          "edges" : {
+            "bottom" : [
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "ink"
+                },
+                "width" : 1
+              },
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "gray99"
+                },
+                "width" : 1
+              }
+            ],
+            "leading" : [
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "ink"
+                },
+                "width" : 1
+              },
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "surface"
+                },
+                "width" : 1
+              }
+            ],
+            "top" : [
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "ink"
+                },
+                "width" : 1
+              },
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "surface"
+                },
+                "width" : 1
+              }
+            ],
+            "trailing" : [
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "ink"
+                },
+                "width" : 1
+              },
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "gray99"
+                },
+                "width" : 1
+              }
+            ]
+          },
+          "ink" : {
+            "opacity" : 1,
+            "source" : "ink"
+          },
+          "layers" : [
+            {
+              "fill" : {
+                "_0" : {
+                  "opacity" : 1,
+                  "source" : "background"
+                }
+              }
+            },
+            {
+              "shadow" : {
+                "_0" : {
+                  "inset" : false,
+                  "shadow" : {
+                    "colour" : {
+                      "opacity" : 1,
+                      "source" : "gray22"
+                    },
+                    "radius" : 0,
+                    "x" : 1,
+                    "y" : 1
+                  },
+                  "spread" : 0
+                }
+              }
+            }
+          ],
+          "radius" : {
+            "uniform" : {
+              "_0" : 0
+            }
+          },
+          "scale" : "integer"
+        }
+      },
       "menuBar" : {
         "rest" : {
           "edges" : {
@@ -1997,7 +2121,7 @@
           "scale" : "integer"
         }
       },
-      "menuItem" : {
+      "menuBarItem" : {
         "disabled" : {
           "ink" : {
             "opacity" : 1,
@@ -2024,6 +2148,193 @@
                 "_0" : {
                   "opacity" : 1,
                   "source" : "highlight"
+                }
+              }
+            },
+            {
+              "shadow" : {
+                "_0" : {
+                  "inset" : false,
+                  "shadow" : {
+                    "colour" : {
+                      "opacity" : 1,
+                      "source" : "lavenderShade"
+                    },
+                    "radius" : 0,
+                    "x" : 0,
+                    "y" : -1
+                  },
+                  "spread" : 0
+                }
+              }
+            },
+            {
+              "shadow" : {
+                "_0" : {
+                  "inset" : false,
+                  "shadow" : {
+                    "colour" : {
+                      "opacity" : 1,
+                      "source" : "indigo"
+                    },
+                    "radius" : 0,
+                    "x" : 0,
+                    "y" : 1
+                  },
+                  "spread" : 0
+                }
+              }
+            }
+          ],
+          "radius" : {
+            "uniform" : {
+              "_0" : 0
+            }
+          },
+          "scale" : "integer"
+        }
+      },
+      "menuItem" : {
+        "disabled" : {
+          "ink" : {
+            "opacity" : 1,
+            "source" : "gray88"
+          },
+          "layers" : [
+
+          ],
+          "radius" : {
+            "uniform" : {
+              "_0" : 0
+            }
+          },
+          "scale" : "integer"
+        },
+        "hover" : {
+          "edges" : {
+            "bottom" : [
+
+            ],
+            "leading" : [
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "lavenderShade"
+                },
+                "width" : 1
+              }
+            ],
+            "top" : [
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "lavenderShade"
+                },
+                "width" : 1
+              }
+            ],
+            "trailing" : [
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "indigo"
+                },
+                "width" : 1
+              }
+            ]
+          },
+          "ink" : {
+            "opacity" : 1,
+            "source" : "surface"
+          },
+          "layers" : [
+            {
+              "fill" : {
+                "_0" : {
+                  "opacity" : 1,
+                  "source" : "highlight"
+                }
+              }
+            }
+          ],
+          "radius" : {
+            "uniform" : {
+              "_0" : 0
+            }
+          },
+          "scale" : "integer"
+        }
+      },
+      "menuSeparator" : {
+        "rest" : {
+          "ink" : {
+            "opacity" : 1,
+            "source" : "ink"
+          },
+          "layers" : [
+            {
+              "gradient" : {
+                "_0" : {
+                  "angleDegrees" : 180,
+                  "kind" : "linear",
+                  "stops" : [
+                    {
+                      "colour" : {
+                        "opacity" : 0,
+                        "source" : "background"
+                      },
+                      "position" : 0
+                    },
+                    {
+                      "colour" : {
+                        "opacity" : 0,
+                        "source" : "background"
+                      },
+                      "position" : 0.3333333333333333
+                    },
+                    {
+                      "colour" : {
+                        "opacity" : 1,
+                        "source" : "gray88"
+                      },
+                      "position" : 0.3333333333333333
+                    },
+                    {
+                      "colour" : {
+                        "opacity" : 1,
+                        "source" : "gray88"
+                      },
+                      "position" : 0.5
+                    },
+                    {
+                      "colour" : {
+                        "opacity" : 1,
+                        "source" : "surface"
+                      },
+                      "position" : 0.5
+                    },
+                    {
+                      "colour" : {
+                        "opacity" : 1,
+                        "source" : "surface"
+                      },
+                      "position" : 0.6666666666666666
+                    },
+                    {
+                      "colour" : {
+                        "opacity" : 0,
+                        "source" : "background"
+                      },
+                      "position" : 0.6666666666666666
+                    },
+                    {
+                      "colour" : {
+                        "opacity" : 0,
+                        "source" : "background"
+                      },
+                      "position" : 1
+                    }
+                  ]
                 }
               }
             }

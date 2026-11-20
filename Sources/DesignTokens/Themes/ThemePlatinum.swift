@@ -29,7 +29,11 @@ public extension Theme {
     /// column at the left and a `#999999` one at the right; titles start 43 px in after the apple and are 15 px apart, so each carries 8 px.
     /// The highlighted title is the lavender `#5454B3` with white text, measured on a live Mac OS 8.0 (the captures had the highlight set to black and white).
     private static var platinumMenus: MenuMetrics {
-        MenuMetrics(barHeight: 20, barInset: Insets(top: 1, leading: 1, bottom: 2, trailing: 1), itemHeight: 20, itemPadding: 8)
+        // a menu (File, held open on a live Mac OS 8.0): 150 px between its black outlines, rows of 16 px whose text starts 19 px in (room for a check
+        // mark) and ends 13 px short of the edge, a separator of 6 px; the rows sit inside the 1 px outline and cover the white and grey lines beside them
+        MenuMetrics(barHeight: 20, barInset: Insets(top: 1, leading: 1, bottom: 2, trailing: 1), itemHeight: 16, itemPadding: 8, menuWidth: 150,
+                    menuInset: Insets(top: 1, leading: 1, bottom: 1, trailing: 1), itemInset: Insets(top: 0, leading: 19, bottom: 0, trailing: 13),
+                    separatorHeight: 6)
     }
 
     /// Measured from the Appearance window of the Mac OS 8.0 capture: the bar is 22 rows (black and white above, #999999 and black below),
@@ -71,7 +75,7 @@ public extension Theme {
                      "highlight": B.adaptive(0x5454B3),
                      // the scroll bar thumb's body and its shaded edge
                      "lavender": B.adaptive(0xB3B3FF), "lavenderShade": B.adaptive(0x8787DA),
-                     "navy": B.adaptive(0x000077)])
+                     "navy": B.adaptive(0x000077), "indigo": B.adaptive(0x0000A5)])
     }
 
     /// The control surfaces, in logical pixels.
@@ -208,6 +212,24 @@ public extension Theme {
         let inactiveFrame = recipe(fill: "background", edges: Edges(top: [dim], leading: [dim], bottom: [dim], trailing: [dim]), radius: 0)
         let blank = SurfaceRecipe(layers: [.fill(bg), .pattern(PatternSpec(literal: 1, 1, [bg]))], edges: nil, radius: .uniform(0), backdropBlur: nil,
                                   ink: ref("ink"), scale: .integer)
+        // The open menu, held open on a live Mac OS 8.0: black outside white on the top and leading edges and outside #B3B3B3 on the bottom and
+        // trailing, a one-pixel #3F3F3F shadow; a lit row is #5454B3 with a #8787DA top row and leading column and a #0000A5 trailing column; a
+        // lit title in the bar has a #8787DA row above and a #0000A5 row below it; a separator is a #A5A5A5 line over a white one in a 6 px row.
+        let menuEdges = Edges(top: [step("ink"), step("surface")], leading: [step("ink"), step("surface")],
+                              bottom: [step("ink"), step("gray99")], trailing: [step("ink"), step("gray99")])
+        let menuBox = SurfaceRecipe(layers: [.fill(bg), .shadow(ShadowLayer(shadow: ShadowSpec(colour: ref("gray22"), radius: 0, x: 1, y: 1), spread: 0))],
+                                    edges: menuEdges, radius: .uniform(0), backdropBlur: nil, ink: ref("ink"), scale: .integer)
+        let litRow = SurfaceRecipe(layers: [.fill(ref("highlight"))],
+                                   edges: Edges(top: [step("lavenderShade")], leading: [step("lavenderShade")], bottom: [], trailing: [step("indigo")]),
+                                   radius: .uniform(0), backdropBlur: nil, ink: W, scale: .integer)
+        let litTitle = SurfaceRecipe(layers: [.fill(ref("highlight")),
+                                              .shadow(ShadowLayer(shadow: ShadowSpec(colour: ref("lavenderShade"), radius: 0, x: 0, y: -1), spread: 0)),
+                                              .shadow(ShadowLayer(shadow: ShadowSpec(colour: ref("indigo"), radius: 0, x: 0, y: 1), spread: 0))],
+                                     edges: nil, radius: .uniform(0), backdropBlur: nil, ink: W, scale: .integer)
+        let clear = ColourReference(source: "background", opacity: 0)
+        let separatorStops: [(ColourReference, Double)] = [(clear, 0), (clear, 2.0 / 6), (ref("gray88"), 2.0 / 6), (ref("gray88"), 3.0 / 6),
+                                                           (W, 3.0 / 6), (W, 4.0 / 6), (clear, 4.0 / 6), (clear, 1)]
+        let separatorGround = GradientSpec(literalAngle: 180, separatorStops.map { GradientStop(colour: $0.0, position: $0.1) })
         let menuDim = SurfaceRecipe(layers: [], edges: nil, radius: .uniform(0), backdropBlur: nil, ink: ref("gray88"), scale: .integer)
         // The keyboard focus ring is chosen (the Mac OS draws none): two pixels of the accent outside the control.
         func focused(_ base: SurfaceRecipe) -> SurfaceRecipe {
@@ -219,7 +241,10 @@ public extension Theme {
         let fieldRest = recipe(fill: "surface", edges: outline, radius: 0)
         return SurfaceSet(recipes: [
             .menuBar: [.rest: recipe(fill: "background", edges: menuBarEdges, radius: 0)],
-            .menuItem: [.hover: recipe(fill: "highlight", ink: "surface", edges: nil, radius: 0), .disabled: menuDim],
+            .menu: [.rest: menuBox],
+            .menuSeparator: [.rest: SurfaceRecipe(layers: [.gradient(separatorGround)], edges: nil, radius: .uniform(0), backdropBlur: nil, ink: ref("ink"), scale: .integer)],
+            .menuBarItem: [.hover: litTitle, .disabled: menuDim],
+            .menuItem: [.hover: litRow, .disabled: menuDim],
             .scrollTrack: [.rest: recipe(fill: "shade", edges: trackEdges, radius: 0), .disabled: inactiveTrack],
             .scrollThumb: [.rest: thumb, .active: pressedThumb],
             .scrollGrip: [.rest: tileOnly(PatternSpec(literal: 8, 8, gripCells)), .active: tileOnly(PatternSpec(literal: 8, 8, pressedGripCells))],
