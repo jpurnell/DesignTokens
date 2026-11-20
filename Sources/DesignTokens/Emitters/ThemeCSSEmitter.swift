@@ -156,7 +156,11 @@ public enum ThemeCSSEmitter {
             for state in ComponentState.allCases {
                 let stateTails = tails(for: state)
                 guard let recipe = states[state], !stateTails.isEmpty else { continue }
-                let selector = classes.flatMap { cls in stateTails.map { "\(scope)\(cls.isEmpty ? "" : " " + cls)\($0)" } }.joined(separator: ",\n")
+                // an inactive window is its title bar marked disabled, so the bar's parts follow the bar rather than carrying the mark themselves
+                let barParts: Set<SurfaceRole> = [.titleStripes, .windowBox, .windowBoxZoom, .windowBoxMinimize]
+                let selector = state == .disabled && barParts.contains(role)
+                    ? classes.map { "\(scope) .dt-titlebar[aria-disabled=\"true\"] \($0)" }.joined(separator: ",\n")
+                    : classes.flatMap { cls in stateTails.map { "\(scope)\(cls.isEmpty ? "" : " " + cls)\($0)" } }.joined(separator: ",\n")
                 lines.append(selector + " {")
                 lines.append("  border: 0;")
                 // the recipe draws a disabled control whole, and a focus ring replaces the components stylesheet's outline

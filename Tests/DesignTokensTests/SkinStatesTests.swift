@@ -164,4 +164,39 @@ struct SkinStatesTests {
         let rule = try lastRule(css, "[data-theme-name=\"platinum\"] .dt-menubar__item[aria-selected=\"true\"]")
         #expect(rule.contains("background-color: var(--extra-highlight);") && rule.contains("color: var(--surface);"))
     }
+
+    // MARK: an inactive window, measured on a live Mac OS 8.0 (Infinite Mac)
+
+    @Test("an inactive Platinum window is flat #E7E7E7 with #777777 outlines, no stripes or boxes, and #878787 title text")
+    func platinumInactiveWindow() throws {
+        let surfaces = try #require(Theme.platinum.surfaces)
+        let grey = EdgeStep(literal: ref("gray77"), 1)
+        let bar = try #require(surfaces.recipes[.titleBar]?[.disabled])
+        #expect(bar.layers == [.fill(ref("background"))])
+        #expect(bar.ink == ref("gray87"))
+        #expect(bar.edges?.top == [grey] && bar.edges?.leading == [grey] && bar.edges?.bottom == [grey])
+        #expect(bar.edges?.trailing == [grey, grey])
+        let frame = try #require(surfaces.recipes[.window]?[.disabled])
+        #expect(frame.edges?.top == [grey] && frame.edges?.leading == [grey] && frame.edges?.bottom == [grey] && frame.edges?.trailing == [grey])
+        // the stripes and the boxes are painted out with the bar's own colour
+        let blank = [SurfaceLayer.fill(ref("background")), .pattern(PatternSpec(literal: 1, 1, [ref("background")]))]
+        for role in [SurfaceRole.titleStripes, .windowBox, .windowBoxZoom, .windowBoxMinimize] {
+            #expect(surfaces.recipes[role]?[.disabled]?.layers == blank, Comment(rawValue: "\(role)"))
+        }
+    }
+
+    @Test("an inactive window is a title bar marked aria-disabled; its stripes and boxes follow it")
+    func inactiveWindowCSS() throws {
+        let css = try ThemeCSSEmitter.emit(.platinum)
+        let bar = try lastRule(css, "[data-theme-name=\"platinum\"] .dt-titlebar:disabled")
+        #expect(bar.contains("background-color: var(--background);") && bar.contains("color: var(--extra-gray87);"))
+        #expect(css.contains("[data-theme-name=\"platinum\"] .dt-titlebar[aria-disabled=\"true\"],\n"))
+        for part in ["stripes", "box", "box--zoom", "box--minimize"] {
+            let rule = try lastRule(css, "[data-theme-name=\"platinum\"] .dt-titlebar[aria-disabled=\"true\"] .dt-titlebar__\(part)")
+            #expect(rule.contains("background-color: var(--background);"), Comment(rawValue: part))
+        }
+        for theme in [Theme.system7, .openstep, .swiss] {
+            #expect(!(try ThemeCSSEmitter.emit(theme)).contains(".dt-titlebar[aria-disabled"), "\(theme.id)")
+        }
+    }
 }

@@ -182,6 +182,15 @@ public extension Theme {
         let dimOutline = Edges(top: [step("gray88")], leading: [step("gray88")], bottom: [step("gray88")], trailing: [step("gray88")])
         let disabledButton = recipe(fill: "background", ink: "gray88", edges: dimOutline, radius: 3)
         let inactiveTrack = recipe(fill: "grayEE", edges: Edges(top: [step("ink")], leading: [], bottom: [step("ink")], trailing: []), radius: 0)
+        // An inactive window, measured on a live Mac OS 8.0 (Infinite Mac, 2026-11-19): the bar is flat #E7E7E7 inside #777777 lines (no white
+        // edge, no stripes, no boxes) and its title is #878787; the frame is #777777 where it was black. The parts the bar loses are painted out
+        // with its own colour, since a recipe cannot clear the tile its rest state draws.
+        let dim = step("gray77")
+        let inactiveBar = SurfaceRecipe(layers: [.fill(bg)], edges: Edges(top: [dim], leading: [dim], bottom: [dim], trailing: [dim, dim]),
+                                        radius: .uniform(0), backdropBlur: nil, ink: ref("gray87"), scale: .integer)
+        let inactiveFrame = recipe(fill: "background", edges: Edges(top: [dim], leading: [dim], bottom: [dim], trailing: [dim]), radius: 0)
+        let blank = SurfaceRecipe(layers: [.fill(bg), .pattern(PatternSpec(literal: 1, 1, [bg]))], edges: nil, radius: .uniform(0), backdropBlur: nil,
+                                  ink: ref("ink"), scale: .integer)
         let menuDim = SurfaceRecipe(layers: [], edges: nil, radius: .uniform(0), backdropBlur: nil, ink: ref("gray88"), scale: .integer)
         // The keyboard focus ring is chosen (the Mac OS draws none): two pixels of the accent outside the control.
         func focused(_ base: SurfaceRecipe) -> SurfaceRecipe {
@@ -201,13 +210,13 @@ public extension Theme {
                                 .disabled: tileOnly(PatternSpec(literal: 16, 16, arrowCells(baseColumn: 9, growsRight: false, inactive: true)))],
             .scrollArrowEnd: [.rest: tileOnly(PatternSpec(literal: 16, 16, arrowCells(baseColumn: 6, growsRight: true))),
                               .disabled: tileOnly(PatternSpec(literal: 16, 16, arrowCells(baseColumn: 6, growsRight: true, inactive: true)))],
-            .titleBar: [.rest: recipe(fill: "bar", edges: barEdges, radius: 0)],
-            .titleStripes: [.rest: tile(PatternSpec(literal: 1, 2, [W, ref("gray96")]))],
-            .windowBox: [.rest: tile(PatternSpec(literal: 13, 13, boxCells))],
-            .windowBoxZoom: [.rest: tile(PatternSpec(literal: 13, 13, zoomCells))],
-            .windowBoxMinimize: [.rest: tile(PatternSpec(literal: 13, 13, shadeCells))],
+            .titleBar: [.rest: recipe(fill: "bar", edges: barEdges, radius: 0), .disabled: inactiveBar],
+            .titleStripes: [.rest: tile(PatternSpec(literal: 1, 2, [W, ref("gray96")])), .disabled: blank],
+            .windowBox: [.rest: tile(PatternSpec(literal: 13, 13, boxCells)), .disabled: blank],
+            .windowBoxZoom: [.rest: tile(PatternSpec(literal: 13, 13, zoomCells)), .disabled: blank],
+            .windowBoxMinimize: [.rest: tile(PatternSpec(literal: 13, 13, shadeCells)), .disabled: blank],
             .desktop: [.rest: recipe(fill: "desktop", edges: nil, radius: 0)],
-            .window: [.rest: recipe(fill: "background", edges: outline, radius: 0)],
+            .window: [.rest: recipe(fill: "background", edges: outline, radius: 0), .disabled: inactiveFrame],
             .panel: [.rest: recipe(fill: "surface", edges: outline, radius: 0)],
             .button: [.rest: buttonRest, .active: recipe(fill: "gray87", ink: "surface", edges: pressed, radius: 3), .disabled: disabledButton, .focus: focused(buttonRest)],
             .buttonDefault: [.rest: buttonDefaultRest, .active: recipe(fill: "gray87", ink: "surface", edges: ringedPressed, radius: 5), .disabled: disabledButton,

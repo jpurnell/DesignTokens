@@ -188,6 +188,10 @@ content area is flat `#E7E7E7` with an etched separator (`#A5A5A5` over white); 
 and `#F3F3F3` that the theme draws flat. Not re-measured live: the inactive scroll bar's greys and the disabled button (tone-mapped by the same ramp,
 `#A5A5A5` and `#F3F3F3`), the sequential chart ramp, and text colours.
 
+## Inactive window, Platinum (live Mac OS 8.0, 2026-11-19)
+
+Read from Infinite HD with another window in front. The title bar column (22 rows): `#777777` line, 20 rows of flat `#E7E7E7`, `#777777` line; no white row, no `#B3B3B3` row, no stripes, no close or zoom boxes. The title text is `#878787`. The frame is `#777777` on every side (two columns at the right and two rows at the bottom, as the shadow), and a scroll bar's outline is `#777777` where an active window's is black. A scroll bar with nothing to scroll in an *active* window is different: it keeps the black outline over `#F3F3F3` (already modelled as the inactive track). Modelled as the `disabled` state of the bar, its stripes and boxes, and the frame; the inactive scroll bar's grey outline is not yet.
+
 ## Not measured yet
 
 - **Fixed-pitch type** (all three skins): Monaco 9 on the Macintosh, Ohlfs then Courier on NeXT are general knowledge and chosen, not read from a capture. A terminal or code window in a capture would settle the size and line.
