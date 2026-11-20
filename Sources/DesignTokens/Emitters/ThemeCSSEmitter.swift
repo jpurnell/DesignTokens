@@ -321,6 +321,18 @@ public enum ThemeCSSEmitter {
                 lines.append("}")
             }
         }
+        // a part held down (before the inactive rules, which win when a bar has nothing to scroll): the thumb, its grip and the arrows
+        let held: [(SurfaceRole, String)] = [(.scrollThumb, ".dt-scrollbar__thumb:active"), (.scrollGrip, ".dt-scrollbar__thumb:active .dt-scrollbar__grip"),
+                                             (.scrollArrowStart, ".dt-scrollbar__arrow--start:active"), (.scrollArrowEnd, ".dt-scrollbar__arrow--end:active")]
+        for (role, suffix) in held {
+            guard let recipe = surfaces.recipes[role]?[.active] else { continue }
+            for turned in [false, true] {
+                lines.append((turned ? "\(scope) .dt-scrollbar\(vertical) \(suffix)" : "\(scope) \(suffix)") + " {")
+                lines.append(contentsOf: SurfaceCSS.declarations(for: turned ? recipe.transposed : recipe, resolve: reference, literal: literal)
+                    .map { "  \($0);" })
+                lines.append("}")
+            }
+        }
         // an inactive bar (nothing to scroll): `aria-disabled="true"` on the bar redraws the parts that have a disabled recipe
         let inactive = "[aria-disabled=\"true\"]"
         for (role, suffix) in parts {

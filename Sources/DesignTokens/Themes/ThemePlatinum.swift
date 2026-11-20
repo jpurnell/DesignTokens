@@ -70,7 +70,8 @@ public extension Theme {
                      // the highlight of a menu title or row: the default Lavender highlight colour
                      "highlight": B.adaptive(0x5454B3),
                      // the scroll bar thumb's body and its shaded edge
-                     "lavender": B.adaptive(0xB3B3FF), "lavenderShade": B.adaptive(0x8787DA)])
+                     "lavender": B.adaptive(0xB3B3FF), "lavenderShade": B.adaptive(0x8787DA),
+                     "navy": B.adaptive(0x000077)])
     }
 
     /// The control surfaces, in logical pixels.
@@ -140,16 +141,25 @@ public extension Theme {
         let gripKey: [Character: ColourReference] = ["e": gEE, "q": lav, "p": light, "s": link]
         let gripRows = ["eqeqeqeq", "pspspsps", "pspspsps", "pspspsps", "pspspsps", "pspspsps", "pspspsps", "qsqsqsqs"]
         let gripCells = gripRows.flatMap { $0.map { gripKey[$0] ?? lav } }
+        // held down (live Mac OS 8.0), the thumb and its grip take each tone one step darker: #F3F3F3 > #DADAFF > #B3B3FF > #8787DA > #5454B3 > #000077
+        let pressedKey: [Character: ColourReference] = ["e": light, "q": ref("lavenderShade"), "p": lav, "s": ref("navy")]
+        let pressedGripCells = gripRows.flatMap { $0.map { pressedKey[$0] ?? ref("lavenderShade") } }
         // the track starts again just past the thumb: its sunken left edge (#777777 then #888888) is painted outside the thumb's right side, in the
         // rows between the thumb's black lines (a shadow shrunk by 1 px and moved right)
         let thumbBase = recipe(fill: "lavender", edges: thumbEdges, radius: 0)
-        let thumb = SurfaceRecipe(
-            layers: thumbBase.layers + [
-                .shadow(ShadowLayer(shadow: ShadowSpec(colour: ref("gray96"), radius: 0, x: 2, y: 0), spread: -1)),
-                .shadow(ShadowLayer(shadow: ShadowSpec(colour: ref("gray88"), radius: 0, x: 3, y: 0), spread: -1)),
-            ], edges: thumbBase.edges, radius: thumbBase.radius, backdropBlur: nil, ink: thumbBase.ink, scale: .integer)
+        func withTrack(_ base: SurfaceRecipe) -> SurfaceRecipe {
+            SurfaceRecipe(
+                layers: base.layers + [
+                    .shadow(ShadowLayer(shadow: ShadowSpec(colour: ref("gray96"), radius: 0, x: 2, y: 0), spread: -1)),
+                    .shadow(ShadowLayer(shadow: ShadowSpec(colour: ref("gray88"), radius: 0, x: 3, y: 0), spread: -1)),
+                ], edges: base.edges, radius: base.radius, backdropBlur: nil, ink: base.ink, scale: .integer)
+        }
+        let thumb = withTrack(thumbBase)
+        let pressedThumbEdges = Edges(top: [step("ink"), step("lavender")], leading: [step("ink"), step("lavender")],
+                                      bottom: [step("ink"), step("highlight")], trailing: [step("ink"), step("highlight")])
+        let pressedThumb = withTrack(recipe(fill: "lavenderShade", edges: pressedThumbEdges, radius: 0))
         // an arrow button: the bevel, then the triangle; the base column of the glyph and which way it grows
-        func arrowCells(baseColumn: Int, growsRight: Bool, inactive: Bool = false) -> [ColourReference] {
+        func arrowCells(baseColumn: Int, growsRight: Bool, inactive: Bool = false, pressed: Bool = false) -> [ColourReference] {
             var cells: [ColourReference] = []
             let widths = [1, 2, 3, 4, 4, 3, 2, 1]
             for row in 0..<16 {
@@ -164,6 +174,13 @@ public extension Theme {
                     // an inactive arrow's side toward the track is #555555 (the start arrow's right column, the end arrow's left), its two end pixels staying black
                     if inactive, col == (growsRight ? 0 : 15), row != 0, row != 15 { cells.append(ref("gray77")); continue }
                     if row == 0 || row == 15 || col == 0 || col == 15 { cells.append(k) }
+                    // held down (live Mac OS 8.0): #777777 down the top and leading, #B3B3B3 at the bottom and trailing, on #969696
+                    else if pressed {
+                        if row == 1 { cells.append(col == 14 ? ref("gray96") : ref("gray77")) }
+                        else if col == 1 { cells.append(row == 14 ? ref("gray96") : ref("gray77")) }
+                        else if row == 14 || col == 14 { cells.append(ref("gray99")) }
+                        else { cells.append(ref("gray96")) }
+                    }
                     else if inactive { cells.append(ref("grayEE")) }
                     else if row == 1 { cells.append(col == 14 ? bg : W) }
                     else if row == 14 { cells.append(col == 1 ? bg : ref("grayBB")) }
@@ -204,12 +221,14 @@ public extension Theme {
             .menuBar: [.rest: recipe(fill: "background", edges: menuBarEdges, radius: 0)],
             .menuItem: [.hover: recipe(fill: "highlight", ink: "surface", edges: nil, radius: 0), .disabled: menuDim],
             .scrollTrack: [.rest: recipe(fill: "shade", edges: trackEdges, radius: 0), .disabled: inactiveTrack],
-            .scrollThumb: [.rest: thumb],
-            .scrollGrip: [.rest: tileOnly(PatternSpec(literal: 8, 8, gripCells))],
+            .scrollThumb: [.rest: thumb, .active: pressedThumb],
+            .scrollGrip: [.rest: tileOnly(PatternSpec(literal: 8, 8, gripCells)), .active: tileOnly(PatternSpec(literal: 8, 8, pressedGripCells))],
             .scrollArrowStart: [.rest: tileOnly(PatternSpec(literal: 16, 16, arrowCells(baseColumn: 9, growsRight: false))),
-                                .disabled: tileOnly(PatternSpec(literal: 16, 16, arrowCells(baseColumn: 9, growsRight: false, inactive: true)))],
+                                .disabled: tileOnly(PatternSpec(literal: 16, 16, arrowCells(baseColumn: 9, growsRight: false, inactive: true))),
+                                .active: tileOnly(PatternSpec(literal: 16, 16, arrowCells(baseColumn: 9, growsRight: false, pressed: true)))],
             .scrollArrowEnd: [.rest: tileOnly(PatternSpec(literal: 16, 16, arrowCells(baseColumn: 6, growsRight: true))),
-                              .disabled: tileOnly(PatternSpec(literal: 16, 16, arrowCells(baseColumn: 6, growsRight: true, inactive: true)))],
+                              .disabled: tileOnly(PatternSpec(literal: 16, 16, arrowCells(baseColumn: 6, growsRight: true, inactive: true))),
+                              .active: tileOnly(PatternSpec(literal: 16, 16, arrowCells(baseColumn: 6, growsRight: true, pressed: true)))],
             .titleBar: [.rest: recipe(fill: "bar", edges: barEdges, radius: 0), .disabled: inactiveBar],
             .titleStripes: [.rest: tile(PatternSpec(literal: 1, 2, [W, ref("gray96")])), .disabled: blank],
             .windowBox: [.rest: tile(PatternSpec(literal: 13, 13, boxCells)), .disabled: blank],

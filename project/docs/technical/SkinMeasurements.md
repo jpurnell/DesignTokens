@@ -192,6 +192,10 @@ and `#F3F3F3` that the theme draws flat. Not re-measured live: the inactive scro
 
 Read from Infinite HD with another window in front. The title bar column (22 rows): `#777777` line, 20 rows of flat `#E7E7E7`, `#777777` line; no white row, no `#B3B3B3` row, no stripes, no close or zoom boxes. The title text is `#878787`. The frame is `#777777` on every side (two columns at the right and two rows at the bottom, as the shadow), and a scroll bar's outline is `#777777` where an active window's is black. A scroll bar with nothing to scroll in an *active* window is different: it keeps the black outline over `#F3F3F3` (already modelled as the inactive track). Modelled as the `disabled` state of the bar, its stripes and boxes, and the frame; the inactive scroll bar's grey outline is not yet.
 
+## Pressed scroll bar parts, Platinum (live Mac OS 8.0, 2026-11-19)
+
+Held with synthetic pointer events on a resized Infinite HD window (read with `getImageData`; the emulator draws its cursor into the canvas, so cells under it were skipped). **Down arrow**, 16 x 16 at rest: black outline, white top and leading, `#CDCDCD` bottom and trailing, `#E7E7E7` fill. Pressed: black outline, `#777777` on the whole top row and leading column, `#969696` fill, `#B3B3B3` bottom row and trailing column, with `#969696` at the two corners where the lines meet; the black triangle is unchanged. The tile reads the same turned about its diagonal, so one tile serves both directions. **Thumb**: every tone moves one step darker, so highlight `#DADAFF` becomes `#B3B3FF`, fill `#B3B3FF` becomes `#8787DA`, shade `#8787DA` becomes `#5454B3`; in the grip `#F3F3F3`, `#DADAFF`, `#B3B3FF` and `#5454B3` become `#DADAFF`, `#B3B3FF`, `#8787DA` and `#000077`.
+
 ## Not measured yet
 
 - **Fixed-pitch type** (all three skins): Monaco 9 on the Macintosh, Ohlfs then Courier on NeXT are general knowledge and chosen, not read from a capture. A terminal or code window in a capture would settle the size and line.

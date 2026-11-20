@@ -199,4 +199,73 @@ struct SkinStatesTests {
             #expect(!(try ThemeCSSEmitter.emit(theme)).contains(".dt-titlebar[aria-disabled"), "\(theme.id)")
         }
     }
+
+    // MARK: pressed scroll bar parts, held on a live Mac OS 8.0 (Infinite Mac)
+
+    private func tile(_ theme: Theme, _ role: SurfaceRole, _ state: ComponentState) throws -> PatternSpec {
+        let recipe = try #require(theme.surfaces?.recipes[role]?[state], Comment(rawValue: "\(role) \(state)"))
+        guard case .pattern(let spec)? = recipe.layers.last else { throw SurfaceError.cellSize(0) }
+        return spec
+    }
+
+    @Test("a pressed scroll arrow is 16 x 16: black outline, #777777 down the top and leading, #969696 fill, #B3B3B3 at the bottom and trailing, black triangle")
+    func pressedArrow() throws {
+        let key: [Character: String] = ["K": "ink", "7": "gray77", "9": "gray96", "B": "gray99"]
+        for (role, base, growsRight) in [(SurfaceRole.scrollArrowEnd, 6, true), (.scrollArrowStart, 9, false)] {
+            var rows: [[Character]] = []
+            for row in 0..<16 {
+                switch row {
+                case 0, 15: rows.append(Array(repeating: "K", count: 16))
+                case 1: rows.append(["K"] + Array(repeating: "7", count: 13) + ["9", "K"])
+                case 14: rows.append(["K", "9"] + Array(repeating: "B", count: 13) + ["K"])
+                default: rows.append(["K", "7"] + Array(repeating: "9", count: 12) + ["B", "K"])
+                }
+            }
+            let widths = [1, 2, 3, 4, 4, 3, 2, 1]
+            for (index, width) in widths.enumerated() {
+                let columns = growsRight ? Array(base..<base + width) : Array((base - width + 1)...base)
+                for column in columns { rows[4 + index][column] = "K" }
+            }
+            let expected = rows.flatMap { $0 }.map { ColourReference(source: key[$0] ?? "?") }
+            let pressed = try tile(.platinum, role, .active)
+            #expect(pressed.width == 16 && pressed.height == 16, Comment(rawValue: "\(role)"))
+            #expect(pressed.cells == expected, Comment(rawValue: "\(role)"))
+        }
+    }
+
+    @Test("a pressed thumb is the same drawing one step darker down the lavender ramp, and its grip with it")
+    func pressedThumb() throws {
+        let surfaces = try #require(Theme.platinum.surfaces)
+        let thumb = try #require(surfaces.recipes[.scrollThumb]?[.active])
+        let step = { (name: String) in EdgeStep(literal: ColourReference(source: name), 1) }
+        #expect(thumb.layers.first == .fill(ref("lavenderShade")))
+        #expect(thumb.edges?.top == [step("ink"), step("lavender")] && thumb.edges?.leading == [step("ink"), step("lavender")])
+        #expect(thumb.edges?.bottom == [step("ink"), step("highlight")] && thumb.edges?.trailing == [step("ink"), step("highlight")])
+        // the grip's four tones: #F3F3F3 > #DADAFF, #B3B3FF > #8787DA, #DADAFF > #B3B3FF, #5454B3 > #000077
+        let rest = try tile(.platinum, .scrollGrip, .rest)
+        let pressed = try tile(.platinum, .scrollGrip, .active)
+        let shift: [ColourReference: ColourReference] = [ref("grayEE"): ref("selection"), ref("lavender"): ref("lavenderShade"),
+                                                         ref("selection"): ref("lavender"), ref("link"): ref("navy")]
+        #expect(pressed.width == 8 && pressed.height == 8)
+        #expect(pressed.cells == rest.cells.map { shift[$0] ?? $0 })
+        #expect(Theme.platinum.palette.extras["navy"]?.light.hex == "#000077")
+    }
+
+    @Test("pressed parts are drawn by :active, turned for a vertical bar, and an inactive bar still wins; skins without a measurement write none")
+    func pressedScrollCSS() throws {
+        let css = try ThemeCSSEmitter.emit(.platinum)
+        let scope = "[data-theme-name=\"platinum\"]"
+        for part in ["thumb:active", "thumb:active .dt-scrollbar__grip", "arrow--start:active", "arrow--end:active"] {
+            let rule = try lastRule(css, "\(scope) .dt-scrollbar__\(part)")
+            #expect(rule.contains { $0.hasPrefix("background") }, Comment(rawValue: part))
+            let turned = try lastRule(css, "\(scope) .dt-scrollbar[data-orientation=\"vertical\"] .dt-scrollbar__\(part)")
+            #expect(turned.contains { $0.hasPrefix("background") }, Comment(rawValue: part))
+        }
+        let pressedAt = try #require(css.range(of: "\(scope) .dt-scrollbar__arrow--end:active {"))
+        let inactiveAt = try #require(css.range(of: "\(scope) .dt-scrollbar[aria-disabled=\"true\"] .dt-scrollbar__arrow--end {"))
+        #expect(pressedAt.lowerBound < inactiveAt.lowerBound)
+        for theme in [Theme.system7, .openstep, .swiss] {
+            #expect(!(try ThemeCSSEmitter.emit(theme)).contains(".dt-scrollbar__thumb:active"), "\(theme.id)")
+        }
+    }
 }
