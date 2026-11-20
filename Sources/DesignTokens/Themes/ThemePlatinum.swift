@@ -11,8 +11,8 @@ public extension Theme {
     /// `#000000 #E7E7E7 #FFFFFF` on the top and left and `#000000 #969696 #C0C0C0` on the bottom and right, over a flat `#E7E7E7` body; the
     /// default button has a second three-pixel frame (`#000000 #E7E7E7 #C0C0C0` top and left, `#000000 #969696 #C0C0C0` bottom and right)
     /// outside that, its corner stepping in 4 to 5 px; a panel's body is `#E7E7E7`; the accent and highlight are the lavender `#5454B3`;
-    /// a text field is a 1 px black outline on white. A window's frame area carries a fine dither of `#DADADA`, `#E7E7E7` and `#F3F3F3` that the
-    /// theme draws flat.
+    /// a text field is a 1 px black outline on white. A window's frame is a flat `#DADADA` ring between bevel lines (the "dither" the 256-colour
+    /// screenshots suggested is not there on the live system).
     ///
     /// **Not measured, chosen here:** the focus ring, the disabled field and default button,
     /// the window frame (a plain 1 px outline; the title bar is measured, see `platinumTitleBar`) and the pressed state of the title bar's boxes,
@@ -202,14 +202,24 @@ public extension Theme {
         // Assumed: a disabled default button loses its ring, and a disabled field dims only its text.
         let dimOutline = Edges(top: [step("gray88")], leading: [step("gray88")], bottom: [step("gray88")], trailing: [step("gray88")])
         let disabledButton = recipe(fill: "background", ink: "gray88", edges: dimOutline, radius: 3)
-        let inactiveTrack = recipe(fill: "grayEE", edges: Edges(top: [step("ink")], leading: [], bottom: [step("ink")], trailing: []), radius: 0)
+        let inactiveTrack = recipe(fill: "grayEE", edges: Edges(top: [step("gray77")], leading: [], bottom: [step("gray77")], trailing: []), radius: 0)
         // An inactive window, measured on a live Mac OS 8.0 (Infinite Mac, 2026-11-19): the bar is flat #E7E7E7 inside #777777 lines (no white
         // edge, no stripes, no boxes) and its title is #878787; the frame is #777777 where it was black. The parts the bar loses are painted out
         // with its own colour, since a recipe cannot clear the tile its rest state draws.
         let dim = step("gray77")
         let inactiveBar = SurfaceRecipe(layers: [.fill(bg)], edges: Edges(top: [dim], leading: [dim], bottom: [dim], trailing: [dim, dim]),
                                         radius: .uniform(0), backdropBlur: nil, ink: ref("gray87"), scale: .integer)
-        let inactiveFrame = recipe(fill: "background", edges: Edges(top: [dim], leading: [dim], bottom: [dim], trailing: [dim]), radius: 0)
+        let inactiveRing = [dim, step("background"), step("background"), step("background"), step("background")]
+        let inactiveFrame = SurfaceRecipe(layers: [.fill(bg), .shadow(ShadowLayer(shadow: ShadowSpec(colour: ref("gray77"), radius: 0, x: 1, y: 1), spread: 0))],
+                                          edges: Edges(top: [dim], leading: inactiveRing, bottom: inactiveRing, trailing: inactiveRing),
+                                          radius: .uniform(0), backdropBlur: nil, ink: ref("ink"), scale: .integer)
+        // The active window's frame, measured on the same session: outside in, black, white, two #DADADA and #B3B3B3 on the leading side; the bottom
+        // and trailing sides reverse the light; the top is the title bar's own black and white; a one-pixel black shadow falls down and right.
+        let lit = [step("ink"), step("surface"), step("bar"), step("bar"), step("gray99")]
+        let darkSide = [step("ink"), step("gray99"), step("bar"), step("bar"), step("surface")]
+        let activeFrame = SurfaceRecipe(layers: [.fill(ref("bar")), .shadow(ShadowLayer(shadow: ShadowSpec(colour: ref("ink"), radius: 0, x: 1, y: 1), spread: 0))],
+                                        edges: Edges(top: [step("ink"), step("surface")], leading: lit, bottom: darkSide, trailing: darkSide),
+                                        radius: .uniform(0), backdropBlur: nil, ink: ref("ink"), scale: .integer)
         let blank = SurfaceRecipe(layers: [.fill(bg), .pattern(PatternSpec(literal: 1, 1, [bg]))], edges: nil, radius: .uniform(0), backdropBlur: nil,
                                   ink: ref("ink"), scale: .integer)
         // The open menu, held open on a live Mac OS 8.0: black outside white on the top and leading edges and outside #B3B3B3 on the bottom and
@@ -260,7 +270,7 @@ public extension Theme {
             .windowBoxZoom: [.rest: tile(PatternSpec(literal: 13, 13, zoomCells)), .disabled: blank],
             .windowBoxMinimize: [.rest: tile(PatternSpec(literal: 13, 13, shadeCells)), .disabled: blank],
             .desktop: [.rest: recipe(fill: "desktop", edges: nil, radius: 0)],
-            .window: [.rest: recipe(fill: "background", edges: outline, radius: 0), .disabled: inactiveFrame],
+            .window: [.rest: activeFrame, .disabled: inactiveFrame],
             .panel: [.rest: recipe(fill: "surface", edges: outline, radius: 0)],
             .button: [.rest: buttonRest, .active: recipe(fill: "gray87", ink: "surface", edges: pressed, radius: 3), .disabled: disabledButton, .focus: focused(buttonRest)],
             .buttonDefault: [.rest: buttonDefaultRest, .active: recipe(fill: "gray87", ink: "surface", edges: ringedPressed, radius: 5), .disabled: disabledButton,

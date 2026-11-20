@@ -9516,7 +9516,7 @@
               {
                 "colour" : {
                   "opacity" : 1,
-                  "source" : "ink"
+                  "source" : "gray77"
                 },
                 "width" : 1
               }
@@ -9528,7 +9528,7 @@
               {
                 "colour" : {
                   "opacity" : 1,
-                  "source" : "ink"
+                  "source" : "gray77"
                 },
                 "width" : 1
               }
@@ -9924,6 +9924,34 @@
                   "source" : "gray77"
                 },
                 "width" : 1
+              },
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "background"
+                },
+                "width" : 1
+              },
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "background"
+                },
+                "width" : 1
+              },
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "background"
+                },
+                "width" : 1
+              },
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "background"
+                },
+                "width" : 1
               }
             ],
             "leading" : [
@@ -9931,6 +9959,34 @@
                 "colour" : {
                   "opacity" : 1,
                   "source" : "gray77"
+                },
+                "width" : 1
+              },
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "background"
+                },
+                "width" : 1
+              },
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "background"
+                },
+                "width" : 1
+              },
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "background"
+                },
+                "width" : 1
+              },
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "background"
                 },
                 "width" : 1
               }
@@ -9951,6 +10007,34 @@
                   "source" : "gray77"
                 },
                 "width" : 1
+              },
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "background"
+                },
+                "width" : 1
+              },
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "background"
+                },
+                "width" : 1
+              },
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "background"
+                },
+                "width" : 1
+              },
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "background"
+                },
+                "width" : 1
               }
             ]
           },
@@ -9964,6 +10048,23 @@
                 "_0" : {
                   "opacity" : 1,
                   "source" : "background"
+                }
+              }
+            },
+            {
+              "shadow" : {
+                "_0" : {
+                  "inset" : false,
+                  "shadow" : {
+                    "colour" : {
+                      "opacity" : 1,
+                      "source" : "gray77"
+                    },
+                    "radius" : 0,
+                    "x" : 1,
+                    "y" : 1
+                  },
+                  "spread" : 0
                 }
               }
             }
@@ -9984,6 +10085,34 @@
                   "source" : "ink"
                 },
                 "width" : 1
+              },
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "gray99"
+                },
+                "width" : 1
+              },
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "bar"
+                },
+                "width" : 1
+              },
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "bar"
+                },
+                "width" : 1
+              },
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "surface"
+                },
+                "width" : 1
               }
             ],
             "leading" : [
@@ -9991,6 +10120,34 @@
                 "colour" : {
                   "opacity" : 1,
                   "source" : "ink"
+                },
+                "width" : 1
+              },
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "surface"
+                },
+                "width" : 1
+              },
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "bar"
+                },
+                "width" : 1
+              },
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "bar"
+                },
+                "width" : 1
+              },
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "gray99"
                 },
                 "width" : 1
               }
@@ -10002,6 +10159,13 @@
                   "source" : "ink"
                 },
                 "width" : 1
+              },
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "surface"
+                },
+                "width" : 1
               }
             ],
             "trailing" : [
@@ -10009,6 +10173,34 @@
                 "colour" : {
                   "opacity" : 1,
                   "source" : "ink"
+                },
+                "width" : 1
+              },
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "gray99"
+                },
+                "width" : 1
+              },
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "bar"
+                },
+                "width" : 1
+              },
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "bar"
+                },
+                "width" : 1
+              },
+              {
+                "colour" : {
+                  "opacity" : 1,
+                  "source" : "surface"
                 },
                 "width" : 1
               }
@@ -10023,7 +10215,24 @@
               "fill" : {
                 "_0" : {
                   "opacity" : 1,
-                  "source" : "background"
+                  "source" : "bar"
+                }
+              }
+            },
+            {
+              "shadow" : {
+                "_0" : {
+                  "inset" : false,
+                  "shadow" : {
+                    "colour" : {
+                      "opacity" : 1,
+                      "source" : "ink"
+                    },
+                    "radius" : 0,
+                    "x" : 1,
+                    "y" : 1
+                  },
+                  "spread" : 0
                 }
               }
             }

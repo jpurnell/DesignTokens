@@ -51,12 +51,12 @@ struct SkinStatesTests {
         }
     }
 
-    @Test("Platinum's inactive scroll bar: flat #F3F3F3 with black outlines, arrows without a bevel and with #A5A5A5 triangles")
+    @Test("Platinum's inactive scroll bar: flat #F3F3F3 with #777777 outlines, arrows without a bevel and with #A5A5A5 triangles")
     func platinumInactiveScrollBar() throws {
         let surfaces = try #require(Theme.platinum.surfaces)
         let track = try #require(surfaces.recipes[.scrollTrack]?[.disabled])
         #expect(track.layers == [.fill(ref("grayEE"))])
-        #expect(track.edges?.top == [EdgeStep(literal: ref("ink"), 1)] && track.edges?.bottom == [EdgeStep(literal: ref("ink"), 1)])
+        #expect(track.edges?.top == [EdgeStep(literal: ref("gray77"), 1)] && track.edges?.bottom == [EdgeStep(literal: ref("gray77"), 1)])
         for role in [SurfaceRole.scrollArrowStart, .scrollArrowEnd] {
             let recipe = try #require(surfaces.recipes[role]?[.disabled], Comment(rawValue: "\(role)"))
             guard case .pattern(let tile)? = recipe.layers.last else { throw SurfaceError.cellSize(0) }
@@ -177,12 +177,34 @@ struct SkinStatesTests {
         #expect(bar.edges?.top == [grey] && bar.edges?.leading == [grey] && bar.edges?.bottom == [grey])
         #expect(bar.edges?.trailing == [grey, grey])
         let frame = try #require(surfaces.recipes[.window]?[.disabled])
-        #expect(frame.edges?.top == [grey] && frame.edges?.leading == [grey] && frame.edges?.bottom == [grey] && frame.edges?.trailing == [grey])
+        let flat = [grey] + Array(repeating: EdgeStep(literal: ref("background"), 1), count: 4)
+        let dimShadow = frame.layers.compactMap { layer -> ShadowLayer? in
+            if case .shadow(let s) = layer { return s } else { return nil }
+        }
+        #expect(dimShadow.count == 1 && dimShadow[0].shadow.colour == ref("gray77") && dimShadow[0].shadow.x == 1 && dimShadow[0].shadow.y == 1)
+        #expect(frame.edges?.top == [grey] && frame.edges?.leading == flat && frame.edges?.bottom == flat && frame.edges?.trailing == flat)
         // the stripes and the boxes are painted out with the bar's own colour
         let blank = [SurfaceLayer.fill(ref("background")), .pattern(PatternSpec(literal: 1, 1, [ref("background")]))]
         for role in [SurfaceRole.titleStripes, .windowBox, .windowBoxZoom, .windowBoxMinimize] {
             #expect(surfaces.recipes[role]?[.disabled]?.layers == blank, Comment(rawValue: "\(role)"))
         }
+    }
+
+    @Test("an active Platinum window frame is the measured five-pixel bevel with a one-pixel shadow, not a dither")
+    func platinumWindowFrame() throws {
+        let surfaces = try #require(Theme.platinum.surfaces)
+        let frame = try #require(surfaces.recipes[.window]?[.rest])
+        func steps(_ names: [String]) -> [EdgeStep] { names.map { EdgeStep(literal: ref($0), 1) } }
+        // live Mac OS 8.0: outside in, black, white, two #DADADA, #B3B3B3 on the leading side; the bottom and trailing sides reverse the light
+        #expect(frame.edges?.leading == steps(["ink", "surface", "bar", "bar", "gray99"]))
+        #expect(frame.edges?.bottom == steps(["ink", "gray99", "bar", "bar", "surface"]))
+        #expect(frame.edges?.trailing == steps(["ink", "gray99", "bar", "bar", "surface"]))
+        #expect(frame.edges?.top == steps(["ink", "surface"]))
+        #expect(frame.layers.contains(.fill(ref("bar"))))
+        let shadow = frame.layers.compactMap { layer -> ShadowLayer? in
+            if case .shadow(let s) = layer { return s } else { return nil }
+        }
+        #expect(shadow.count == 1 && shadow[0].shadow.x == 1 && shadow[0].shadow.y == 1 && shadow[0].shadow.colour == ref("ink"))
     }
 
     @Test("an inactive window is a title bar marked aria-disabled; its stripes and boxes follow it")
