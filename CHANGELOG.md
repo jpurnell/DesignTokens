@@ -2,7 +2,9 @@
 
 ## [Unreleased]
 
-Skins merged from `feature/skins-model`; nothing here is tagged yet. A package that depends on DesignTokens must allow swift-crypto 5.1.2 or later (the tests use it on Linux).
+## [0.15.0] - 2026-11-24
+
+Skins, platform isolation and the swift-crypto minimum. Source-breaking for `ChromeBlogFetcher` (now in `DesignTokensChrome`), so a minor bump. A package that depends on DesignTokens must allow swift-crypto 5.1.2 or later (the tests use it on Linux).
 
 ### Changed
 - **Browser floor for the theme files is now Chrome 111, Edge 111, Safari 16.2, Firefox 113** (it was Chrome 96 for the theme files alone; a page linking `components.css` already needed 111). OPENSTEP's dock tile shade is black at 40%, which the emitter writes as `color-mix()`; the BrowserSupport table lists `color-mix()` for themes and components, and the README says so.
@@ -665,7 +667,8 @@ Additive. `Generated/tokens.css` and `tokens.json` are byte-identical to 0.3.0 (
   selectors honour Bootstrap's `data-bs-theme` as well as `data-theme`.
 - Palette tests: fixed order (validated for adjacency and colour-vision separation; fails the lightness band for the slots listed under 0.4.0), adjacent OKLab distance of at least 15, contrast of label on background.
 
-[Unreleased]: https://github.com/jpurnell/DesignTokens/compare/0.14.0...HEAD
+[Unreleased]: https://github.com/jpurnell/DesignTokens/compare/0.15.0...HEAD
+[0.15.0]: https://github.com/jpurnell/DesignTokens/compare/0.14.0...0.15.0
 [0.14.0]: https://github.com/jpurnell/DesignTokens/compare/0.13.0...0.14.0
 [0.13.0]: https://github.com/jpurnell/DesignTokens/compare/0.12.0...0.13.0
 [0.12.0]: https://github.com/jpurnell/DesignTokens/compare/0.11.2...0.12.0
