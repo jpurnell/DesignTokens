@@ -2,13 +2,11 @@
 
 ## [Unreleased]
 
+Skins merged from `feature/skins-model`; nothing here is tagged yet. A package that depends on DesignTokens must allow swift-crypto 5.1.2 or later (the tests use it on Linux).
+
 ### Changed
 - **Browser floor for the theme files is now Chrome 111, Edge 111, Safari 16.2, Firefox 113** (it was Chrome 96 for the theme files alone; a page linking `components.css` already needed 111). OPENSTEP's dock tile shade is black at 40%, which the emitter writes as `color-mix()`; the BrowserSupport table lists `color-mix()` for themes and components, and the README says so.
-
-### Changed
 - **Platinum is re-baselined to the live 24-bit Mac OS 8.0** (Infinite Mac, 2026-11-19): the first rounds read a 256-colour screenshot, so every Platinum colour had been the nearest 8-bit one. Mapped use by use against the live pixels (same tiles, cell for cell): window and button face `#DDDDDD` to `#E7E7E7`, title bar `#CCCCCC` to `#DADADA`, bevel shade `#AAAAAA` to `#C0C0C0`, the dark shade `#777777` to `#969696` (a new `gray96`, since `muted` is also the secondary text colour), `gray88` `#888888` to `#A5A5A5`, `gray99` to `#B3B3B3`, `grayBB` to `#CDCDCD`, `grayEE` to `#F3F3F3`, `gray22` to `#3F3F3F`, the thumb's `#9999FF`, `#CCCCFF`, `#6666CC` to `#B3B3FF`, `#DADAFF`, `#8787DA` (new `lavenderShade`), the accent and link to `#5454B3`, and the desktop to `#B3B3DA`. The pressed button uses its measured `#666666`, `#777777` and `#878787`. The recipes' structure is unchanged; a rendered button, title bar and scroll track now match the live pixel profiles exactly. The ledger's sequential-ramp finding is 1.24 (was 1.13) against the new body colour. The sequential chart ramp and the series colour are unchanged.
-
-### Changed
 - **swift-crypto requirement is now `from: "5.1.2"`** (was `3.0.0`), the stack-wide minimum. It is used only by the tests, on Linux, but a package that depends on DesignTokens must itself allow swift-crypto 5.1.2 or later. Run `swift package reset` before resolving in a checkout that has a 3.x build.
 
 ### Added (skins: surface recipes, wired into themes)
