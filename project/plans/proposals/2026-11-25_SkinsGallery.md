@@ -191,3 +191,23 @@ DocC for `GalleryEmitter` and the new `GeneratedFormat` case; a README section "
 2. **Intended home: a top-line header entry on `www.justinpurnell.com`** (an Ignite static site), served as its own standalone page under a path such as `/skins/`, not inside the site's layout. Requirements this adds: relative links only; the CSS served from the same origin as the page (the appearance forcing in 3.4 reads the stylesheets, which a cross-origin host would block); no server, no build step on the site beyond copying `Generated/gallery/`. Publishing stays the owner's call.
 3. **Isolation from the Princeton 2000 reunions site** (and every other consumer): none of them adopts this until it is well tested. So the work must not touch what they consume: no change to any existing `Generated/` file (the existing goldens prove it), no change to `Theme.princeton`, `components.css` or the public API except the additive `GeneratedFormat.gallery` case, and no new dependency. Reunions pins a tagged release; the gallery ships in a tag it does not have to take, and the adoption note in the release says so. The site on `justinpurnell.com` is the only adopter until the owner says otherwise.
 4. **SwiftWASM** (owner asked 2026-11-25): a later, optional live mode, not the base. Same rule: it is a separate target that nothing else depends on, behind a spike that first proves the core builds for `wasm32` and measures the binary; installing the Swift Wasm SDK needs the owner's go-ahead.
+
+## Spike results: SwiftWASM, 2026-11-25
+
+Toolchain: swift.org Swift 6.4.3 through `swiftly` (the owner's default stays 6.4.1; every command selected `+6.4.3`) and `swift-6.4.3-RELEASE_wasm` (checksum verified). There is no 6.4.2 Wasm SDK. Work was done in a throwaway worktree on branch `spike/wasm` (nothing merged, nothing pushed); `main` was not touched.
+
+| Question | Result |
+|---|---|
+| Does the core library build for `wasm32`? | **Yes, unmodified**, first try, debug and release (8.6 s and 40 s). All 63 source files, `import Foundation` and all. |
+| Does it run, and is the output right? | **Yes.** A 12-line probe executable under Node's WASI emitted `ThemeCSSEmitter.emit` for **Platinum, System 7, OPENSTEP and Swiss, byte-identical** to the committed `Generated/themes/<id>.css` (312,552 / 15,915 / 143,760 / 13,837 bytes). Not yet run in a browser. |
+| How big? | **Full Foundation is too heavy:** the probe is about 53 MB raw (`-Osize`, stripped) and **19.5 MB gzipped**. A 20-line Foundation program is 18.2 MB gzipped on its own, so almost all of it is Foundation's ICU internationalisation data, not our code. |
+| Is that fixable? | **Very likely.** The same 20-line program on `FoundationEssentials` only is **3.5 MB gzipped (2.8 MB brotli)**. The core uses generic Foundation (JSON, `Data`, string replacement, `trimmingCharacters`, `range(of:)`); none of the locale, date or number formatting that needs ICU. Porting is mechanical (`#if canImport(FoundationEssentials)`, and stdlib `replacing(_:with:)` for `replacingOccurrences`) but touches up to 53 files and must keep the macOS output byte-identical; not attempted in the spike. |
+
+**What this changes**
+- SwiftWASM is **feasible, and the engine is already correct**: the browser would run the same emitter that produced the committed files.
+- It is **not ready to ship as is** at 19.5 MB. Before any hosted use: port the core to `FoundationEssentials` on WebAssembly and re-measure (expected 3 to 6 MB gzipped), serve brotli, and load the module lazily behind the static gallery, which stays the first paint.
+- The next spike steps: (1) the `FoundationEssentials` port on a branch with the byte-identical comparison as the test; (2) a minimal browser page (JavaScriptKit) that loads the module and re-emits a theme in **Safari, then Chrome**, with iOS Safari memory checked; (3) then, and only then, the standalone package below.
+
+## Standalone package (owner, 2026-11-25)
+
+Whatever is built in SwiftWASM is a **separate, reusable package** (working name `DesignTokensWeb`, a sibling directory, not nested), depending on DesignTokens by tag and following the development guidelines (its own proposal first, strict TDD, gate 0/0). Layers: a pure-Swift core (model and theme-apply service, built and tested on macOS and Linux) under a thin WASM/DOM target. It serves two clients: this gallery's live mode, and, later, theming the whole `justinpurnell.com` Ignite site. DesignTokens itself gains no dependency and changes no public API for it. Its proposal is written after the next spike steps above, so it rests on measured facts.
