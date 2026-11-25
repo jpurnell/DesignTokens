@@ -189,3 +189,13 @@ Each slice is red/green, gate 0/0, one commit, no push.
 3. May the Phase 0 probe capture over a coloured and a detailed backdrop (a photo), in addition to flat greys?
 4. Should the SwiftUI emitter target `glassEffect` only (macOS 26+), or also emit the `ultraThinMaterial` fallback?
 5. Is raising the Chrome floor for `prefers-reduced-transparency` (118) acceptable for this theme only, or should the skin stay at 111 with the documented gap?
+
+## Decisions, 2026-11-25 (owner)
+
+Hold: **no Liquid Glass work starts until the skins gallery (`2026-11-25_SkinsGallery.md`) has been reviewed.** The gallery's backdrop control is what lets the glass be judged.
+
+1. **Refraction demo: yes, Chromium first, and the owner wants Safari more.** Open and to be checked before it is promised: Safari does not take an SVG filter as a `backdrop-filter` input, so a Safari path may need a different technique (layered `backdrop-filter` blur and saturate, highlight edges drawn as gradients, no true displacement). The first task is a browser spike in Safari, then Chromium, reporting what each can and cannot show; the demo stays a separate, labelled CSS file outside the default theme path.
+2. **Dark glass: wait for the nine-grey fit**; do not ship the two-point fit.
+3. **Extra capture: yes**, coloured and photo backdrops as well as flat greys, on Lightspeed. The captures feed the gallery's backdrop control.
+4. **SwiftUI: `glassEffect` plus an `ultraThinMaterial` fallback.**
+5. **`prefers-reduced-transparency`: floor Chrome 118 for this theme** (the rest of the package stays at 111; the gap is documented).
