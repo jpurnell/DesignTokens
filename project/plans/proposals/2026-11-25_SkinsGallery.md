@@ -206,7 +206,27 @@ Toolchain: swift.org Swift 6.4.3 through `swiftly` (the owner's default stays 6.
 **What this changes**
 - SwiftWASM is **feasible, and the engine is already correct**: the browser would run the same emitter that produced the committed files.
 - It is **not ready to ship as is** at 19.5 MB. Before any hosted use: port the core to `FoundationEssentials` on WebAssembly and re-measure (expected 3 to 6 MB gzipped), serve brotli, and load the module lazily behind the static gallery, which stays the first paint.
-- The next spike steps: (1) the `FoundationEssentials` port on a branch with the byte-identical comparison as the test; (2) a minimal browser page (JavaScriptKit) that loads the module and re-emits a theme in **Safari, then Chrome**, with iOS Safari memory checked; (3) then, and only then, the standalone package below.
+- The next spike steps: (1) ~~the `FoundationEssentials` port on a branch with the byte-identical comparison as the test~~ (done 2026-11-26, see below: 4.1 MB gzipped); (2) a minimal browser page (JavaScriptKit) that loads the module and re-emits a theme in **Safari, then Chrome**, with iOS Safari memory checked; (3) then, and only then, the standalone package below.
+
+## Spike results: the FoundationEssentials port, 2026-11-26
+
+Step 1 of the spike, done on the throwaway `spike/wasm` worktree. Nothing in `main` changed.
+
+| Build | gzip | brotli q9 |
+|---|---|---|
+| Core on full Foundation (before) | 19.5 MB | not measured |
+| Core on `FoundationEssentials`, debug and name sections left in | 5.95 MB | 4.89 MB |
+| Same, custom sections stripped (what a release would ship) | **4.13 MB** | **3.33 MB** |
+
+CSS from the ported module under Node WASI is **byte-identical** to `Generated/themes/<id>.css` for platinum, system7, openstep and swiss, and the stripped binary also emits identical output. The size was not a matter of Foundation APIs in the core alone; three things pulled ICU in, and only the first was obvious:
+
+1. **SwiftPM's generated resource accessor.** `.copy("DesignTokens.docc")` on the core target makes SwiftPM emit a `resource_bundle_accessor.swift` that does `import Foundation` (for `Bundle`). Merely linking the core was enough to pull in all of Foundation: a program that only printed `DesignTokens.version` was 21.7 MB gzipped. That import also leaked `String` extensions into every file in the module, which is why the first port attempt compiled with nothing but a handful of maths errors. The fix is to stop declaring the catalogue as a resource (`exclude:` it, or let the docc plugin find it).
+2. **Three `NSString`-bridged `String` APIs** that are not in `FoundationEssentials`: `replacingOccurrences(of:with:)` (9 files), `trimmingCharacters(in:)` (4) and `range(of:options:range:)` (`BlogCheck`, with `.caseInsensitive`). Each has a standard-library equivalent (`replacing(_:with:)`, scalar properties, `starts(with:)` scanning), gathered into one internal `TextHelpers.swift`.
+3. **The maths functions** (`pow`, `cbrt`, `atan2`) come from the C library, not Foundation: `Colorimetry.swift` and `ColorAnalysis.swift` need a conditional `Darwin`/`Glibc`/`WASILibc` import. `CharacterSet.controlCharacters` becomes `generalCategory == .control`.
+
+Also: the probe's own `main.swift` must not import `Foundation` either (it did, for `FileHandle`; that alone kept ICU linked).
+
+What it means for the real port (a later slice, TDD, not done here): about 17 call sites in 8 files plus a helper file and two conditional imports, and the macOS and Linux suites stay as the oracle, with a new test that the helpers match Foundation's on the inputs the core uses (empty strings, Unicode spaces, case folding, overlapping needles). The `exclude:` change needs a check that DocC still builds the catalogue. The 4.1 MB figure is before `wasm-opt -Oz`, which usually takes a further 10 to 25 percent off code; not tried.
 
 ## Standalone package (owner, 2026-11-25)
 
