@@ -1,4 +1,8 @@
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 /// Emits one ``Theme`` slot as a GTK stylesheet for GTK 3 and GTK 4 (and libadwaita applications).
 ///

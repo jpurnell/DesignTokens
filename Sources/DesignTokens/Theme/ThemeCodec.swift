@@ -1,4 +1,8 @@
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 /// A stable content hash, FNV-1a 64-bit, as 16 lowercase hex digits.
 ///

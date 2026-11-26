@@ -1,4 +1,8 @@
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 /// The browser floor of the CSS the package emits: each modern feature it uses, the first version of each engine that ships it, and
 /// where it is used. Added in 0.12.0.

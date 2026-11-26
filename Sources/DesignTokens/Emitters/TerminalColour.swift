@@ -1,4 +1,8 @@
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 /// Reduces an sRGB colour to the xterm 256- and 16-colour palettes, deterministically.
 ///

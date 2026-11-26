@@ -1,4 +1,8 @@
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 /// Why an icon was refused.
 public enum IconError: Error, Sendable, Equatable {

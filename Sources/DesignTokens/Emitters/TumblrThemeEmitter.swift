@@ -1,4 +1,8 @@
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 /// Why ``TumblrThemeParameters`` refused a value.
 public enum TumblrThemeError: Error, Sendable, Equatable, CustomStringConvertible {

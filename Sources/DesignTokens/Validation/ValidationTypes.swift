@@ -1,4 +1,8 @@
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 /// The thresholds of the dataviz method, in one place so a change to the method is one edit.
 ///

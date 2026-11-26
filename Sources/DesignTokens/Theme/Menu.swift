@@ -1,4 +1,8 @@
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 /// The geometry of a theme's menus, in logical pixels. The drawing is the theme's ``SurfaceRole/menuBar``, ``SurfaceRole/menu``,
 /// ``SurfaceRole/menuTitle``, ``SurfaceRole/menuItem``, ``SurfaceRole/menuBarItem`` and ``SurfaceRole/menuSeparator`` recipes; this is the layout the web emitter lays them out with.

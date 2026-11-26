@@ -1,4 +1,8 @@
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 /// Emits one ``Theme`` as JSON: the full model in its canonical form (``ThemeCodec``), byte for byte.
 ///

@@ -1,4 +1,8 @@
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 /// The four themes of BusinessMath-UI's `ChartThemeProviding` family, carried as they are.
 ///

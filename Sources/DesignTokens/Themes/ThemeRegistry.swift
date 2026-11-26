@@ -1,4 +1,8 @@
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 public extension Theme {
     /// Every theme the package ships, in a stable order: Swiss, House, Princeton, FT, Economist, then the

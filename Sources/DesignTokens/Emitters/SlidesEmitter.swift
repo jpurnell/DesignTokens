@@ -1,4 +1,8 @@
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 /// Emits one ``Theme`` for slide templates: a colour and font list to type into Keynote or PowerPoint, and
 /// PowerPoint's own *Theme Colors* and *Theme Fonts* XML.

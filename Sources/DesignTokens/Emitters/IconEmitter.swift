@@ -1,4 +1,8 @@
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 /// Writes an ``Icon`` as a standalone SVG file.
 public enum IconEmitter {

@@ -1,4 +1,8 @@
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 public extension Theme {
     /// System 7, the one-bit Macintosh look, as a theme (unreleased): black on white, one-pixel outlines, no bevel, no shadow, and a

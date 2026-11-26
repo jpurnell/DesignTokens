@@ -1,4 +1,8 @@
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 /// A button in a window's title bar.
 public enum WindowControl: String, Sendable, Hashable, Codable {

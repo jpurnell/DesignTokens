@@ -1,4 +1,8 @@
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 /// A decoded JSON tree: only its shape (which keys an object carries), not its values.
 ///

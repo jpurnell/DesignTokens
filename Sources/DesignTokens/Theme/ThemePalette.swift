@@ -1,4 +1,8 @@
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 /// The colour roles every theme defines, in fixed order. Each is one field of ``ThemePalette``.
 public enum ColorRole: String, Sendable, Hashable, Codable, CaseIterable {

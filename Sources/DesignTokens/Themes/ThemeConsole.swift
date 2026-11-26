@@ -1,4 +1,8 @@
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 public extension Theme {
     /// Console: the look of the FleetWatch web page before it moved onto the design system (added in 0.12.0), as a theme of its own.

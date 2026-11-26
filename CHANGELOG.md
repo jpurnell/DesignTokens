@@ -2,6 +2,13 @@
 
 ## [Unreleased]
 
+### Changed
+- **The core links `FoundationEssentials` only, where that module exists** (Linux and WebAssembly; Apple platforms still import `Foundation`, whose SDK does not expose it separately). Full Foundation links the ICU data tables, about 18 MB gzipped, so a WebAssembly build of the core was 19.5 MB gzipped; it is now 4.13 MB gzipped (3.34 MB brotli) with the debug and name sections stripped. Three `NSString`-bridged `String` calls (`replacingOccurrences`, `trimmingCharacters`, `range(of:options:range:)`) and `CharacterSet.controlCharacters` are replaced by standard-library helpers in `TextHelpers.swift`, tested against Foundation's own answers; `pow`, `cbrt` and `atan2` import the C library (`Darwin`, `Glibc` or `WASILibc`) explicitly. Output is unchanged: `Generated/` is byte-identical and the 749 tests pass.
+- **The `DesignTokens` target no longer declares its DocC catalogue as a resource.** `.copy("DesignTokens.docc")` made SwiftPM generate a resource accessor that imports full Foundation, which alone linked ICU into any build of the core. The comment saying this toolchain does not classify `.docc` catalogues no longer holds on 6.4: with no declaration the catalogue is found and DocC builds.
+
+### Added
+- **`scripts/check-wasm.sh`** builds the core for `wasm32-unknown-wasip1` (swift.org 6.4.3 with its WebAssembly SDK), runs the emitter under Node's WASI for platinum, system7, openstep and swiss and compares the CSS byte for byte with `Generated/themes/`, and fails if the stripped binary exceeds 6 MB gzipped (which means something started needing full Foundation again). Exits 2 if a tool is missing, so a skip is never read as a pass.
+
 ## [0.15.0] - 2026-11-24
 
 Skins, platform isolation and the swift-crypto minimum. Source-breaking for `ChromeBlogFetcher` (now in `DesignTokensChrome`), so a minor bump. A package that depends on DesignTokens must allow swift-crypto 5.1.2 or later (the tests use it on Linux).

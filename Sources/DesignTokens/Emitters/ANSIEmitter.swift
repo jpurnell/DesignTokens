@@ -1,4 +1,8 @@
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 /// Emits one ``Theme`` as a terminal role table: plain text, one block per ``ThemeSlot``, one row per colour.
 ///

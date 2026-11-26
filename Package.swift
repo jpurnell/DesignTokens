@@ -32,10 +32,6 @@ let package = Package(
         // Targets can depend on other targets in this package and products from dependencies.
         .target(
             name: "DesignTokens",
-            resources: [
-                // This toolchain does not classify .docc catalogues on its own.
-                .copy("DesignTokens.docc")
-            ],
             swiftSettings: [
                 .enableUpcomingFeature("ApproachableConcurrency"),
             ],

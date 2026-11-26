@@ -1,4 +1,8 @@
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 /// The exact measurements the validator makes of each registered theme, recorded as data. A test fails if
 /// any of them changes, appears or disappears (see ``ThemeValidator/deviations(of:)``); this is a ledger, not

@@ -83,7 +83,7 @@ Not yet here: increased-contrast values for the roles listed above, and dark val
 
 ## Platforms
 
-The core library (`DesignTokens`) is Foundation-only and builds and passes its tests on Linux (`scripts/check-linux.sh`; the tests hash with swift-crypto there, CryptoKit elsewhere). Foundation-only is a guard against
+The core library (`DesignTokens`) is Foundation-only (`FoundationEssentials` where that module exists, so it also builds for WebAssembly: `scripts/check-wasm.sh` emits four themes under Node's WASI and compares them byte for byte with `Generated/`; 4.13 MB gzipped stripped; not yet run in a browser from this repository) and builds and passes its tests on Linux (`scripts/check-linux.sh`; the tests hash with swift-crypto there, CryptoKit elsewhere). Foundation-only is a guard against
 SwiftUI imports in the core, not a commitment to a Linux GUI (there is none; a future GUI path that consumes the
 `Theme` is possible but out of scope). It builds and is tested on macOS. It holds data, not `Color` values: on Apple
 platforms a resolver should use the system's own colours (the HIG says not to hard-code them), and the

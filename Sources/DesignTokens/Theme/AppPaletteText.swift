@@ -1,4 +1,8 @@
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 /// The backgrounds an app draws its text roles on, in each appearance: its window, a grouped list, a card, a bar.
 ///

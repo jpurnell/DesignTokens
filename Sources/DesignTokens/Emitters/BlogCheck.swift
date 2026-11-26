@@ -1,4 +1,8 @@
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 /// What a staleness check found on the blog.
 public enum BlogStatus: Sendable, Equatable {

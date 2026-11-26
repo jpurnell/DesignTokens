@@ -1,4 +1,8 @@
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 /// A finding that fails the method, written into a ledger.
 func ledgerFail(_ check: Check, _ appearance: ValidationAppearance, _ subject: String, _ measured: Double,
