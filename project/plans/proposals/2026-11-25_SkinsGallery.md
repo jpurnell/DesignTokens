@@ -206,7 +206,7 @@ Toolchain: swift.org Swift 6.4.3 through `swiftly` (the owner's default stays 6.
 **What this changes**
 - SwiftWASM is **feasible, and the engine is already correct**: the browser would run the same emitter that produced the committed files.
 - It is **not ready to ship as is** at 19.5 MB. Before any hosted use: port the core to `FoundationEssentials` on WebAssembly and re-measure (expected 3 to 6 MB gzipped), serve brotli, and load the module lazily behind the static gallery, which stays the first paint.
-- The next spike steps: (1) ~~the `FoundationEssentials` port on a branch with the byte-identical comparison as the test~~ (done 2026-11-26, see below: 4.1 MB gzipped); (2) a minimal browser page (JavaScriptKit) that loads the module and re-emits a theme in **Safari, then Chrome**, with iOS Safari memory checked; (3) then, and only then, the standalone package below.
+- The next spike steps: (1) ~~the `FoundationEssentials` port on a branch with the byte-identical comparison as the test~~ (done 2026-11-26, see below: 4.1 MB gzipped); (2) ~~a minimal browser page that loads the module and re-emits a theme in **Safari, then Chrome**, with iOS Safari memory checked~~ (done 2026-11-26: works in all three, see below; iPhone is slow, not memory-bound); (3) then, and only then, the standalone package below.
 
 ## Spike results: the FoundationEssentials port, 2026-11-26
 
@@ -227,6 +227,28 @@ CSS from the ported module under Node WASI is **byte-identical** to `Generated/t
 Also: the probe's own `main.swift` must not import `Foundation` either (it did, for `FileHandle`; that alone kept ICU linked).
 
 What it means for the real port (a later slice, TDD, not done here): about 17 call sites in 8 files plus a helper file and two conditional imports, and the macOS and Linux suites stay as the oracle, with a new test that the helpers match Foundation's on the inputs the core uses (empty strings, Unicode spaces, case folding, overlapping needles). The `exclude:` change needs a check that DocC still builds the catalogue. The 4.1 MB figure is before `wasm-opt -Oz`, which usually takes a further 10 to 25 percent off code; not tried.
+
+## Spike results: in the browser, 2026-11-26
+
+Step 2 of the spike. The stripped 14.3 MB module (4.1 MB gzipped) was loaded by a static page through `@bjorn3/browser_wasi_shim` 0.4.2 (no JavaScriptKit needed for this: the module is a WASI command that writes CSS to stdout). The page captures stdout as raw bytes and compares them with the committed `Generated/themes/<id>.css`. Served over plain HTTP, uncompressed.
+
+| Browser | Platinum (312,552 bytes) | Swiss (13,837 bytes) | Compile | Fetch |
+|---|---|---|---|---|
+| Chrome 157, headless, Mac | identical, 90 ms | identical, 4 ms | 18 ms | 17 ms |
+| Chrome 157, windowed, Mac | identical, 94 ms | identical, 3 ms | 22 ms | 53 ms |
+| Safari 27.2, Mac | identical, 127 ms | identical, 7 ms | 52 ms | 28 ms |
+| Safari 27.3, iPhone (iOS 18.7) | identical, **2,727 ms** | identical, 74 ms | 97 ms | **6,005 ms** |
+
+Every run exited 0 and was byte-identical. Wasm memory after a run was 4.6 MB (Platinum) and 2.9 MB (Swiss), so memory is not the constraint on iOS.
+
+What the numbers say:
+
+- **It works in Safari first, as wanted**, on Mac and on iPhone, from one binary.
+- **The phone is the constraint, and it is time, not memory.** Emitting the 312 KB Platinum stylesheet took 2.7 s on the iPhone against about 0.1 s on a Mac (roughly 30 times slower; Swiss, 14 KB, took 74 ms). The fetch took 6 s for 14 MB over local Wi-Fi from a one-file Python server with no compression. Both are fixed by design rather than by tuning: serve brotli (about 3.3 MB), and keep the static gallery as first paint so the module loads lazily behind it. Re-emitting a whole theme on a phone should be a rare, explicit action (a "re-generate" button), not part of page load.
+- Compile times are warm-cache figures (the same file was loaded just before on each desktop browser); the iPhone figure is its first load.
+- **Not measured:** a cold compile on a slow connection; iOS 26 (the phone was on 18.7); peak memory under memory pressure with other tabs open; `wasm-opt`.
+
+Method note: Safari could not be driven by `safaridriver` (remote automation was not enabled and needs an admin step), so Safari and iOS were opened by hand and the page posted its result to a local server. The throwaway worktree, page and server are deleted; the helper design is described in the FoundationEssentials section above.
 
 ## Standalone package (owner, 2026-11-25)
 
