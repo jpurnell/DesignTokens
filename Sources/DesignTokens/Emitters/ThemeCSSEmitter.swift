@@ -1,4 +1,8 @@
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 /// Emits one ``Theme`` as CSS custom properties, scoped to `[data-theme-name="<id>"]` so several themes can
 /// coexist on a page.

@@ -1,4 +1,8 @@
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 /// The fixed markup of the Tumblr full theme: the document around the generated style block.
 ///

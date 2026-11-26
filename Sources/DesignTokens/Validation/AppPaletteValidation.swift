@@ -1,4 +1,8 @@
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 public extension ThemeValidator {
     /// Validates an app's palette on a theme: the app's series (and accent, if it has one) are composed onto

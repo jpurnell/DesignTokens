@@ -1,4 +1,8 @@
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 /// Emits `components.css`: the web counterpart of the SwiftUI Swiss components, one stylesheet any page can link.
 ///

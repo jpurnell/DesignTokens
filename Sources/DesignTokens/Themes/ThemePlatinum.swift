@@ -1,4 +1,8 @@
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 public extension Theme {
     /// Platinum, the Mac OS 8 and 9 look, as a theme (unreleased): a two-pixel-deep bevel on every control, flat greys, a lavender accent.

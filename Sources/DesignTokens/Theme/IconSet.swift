@@ -1,4 +1,8 @@
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 /// Why an icon was refused.
 public enum IconError: Error, Sendable, Equatable {
@@ -27,7 +31,7 @@ public struct Icon: Sendable, Hashable, Codable {
         guard !name.isEmpty, name.allSatisfy({ ($0 >= "a" && $0 <= "z") || ($0 >= "0" && $0 <= "9") || $0 == "-" }) else { throw IconError.name(name) }
         let numbers = viewBox.split(separator: " ").compactMap { Double($0) }
         guard numbers.count == 4, viewBox.split(separator: " ").count == 4 else { throw IconError.viewBox(viewBox) }
-        guard !body.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else { throw IconError.emptyBody }
+        guard !body.trimmedWhitespace().isEmpty else { throw IconError.emptyBody }
         self.name = name
         self.viewBox = viewBox
         self.body = body

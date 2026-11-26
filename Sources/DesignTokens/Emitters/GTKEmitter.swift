@@ -1,4 +1,8 @@
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 /// Emits one ``Theme`` slot as a GTK stylesheet for GTK 3 and GTK 4 (and libadwaita applications).
 ///
@@ -134,13 +138,13 @@ public enum GTKEmitter {
             if character == "(" { depth += 1 }
             if character == ")" { depth -= 1 }
             if character == ",", depth == 0 {
-                shadows.append(current.trimmingCharacters(in: .whitespaces))
+                shadows.append(current.trimmedSpaces())
                 current = ""
             } else {
                 current.append(character)
             }
         }
-        shadows.append(current.trimmingCharacters(in: .whitespaces))
+        shadows.append(current.trimmedSpaces())
         return prefix + shadows.reversed().joined(separator: ", ")
     }
 

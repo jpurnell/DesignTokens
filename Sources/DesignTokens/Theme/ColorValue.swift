@@ -1,4 +1,8 @@
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 /// An sRGB colour with an alpha, stored as `#RRGGBB` or, when translucent, `#RRGGBBAA`.
 ///

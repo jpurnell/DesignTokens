@@ -1,4 +1,8 @@
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 extension Theme {
     /// OPENSTEP's icons: **original drawings** in the look of the 4.2 dock, not copies of NeXT's artwork. Each is a 56-unit vector: a one-pixel

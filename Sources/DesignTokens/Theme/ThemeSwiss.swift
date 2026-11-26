@@ -1,4 +1,8 @@
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 public extension Theme {
     /// Swiss: the house style, San Francisco throughout, Apple system colours, flat surfaces, a heavy rule

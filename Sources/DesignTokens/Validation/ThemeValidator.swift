@@ -1,4 +1,8 @@
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 /// The dataviz method's checks, ported to Swift from `validate_palette.js`.
 ///

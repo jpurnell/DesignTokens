@@ -1,4 +1,8 @@
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 // MARK: - Errors
 
@@ -534,8 +538,8 @@ public enum SurfaceCSS {
             rects += "<rect x='\(x)' y='\(y)' width='1' height='1' fill='\(resolve(cell))'/>"
         }
         let svg = "<svg xmlns='http://www.w3.org/2000/svg' width='\(spec.width)' height='\(spec.height)' shape-rendering='crispEdges'>\(rects)</svg>"
-        let encoded = svg.replacingOccurrences(of: "%", with: "%25").replacingOccurrences(of: "<", with: "%3C")
-            .replacingOccurrences(of: ">", with: "%3E").replacingOccurrences(of: "#", with: "%23").replacingOccurrences(of: "=", with: "%3D")
+        let encoded = svg.replacingAll("%", with: "%25").replacingAll("<", with: "%3C")
+            .replacingAll(">", with: "%3E").replacingAll("#", with: "%23").replacingAll("=", with: "%3D")
         return "url(\"data:image/svg+xml,\(encoded)\")"
     }
 

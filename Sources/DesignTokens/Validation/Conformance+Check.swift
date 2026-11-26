@@ -1,4 +1,8 @@
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 public extension ThemeValidator {
     /// Where a theme's measured findings and its declared ``Theme/conformance`` disagree. Empty means the

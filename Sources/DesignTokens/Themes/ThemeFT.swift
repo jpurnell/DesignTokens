@@ -1,4 +1,8 @@
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 public extension Theme {
     /// FT: our interpretation of the Financial Times chart style, with the salmon paper, in light and in an

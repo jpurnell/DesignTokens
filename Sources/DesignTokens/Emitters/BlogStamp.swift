@@ -1,4 +1,8 @@
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 /// The identity of a pasted Tumblr block: which theme, which DesignTokens version, which template revision, and
 /// the hash of the theme's canonical JSON.

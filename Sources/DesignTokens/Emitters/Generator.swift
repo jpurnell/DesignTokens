@@ -1,4 +1,8 @@
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 /// A file the generator writes, as a path relative to the output directory and its text.
 public struct GeneratedFile: Sendable, Hashable {

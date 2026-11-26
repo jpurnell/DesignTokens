@@ -1,4 +1,8 @@
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 /// Emits the tokens as JSON for tools that cannot import Swift.
 ///
@@ -69,7 +73,7 @@ public enum JSONEmitter {
     }
 
     private static func escaped(_ text: String) -> String {
-        text.replacingOccurrences(of: "\\", with: "\\\\").replacingOccurrences(of: "\"", with: "\\\"")
+        text.replacingAll("\\", with: "\\\\").replacingAll("\"", with: "\\\"")
     }
 
     private static func list(_ colors: [RGB]) -> String {

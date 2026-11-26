@@ -1,4 +1,8 @@
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 public extension Theme {
     /// OPENSTEP 4.2 (the NeXT look), as a theme (unreleased): flat `#AAAAAA` grey, a one-pixel white highlight on the top and left of a

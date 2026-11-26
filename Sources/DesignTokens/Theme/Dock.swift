@@ -1,4 +1,8 @@
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 /// The geometry of a theme's dock, in logical pixels. The drawing is the theme's ``SurfaceRole/dockTile`` recipe.
 public struct DockMetrics: Sendable, Hashable, Codable {

@@ -1,4 +1,15 @@
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
+#if canImport(Darwin)
+import Darwin
+#elseif canImport(Glibc)
+import Glibc
+#elseif canImport(WASILibc)
+import WASILibc
+#endif
 
 /// Rounds a measurement to a fixed number of decimal places, the way the JavaScript validator displays it.
 enum Rounding {

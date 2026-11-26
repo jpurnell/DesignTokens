@@ -1,4 +1,8 @@
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 public extension Theme {
     /// Princeton's colours as an ``AppPalette``: Princeton orange as the accent, an eight-colour categorical

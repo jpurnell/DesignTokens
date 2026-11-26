@@ -1,4 +1,8 @@
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 /// Where a scroll bar's two arrow buttons sit.
 public enum ScrollArrowPlacement: String, Sendable, Hashable, Codable {

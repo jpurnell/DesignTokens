@@ -1,4 +1,8 @@
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 /// A problem with a theme's declared appearance support.
 public struct AppearanceIssue: Sendable, Hashable {

@@ -1,4 +1,8 @@
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 /// One resolved colour state of a theme: an appearance, with Increase Contrast on or off.
 ///

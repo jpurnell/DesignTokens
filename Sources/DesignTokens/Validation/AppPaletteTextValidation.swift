@@ -1,4 +1,8 @@
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 extension ThemeValidator {
     /// The surfaces a palette's text roles are measured on in one appearance: the declared list (named by hex), or

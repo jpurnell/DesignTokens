@@ -1,4 +1,8 @@
+#if canImport(FoundationEssentials)
+import FoundationEssentials
+#else
 import Foundation
+#endif
 
 /// The result of running a subcommand: what to print and how to exit.
 public struct CommandResult: Sendable, Equatable {
