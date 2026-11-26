@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+## [0.16.0] - 2026-11-26
+
+The core builds for WebAssembly. No change to any emitted output except the version stamp: `Generated/` differs from 0.15.0 only in the `0.16.0` it records. Minor bump because the package structure changed (the DocC catalogue is no longer declared as a resource) and a build script was added.
+
 ### Changed
 - **The core links `FoundationEssentials` only, where that module exists** (Linux and WebAssembly; Apple platforms still import `Foundation`, whose SDK does not expose it separately). Full Foundation links the ICU data tables, about 18 MB gzipped, so a WebAssembly build of the core was 19.5 MB gzipped; it is now 4.13 MB gzipped (3.34 MB brotli) with the debug and name sections stripped. Three `NSString`-bridged `String` calls (`replacingOccurrences`, `trimmingCharacters`, `range(of:options:range:)`) and `CharacterSet.controlCharacters` are replaced by standard-library helpers in `TextHelpers.swift`, tested against Foundation's own answers; `pow`, `cbrt` and `atan2` import the C library (`Darwin`, `Glibc` or `WASILibc`) explicitly. Output is unchanged: `Generated/` is byte-identical and the 749 tests pass.
 - **The `DesignTokens` target no longer declares its DocC catalogue as a resource.** `.copy("DesignTokens.docc")` made SwiftPM generate a resource accessor that imports full Foundation, which alone linked ICU into any build of the core. The comment saying this toolchain does not classify `.docc` catalogues no longer holds on 6.4: with no declaration the catalogue is found and DocC builds.
@@ -674,7 +678,8 @@ Additive. `Generated/tokens.css` and `tokens.json` are byte-identical to 0.3.0 (
   selectors honour Bootstrap's `data-bs-theme` as well as `data-theme`.
 - Palette tests: fixed order (validated for adjacency and colour-vision separation; fails the lightness band for the slots listed under 0.4.0), adjacent OKLab distance of at least 15, contrast of label on background.
 
-[Unreleased]: https://github.com/jpurnell/DesignTokens/compare/0.15.0...HEAD
+[Unreleased]: https://github.com/jpurnell/DesignTokens/compare/0.16.0...HEAD
+[0.16.0]: https://github.com/jpurnell/DesignTokens/compare/0.15.0...0.16.0
 [0.15.0]: https://github.com/jpurnell/DesignTokens/compare/0.14.0...0.15.0
 [0.14.0]: https://github.com/jpurnell/DesignTokens/compare/0.13.0...0.14.0
 [0.13.0]: https://github.com/jpurnell/DesignTokens/compare/0.12.0...0.13.0
