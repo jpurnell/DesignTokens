@@ -89,14 +89,14 @@ public enum BlogChecker {
         } catch {
             return .unreadable("could not fetch \(url.absoluteString): \(error)")
         }
-        guard !html.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+        guard !html.trimmedWhitespace().isEmpty else {
             return .unreadable("could not fetch \(url.absoluteString): the page was empty")
         }
         return compare(html: html, expected: expected)
     }
 
     static func bounded(_ text: String, limit: Int = 120) -> String {
-        let flat = text.replacingOccurrences(of: "\n", with: " ")
+        let flat = text.replacingAll("\n", with: " ")
         return flat.count <= limit ? flat : String(flat.prefix(limit)) + "..."
     }
 
@@ -127,9 +127,9 @@ public enum BlogChecker {
     private static func styleText(in html: String) -> String {
         var pieces: [String] = []
         var cursor = html.startIndex
-        while let open = html.range(of: "<style", options: .caseInsensitive, range: cursor..<html.endIndex),
-              let close = html.range(of: ">", range: open.upperBound..<html.endIndex) {
-            guard let end = html.range(of: "</style", options: .caseInsensitive, range: close.upperBound..<html.endIndex) else {
+        while let open = html.firstRange(of: "<style", in: cursor..<html.endIndex, ignoringCase: true),
+              let close = html.firstRange(of: ">", in: open.upperBound..<html.endIndex) {
+            guard let end = html.firstRange(of: "</style", in: close.upperBound..<html.endIndex, ignoringCase: true) else {
                 pieces.append(String(html[close.upperBound...]))
                 break
             }
@@ -141,7 +141,7 @@ public enum BlogChecker {
 
     /// The `--theme-stamp` custom property: quoted (the emitted form) or bare.
     private static func propertyStamp(in styles: String) -> Reading {
-        guard let key = styles.range(of: "--theme-stamp:") else { return .none }
+        guard let key = styles.firstRange(of: "--theme-stamp:", in: styles.startIndex..<styles.endIndex) else { return .none }
         let rest = styles[key.upperBound...].drop(while: { $0 == " " || $0 == "\t" })
         let value: Substring
         if rest.hasPrefix("\"") {
@@ -161,10 +161,10 @@ public enum BlogChecker {
 
     /// The header comment: `/* theme: swiss | DesignTokens 0.5.0 | template 1 | hash fnv1a64:... | ... */`.
     private static func commentStamp(in styles: String) -> Reading {
-        guard let open = styles.range(of: "/* theme: ") else { return .none }
+        guard let open = styles.firstRange(of: "/* theme: ", in: styles.startIndex..<styles.endIndex) else { return .none }
         let body = styles[open.upperBound...]
-        let line = body[body.startIndex..<(body.range(of: "*/")?.lowerBound ?? body.endIndex)]
-        let fields = line.components(separatedBy: " | ").map { $0.trimmingCharacters(in: .whitespaces) }
+        let line = body[body.startIndex..<(body.firstRange(of: "*/", in: body.startIndex..<body.endIndex)?.lowerBound ?? body.endIndex)]
+        let fields = line.components(separatedBy: " | ").map { $0.trimmedSpaces() }
         guard fields.count >= 4, fields[1].hasPrefix("DesignTokens "), fields[2].hasPrefix("template "),
               fields[3].hasPrefix("hash ") else {
             return .garbled("the header comment is not a design-tokens header: \(line.prefix(80))")

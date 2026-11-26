@@ -134,13 +134,13 @@ public enum GTKEmitter {
             if character == "(" { depth += 1 }
             if character == ")" { depth -= 1 }
             if character == ",", depth == 0 {
-                shadows.append(current.trimmingCharacters(in: .whitespaces))
+                shadows.append(current.trimmedSpaces())
                 current = ""
             } else {
                 current.append(character)
             }
         }
-        shadows.append(current.trimmingCharacters(in: .whitespaces))
+        shadows.append(current.trimmedSpaces())
         return prefix + shadows.reversed().joined(separator: ", ")
     }
 

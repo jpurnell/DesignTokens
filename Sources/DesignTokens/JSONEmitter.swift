@@ -69,7 +69,7 @@ public enum JSONEmitter {
     }
 
     private static func escaped(_ text: String) -> String {
-        text.replacingOccurrences(of: "\\", with: "\\\\").replacingOccurrences(of: "\"", with: "\\\"")
+        text.replacingAll("\\", with: "\\\\").replacingAll("\"", with: "\\\"")
     }
 
     private static func list(_ colors: [RGB]) -> String {
