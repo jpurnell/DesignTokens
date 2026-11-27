@@ -36,6 +36,8 @@ public enum GeneratedFormat: String, Sendable, Hashable, CaseIterable {
     case gtk
     /// `themes/<id>.icons/<name>.svg`, one file per icon of a theme that has an icon set (``IconEmitter``).
     case icons
+    /// `gallery/index.html`, `gallery/gallery.css` and `gallery/gallery.js`, the skins gallery (``GalleryEmitter``).
+    case gallery
 }
 
 /// Why the generator refused its arguments.
@@ -44,7 +46,7 @@ public enum GeneratorError: Error, Sendable, Equatable {
     case unknownTheme(String)
     /// An argument the generator does not know.
     case unknownArgument(String)
-    /// `--format` names no format (the known ones are css, json, tumblr, ansi, slides, components, gtk and icons).
+    /// `--format` names no format (the known ones are css, json, tumblr, ansi, slides, components, gtk, icons and gallery).
     case unknownFormat(String)
     /// A flag that needs a value has none.
     case missingValue(String)
@@ -106,6 +108,9 @@ public enum Generator {
                 files.append((.icons, GeneratedFile(path: "themes/\(theme.id).icons/\(icon.name).svg", contents: IconEmitter.emit(icon))))
             }
         }
+        if includeDefaults {
+            for file in try GalleryEmitter.emit(themes: themes) { files.append((.gallery, file)) }
+        }
         return files.filter { formats?.contains($0.0) ?? true }.map(\.1)
     }
 
@@ -115,7 +120,7 @@ public enum Generator {
     ///
     /// With no arguments, or only a directory (the form `design-tokens Generated` has always had), every file is
     /// written. `--theme <id>` writes that theme's files only. `--format` (repeatable, or comma-separated) keeps only those kinds of file
-/// (css, json, tumblr, ansi, slides, components, gtk, icons); with no `--theme` the two default files count as css and json. `list` returns the theme ids and writes nothing.
+/// (css, json, tumblr, ansi, slides, components, gtk, icons, gallery); with no `--theme` the two default files count as css and json. `list` returns the theme ids and writes nothing.
     /// Arguments are checked before anything is written, so a refusal leaves the directory alone.
     ///
     /// - Returns: The paths written (relative to the directory), or the theme ids for `list`.

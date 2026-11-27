@@ -2,6 +2,9 @@
 
 ## [Unreleased]
 
+### Added
+- **The skins gallery, first slice** (`GalleryEmitter`, `GeneratedFormat.gallery`): `Generated/gallery/index.html`, `gallery.css` and `gallery.js`, written by `design-tokens Generated` and golden-tested. One static page that links every theme's stylesheet and `components.css`, a theme switcher (the skins first, then the rest), the choice kept in the URL hash (`#theme=platinum`), and one components scene under the selected theme. The page's chrome is neutral (never themed), every link is relative, the script is plain ES2020 with no modules, and nothing loads from the network, so it opens from `file://` and from any static path. Purely additive: no existing `Generated/` file changed. Not yet in the page: the role-by-state matrix, forced states, composed skin scenes (window, menu, dock), backdrops, scale and appearance controls (later slices of `project/plans/proposals/2026-11-25_SkinsGallery.md`). A SwiftUI gallery is a later companion once SwiftUI emits skins.
+
 ## [0.16.2] - 2026-11-27
 
 A speed fix and one bug fix in the text helper the WebAssembly port introduced. `Generated/` differs from 0.16.1 only in the `0.16.2` it records.

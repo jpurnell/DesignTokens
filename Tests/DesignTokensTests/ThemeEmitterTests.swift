@@ -57,7 +57,7 @@ struct ThemeEmitterTests {
         #expect(onDisk.sorted() == files.map(\.path).sorted())
     }
 
-    @Test("the file set is the two default files, then per theme: CSS, JSON, Swiss's Tumblr block, the ANSI table, the slide files and the GTK stylesheets")
+    @Test("the file set is the two default files, then per theme: CSS, JSON, Swiss's Tumblr block, the ANSI table, the slide files and the GTK stylesheets, then the gallery")
     func fileSet() throws {
         let paths = try Generator.files().map(\.path)
         var expected = ["tokens.css", "tokens.json", "components.css"]
@@ -79,8 +79,9 @@ struct ThemeEmitterTests {
             expected += (theme.icons?.icons ?? []).map { "themes/\(theme.id).icons/\($0.name).svg" }
             slotCount += slots.count + (theme.appearances == .both ? 2 : 1)
         }
+        expected += ["gallery/index.html", "gallery/gallery.css", "gallery/gallery.js"]
         #expect(paths == expected)
-        #expect(paths.count == 3 + 13 * 5 + 2 + slotCount + Theme.all.filter { $0.windowControls != nil }.count
+        #expect(paths.count == 3 + 13 * 5 + 2 + 3 + slotCount + Theme.all.filter { $0.windowControls != nil }.count
                 + Theme.all.reduce(0) { $0 + ($1.icons?.icons.count ?? 0) })
     }
 

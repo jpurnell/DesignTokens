@@ -1,6 +1,6 @@
 # Design Proposal: the skins gallery
 
-**Status:** Proposed, 2026-11-25. No code written. Owner asked to see this before any Aqua ("Water") or Liquid Glass work starts.
+**Status:** Proposed, 2026-11-25. **Slice 2 built 2026-11-27 (the shell: page, switcher, one components scene; see Progress at the end).** Slices 3 to 7 not started. Owner asked to see this before any Aqua ("Water") or Liquid Glass work starts.
 **Branch:** new, from `main` at `0.15.0` (`feature/skins-gallery`).
 **Master Plan Reference:** Skins theme the whole OS; Roadmap row "Skins" (open: Aqua, Liquid Glass, GTK/SwiftUI). Replaces the old backlog line "demo apps" for the skins.
 **Companions:** `2026-11-20_AquaSkin.md`, `2026-11-20_LiquidGlassSkin.md`. Both skins need a backdrop and a forced-state view to be judged at all, which is half of this proposal.
@@ -253,3 +253,11 @@ Method note: Safari could not be driven by `safaridriver` (remote automation was
 ## Standalone package (owner, 2026-11-25)
 
 Whatever is built in SwiftWASM is a **separate, reusable package** (working name `DesignTokensWeb`, a sibling directory, not nested), depending on DesignTokens by tag and following the development guidelines (its own proposal first, strict TDD, gate 0/0). Layers: a pure-Swift core (model and theme-apply service, built and tested on macOS and Linux) under a thin WASM/DOM target. It serves two clients: this gallery's live mode, and, later, theming the whole `justinpurnell.com` Ignite site. DesignTokens itself gains no dependency and changes no public API for it. Its proposal is written after the next spike steps above, so it rests on measured facts.
+
+## Progress, 2026-11-27 (owner asked for the first slice)
+
+Built slice 2 of the phased plan: `GalleryEmitter` and `GeneratedFormat.gallery` write `Generated/gallery/{index.html,gallery.css,gallery.js}`. It links every theme and `components.css`, switches `data-theme-name` on one stage, keeps the choice in the URL hash, and shows one components scene. Tests (`GalleryEmitterTests`, 13) cover the file set, determinism, that every relative link resolves to a generated file, one link per theme, switcher order, name escaping, refusal of a non-slug id, that every `dt-` class in the scene is one `components.css` writes (test 3 of section 11), no network references or modules, a neutral chrome, and the hash. The existing golden test and file-set test include the new files. No existing `Generated/` file changed.
+
+Seen in headless Chrome 158 (Swiss, Platinum, System 7): the switcher selects by hash and the shared components take each theme's tokens. **Platinum and System 7 look like themed forms, not like their operating systems yet**: the window, menu and dock scenes are slices 4 and 5.
+
+Not done: slice 1's spike (the `mediaText` appearance forcing in Chrome, Safari and Firefox) was not run, so there is no appearance control yet; Safari and Firefox have not opened the page; page weight with every theme linked has not been measured.

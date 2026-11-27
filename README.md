@@ -105,6 +105,10 @@ writes `Generated/tokens.css` and `Generated/tokens.json` (the default look), `G
 `Generated/themes/<id>.css` and `<id>.json`, plus Swiss's Tumblr block `themes/swiss.tumblr.css`. All are committed, and a test fails if any differs from a fresh emit or if
 `Generated/` holds a file that is not generated, so regenerate and commit after changing a value.
 
+### The skins gallery
+
+Open `Generated/gallery/index.html` in a browser (it works from `file://`; nothing is fetched from the network). It links every theme and shows one components scene under the theme you pick; the choice is kept in the URL hash (`index.html#theme=platinum`). This is the first slice: the role-by-state matrix, forced states, window, menu and dock scenes, backdrops, scale and appearance controls are still to come (`project/plans/proposals/2026-11-25_SkinsGallery.md`). It shows what the emitters write, so it proves the stylesheets apply, not that a skin matches its operating system. `swift run design-tokens emit --format gallery Generated` writes only these files.
+
 Each theme also gets a terminal table and slide files (below). A theme's CSS is scoped to `[data-theme-name="<id>"]`, so several themes can coexist on a page. A light-only theme has no
 dark blocks; the dark selectors honour `data-theme` and `data-bs-theme` on the element or any ancestor.
 
