@@ -200,6 +200,15 @@ public enum ThemeValidator {
                                measured: Rounding.places(measured, 3), threshold: threshold))
         }
         for issue in theme.appearanceIssues { add(issue.subject, issue.kind == .missingDark ? 0 : 1, issue.kind == .missingDark ? 1 : 0) }
+        // An id that is not a slug is refused by every emitter, so it is a failure here, before anything is emitted. A name
+        // is display text and is always emittable, but characters that cannot be written to a generated file (controls, line
+        // separators, bidirectional controls) are written as spaces, so the text the author sees is not the text that ships.
+        if !ThemeIdentity.isValidID(theme.id) { add("id", 0, 1) }
+        let rewritten = zip(theme.name.unicodeScalars, ThemeIdentity.displayText(theme.name).unicodeScalars).filter { $0 != $1 }.count
+        if rewritten > 0 {
+            out.append(Finding(severity: .warn, check: .structure, appearance: appearance, subject: "name",
+                               measured: Double(rewritten), threshold: 0))
+        }
         let rules = theme.structure.rules
         let weights: [(String, Double)] = [
             ("rules.title.weight", rules.title.weight), ("rules.section", rules.section), ("rules.hairline", rules.hairline),
