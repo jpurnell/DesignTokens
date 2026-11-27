@@ -1,6 +1,6 @@
 # Design Proposal: the skins gallery
 
-**Status:** Proposed, 2026-11-25. **Slice 2 built 2026-11-27 (the shell: page, switcher, one components scene; see Progress at the end).** Slices 3 to 7 not started. Owner asked to see this before any Aqua ("Water") or Liquid Glass work starts.
+**Status:** Proposed, 2026-11-25. **Slice 2 built 2026-11-27 (the shell: page, switcher, one components scene; see Progress at the end).** Slice 5's skin scenes built 2026-11-27 (windows, menus, scroll bars, dock); slices 3, 4, 6 and 7 not started. Owner asked to see this before any Aqua ("Water") or Liquid Glass work starts.
 **Branch:** new, from `main` at `0.15.0` (`feature/skins-gallery`).
 **Master Plan Reference:** Skins theme the whole OS; Roadmap row "Skins" (open: Aqua, Liquid Glass, GTK/SwiftUI). Replaces the old backlog line "demo apps" for the skins.
 **Companions:** `2026-11-20_AquaSkin.md`, `2026-11-20_LiquidGlassSkin.md`. Both skins need a backdrop and a forced-state view to be judged at all, which is half of this proposal.
@@ -261,3 +261,7 @@ Built slice 2 of the phased plan: `GalleryEmitter` and `GeneratedFormat.gallery`
 Seen in headless Chrome 158 (Swiss, Platinum, System 7): the switcher selects by hash and the shared components take each theme's tokens. **Platinum and System 7 look like themed forms, not like their operating systems yet**: the window, menu and dock scenes are slices 4 and 5.
 
 Not done: slice 1's spike (the `mediaText` appearance forcing in Chrome, Safari and Firefox) was not run, so there is no appearance control yet; Safari and Firefox have not opened the page; page weight with every theme linked has not been measured.
+
+### Progress, 2026-11-27 (later): the skin scenes (part of slice 5)
+
+`GalleryScenes.skinScene(for:)` builds, per skin, an active and an inactive window (title bar, vertical and horizontal scroll bars), a menu bar with an open menu (selected, disabled, separator) and a dock, **only where the theme defines the part and its own stylesheet styles the class**. Tests check every `dt-` class against the skin's stylesheet, that each part follows the model, that every control a theme places appears iff it is styled, and the menu states. Findings from building it: a theme can have a menu bar and no menu column (System 7) or the reverse (OPENSTEP), and System 7 defines no title bar or scroll bars, so its scene is its menu bar alone; OPENSTEP's inactive window looks the same as its active one and Platinum's inactive scroll bars still draw a lit thumb (the emitter's `aria-disabled` on a bar means "nothing to scroll", not "inactive window"), both unmodelled, not fixed here. Seen in headless Chrome 158: Platinum reads as Mac OS 8. Still not built: forced states (slice 3), the role-by-state matrix (slice 4), backdrops, scale and appearance controls (slice 6), the screenshot script (slice 7).

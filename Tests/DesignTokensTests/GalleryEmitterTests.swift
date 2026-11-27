@@ -117,18 +117,100 @@ struct GalleryEmitterTests {
 
     // MARK: The scene
 
-    @Test("every dt- class the page uses is one components.css writes")
+    @Test("every dt- class the shared scene uses is one components.css writes")
     func sceneClassesExist() throws {
         let html = try file(Self.page, in: try GalleryEmitter.emit())
         let components = ComponentsCSSEmitter.emit()
-        var used = Set<String>()
-        for value in values(of: "class", in: html) {
-            for token in value.split(whereSeparator: { $0 == " " }) where token.hasPrefix("dt-") { used.insert(String(token)) }
-        }
+        let used = classes(in: GalleryScenes.sharedScene)
         #expect(used.count >= 10, "the components scene should exercise the components; found \(used.count)")
         for name in used.sorted() {
             #expect(components.contains(".\(name)"), "\(name) is not written by components.css")
         }
+        #expect(html.contains(GalleryScenes.sharedScene), "the page carries the shared scene as given")
+    }
+
+    // MARK: Skin scenes
+
+    private func classes(in markup: String) -> Set<String> {
+        var used = Set<String>()
+        for value in values(of: "class", in: markup) {
+            for token in value.split(whereSeparator: { $0 == " " }) where token.hasPrefix("dt-") { used.insert(String(token)) }
+        }
+        return used
+    }
+
+    @Test("a skin scene exists for each theme with surfaces and for no other, once each")
+    func skinScenePerSkin() throws {
+        let html = try file(Self.page, in: try GalleryEmitter.emit())
+        let scenes = values(of: "data-skin-scene", in: html)
+        let skins = Theme.all.filter { $0.surfaces != nil }.map(\.id)
+        #expect(!skins.isEmpty)
+        #expect(scenes == skins)
+        for theme in Theme.all where theme.surfaces == nil {
+            #expect(try GalleryScenes.skinScene(for: theme) == nil, "\(theme.id) has no surfaces, so no skin scene")
+        }
+    }
+
+    @Test("every dt- class in a skin's scene is written by that skin's stylesheet or components.css, so a class the emitter stops writing fails here")
+    func skinSceneClassesWritten() throws {
+        for theme in Theme.all where theme.surfaces != nil {
+            let scene = try #require(try GalleryScenes.skinScene(for: theme), "\(theme.id)")
+            let css = try ThemeCSSEmitter.emit(theme) + ComponentsCSSEmitter.emit()
+            let used = classes(in: scene)
+            #expect(!used.isEmpty, "\(theme.id)")
+            for name in used.sorted() {
+                #expect(css.contains(".\(name)"), "\(theme.id): \(name) is written by neither \(theme.id).css nor components.css")
+            }
+        }
+    }
+
+    @Test("a skin scene shows exactly the parts the theme defines, and says so where it has none")
+    func skinScenePartsFollowTheModel() throws {
+        for theme in Theme.all where theme.surfaces != nil {
+            let scene = try #require(try GalleryScenes.skinScene(for: theme), "\(theme.id)")
+            let used = classes(in: scene)
+            let hasBar = theme.windowControls?.titleBar != nil && theme.surfaces?.recipes[.titleBar] != nil
+            #expect(used.contains("dt-titlebar") == hasBar, "\(theme.id) title bar")
+            #expect(used.contains("dt-scrollbar") == (theme.scrollBar != nil), "\(theme.id) scroll bars")
+            let css = try ThemeCSSEmitter.emit(theme)
+            // menus follow what the stylesheet draws: a theme can have a menu bar and no menu column (System 7) or the reverse (OPENSTEP)
+            #expect(used.contains("dt-menubar") == (theme.menus != nil && css.contains(".dt-menubar")), "\(theme.id) menu bar")
+            #expect(used.contains("dt-menu") == (theme.menus != nil && (css.contains(".dt-menu {") || css.contains(".dt-menu,"))), "\(theme.id) menu")
+            #expect(used.contains("dt-dock__tile") == (theme.dock != nil && theme.surfaces?.recipes[.dockTile]?[.rest] != nil), "\(theme.id) dock")
+        }
+    }
+
+    @Test("a title bar carries one box per control the theme places, and an inactive window is the same bar marked aria-disabled")
+    func titleBarControls() throws {
+        for theme in Theme.all {
+            guard let controls = theme.windowControls, controls.titleBar != nil, theme.surfaces?.recipes[.titleBar] != nil else { continue }
+            let scene = try #require(try GalleryScenes.skinScene(for: theme), "\(theme.id)")
+            let css = try ThemeCSSEmitter.emit(theme)
+            for control in controls.leading + controls.trailing {
+                // a control appears when the stylesheet styles it, and only then
+                #expect(scene.contains("dt-titlebar__box--\(control.rawValue)") == css.contains(".dt-titlebar__box--\(control.rawValue)"), "\(theme.id) \(control.rawValue)")
+            }
+            #expect(scene.components(separatedBy: "class=\"dt-titlebar\">").count - 1 == 1, "\(theme.id): the active bar")
+            #expect(scene.components(separatedBy: "class=\"dt-titlebar\" aria-disabled=\"true\"").count - 1 == 1, "\(theme.id): the inactive bar")
+        }
+    }
+
+    @Test("a menu shows a selected row, a disabled row and a separator, so every state the recipes draw is on screen")
+    func menuStates() throws {
+        for theme in Theme.all where theme.menus != nil && theme.surfaces != nil {
+            let scene = try #require(try GalleryScenes.skinScene(for: theme), "\(theme.id)")
+            guard classes(in: scene).contains("dt-menu") else { continue }
+            #expect(scene.contains("class=\"dt-menu__item\" aria-selected=\"true\""), "\(theme.id)")
+            #expect(scene.contains("class=\"dt-menu__item\" aria-disabled=\"true\""), "\(theme.id)")
+            #expect(scene.contains("dt-menu__separator") == (try ThemeCSSEmitter.emit(theme)).contains(".dt-menu__separator"), "\(theme.id)")
+        }
+    }
+
+    @Test("the script shows the scene of the selected theme and hides the others")
+    func scriptTogglesScenes() throws {
+        let script = try file("gallery/gallery.js", in: try GalleryEmitter.emit())
+        #expect(script.contains("data-skin-scene"))
+        #expect(script.contains("hidden"))
     }
 
     @Test("the page and its script load nothing from the network and the script is plain ES2020 with no modules")
@@ -159,6 +241,13 @@ struct GalleryEmitterTests {
             let themed = try ThemeCSSEmitter.emit(theme)
             #expect(themed.contains("--card-gap:"), "\(theme.id) defines --card-gap, which the gallery spacing reads")
         }
+    }
+
+    @Test("a scene caption sits on the page's own neutral colours, so it reads over any skin's desktop")
+    func captionLegible() throws {
+        let css = try file("gallery/gallery.css", in: try GalleryEmitter.emit())
+        let rule = try #require(css.split(whereSeparator: \.isNewline).first { $0.contains(".skin-scene__caption") }, "a caption rule")
+        #expect(rule.contains("background: Canvas") && rule.contains("color: CanvasText"))
     }
 
     @Test("the chosen theme is kept in the URL hash: the script reads and writes location.hash")

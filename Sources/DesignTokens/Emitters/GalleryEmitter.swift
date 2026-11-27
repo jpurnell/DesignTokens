@@ -29,7 +29,7 @@ public enum GalleryEmitter {
         for theme in themes { try ThemeIdentity.requireValidID(of: theme) }
         let ordered = themes.filter { $0.surfaces != nil } + themes.filter { $0.surfaces == nil }
         return [
-            GeneratedFile(path: "gallery/index.html", contents: page(ordered)),
+            GeneratedFile(path: "gallery/index.html", contents: try page(ordered)),
             GeneratedFile(path: "gallery/gallery.css", contents: stylesheet),
             GeneratedFile(path: "gallery/gallery.js", contents: script),
         ]
@@ -37,8 +37,12 @@ public enum GalleryEmitter {
 
     // MARK: The page
 
-    private static func page(_ themes: [Theme]) -> String {
+    private static func page(_ themes: [Theme]) throws -> String {
         let first = themes.first?.id ?? ""
+        let skinScenes = try themes.compactMap { theme -> String? in
+            guard let scene = try GalleryScenes.skinScene(for: theme) else { return nil }
+            return "<section class=\"skin-scene\" data-skin-scene=\"\(theme.id)\"\(theme.id == first ? "" : " hidden")>\n\(scene)\n</section>"
+        }.joined(separator: "\n")
         let links = themes.map { "<link rel=\"stylesheet\" href=\"../themes/\($0.id).css\">" }.joined(separator: "\n")
         let buttons = themes.map { theme in
             "<button type=\"button\" class=\"switch__option\" data-theme=\"\(theme.id)\" aria-pressed=\"false\">\(escape(ThemeIdentity.displayText(theme.name)))</button>"
@@ -64,7 +68,8 @@ public enum GalleryEmitter {
         </header>
         <main>
           <div class="stage" data-theme-name="\(first)">
-        \(scene)
+        \(GalleryScenes.sharedScene)
+        \(skinScenes)
           </div>
         </main>
         <script src="gallery.js"></script>
@@ -73,83 +78,6 @@ public enum GalleryEmitter {
 
         """
     }
-
-    /// The components scene: one of each shared component, built only from classes `components.css` documents.
-    private static let scene = """
-        <div class="dt-page">
-          <header class="dt-header">
-            <div class="dt-header__title"><h2 class="dt-title">Components</h2></div>
-            <div class="dt-header__aside"><span class="dt-caption">the same markup in every theme</span></div>
-          </header>
-          <section class="dt-section">
-            <h3 class="dt-section__heading">Buttons and form</h3>
-            <div class="dt-actions">
-              <button type="button" class="dt-button dt-button--primary">Primary</button>
-              <button type="button" class="dt-button">Default</button>
-              <button type="button" class="dt-button dt-button--destructive">Destructive</button>
-              <button type="button" class="dt-button" disabled>Disabled</button>
-            </div>
-            <div class="dt-form">
-              <div class="dt-field">
-                <label class="dt-field__label" for="g-name">Name</label>
-                <input class="dt-input" id="g-name" type="text" value="Ada Lovelace">
-              </div>
-              <div class="dt-field">
-                <label class="dt-field__label" for="g-kind">Kind</label>
-                <select class="dt-select" id="g-kind"><option>Window</option><option>Menu</option></select>
-              </div>
-              <div class="dt-field">
-                <label class="dt-field__label" for="g-note">Note</label>
-                <textarea class="dt-textarea" id="g-note" rows="2">Text that wraps.</textarea>
-              </div>
-              <label class="dt-checkline"><input class="dt-check" type="checkbox" checked> Keep me signed in</label>
-              <div class="dt-segmented" role="radiogroup" aria-label="View">
-                <button type="button" class="dt-segmented__option" role="radio" aria-checked="true">List</button>
-                <button type="button" class="dt-segmented__option" role="radio" aria-checked="false">Grid</button>
-              </div>
-            </div>
-          </section>
-          <section class="dt-section">
-            <h3 class="dt-section__heading">Status</h3>
-            <p>
-              <span class="dt-chip dt-chip--success">Success</span>
-              <span class="dt-chip dt-chip--caution">Caution</span>
-              <span class="dt-chip dt-chip--warning">Warning</span>
-              <span class="dt-chip dt-chip--destructive">Destructive</span>
-              <span class="dt-chip dt-chip--neutral">Neutral</span>
-            </p>
-            <div class="dt-banner dt-banner--caution"><div class="dt-banner__head">A banner holds text and a <a class="dt-link" href="#">link</a>.</div></div>
-            <div class="dt-meter dt-meter--success">
-              <div class="dt-meter__track" role="meter" aria-valuenow="72" aria-valuemin="0" aria-valuemax="100" aria-label="Capacity">
-                <div class="dt-meter__fill" style="inline-size: 72%"></div>
-              </div>
-              <span class="dt-meter__figure">72%</span>
-            </div>
-          </section>
-          <section class="dt-section">
-            <h3 class="dt-section__heading">Table and cards</h3>
-            <table class="dt-table">
-              <thead><tr><th>Item</th><th class="dt-num">Count</th></tr></thead>
-              <tbody>
-                <tr><td data-label="Item">Windows</td><td class="dt-num" data-label="Count">12</td></tr>
-                <tr><td data-label="Item">Menus</td><td class="dt-num" data-label="Count">4</td></tr>
-              </tbody>
-            </table>
-            <div class="dt-cards">
-              <article class="dt-card">
-                <div class="dt-card__header"><span class="dt-card__name">First card</span></div>
-                <div class="dt-stats"><div class="dt-stat"><span class="dt-stat__label">Open</span><span class="dt-stat__figure">12</span></div></div>
-                <div class="dt-card__footer">Footer</div>
-              </article>
-              <article class="dt-card">
-                <div class="dt-card__header"><span class="dt-card__name">Second card</span></div>
-                <div class="dt-stats"><div class="dt-stat"><span class="dt-stat__label">Closed</span><span class="dt-stat__figure">4</span></div></div>
-                <div class="dt-card__footer">Footer</div>
-              </article>
-            </div>
-          </section>
-        </div>
-        """
 
     // MARK: The script and the page's own stylesheet
 
@@ -165,6 +93,9 @@ public enum GalleryEmitter {
           function select(id) {
             if (!known(id)) { id = options.length ? options[0].getAttribute('data-theme') : ''; }
             stage.setAttribute('data-theme-name', id);
+            Array.prototype.forEach.call(document.querySelectorAll('[data-skin-scene]'), function (scene) {
+              scene.hidden = scene.getAttribute('data-skin-scene') !== id;
+            });
             options.forEach(function (option) {
               option.setAttribute('aria-pressed', option.getAttribute('data-theme') === id ? 'true' : 'false');
             });
@@ -199,6 +130,15 @@ public enum GalleryEmitter {
         main { padding: 16px; }
         .stage { padding: 16px; border: 1px solid var(--g-rule); border-radius: 8px; overflow: auto; }
         .stage .dt-table + .dt-cards { margin-block-start: var(--card-gap, 16px); }
+        .skin-scene { margin-block-start: 24px; display: grid; gap: 24px; }
+        .skin-scene__row { display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start; }
+        .skin-scene__caption { display: inline-block; margin: 0 0 6px; padding: 2px 6px; border-radius: 4px; font: 12px/1.3 system-ui, sans-serif; background: Canvas; color: CanvasText; }
+        .skin-window { inline-size: 320px; display: flex; flex-direction: column; }
+        .skin-window__body { display: grid; grid-template-columns: 1fr auto; grid-template-rows: 1fr auto; block-size: 150px; }
+        .skin-window__content { padding: 8px; overflow: hidden; }
+        .skin-window__corner { }
+        .skin-menus { display: flex; flex-direction: column; align-items: flex-start; gap: 0; inline-size: 320px; }
+        .skin-dock { display: flex; gap: 8px; align-items: flex-end; }
 
         """
 

@@ -9,6 +9,9 @@
   function select(id) {
     if (!known(id)) { id = options.length ? options[0].getAttribute('data-theme') : ''; }
     stage.setAttribute('data-theme-name', id);
+    Array.prototype.forEach.call(document.querySelectorAll('[data-skin-scene]'), function (scene) {
+      scene.hidden = scene.getAttribute('data-skin-scene') !== id;
+    });
     options.forEach(function (option) {
       option.setAttribute('aria-pressed', option.getAttribute('data-theme') === id ? 'true' : 'false');
     });
