@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+## [0.16.1] - 2026-11-27
+
+Emitters no longer trust a theme's identity strings, so a theme supplied at runtime (DesignTokensWeb accepts custom JSON) cannot break out of a selector, comment or custom-property name. `Generated/` differs from 0.16.0 only in the `0.16.1` it records: every built-in id and name passes unchanged. Source-visible: an id that is not a slug now throws, so a patch bump rather than a silent one.
+
 ### Changed
 - **An emitter now refuses a theme whose `id` is not a slug**, and neutralises the strings a theme supplies for the place each is written. Source-visible: `ThemeCSSEmitter`, `TumblrEmitter`, `TumblrThemeEmitter`, `ANSIEmitter`, `SlidesEmitter.emitList` and `GTKEmitter.emit` throw `ThemeEmitError.invalidID` for an id that is not 1 to 64 of `a-z 0-9 - _ +`, starting with a letter or digit, with no `--`. Every built-in id and composed ids such as `swiss+princeton` pass; a custom theme or an `AppPalette` whose id has a space, an upper-case letter or a quote now throws where it used to write the id into a selector, a stamp and a comment as it was. This matters because a theme can arrive from outside (DesignTokensWeb takes custom JSON). `Generated/` is byte-identical.
 - **Strings a theme supplies are escaped where they are written.** A theme name: control characters, line and paragraph separators and bidirectional controls become spaces everywhere; `*/` and `</` are spaced out in CSS comments; `--` runs and `</` in HTML and XML comments; braces in the Tumblr page (its template engine reads `{Tag}` inside a comment). A named font, in a CSS string (`ThemeCSSEmitter`, `TumblrEmitter`): quote, backslash, braces, angle brackets and controls are CSS-escaped. An extras key, an extra-ramp name and a colour reference to one, in a custom-property name: anything but letters, digits, `-` and `_` is CSS-escaped, the same way where declared and where read. A series name, extras key and font name in the ANSI table, slides list and font scheme: controls become spaces. `GTKEmitter.settings` cannot throw, so it writes id and name as display text. Found by tests that assert the structure of the output (a hostile name leaves a stylesheet with the same rules and declarations as a harmless one), not a particular escape; the first run failed 99 expectations across the sinks.
@@ -686,7 +690,8 @@ Additive. `Generated/tokens.css` and `tokens.json` are byte-identical to 0.3.0 (
   selectors honour Bootstrap's `data-bs-theme` as well as `data-theme`.
 - Palette tests: fixed order (validated for adjacency and colour-vision separation; fails the lightness band for the slots listed under 0.4.0), adjacent OKLab distance of at least 15, contrast of label on background.
 
-[Unreleased]: https://github.com/jpurnell/DesignTokens/compare/0.16.0...HEAD
+[Unreleased]: https://github.com/jpurnell/DesignTokens/compare/0.16.1...HEAD
+[0.16.1]: https://github.com/jpurnell/DesignTokens/compare/0.16.0...0.16.1
 [0.16.0]: https://github.com/jpurnell/DesignTokens/compare/0.15.0...0.16.0
 [0.15.0]: https://github.com/jpurnell/DesignTokens/compare/0.14.0...0.15.0
 [0.14.0]: https://github.com/jpurnell/DesignTokens/compare/0.13.0...0.14.0
