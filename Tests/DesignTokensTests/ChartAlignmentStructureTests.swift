@@ -152,11 +152,12 @@ struct ChartAlignmentStructureTests {
     }
 
     /// The FNV-1a 64 of each unchanged theme's committed `Generated/themes/<id>.json` before the chart alignment
-    /// (taken from `git show 8e29e5c:Generated/themes/<id>.json`).
+    /// (taken from `git show 8e29e5c:Generated/themes/<id>.json`). The four legacy themes lost their card drop shadow in 0.17.0, so their
+    /// entries are that same historic file with its `layout.shadow` object (and the comma before the closing brace) removed, nothing else.
     private static let preChangeFingerprints: [String: String] = [
         "house": "5ed67cf4b6639b87", "ft": "bb3c6a270b5ca4db", "economist": "e9330bbccd9810c7",
-        "legacy-default": "b07a4bf0764d6dc9", "legacy-dark": "e76d0222d5425e75",
-        "legacy-financial": "7a1c771435074a42", "legacy-accessible": "0898100354440b15",
+        "legacy-default": "d4c1c1be8e1c88ff", "legacy-dark": "a478a51209d2cf93",
+        "legacy-financial": "a3dac392100d5af4", "legacy-accessible": "b47c904f8a0a9673",
     ]
 
     @Test("an unchanged theme's JSON, less the new defaulted keys, is byte-for-byte its pre-change JSON")

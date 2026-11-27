@@ -93,9 +93,12 @@ struct ChartStyleStructureTests {
         }
     }
 
-    @Test("shadow and tag: legacy themes have the 4/0/2 shadow, Economist the 28 by 6 tag, Swiss neither")
+    @Test("shadow and tag: a theme that sets a 4/0/2 shadow gets it (the legacy themes stopped in 0.17.0), Economist the 28 by 6 tag, Swiss neither")
     func shadowAndTag() throws {
-        let legacy = try #require(ChartStyle(theme: .legacyDefault, appearance: .light).shadow)
+        #expect(ChartStyle(theme: .legacyDefault, appearance: .light).shadow == nil, "0.17.0: the legacy cards are flat")
+        var shadowed = Theme.legacyDefault
+        shadowed.structure.layout.shadow = ShadowSpec(colour: ColourReference(source: "shadow"), radius: 4, x: 0, y: 2)
+        let legacy = try #require(ChartStyle(theme: shadowed, appearance: .light).shadow)
         #expect(near(legacy.radius, 4))
         #expect(near(legacy.x, 0))
         #expect(near(legacy.y, 2))

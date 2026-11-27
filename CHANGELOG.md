@@ -2,6 +2,14 @@
 
 ## [Unreleased]
 
+## [0.17.0] - 2026-11-27
+
+The skins gallery's first slices, and the four legacy themes lose their card drop shadow. `Generated/` differs from 0.16.2 in the `0.17.0` stamp, the new `gallery/` files, and the legacy themes (below). Minor bump because the legacy look changed.
+
+### Changed
+- **The four legacy themes (`legacy-default`, `legacy-dark`, `legacy-financial`, `legacy-accessible`) have flat cards**: `structure.layout.shadow` is `nil`, so `--shadow` is `none` in their CSS and the `layout.shadow` object is gone from their JSON. It was a soft `0 2px 4px` drop shadow at 10% black copied from the BusinessMath-UI look; the owner found it an unwanted embossing around cards in the gallery. **Source-visible**: `ChartStyle.shadow` is now `nil` for these themes, so SwiftUI chart cards drawn from them lose the shadow too, and `Theme.legacyDefault` is the environment default. The `shadow` colour stays in each theme's `extras` for a consumer that draws its own. Consumers pinned to an earlier tag are unaffected. Every other theme is unchanged.
+
+
 ### Added
 - **The skins gallery, first slice** (`GalleryEmitter`, `GeneratedFormat.gallery`): `Generated/gallery/index.html`, `gallery.css` and `gallery.js`, written by `design-tokens Generated` and golden-tested. One static page that links every theme's stylesheet and `components.css`, a theme switcher (the skins first, then the rest), the choice kept in the URL hash (`#theme=platinum`), and one components scene under the selected theme. The page's chrome is neutral (never themed), every link is relative, the script is plain ES2020 with no modules, and nothing loads from the network, so it opens from `file://` and from any static path. Purely additive: no existing `Generated/` file changed. Not yet in the page: the role-by-state matrix, forced states, composed skin scenes (window, menu, dock), backdrops, scale and appearance controls (later slices of `project/plans/proposals/2026-11-25_SkinsGallery.md`). A SwiftUI gallery is a later companion once SwiftUI emits skins.
 - **The gallery's skin scenes** (`GalleryScenes`): for each theme with surfaces, a scene generated from the model: an active and an inactive window (title bar, scroll bars), a menu bar and an open menu (selected, disabled and separator rows), and a dock, each shown only where the theme defines it and its own stylesheet styles the class (System 7 shows a menu bar; OPENSTEP a menu, scroll bars, title bars and a dock; Platinum windows and menus). A test checks every `dt-` class in a skin's scene against that skin's stylesheet. The theme switcher shows the selected skin's scene.
@@ -704,7 +712,8 @@ Additive. `Generated/tokens.css` and `tokens.json` are byte-identical to 0.3.0 (
   selectors honour Bootstrap's `data-bs-theme` as well as `data-theme`.
 - Palette tests: fixed order (validated for adjacency and colour-vision separation; fails the lightness band for the slots listed under 0.4.0), adjacent OKLab distance of at least 15, contrast of label on background.
 
-[Unreleased]: https://github.com/jpurnell/DesignTokens/compare/0.16.2...HEAD
+[Unreleased]: https://github.com/jpurnell/DesignTokens/compare/0.17.0...HEAD
+[0.17.0]: https://github.com/jpurnell/DesignTokens/compare/0.16.2...0.17.0
 [0.16.2]: https://github.com/jpurnell/DesignTokens/compare/0.16.1...0.16.2
 [0.16.1]: https://github.com/jpurnell/DesignTokens/compare/0.16.0...0.16.1
 [0.16.0]: https://github.com/jpurnell/DesignTokens/compare/0.15.0...0.16.0

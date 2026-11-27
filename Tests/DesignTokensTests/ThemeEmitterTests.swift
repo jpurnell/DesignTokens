@@ -280,7 +280,10 @@ struct ThemeEmitterTests {
         #expect(economist.contains("  --mark-tag-height: 6px;"))
         #expect(economist.contains("  --mark-tag-color: var(--"))
         let legacy = try ThemeCSSEmitter.emit(Theme.legacyDefault)
-        #expect(legacy.contains("  --shadow: 0px 2px 4px var(--extra-shadow);"))
+        #expect(legacy.contains("  --shadow: none;"), "0.17.0: the legacy themes' cards are flat")
+        var shadowed = Theme.legacyDefault
+        shadowed.structure.layout.shadow = ShadowSpec(colour: ColourReference(source: "shadow"), radius: 4, x: 0, y: 2)
+        #expect(try ThemeCSSEmitter.emit(shadowed).contains("  --shadow: 0px 2px 4px var(--extra-shadow);"), "a theme that sets a shadow still gets it written")
         #expect(legacy.contains("  --radius-annotation: 8px;"))
         #expect(legacy.contains("  --gridlines: platform-automatic;"))
     }

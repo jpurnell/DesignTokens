@@ -149,18 +149,19 @@ struct ThemeRegistryTests {
         #expect(theme.palette.background.dark?.hex == "#1E1E1E")
         #expect(theme.structure.layout.gridlines == .platformAutomatic)
         #expect(theme.structure.marks.barFill == .autoGradient)
-        #expect(theme.structure.layout.shadow == ShadowSpec(colour: ColourReference(source: "shadow"), radius: 4, x: 0, y: 2))
+        #expect(theme.structure.layout.shadow == nil, "0.17.0: cards are flat; the colour stays in extras for a consumer that draws its own")
         #expect(theme.palette.extras["shadow"]?.light.hex == "#0000001A")
     }
 
     @Test("every legacy theme is platform-automatic and gradient-filled; none has a title rule or value labels")
-    func legacyStructure() {
+    func legacyStructure() throws {
         for theme in [Theme.legacyDefault, .legacyDark, .legacyFinancial, .legacyAccessible] {
             #expect(theme.structure.layout.gridlines == .platformAutomatic, "\(theme.id)")
             #expect(theme.structure.marks.barFill == .autoGradient, "\(theme.id)")
             #expect(theme.structure.rules.title.position == TitleRulePosition.none, "\(theme.id)")
             #expect(theme.structure.labels.values == .off, "\(theme.id)")
-            #expect(theme.structure.layout.shadow == ShadowSpec(colour: ColourReference(source: "shadow"), radius: 4, x: 0, y: 2), "\(theme.id)")
+            #expect(theme.structure.layout.shadow == nil, "\(theme.id)")
+            #expect(try ThemeCSSEmitter.emit(theme).contains("  --shadow: none;"), "\(theme.id): cards have no drop shadow")
             #expect(theme.structure.type.title.platformStyle == .headline, "\(theme.id)")
         }
         #expect(Theme.legacyDark.appearances == .fixedDark)

@@ -150,16 +150,23 @@ struct ThemeDecodingStrictnessTests {
         }
     }
 
+    /// The legacy default with the card shadow it had before 0.17.0, so the shadow's decoding rules still have a shadow to check.
+    private static var shadowed: Theme {
+        var theme = Theme.legacyDefault
+        theme.structure.layout.shadow = ShadowSpec(colour: ColourReference(source: "shadow"), radius: 4, x: 0, y: 2)
+        return theme
+    }
+
     @Test("a shadow colour that names no role and no extra is refused")
     func danglingShadowSource() throws {
-        let changed = try edited(.legacyDefault, "structure.layout.shadow.colour.source") { _ in "ghost" }
+        let changed = try edited(Self.shadowed, "structure.layout.shadow.colour.source") { _ in "ghost" }
         let text = refusal(changed, "dangling shadow")
         #expect(text.contains("ghost") && text.contains("shadow"), "\(text)")
     }
 
     @Test("an opacity outside 0 to 1 in a colour reference is refused")
     func opacityOutOfRange() throws {
-        let changed = try edited(.legacyDefault, "structure.layout.shadow.colour.opacity") { _ in 1.5 }
+        let changed = try edited(Self.shadowed, "structure.layout.shadow.colour.opacity") { _ in 1.5 }
         let text = refusal(changed, "opacity 1.5")
         #expect(text.contains("opacity"), "\(text)")
     }

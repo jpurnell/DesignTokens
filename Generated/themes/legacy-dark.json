@@ -409,15 +409,6 @@
         "leading" : 16,
         "top" : 16,
         "trailing" : 16
-      },
-      "shadow" : {
-        "colour" : {
-          "opacity" : 1,
-          "source" : "shadow"
-        },
-        "radius" : 4,
-        "x" : 0,
-        "y" : 2
       }
     },
     "marks" : {
