@@ -188,7 +188,7 @@ public enum TumblrEmitter {
         case .mono: FontStack.mono
         case .serifNewYork: FontStack.serifNewYork
         case .serifGaramond: FontStack.serifGaramond
-        case .named(let name, let fallback): "\"\(name)\", \(css(fallback))"
+        case .named(let name, let fallback): "\"\(ThemeIdentity.cssString(name))\", \(css(fallback))"
         }
     }
 }

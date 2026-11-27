@@ -445,7 +445,7 @@ public enum ThemeCSSEmitter {
         }
         for key in palette.extras.keys.sorted() {
             guard let adaptive = palette.extras[key], has(adaptive) else { continue }
-            out.append(contentsOf: withRGB("--extra-\(kebab(key))", value(adaptive)))
+            out.append(contentsOf: withRGB("--extra-\(ThemeIdentity.cssIdentifier(kebab(key)))", value(adaptive)))
         }
         guard selection != .increasedOnly else { return out }
         func ramp(_ name: String, _ ramp: Ramp) {
@@ -457,7 +457,7 @@ public enum ThemeCSSEmitter {
         ramp("sequential", palette.sequential)
         ramp("diverging", palette.diverging)
         for name in palette.extraRamps.keys.sorted() {
-            if let extra = palette.extraRamps[name] { ramp("ramp-\(kebab(name))", extra) }
+            if let extra = palette.extraRamps[name] { ramp("ramp-\(ThemeIdentity.cssIdentifier(kebab(name)))", extra) }
         }
         return out
     }
@@ -594,13 +594,13 @@ public enum ThemeCSSEmitter {
         case .mono: FontStack.mono
         case .serifNewYork: FontStack.serifNewYork
         case .serifGaramond: FontStack.serifGaramond
-        case .named(let name, let fallback): "\"\(name)\", \(family(fallback))"
+        case .named(let name, let fallback): "\"\(ThemeIdentity.cssString(name))\", \(family(fallback))"
         }
     }
 
     /// A colour reference as a CSS value: the variable, or the variable at an opacity.
     private static func reference(_ ref: ColourReference) -> String {
-        let name = ColorRole(rawValue: ref.source).map { "--\(kebab($0.rawValue))" } ?? "--extra-\(kebab(ref.source))"
+        let name = ColorRole(rawValue: ref.source).map { "--\(kebab($0.rawValue))" } ?? "--extra-\(ThemeIdentity.cssIdentifier(kebab(ref.source)))"
         guard ref.opacity < 1 else { return "var(\(name))" }
         return "color-mix(in srgb, var(\(name)) \(CSSNumber.string((ref.opacity * 100).rounded()))%, transparent)"
     }

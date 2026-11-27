@@ -56,11 +56,11 @@ public enum ANSIEmitter {
             }
             for (index, entry) in theme.palette.series.enumerated() {
                 lines.append(row(for: "series-\(index + 1)", kind: "fg", slot.rgb(entry.color, in: theme),
-                                 glyph: ".", ascii: ".", note: note(entry.name)))
+                                 glyph: ".", ascii: ".", note: note(ThemeIdentity.displayText(entry.name))))
             }
             for key in theme.palette.extras.keys.sorted() {
                 guard let adaptive = theme.palette.extras[key] else { continue }
-                lines.append(row(for: "extra.\(key)", kind: "fg", slot.rgb(adaptive, in: theme), glyph: ".", ascii: ".", note: "."))
+                lines.append(row(for: "extra.\(note(ThemeIdentity.displayText(key)))", kind: "fg", slot.rgb(adaptive, in: theme), glyph: ".", ascii: ".", note: "."))
             }
         }
         return lines.joined(separator: "\n") + "\n"

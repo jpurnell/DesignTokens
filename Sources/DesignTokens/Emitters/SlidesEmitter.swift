@@ -48,7 +48,9 @@ public enum SlidesEmitter {
         case .mono: names(in: FontStack.mono)
         case .serifNewYork: names(in: FontStack.serifNewYork)
         case .serifGaramond: names(in: FontStack.serifGaramond)
-        case .named(let name, let fallback): [name] + fontChain(fallback).filter { $0 != name }
+        case .named(let name, let fallback):
+            // The chain goes into text lines, an XML attribute and an XML comment: control characters become spaces here.
+            [ThemeIdentity.displayText(name)] + fontChain(fallback).filter { $0 != ThemeIdentity.displayText(name) }
         }
     }
 
@@ -84,11 +86,11 @@ public enum SlidesEmitter {
                 lines.append(pad(role.rawValue, 20) + slot.rgb(theme.palette[role], in: theme).hex)
             }
             for (index, entry) in theme.palette.series.enumerated() {
-                lines.append(pad("series-\(index + 1)", 20) + slot.rgb(entry.color, in: theme).hex + " " + entry.name)
+                lines.append(pad("series-\(index + 1)", 20) + slot.rgb(entry.color, in: theme).hex + " " + ThemeIdentity.displayText(entry.name))
             }
             for key in theme.palette.extras.keys.sorted() {
                 guard let adaptive = theme.palette.extras[key] else { continue }
-                lines.append(pad("extra.\(key)", 20) + slot.rgb(adaptive, in: theme).hex)
+                lines.append(pad("extra.\(ThemeIdentity.displayText(key))", 20) + slot.rgb(adaptive, in: theme).hex)
             }
         }
         lines.append("")
@@ -147,7 +149,10 @@ public enum SlidesEmitter {
     public static func emitFontScheme(_ theme: Theme) throws -> String {
         let major = fontChain(theme.structure.type[.heading].family)
         let minor = fontChain(theme.structure.type[.body].family)
-        func fallbacks(_ chain: [String]) -> String { chain.count > 1 ? chain.dropFirst().joined(separator: ", ") : "none" }
+        // These go inside an XML comment, where "--" is not allowed.
+        func fallbacks(_ chain: [String]) -> String {
+            chain.count > 1 ? ThemeIdentity.markupCommentText(chain.dropFirst().joined(separator: ", ")) : "none"
+        }
         var lines = [
             "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>",
             try header(theme, comment: "<!-- ", close: " -->"),

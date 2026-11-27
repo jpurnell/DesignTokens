@@ -137,6 +137,181 @@ private func elementCount(_ xml: String) -> Int? {
     return parser.parse() ? counter.count : nil
 }
 
+/// The structure of `css` with every declaration reduced to "there is one here": what a property or value says is allowed to
+/// differ between a harmless and a hostile key, how many rules and declarations there are is not.
+private func outline(_ css: String) -> [Piece]? {
+    func reduce(_ pieces: [Piece]) -> [Piece] {
+        pieces.map { piece in
+            switch piece {
+            case .comment: .comment
+            case .statement: .statement("declaration")
+            case .block(let prelude, let body): .block(prelude: prelude, body: reduce(body))
+            }
+        }
+    }
+    return shape(css).map(reduce)
+}
+
+/// Text that is a font name or a palette key in a hostile theme: it tries to close the string, the declaration, the rule or
+/// the line it is written into.
+private let hostileStrings: [String] = hostileNames + [
+    "Foo\", sans-serif; } body { display: none } /*", "a\"b", "a')b", "x) ; } .evil { background: url(https://example.test/x) } /*",
+    "a\\\"b", "a\\", "{Title}", "{block:Posts}", "9starts-with-digit", "has space", "UPPER", "a;b", "--double", "a.b", "e\u{301}",
+]
+
+private let colour = Adaptive(light: ColorValue(RGB(rgb: 0x123456)))
+
+private func textSpec(family: FontFamilyRef) -> TextSpec {
+    TextSpec(family: family, size: 12, weight: 400, tracking: 0, italic: false, uppercase: false, lineHeight: 1.4)
+}
+
+/// Any control character other than a line feed: nothing a text output should carry (an escape would reach a terminal).
+private func hasStrayControl(_ text: String) -> Bool {
+    text.unicodeScalars.contains { $0 != "\n" && $0.properties.generalCategory == .control }
+}
+
+@Suite("Theme strings that reach a CSS string, a CSS identifier or a text line")
+struct EmitterStringSinkTests {
+    // MARK: Named fonts: a CSS string
+
+    @Test("a hostile font name stays inside its string in the stylesheet")
+    func cssFontNameStaysInItsString() throws {
+        func css(_ name: String) throws -> String {
+            var theme = Theme.platinum
+            theme.structure.type.body.family = .named(name, fallback: .sans)
+            theme.structure.monospace = textSpec(family: .named(name, fallback: .mono))
+            return try ThemeCSSEmitter.emit(theme)
+        }
+        let baseline = try #require(outline(try css("Plain Face")))
+        for name in hostileStrings {
+            let out = try css(name)
+            #expect(outline(out) == baseline, "\(name.debugDescription.prefix(40)) changed the structure of the stylesheet")
+        }
+    }
+
+    @Test("a hostile font name stays inside its string in the Tumblr block, with no brace or closing tag")
+    func tumblrFontNameStaysInItsString() throws {
+        func block(_ name: String) throws -> String {
+            var theme = Theme.platinum
+            theme.structure.type.body.family = .named(name, fallback: .sans)
+            return try TumblrEmitter.emit(theme)
+        }
+        let baseline = try block("Plain Face")
+        let baselineShape = try #require(outline(baseline))
+        for name in hostileStrings {
+            let out = try block(name)
+            #expect(outline(out) == baselineShape, "\(name.debugDescription.prefix(40)) changed the structure of the block")
+            for needle in ["{", "}", "</"] {
+                #expect(occurrences(of: needle, in: out) == occurrences(of: needle, in: baseline),
+                        "\(name.debugDescription.prefix(40)) added \(needle.debugDescription)")
+            }
+        }
+    }
+
+    // MARK: Palette keys and colour references: a CSS identifier
+
+    @Test("a hostile extras key becomes one custom property, not a new rule or declaration")
+    func cssExtrasKeyCannotLeaveItsName() throws {
+        func css(_ key: String) throws -> String {
+            var theme = Theme.platinum
+            theme.palette.extras[key] = colour
+            return try ThemeCSSEmitter.emit(theme)
+        }
+        let baseline = try #require(outline(try css("plainKey")))
+        for key in hostileStrings where !key.isEmpty {
+            #expect(outline(try css(key)) == baseline, "\(key.debugDescription.prefix(40)) changed the structure of the stylesheet")
+        }
+    }
+
+    @Test("a hostile extra-ramp name becomes one custom property family, not a new rule")
+    func cssRampNameCannotLeaveItsName() throws {
+        func css(_ name: String) throws -> String {
+            var theme = Theme.platinum
+            theme.palette.extraRamps[name] = Ramp(packedLight: [0x111111, 0x888888, 0xEEEEEE])
+            return try ThemeCSSEmitter.emit(theme)
+        }
+        let baseline = try #require(outline(try css("plainRamp")))
+        for name in hostileStrings where !name.isEmpty {
+            #expect(outline(try css(name)) == baseline, "\(name.debugDescription.prefix(40)) changed the structure of the stylesheet")
+        }
+    }
+
+    @Test("a hostile extras key that a surface refers to stays inside its var(), and is spelled the same where defined and used")
+    func cssReferenceSourceStaysInItsVar() throws {
+        // A reference to a name that is neither a role nor an extras key is already refused by the theme's own consistency
+        // check, so the only way a hostile source reaches the stylesheet is as an extras key that exists and is referenced.
+        func css(_ source: String) throws -> String {
+            var theme = Theme.platinum
+            theme.palette.extras[source] = colour
+            theme.surfaces?.recipes[.button]?[.rest]?.layers = [.fill(ColourReference(source: source, opacity: 0.5))]
+            return try ThemeCSSEmitter.emit(theme)
+        }
+        let baseline = try #require(outline(try css("plainSource")))
+        for source in hostileStrings where !source.isEmpty {
+            let out = try css(source)
+            #expect(outline(out) == baseline, "\(source.debugDescription.prefix(40)) changed the structure of the stylesheet")
+            // Every custom property the stylesheet reads with var(--extra-...) is one it declares, spelled the same way:
+            // an escape applied at the use and not at the definition would leave the reference pointing at nothing.
+            var rest = Substring(out)
+            var checked = 0
+            while let start = rest.firstRange(of: "var(--extra-") {
+                let afterOpen = rest[start.lowerBound...].dropFirst(4)
+                guard let close = afterOpen.firstIndex(of: ")") else { break }
+                let name = String(afterOpen[afterOpen.startIndex..<close])
+                #expect(out.contains(name + ":"), "\(source.debugDescription.prefix(40)) is read as \(name) but never declared")
+                checked += 1
+                rest = rest[close...]
+            }
+            #expect(checked > 0, "\(source.debugDescription.prefix(40)) was never referenced, so the test checked nothing")
+        }
+    }
+
+    @Test("a plain extras key keeps its exact spelling, so the committed stylesheets do not move")
+    func plainKeysAreUnchanged() throws {
+        var theme = Theme.platinum
+        theme.palette.extras["lavenderShade2"] = colour
+        let css = try ThemeCSSEmitter.emit(theme)
+        #expect(css.contains("--extra-lavender-shade2:"))
+    }
+
+    // MARK: Text lines
+
+    @Test("a hostile series name, extras key or font name adds no line and no control character to the ANSI and slides lists")
+    func textListsKeepTheirLines() throws {
+        func theme(_ text: String) -> Theme {
+            var copy = Theme.platinum
+            copy.palette.series[0].name = text
+            copy.palette.extras[text.isEmpty ? "k" : text] = colour
+            copy.structure.type.body.family = .named(text, fallback: .sans)
+            return copy
+        }
+        let ansi = lines(try ANSIEmitter.emit(theme("Plain")))
+        let list = lines(try SlidesEmitter.emitList(theme("Plain")))
+        for text in hostileStrings {
+            let a = try ANSIEmitter.emit(theme(text))
+            let s = try SlidesEmitter.emitList(theme(text))
+            #expect(lines(a).count == ansi.count,"\(text.debugDescription.prefix(40)) changed the ANSI line count")
+            #expect(lines(s).count == list.count, "\(text.debugDescription.prefix(40)) changed the slides line count")
+            #expect(!hasStrayControl(a), "\(text.debugDescription.prefix(40)) put a control character in the ANSI table")
+            #expect(!hasStrayControl(s), "\(text.debugDescription.prefix(40)) put a control character in the slides list")
+        }
+    }
+
+    @Test("a hostile font name leaves the font scheme XML well-formed, with the same elements")
+    func fontSchemeStaysWellFormed() throws {
+        func xml(_ name: String) throws -> String {
+            var theme = Theme.platinum
+            theme.structure.type.heading.family = .named(name, fallback: .sans)
+            theme.structure.type.body.family = .named(name, fallback: .sans)
+            return try SlidesEmitter.emitFontScheme(theme)
+        }
+        let baseline = try #require(elementCount(try xml("Plain Face")))
+        for name in hostileStrings {
+            #expect(elementCount(try xml(name)) == baseline, "\(name.debugDescription.prefix(40)) broke the font scheme")
+        }
+    }
+}
+
 @Suite("Theme identity: what a supplied id and name cannot do to an emitter")
 struct EmitterEscapingTests {
     // MARK: The identity rules

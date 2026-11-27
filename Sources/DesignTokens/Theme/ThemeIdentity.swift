@@ -102,6 +102,48 @@ public enum ThemeIdentity {
         markupCommentText(text).replacingAll("{", with: "(").replacingAll("}", with: ")")
     }
 
+    // MARK: CSS escapes
+
+    /// `text` as the inside of a double-quoted CSS string, escaped per CSS Syntax (a backslash, the code point in hex, and one
+    /// space that ends the escape).
+    ///
+    /// Escaped: the quote and the backslash (they end or alter the string), the controls that ``displayText(_:)`` replaces
+    /// (a newline is not allowed in a string), and `{`, `}`, `<` and `>`: a brace inside a string is still read as a tag when
+    /// the CSS is pasted into a Tumblr theme, and `</style` must not occur in a stylesheet inlined in a page. Every other
+    /// character, non-ASCII included, is kept, so an ordinary font name such as `SF Pro Text` is written as it always was.
+    static func cssString(_ text: String) -> String {
+        var out = ""
+        for scalar in text.unicodeScalars {
+            switch scalar {
+            case "\"", "\\", "{", "}", "<", ">": out += cssEscape(scalar)
+            default: out += isUnsafeInText(scalar) ? cssEscape(scalar) : String(scalar)
+            }
+        }
+        return out
+    }
+
+    /// `text` as the rest of a CSS identifier (a custom property name or a `var()` argument after its `--prefix`), escaped per
+    /// CSS Syntax.
+    ///
+    /// Kept: ASCII letters, digits, `-` and `_`, and any non-ASCII character that is not a control. Everything else becomes a
+    /// hex escape, so a key that holds a `;`, a brace, a paren or a space is still one identifier, and the same key written
+    /// where it is defined and where it is referenced is the same identifier.
+    static func cssIdentifier(_ text: String) -> String {
+        var out = ""
+        for scalar in text.unicodeScalars {
+            let isKept = scalar.isASCII
+                ? (scalar.properties.isAlphabetic || ("0"..."9").contains(scalar) || scalar == "-" || scalar == "_")
+                : !isUnsafeInText(scalar)
+            out += isKept ? String(scalar) : cssEscape(scalar)
+        }
+        return out
+    }
+
+    /// One code point as a CSS hex escape. NUL, which CSS does not allow, becomes the replacement character's escape.
+    private static func cssEscape(_ scalar: Unicode.Scalar) -> String {
+        "\\" + String(scalar.value == 0 ? 0xFFFD : scalar.value, radix: 16, uppercase: true) + " "
+    }
+
     /// Throws ``ThemeEmitError/invalidID(_:)`` unless `theme.id` is a slug. Every emitter that writes the id calls this first.
     static func requireValidID(of theme: Theme) throws {
         guard isValidID(theme.id) else { throw ThemeEmitError.invalidID(theme.id) }
