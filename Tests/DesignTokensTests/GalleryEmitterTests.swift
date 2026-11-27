@@ -150,6 +150,17 @@ struct GalleryEmitterTests {
         for theme in Theme.all { #expect(!css.contains("[data-theme-name=\"\(theme.id)\"]")) }
     }
 
+    @Test("the table and the cards below it are separated by the theme's own card gap, not by a fixed length")
+    func tableAndCardsSpaced() throws {
+        let css = try file("gallery/gallery.css", in: try GalleryEmitter.emit())
+        #expect(css.contains(".stage .dt-table + .dt-cards"))
+        #expect(css.contains("margin-block-start: var(--card-gap"))
+        for theme in Theme.all {
+            let themed = try ThemeCSSEmitter.emit(theme)
+            #expect(themed.contains("--card-gap:"), "\(theme.id) defines --card-gap, which the gallery spacing reads")
+        }
+    }
+
     @Test("the chosen theme is kept in the URL hash: the script reads and writes location.hash")
     func hashState() throws {
         let script = try file("gallery/gallery.js", in: try GalleryEmitter.emit())

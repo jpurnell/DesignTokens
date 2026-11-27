@@ -198,6 +198,7 @@ public enum GalleryEmitter {
         .switch__option:focus-visible { outline: 2px solid Highlight; outline-offset: 2px; }
         main { padding: 16px; }
         .stage { padding: 16px; border: 1px solid var(--g-rule); border-radius: 8px; overflow: auto; }
+        .stage .dt-table + .dt-cards { margin-block-start: var(--card-gap, 16px); }
 
         """
 
