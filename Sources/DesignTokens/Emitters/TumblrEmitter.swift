@@ -48,7 +48,8 @@ public enum TumblrEmitter {
     ///
     /// - Throws: An encoding error if the theme cannot be encoded.
     public static func stamp(for theme: Theme) throws -> BlogStamp {
-        BlogStamp(id: theme.id, version: packageVersion, template: templateRevision,
+        try ThemeIdentity.requireValidID(of: theme)
+        return BlogStamp(id: theme.id, version: packageVersion, template: templateRevision,
                   hash: "fnv1a64:" + Fingerprint.fnv1a64(Data(content(of: theme).joined(separator: "\n").utf8)))
     }
 
@@ -187,7 +188,7 @@ public enum TumblrEmitter {
         case .mono: FontStack.mono
         case .serifNewYork: FontStack.serifNewYork
         case .serifGaramond: FontStack.serifGaramond
-        case .named(let name, let fallback): "\"\(name)\", \(css(fallback))"
+        case .named(let name, let fallback): "\"\(ThemeIdentity.cssString(name))\", \(css(fallback))"
         }
     }
 }

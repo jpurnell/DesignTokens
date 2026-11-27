@@ -2,6 +2,14 @@
 
 ## [Unreleased]
 
+### Changed
+- **An emitter now refuses a theme whose `id` is not a slug**, and neutralises the strings a theme supplies for the place each is written. Source-visible: `ThemeCSSEmitter`, `TumblrEmitter`, `TumblrThemeEmitter`, `ANSIEmitter`, `SlidesEmitter.emitList` and `GTKEmitter.emit` throw `ThemeEmitError.invalidID` for an id that is not 1 to 64 of `a-z 0-9 - _ +`, starting with a letter or digit, with no `--`. Every built-in id and composed ids such as `swiss+princeton` pass; a custom theme or an `AppPalette` whose id has a space, an upper-case letter or a quote now throws where it used to write the id into a selector, a stamp and a comment as it was. This matters because a theme can arrive from outside (DesignTokensWeb takes custom JSON). `Generated/` is byte-identical.
+- **Strings a theme supplies are escaped where they are written.** A theme name: control characters, line and paragraph separators and bidirectional controls become spaces everywhere; `*/` and `</` are spaced out in CSS comments; `--` runs and `</` in HTML and XML comments; braces in the Tumblr page (its template engine reads `{Tag}` inside a comment). A named font, in a CSS string (`ThemeCSSEmitter`, `TumblrEmitter`): quote, backslash, braces, angle brackets and controls are CSS-escaped. An extras key, an extra-ramp name and a colour reference to one, in a custom-property name: anything but letters, digits, `-` and `_` is CSS-escaped, the same way where declared and where read. A series name, extras key and font name in the ANSI table, slides list and font scheme: controls become spaces. `GTKEmitter.settings` cannot throw, so it writes id and name as display text. Found by tests that assert the structure of the output (a hostile name leaves a stylesheet with the same rules and declarations as a harmless one), not a particular escape; the first run failed 99 expectations across the sinks.
+
+### Added
+- `ThemeIdentity.isValidID(_:)` and `ThemeEmitError`.
+- **`ThemeValidator` reports the identity**: an id that is not a slug is a `fail` (`structure`, subject `id`); a name with characters the emitters write as spaces is a `warn` (`structure`, subject `name`). Built-in themes have none, so no ledger changes.
+
 ## [0.16.0] - 2026-11-26
 
 The core builds for WebAssembly. No change to any emitted output except the version stamp: `Generated/` differs from 0.15.0 only in the `0.16.0` it records. Minor bump because the package structure changed (the DocC catalogue is no longer declared as a resource) and a build script was added.
