@@ -14,17 +14,32 @@ extension StringProtocol {
     ///
     /// An empty `target` returns the text unchanged, as Foundation's `replacingOccurrences(of:with:)` does.
     func replacingAll(_ target: String, with replacement: String) -> String {
-        let text = String(self)
+        var text = String(self)
         guard !target.isEmpty else { return text }
-        var result = ""
-        var cursor = text.startIndex
-        while let hit = text.firstRange(of: target, in: cursor..<text.endIndex) {
-            result += text[cursor..<hit.lowerBound]
-            result += replacement
-            cursor = hit.upperBound
+        // One pass over the UTF-8 bytes: the target's first byte is compared at every position and the rest only on a hit.
+        // Matching bytes is what Foundation's literal replacement does (so "\n" is found inside "\r\n", which a
+        // Character-by-Character scan misses), and it avoids a scan that was over half of the time to emit Platinum in
+        // WebAssembly. A UTF-8 needle can only match on scalar boundaries, so the output is always valid UTF-8.
+        let needle = Array(target.utf8)
+        let substitute = Array(replacement.utf8)
+        let first = needle[0]
+        let output: [UInt8] = text.withUTF8 { source in
+            var out = [UInt8]()
+            out.reserveCapacity(source.count)
+            let count = source.count
+            var index = 0
+            while index < count {
+                if source[index] == first, index + needle.count <= count, bytesMatch(source, at: index, needle) {
+                    out.append(contentsOf: substitute)
+                    index += needle.count
+                } else {
+                    out.append(source[index])
+                    index += 1
+                }
+            }
+            return out
         }
-        result += text[cursor...]
-        return result
+        return String(decoding: output, as: UTF8.self)
     }
 
     /// The text without leading and trailing spaces and tabs: Foundation's `CharacterSet.whitespaces`, which on Apple
@@ -82,4 +97,14 @@ extension Unicode.Scalar {
     var isControlCharacter: Bool {
         properties.generalCategory == .control || properties.generalCategory == .format
     }
+}
+
+/// Whether `needle` occurs in `source` starting at `index`; the caller has checked it fits.
+private func bytesMatch(_ source: UnsafeBufferPointer<UInt8>, at index: Int, _ needle: [UInt8]) -> Bool {
+    var offset = 1
+    while offset < needle.count {
+        if source[index + offset] != needle[offset] { return false }
+        offset += 1
+    }
+    return true
 }

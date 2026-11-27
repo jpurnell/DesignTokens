@@ -2,6 +2,16 @@
 
 ## [Unreleased]
 
+## [0.16.2] - 2026-11-27
+
+A speed fix and one bug fix in the text helper the WebAssembly port introduced. `Generated/` differs from 0.16.1 only in the `0.16.2` it records.
+
+### Changed
+- **`replacingAll` scans UTF-8 bytes** instead of restarting a Character-by-Character `starts(with:)` at every index. That scan was 57% of the time to emit Platinum in WebAssembly (87 ms to about 19 ms in a scratch build, a 4.6 times speed-up; 6.8 s on an iPhone before this change). Output is unchanged for every built-in theme, and the wasm output is still byte-identical (`scripts/check-wasm.sh`).
+
+### Fixed
+- `replacingAll` matched by Character, so a target of `"\n"` was not found inside `"\r\n"` (one Character in Swift) where Foundation's `replacingOccurrences` finds it. Found by a new test case against Foundation's answer (it failed before the byte-level scan); no built-in theme contains a `\r\n`, so no emitted output changed.
+
 ## [0.16.1] - 2026-11-27
 
 Emitters no longer trust a theme's identity strings, so a theme supplied at runtime (DesignTokensWeb accepts custom JSON) cannot break out of a selector, comment or custom-property name. `Generated/` differs from 0.16.0 only in the `0.16.1` it records: every built-in id and name passes unchanged. Source-visible: an id that is not a slug now throws, so a patch bump rather than a silent one.
@@ -690,7 +700,8 @@ Additive. `Generated/tokens.css` and `tokens.json` are byte-identical to 0.3.0 (
   selectors honour Bootstrap's `data-bs-theme` as well as `data-theme`.
 - Palette tests: fixed order (validated for adjacency and colour-vision separation; fails the lightness band for the slots listed under 0.4.0), adjacent OKLab distance of at least 15, contrast of label on background.
 
-[Unreleased]: https://github.com/jpurnell/DesignTokens/compare/0.16.1...HEAD
+[Unreleased]: https://github.com/jpurnell/DesignTokens/compare/0.16.2...HEAD
+[0.16.2]: https://github.com/jpurnell/DesignTokens/compare/0.16.1...0.16.2
 [0.16.1]: https://github.com/jpurnell/DesignTokens/compare/0.16.0...0.16.1
 [0.16.0]: https://github.com/jpurnell/DesignTokens/compare/0.15.0...0.16.0
 [0.15.0]: https://github.com/jpurnell/DesignTokens/compare/0.14.0...0.15.0

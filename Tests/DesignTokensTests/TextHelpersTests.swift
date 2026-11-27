@@ -44,6 +44,10 @@ struct TextHelpersTests {
         ("a & b < c > d \"q\"", "&", "&amp;"), ("x&amp;y", "<", "&lt;"), ("Theme -- Name", "--", "- -"), ("a---b", "--", "- -"),
         ("line1\nline2\n", "\n", " "), ("tab\there", "\t", "    "), ("éé", "é", "e"), ("abc", "abc", ""),
         ("abc", "abcd", "x"), ("ABC", "abc", "x"),
+        // Multi-byte text, emoji, combining marks, a match at the very start and end, adjacent matches, a replacement containing the target.
+        ("日本語日本", "日本", "X"), ("a😀b😀", "😀", ":)"), ("😀😀😀", "😀😀", "x"), ("x\u{0301}y", "y", "z"),
+        ("--a--", "--", "-"), ("abab", "ab", "abab"), ("ééé", "é", "é é"), ("end-", "-", ""), ("-start", "-", "+"),
+        ("a\u{200B}b", "\u{200B}", ""), ("\r\n\r\n", "\n", "N"),
     ]
 
     @Test("replacingAll equals replacingOccurrences(of:with:) on every case, including overlaps and the empty target")
@@ -52,6 +56,13 @@ struct TextHelpersTests {
             #expect(c.text.replacingAll(c.target, with: c.with) == c.text.replacingOccurrences(of: c.target, with: c.with),
                     "\(c.text.debugDescription) \(c.target.debugDescription) -> \(c.with.debugDescription)")
         }
+    }
+
+    @Test("replacingAll gives Foundation's answer on a long text with many matches")
+    func replaceLong() {
+        let text = String(repeating: "a<b>&\"c é😀 ", count: 20_000)
+        let ours = text.replacingAll("&", with: "&amp;")
+        #expect(ours == text.replacingOccurrences(of: "&", with: "&amp;"))
     }
 
     @Test("replacingAll works on a Substring too and returns a String")
